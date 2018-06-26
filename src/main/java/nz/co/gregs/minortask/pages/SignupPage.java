@@ -30,16 +30,19 @@ public class SignupPage extends MinorTaskPage {
 
 	@Override
 	public void show() {
-		REPEAT_PASSWORD_FIELD.clear();
 		VerticalLayout layout = new VerticalLayout();
+		
+		REPEAT_PASSWORD_FIELD.clear();
+		ui.USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
+		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
+		
 		Button signupButton = new Button("Request Sign Up");
 		setAsDefaultButton(signupButton);
-		
+
 		Button returnToLoginButton = new Button("Return to Login");
-		returnToLoginButton.addClickListener((Button.ClickEvent e) -> {
-			ui.LOGIN.show();
-		});
-		
+		setEscapeButton(returnToLoginButton);
+
 		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
 		layout.addComponents(ui.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(ui.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
 		show(layout);
@@ -92,7 +95,7 @@ public class SignupPage extends MinorTaskPage {
 
 	@Override
 	public void handleEscapeButton() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		ui.LOGIN.show();
 	}
 
 }

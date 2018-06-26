@@ -5,10 +5,8 @@
  */
 package nz.co.gregs.minortask.pages;
 
-import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
