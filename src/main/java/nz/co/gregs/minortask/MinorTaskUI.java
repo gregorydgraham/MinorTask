@@ -30,7 +30,7 @@ import nz.co.gregs.minortask.pages.*;
 @PreserveOnRefresh
 public class MinorTaskUI extends UI {
 
-	public static DBDatabase database;
+	private static DBDatabase database;
 
 	public final LoginPage LOGIN = new LoginPage(this);
 	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
@@ -40,7 +40,7 @@ public class MinorTaskUI extends UI {
 	public final Button LOGOUT_BUTTON = new Button("Log Out");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
 	private VaadinSession sess;
-	public boolean notLoggedIn = true;
+	private boolean notLoggedIn = true;
 	public String username = "";
 	private long userID = 0;
 	public MinorTaskPage currentPage = null;
@@ -102,6 +102,22 @@ public class MinorTaskUI extends UI {
 		if (!USERNAME_FIELD.isEmpty()) {
 			username = USERNAME_FIELD.getValue();
 		}
+	}
+
+	public DBDatabase getDatabase() {
+		if (database==null){
+			setupDatabase();
+		}
+		return database;
+	}
+
+	public boolean getNotLoggedIn() {
+		return notLoggedIn;
+	}
+
+	public void loginAs(Long userID) {
+		this.notLoggedIn=false;
+		this.userID = userID;
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)

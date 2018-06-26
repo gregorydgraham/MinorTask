@@ -13,7 +13,7 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class TasksPage extends AuthorisedPage {
+public class TasksPage extends AuthorisedPage{
 	
 	Long currentTask = null;
 
@@ -26,17 +26,25 @@ public class TasksPage extends AuthorisedPage {
 		VerticalLayout layout = new VerticalLayout();
 
 		final Button createTaskButton = new Button("New");
-		createTaskButton.addClickListener((event) -> {
-			new CreateTaskPage(ui, currentTask).show();
+		setAsDefaultButton(createTaskButton);
+
+		final Button showTasks = new Button("List");
+		showTasks.addClickListener((event) -> {
+			new TaskListPage(ui, currentTask).show();
 		});
 
-		layout.addComponent(createTaskButton);
+		layout.addComponents(createTaskButton, showTasks);
 
 		show(layout);
 	}
 
 	@Override
-	public void handle() {
+	public void handleDefaultButton() {
+		new TaskCreationPage(ui, currentTask).show();
+	}
+
+	@Override
+	public void handleEscapeButton() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

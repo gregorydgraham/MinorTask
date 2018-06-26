@@ -23,7 +23,7 @@ public class LoggedoutPage extends MinorTaskPage {
 	}
 
 	@Override
-	public void handle() {
+	public void handleDefaultButton() {
 	}
 
 	@Override
@@ -37,6 +37,11 @@ public class LoggedoutPage extends MinorTaskPage {
 		
 		layout.addComponents(new Label("Thank you for using MinorTask"),new Link("return to the login page", new ExternalResource("/")));
 		super.show(layout);
+	}
+
+	@Override
+	public void handleEscapeButton() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }

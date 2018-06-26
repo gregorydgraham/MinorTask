@@ -18,18 +18,18 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class CreateTaskPage extends AuthorisedPage {
+public class TaskCreationPage extends AuthorisedPage {
 
 	TextField name = new TextField("Name");
-	TextField description = new TextField("Name");
+	TextField description = new TextField("Description");
 	DateField startDate = new DateField("Start");
-	DateField preferredEndDate = new DateField("Preferred");
+	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 	private final Long projectID;
 
-	public CreateTaskPage(MinorTaskUI ui, Long projectID) {
+	public TaskCreationPage(MinorTaskUI ui, Long projectID) {
 		super(ui);
 		this.projectID = projectID;
 	}
@@ -39,25 +39,31 @@ public class CreateTaskPage extends AuthorisedPage {
 
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.addComponents(name, description, startDate, preferredEndDate, deadlineDate);
+		setEscapeButton(cancelButton);
+		
+		setAsDefaultButton(createButton);
+		
+		 startDate.setValue( LocalDate.now().plusDays(1));
+		 preferredEndDate.setValue( LocalDate.now().plusWeeks(1));
+		 deadlineDate.setValue( LocalDate.now().plusWeeks(2));
 
-		cancelButton.addClickListener((event) -> {
-			new TasksPage(ui).show();
-		});
-
-		createButton.addClickListener((event) -> {
-			handle();
-		});
-
-		HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, createButton);
-
-		layout.addComponent(buttonLayout);
+		layout.addComponents(
+				name, 
+				description,
+				new HorizontalLayout(
+						startDate, 
+						preferredEndDate, 
+						deadlineDate),
+				new HorizontalLayout(
+						cancelButton, 
+						createButton)
+		);
 
 		super.show(layout);
 	}
 
 	@Override
-	public void handle() {
+	public void handleDefaultButton() {
 		Task task = new Task();
 
 		task.userID.setValue(ui.getUserID());
@@ -73,11 +79,16 @@ public class CreateTaskPage extends AuthorisedPage {
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
 
 		try {
-			MinorTaskUI.database.insert(task);
+			getDatabase().insert(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(CreateTaskPage.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(TaskCreationPage.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
 		}
+		new TasksPage(ui).show();
+	}
+
+	@Override
+	public void handleEscapeButton() {
 		new TasksPage(ui).show();
 	}
 

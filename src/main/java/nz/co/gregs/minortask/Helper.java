@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 
 /**
@@ -31,6 +33,10 @@ public class Helper {
 
 	public static LocalDateTime asLocalDateTime(Date date) {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+	}
+
+	public static String asDateString(Date value) {
+		return Helper.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
 	}
 
 	private Helper() {

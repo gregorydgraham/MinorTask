@@ -33,22 +33,20 @@ public class SignupPage extends MinorTaskPage {
 		REPEAT_PASSWORD_FIELD.clear();
 		VerticalLayout layout = new VerticalLayout();
 		Button signupButton = new Button("Request Sign Up");
-		signupButton.addClickListener((Button.ClickEvent e) -> {
-			handle();
-		});
 		setAsDefaultButton(signupButton);
+		
 		Button returnToLoginButton = new Button("Return to Login");
 		returnToLoginButton.addClickListener((Button.ClickEvent e) -> {
 			ui.LOGIN.show();
 		});
 		
-		HorizontalLayout buttonLayout = new HorizontalLayout(signupButton, returnToLoginButton);
-		layout.addComponents(ui.USERNAME_FIELD, EMAIL_FIELD, ui.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD, buttonLayout);
+		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
+		layout.addComponents(ui.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(ui.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
 		show(layout);
 	}
 
 	@Override
-	public void handle() {
+	public void handleDefaultButton() {
 		final String name = ui.USERNAME_FIELD.getValue();
 		final String email = EMAIL_FIELD.getValue();
 		final String pass = ui.PASSWORD_FIELD.getValue();
@@ -66,7 +64,7 @@ public class SignupPage extends MinorTaskPage {
 		User user = new User();
 		user.username.permittedValuesIgnoreCase(name);
 		try {
-			Long count = MinorTaskUI.database.getDBTable(user).count();
+			Long count = getDatabase().getDBTable(user).count();
 			if (count > 0) {
 				error("You're unique", "Sorry, that username is already taken, please try another one");
 			}
@@ -83,13 +81,18 @@ public class SignupPage extends MinorTaskPage {
 //				user.defaultProject.setValue(defaultProject);
 				user.password.setValue(pass);
 				user.signupDate.setValue(new Date());
-				MinorTaskUI.database.insert(user);
+				getDatabase().insert(user);
 				chat("Welcome to Minor Task " + name);
-				ui.LOGIN.handle();
+				ui.LOGIN.handleDefaultButton();
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}
 		}
+	}
+
+	@Override
+	public void handleEscapeButton() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }
