@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask;
 
+import com.vaadin.ui.UI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,8 +36,8 @@ public class Helper {
 		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 
-	public static String asDateString(Date value) {
-		return Helper.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+	public static String asDateString(Date value, UI ui) {
+		return Helper.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(ui.getLocale()));
 	}
 
 	public static String shorten(String value, int i) {
