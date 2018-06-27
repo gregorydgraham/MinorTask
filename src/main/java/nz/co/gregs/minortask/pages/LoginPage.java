@@ -40,9 +40,18 @@ public class LoginPage extends MinorTaskPage {
 
 		HorizontalLayout buttons = new HorizontalLayout(signupButton, loginButton);
 		buttons.setComponentAlignment(loginButton, Alignment.TOP_RIGHT);
+		
+		ui.USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.addComponents(ui.USERNAME_FIELD, ui.PASSWORD_FIELD, buttons);
-		show(new GridLayout(3, 3, new VerticalLayout(), new VerticalLayout(), new VerticalLayout(), new VerticalLayout(), loginPanel, new VerticalLayout(), new VerticalLayout(), new VerticalLayout(), new VerticalLayout()));
+		show(
+				new GridLayout(3, 3,
+						new VerticalLayout(), new VerticalLayout(), new VerticalLayout(),
+						new VerticalLayout(), loginPanel, new VerticalLayout(),
+						new VerticalLayout(), new VerticalLayout(), new VerticalLayout()
+				)
+		);
 	}
 
 	@Override

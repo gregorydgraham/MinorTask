@@ -22,6 +22,7 @@ public class TaskCreationPage extends AuthorisedPage {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
+	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
@@ -42,7 +43,8 @@ public class TaskCreationPage extends AuthorisedPage {
 		setEscapeButton(cancelButton);
 		
 		setAsDefaultButton(createButton);
-		
+		name.setMaxLength(20);
+		description.setMaxLength(50);
 		 startDate.setValue( LocalDate.now().plusDays(1));
 		 preferredEndDate.setValue( LocalDate.now().plusWeeks(1));
 		 deadlineDate.setValue( LocalDate.now().plusWeeks(2));
@@ -54,6 +56,7 @@ public class TaskCreationPage extends AuthorisedPage {
 						startDate, 
 						preferredEndDate, 
 						deadlineDate),
+//				notes,
 				new HorizontalLayout(
 						cancelButton, 
 						createButton)
@@ -74,6 +77,7 @@ public class TaskCreationPage extends AuthorisedPage {
 		}
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
+//		task.notes.setValue(notes.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
 		task.preferredDate.setValue(Helper.asDate(preferredEndDate.getValue()));
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));

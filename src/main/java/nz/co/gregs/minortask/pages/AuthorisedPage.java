@@ -28,7 +28,6 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 	void show(AbstractLayout sublayout) {
 		if (authorised()) {
 			VerticalLayout layout = new VerticalLayout();
-			layout.addComponent(sublayout);
 
 			layout.addComponent(ui.LOGOUT_BUTTON);
 			final long userID = getUserID();
@@ -41,6 +40,7 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 			} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 				sqlerror(ex);
 			}
+			layout.addComponent(sublayout);
 			super.show(layout);
 		}
 	}

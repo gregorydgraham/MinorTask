@@ -57,6 +57,8 @@ public class SignupPage extends MinorTaskPage {
 		final StringBuffer warningBuffer = new StringBuffer();
 		if (name.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
+		}if (name.contains(" ")) {
+			warningBuffer.append("Usernames may not contain spaces\n");
 		}
 		if (!pass.equals(pass2)) {
 			warningBuffer.append("The passwords do not match, try typing them again\n");
@@ -85,7 +87,7 @@ public class SignupPage extends MinorTaskPage {
 				user.password.setValue(pass);
 				user.signupDate.setValue(new Date());
 				getDatabase().insert(user);
-				chat("Welcome to Minor Task " + name);
+				chat("Welcome to Minor Task @" + name);
 				ui.LOGIN.handleDefaultButton();
 			} catch (SQLException ex) {
 				sqlerror(ex);

@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -30,6 +31,7 @@ public class TaskListPage extends AuthorisedPage {
 
 	@Override
 	public void show() {
+		
 		VerticalLayout layout = new VerticalLayout();
 
 		final Button cancelTaskButton = new Button("Back");
@@ -41,7 +43,7 @@ public class TaskListPage extends AuthorisedPage {
 		layout.addComponent(new HorizontalLayout(cancelTaskButton, createTaskButton));
 
 		Task example = new Task();
-		example.userID.permittedValues(ui.getUserID());
+		example.userID.permittedValues(getUserID());
 		if (projectID == null) {
 			example.projectID.isNull();
 		} else {
@@ -56,8 +58,7 @@ public class TaskListPage extends AuthorisedPage {
 				Label name = new Label(task.name.getValue());
 				Label desc = new Label(task.description.getValue());
 				desc.addStyleName("small");
-				hlayout.addComponent(name);
-				hlayout.addComponent(desc);
+				hlayout.addComponent(new VerticalLayout(name, desc));
 				hlayout.addComponent(new Label(Helper.asDateString(task.startDate.getValue())));
 				hlayout.addComponent(new Label(Helper.asDateString(task.preferredDate.getValue())));
 				hlayout.addComponent(new Label(Helper.asDateString(task.finalDate.getValue())));
@@ -67,7 +68,7 @@ public class TaskListPage extends AuthorisedPage {
 			sqlerror(ex);
 		}
 
-		super.show(layout);
+		show(layout);
 	}
 
 	@Override

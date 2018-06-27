@@ -13,6 +13,7 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBLargeText;
 import nz.co.gregs.dbvolution.datatypes.DBString;
 
 /**
@@ -49,5 +50,8 @@ public class Task extends DBRow {
 	
 	@DBColumn
 	public DBDate finalDate = new DBDate();
+	
+//	@DBColumn
+//	public DBLargeText notes = new DBLargeText();
 	
 }

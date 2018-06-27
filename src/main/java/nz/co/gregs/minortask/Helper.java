@@ -39,6 +39,10 @@ public class Helper {
 		return Helper.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
 	}
 
+	public static String shorten(String value, int i) {
+		return value.substring(0, value.length()<i?value.length():i);
+	}
+
 	private Helper() {
 	}
 }
