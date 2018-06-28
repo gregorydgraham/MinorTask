@@ -3,16 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
@@ -23,19 +16,21 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public abstract class AuthorisedPage extends MinorTaskPage {
+public abstract class AuthorisedComponent extends MinorTaskComponent {
 
-	Long currentTask = null;
+	Long currentTaskID = null;
 
-	public AuthorisedPage(MinorTaskUI ui, Long currentTask) {
+	public AuthorisedComponent(MinorTaskUI ui, Long currentTask) {
 		super(ui);
-		this.currentTask = currentTask;
+		this.currentTaskID = currentTask;
 	}
 
+	public abstract Component getAuthorisedComponent();
+
 	@Override
-	void show(AbstractLayout sublayout) {
+	public final Component getComponent() {
 		if (!authorised()) {
-			new LoginPage(ui).show();
+			return new LoginComponent(ui).getComponent();
 		} else {
 			Component banner = createBanner();
 			Component footer = createFooter();
@@ -43,22 +38,35 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 			GridLayout vlayout = new GridLayout(1, 2);
 			vlayout.addComponent(banner);
 			vlayout.setComponentAlignment(banner, Alignment.TOP_RIGHT);
-			vlayout.addComponent(sublayout);
+			vlayout.addComponent(getAuthorisedComponent());
 
 			vlayout.addComponent(footer);
-
-			super.show(vlayout);
+			return vlayout;
 		}
 	}
 
-	public Component createBanner() {
+	private boolean authorised() {
+		return !notLoggedIn();
+	}
+
+	@Override
+	public void handleDefaultButton() {
+		new TaskCreationComponent(ui, currentTaskID).show();
+	}
+
+	@Override
+	public void handleEscapeButton() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	private Component createBanner() {
 		HorizontalLayout banner = new HorizontalLayout();
 		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		final Button createTaskButton = new Button("New");
 		setAsDefaultButton(createTaskButton);
 		final Button showTasks = new Button("Top List");
 		showTasks.addClickListener((event) -> {
-			new TaskListPage(ui, null).show();
+			new TaskListComponent(ui, null).show();
 		});
 		banner.addComponents(createTaskButton, showTasks);
 		final long userID = getUserID();
@@ -73,20 +81,6 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 		}
 		banner.addComponent(ui.LOGOUT_BUTTON);
 		return banner;
-	}
-
-	private boolean authorised() {
-		return !notLoggedIn();
-	}
-
-	@Override
-	public void handleDefaultButton() {
-		new TaskCreationPage(ui, currentTask).show();
-	}
-
-	@Override
-	public void handleEscapeButton() {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	private Component createFooter() {

@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
@@ -16,9 +17,9 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class LoggedoutPage extends MinorTaskPage {
+public class LoggedoutComponent extends MinorTaskComponent {
 
-	public LoggedoutPage(MinorTaskUI ui) {
+	public LoggedoutComponent(MinorTaskUI ui) {
 		super(ui);
 	}
 
@@ -27,16 +28,16 @@ public class LoggedoutPage extends MinorTaskPage {
 	}
 
 	@Override
-	public void show() {
+	public Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 		
 		Button button = new Button("Return to Login");
 		button.addClickListener((event) -> {
-			new LoginPage(ui).show();
+			new LoginComponent(ui).show();
 		});
 		
 		layout.addComponents(new Label("Thank you for using MinorTask"),new Link("return to the login page", new ExternalResource("/")));
-		super.show(layout);
+		return layout;
 	}
 
 	@Override

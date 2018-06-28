@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import nz.co.gregs.minortask.MinorTaskUI;
 
@@ -13,16 +13,16 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class TasksPage extends AuthorisedPage {
+public class TasksComponent extends AuthorisedComponent {
 
-	public TasksPage(MinorTaskUI loginUI) {
+	public TasksComponent(MinorTaskUI loginUI) {
 		super(loginUI, null);
 	}
 
 	@Override
-	public void show() {
+	public Component getAuthorisedComponent() {
 		VerticalLayout layout = new VerticalLayout();
 		
-		show(layout);
+		return layout;
 	}
 }

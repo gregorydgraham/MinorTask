@@ -35,7 +35,7 @@ public class Task extends DBRow {
 	public DBInteger userID = new DBInteger();
 
 	@DBColumn
-	@DBForeignKey(Task.class)
+	@DBForeignKey(Project.class)
 	public DBInteger projectID = new DBInteger();
 
 	@DBColumn

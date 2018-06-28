@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.data.Binder;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
@@ -20,19 +21,19 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class SignupPage extends MinorTaskPage {
+public class SignupComponent extends MinorTaskComponent {
 
 	public final PasswordField REPEAT_PASSWORD_FIELD = new PasswordField("Repeat Password");
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
 	private final Binder<User> binder = new Binder<>();
 
-	public SignupPage(MinorTaskUI loginUI) {
+	public SignupComponent(MinorTaskUI loginUI) {
 		super(loginUI);
 	}
 
 	@Override
-	public void show() {
+	public Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 		
 		REPEAT_PASSWORD_FIELD.clear();
@@ -52,7 +53,8 @@ public class SignupPage extends MinorTaskPage {
 
 		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
 		layout.addComponents(ui.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(ui.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
-		show(layout);
+		
+		return layout;
 	}
 
 	@Override
@@ -91,7 +93,7 @@ public class SignupPage extends MinorTaskPage {
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
 				chat("Welcome to Minor Task @" + name);
-				new LoginPage(ui).handleDefaultButton();
+				new LoginComponent(ui).handleDefaultButton();
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}
@@ -100,7 +102,7 @@ public class SignupPage extends MinorTaskPage {
 
 	@Override
 	public void handleEscapeButton() {
-		new LoginPage(ui).show();
+		new LoginComponent(ui).show();
 	}
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
@@ -19,19 +19,21 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public abstract class MinorTaskPage implements Serializable {
+public abstract class MinorTaskComponent implements Serializable {
 
 	public MinorTaskUI ui;
 
-	public MinorTaskPage(MinorTaskUI ui) {
+	public MinorTaskComponent(MinorTaskUI ui) {
 		this.ui = ui;
 	}
 
-	public abstract void show();
+//	public abstract void show();
 
 	public abstract void handleDefaultButton();
 
 	public abstract void handleEscapeButton();
+	
+	public abstract Component getComponent();
 
 	public final void chat(String string) {
 		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
@@ -68,9 +70,9 @@ public abstract class MinorTaskPage implements Serializable {
 		});
 	}
 
-	void show(AbstractLayout sublayout) {
+	public final void show() {
 		VerticalLayout verticalLayout = new VerticalLayout();
-		verticalLayout.addComponent(sublayout);
+		verticalLayout.addComponent(getComponent());
 		ui.setContent(verticalLayout);
 		ui.currentPage = this;
 	}

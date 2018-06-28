@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -19,14 +20,15 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class LoginPage extends MinorTaskPage {
+public class LoginComponent extends MinorTaskComponent {
 
-	public LoginPage(MinorTaskUI ui) {
+	public LoginComponent(MinorTaskUI ui) {
 		super(ui);
 	}
 
+	
 	@Override
-	public void show() {
+	public Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
 		loginPanel.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
@@ -35,22 +37,21 @@ public class LoginPage extends MinorTaskPage {
 
 		Button signupButton = new Button("Sign Up");
 		signupButton.addClickListener((Button.ClickEvent e) -> {
-			new SignupPage(ui).show();
+			new SignupComponent(ui).show();
 		});
 
 		HorizontalLayout buttons = new HorizontalLayout(signupButton, loginButton);
 		buttons.setComponentAlignment(loginButton, Alignment.TOP_RIGHT);
-		
+
 		ui.USERNAME_FIELD.setRequiredIndicatorVisible(true);
 		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.addComponents(ui.USERNAME_FIELD, ui.PASSWORD_FIELD, buttons);
-		show(
-				new GridLayout(3, 3,
-						new VerticalLayout(), new VerticalLayout(), new VerticalLayout(),
-						new VerticalLayout(), loginPanel, new VerticalLayout(),
-						new VerticalLayout(), new VerticalLayout(), new VerticalLayout()
-				)
+		return new GridLayout(
+				3, 3,
+				new VerticalLayout(), new VerticalLayout(), new VerticalLayout(),
+				new VerticalLayout(), loginPanel, new VerticalLayout(),
+				new VerticalLayout(), new VerticalLayout(), new VerticalLayout()
 		);
 	}
 
@@ -68,7 +69,7 @@ public class LoginPage extends MinorTaskPage {
 				switch (users.size()) {
 					case 1:
 						ui.loginAs(users.get(0).getUserID());
-						new TasksPage(ui).show();
+						new TasksComponent(ui).show();
 						break;
 					case 0:
 						warning("Login Error", "Name and/or password do not match any known combination");

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.*;
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskCreationPage extends AuthorisedPage {
+public class TaskCreationComponent extends AuthorisedComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -30,34 +30,33 @@ public class TaskCreationPage extends AuthorisedPage {
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
+	private Task existingTask = null;
 
-	public TaskCreationPage(MinorTaskUI ui, Long currentTask) {
+	public TaskCreationComponent(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
 	}
 
+	public TaskCreationComponent(MinorTaskUI ui, Long currentTask, Task existingTask) {
+		super(ui, currentTask);
+		this.existingTask = existingTask;
+	}
+
 	@Override
-	public void show() {
+	public Component getAuthorisedComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new Label("Current Project To Create Within: " + currentTask));
+			layout.addComponent(new Label("Current Project To Create Within: " + currentTaskID));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
 
 			name.setMaxLength(20);
 			description.setMaxLength(50);
-			final Task projectExample = new Task();
-			projectExample.taskID.permittedValues(currentTask);
-			if (currentTask != null) {
-				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
-				project.setValue(fullTaskDetails.name.getValue());
-			}
+			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 
-			startDate.setValue(LocalDate.now().plusDays(1));
-			preferredEndDate.setValue(LocalDate.now().plusWeeks(1));
-			deadlineDate.setValue(LocalDate.now().plusWeeks(2));
+			setFieldValues();
 
 			layout.addComponents(
 					name,
@@ -74,8 +73,27 @@ public class TaskCreationPage extends AuthorisedPage {
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			sqlerror(ex);
 		}
+		return layout;
+	}
 
-		super.show(layout);
+	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
+		if (existingTask == null) {
+			final Project projectExample = new Project();
+			projectExample.taskID.permittedValues(currentTaskID);
+			if (currentTaskID != null) {
+				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
+				project.setValue(fullTaskDetails.name.getValue());
+			}
+			startDate.setValue(LocalDate.now().plusDays(1));
+			preferredEndDate.setValue(LocalDate.now().plusWeeks(1));
+			deadlineDate.setValue(LocalDate.now().plusWeeks(2));
+		} else {
+			name.setValue(existingTask.name.getValue());
+			description.setValue(existingTask.description.getValue());
+			startDate.setValue(Helper.asLocalDate(existingTask.startDate.getValue()));
+			preferredEndDate.setValue(Helper.asLocalDate(existingTask.preferredDate.getValue()));
+			deadlineDate.setValue(Helper.asLocalDate(existingTask.finalDate.getValue()));
+		}
 	}
 
 	@Override
@@ -83,7 +101,7 @@ public class TaskCreationPage extends AuthorisedPage {
 		Task task = new Task();
 
 		task.userID.setValue(ui.getUserID());
-		task.projectID.setValue(currentTask);
+		task.projectID.setValue(currentTaskID);
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 //		task.notes.setValue(notes.getValue());
@@ -94,15 +112,15 @@ public class TaskCreationPage extends AuthorisedPage {
 		try {
 			getDatabase().insert(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(TaskCreationPage.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
 		}
-		new TasksPage(ui).show();
+		new TasksComponent(ui).show();
 	}
 
 	@Override
 	public void handleEscapeButton() {
-		new TasksPage(ui).show();
+		new TasksComponent(ui).show();
 	}
 
 }

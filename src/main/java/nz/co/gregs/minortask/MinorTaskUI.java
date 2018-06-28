@@ -1,5 +1,9 @@
 package nz.co.gregs.minortask;
 
+import nz.co.gregs.minortask.components.TasksComponent;
+import nz.co.gregs.minortask.components.LoginComponent;
+import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.components.LoggedoutComponent;
 import com.vaadin.annotations.PreserveOnRefresh;
 import javax.servlet.annotation.WebServlet;
 
@@ -15,7 +19,6 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
-import nz.co.gregs.minortask.pages.*;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -32,10 +35,10 @@ public class MinorTaskUI extends UI {
 
 	private static DBDatabase database;
 
-//	public final LoginPage LOGIN = new LoginPage(this);
-//	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
+//	public final LoginComponent LOGIN = new LoginComponent(this);
+//	public final LoggedoutComponent LOGGEDOUT = new LoggedoutComponent(this);
 //	public final SignupPage SIGNUP = new SignupPage(this);
-//	public final TasksPage TASKS = new TasksPage(this);
+//	public final TasksComponent TASKS = new TasksComponent(this);
 	public final TextField USERNAME_FIELD = new TextField("Your Name");
 	public final Button LOGOUT_BUTTON = new Button("Log Out");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
@@ -43,7 +46,7 @@ public class MinorTaskUI extends UI {
 	private boolean notLoggedIn = true;
 	public String username = "";
 	private long userID = 0;
-	public MinorTaskPage currentPage = null;
+	public MinorTaskComponent currentPage = null;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -57,9 +60,9 @@ public class MinorTaskUI extends UI {
 		});
 
 		if (notLoggedIn) {
-			new LoginPage(this).show();
+			new LoginComponent(this).show();
 		} else {
-			new TasksPage(this).show();
+			new TasksComponent(this).show();
 		}
 	}
 
@@ -67,7 +70,7 @@ public class MinorTaskUI extends UI {
 		USERNAME_FIELD.clear();
 		PASSWORD_FIELD.clear();
 		notLoggedIn = true;
-		new LoggedoutPage(this).show();
+		new LoggedoutComponent(this).show();
 
 		sess.close();
 	}

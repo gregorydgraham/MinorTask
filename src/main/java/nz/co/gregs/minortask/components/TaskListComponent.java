@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.pages;
+package nz.co.gregs.minortask.components;
 
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.LayoutEvents;
@@ -11,6 +11,7 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -30,29 +31,29 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class TaskListPage extends AuthorisedPage {
+public class TaskListComponent extends AuthorisedComponent {
 
-	public TaskListPage(MinorTaskUI ui, Long selectedTask) {
+	public TaskListComponent(MinorTaskUI ui, Long selectedTask) {
 		super(ui, selectedTask);
 	}
 
 	@Override
-	public void show() {
+	public Component getAuthorisedComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new Label("Current Project: " + currentTask));
+			layout.addComponent(new Label("Current Project: " + currentTaskID));
 			
 			Label project = new Label("Top Level Projects");
 			final Task projectExample = new Task();
-			projectExample.taskID.permittedValues(currentTask);
-			if (currentTask != null) {
+			projectExample.taskID.permittedValues(currentTaskID);
+			if (currentTaskID != null) {
 				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
 				project.setValue(fullTaskDetails.name.getValue());
 			}
 			TaskWithSortColumns example = new TaskWithSortColumns();
 			example.userID.permittedValues(getUserID());
-			example.projectID.permittedValues(currentTask);
+			example.projectID.permittedValues(currentTaskID);
 			example.startDate.setSortOrderAscending();
 			final DBTable<TaskWithSortColumns> dbTable = getDatabase().getDBTable(example);
 			dbTable.setSortOrder(
@@ -67,7 +68,7 @@ public class TaskListPage extends AuthorisedPage {
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			sqlerror(ex);
 		}
-		show(layout);
+		return layout;
 	}
 
 	public AbstractLayout addTasksToLayout(String caption, List<TaskWithSortColumns> tasks) {
@@ -114,12 +115,12 @@ public class TaskListPage extends AuthorisedPage {
 
 	@Override
 	public void handleDefaultButton() {
-		new TaskCreationPage(ui, currentTask).show();
+		new TaskCreationComponent(ui, currentTaskID).show();
 	}
 
 	@Override
 	public void handleEscapeButton() {
-		new TasksPage(ui).show();
+		new TasksComponent(ui).show();
 	}
 
 	static public class TaskWithSortColumns extends Task {
@@ -161,7 +162,7 @@ public class TaskListPage extends AuthorisedPage {
 		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
 			chat("Switching to "+ task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
-				new TaskListPage(ui, task.taskID.getValue()).show();
+				new TaskListComponent(ui, task.taskID.getValue()).show();
 			}
 		}
 	}
