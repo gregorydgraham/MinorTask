@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
@@ -55,6 +56,10 @@ public class TaskListPage extends AuthorisedPage {
 			layout.addComponent(new Label(tasks.size() + " Tasks Found"));
 			GridLayout gridlayout = new GridLayout(4, 4);
 			for (Task task : tasks) {
+				final LayoutEvents.LayoutClickListener taskClickListener = (event) -> {
+					new TaskListPage(ui, task.taskid.getValue()).show();
+				};
+
 				Label name = new Label(task.name.getValue());
 				Label desc = new Label(task.description.getValue());
 
@@ -78,9 +83,13 @@ public class TaskListPage extends AuthorisedPage {
 				deadline.setWidth(8, Sizeable.Unit.EM);
 
 				gridlayout.addComponent(summary);
+				gridlayout.addLayoutClickListener(taskClickListener);
 				gridlayout.addComponent(startdate);
+				gridlayout.addLayoutClickListener(taskClickListener);
 				gridlayout.addComponent(readyDate);
+				gridlayout.addLayoutClickListener(taskClickListener);
 				gridlayout.addComponent(deadline);
+				gridlayout.addLayoutClickListener(taskClickListener);
 				gridlayout.newLine();
 			}
 			layout.addComponent(gridlayout);
@@ -105,17 +114,17 @@ public class TaskListPage extends AuthorisedPage {
 
 		@DBColumn
 		public DBBoolean hasStarted = new DBBoolean(this.column(this.startDate).isLessThan(DateExpression.currentDate()));
-		
+
 		@DBColumn
 		public DBBoolean isOverdue = new DBBoolean(this.column(this.finalDate).isLessThan(DateExpression.currentDate()));
-		
+
 		{
 			this.hasStarted.setSortOrderDescending();
 			this.isOverdue.setSortOrderDescending();
 			this.startDate.setSortOrderAscending();
 			this.preferredDate.setSortOrderAscending();
 			this.finalDate.setSortOrderAscending();
-			
+
 		}
 	}
 
