@@ -22,10 +22,7 @@ public class TasksPage extends AuthorisedPage {
 	@Override
 	public void show() {
 		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(new Label("MinorTask is a simple system to help you create projects and tasks."));
-		layout.addComponent(new Label("The key concept is that every task or project is just a series of minor tasks."));
-		layout.addComponent(new Label("MinorTask provides you the tools to break all your tasks and projects into their component minor tasks and complete the successfully."));
-
+		
 		show(layout);
 	}
 }
