@@ -40,10 +40,6 @@ public class SignupPage extends MinorTaskPage {
 		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		
-//		binder.bind(ui.USERNAME_FIELD, User::getUsername, User::setUsername);
-//		binder.bind(ui.PASSWORD_FIELD, User::getPassword, User::setPassword);
-//		binder.bind(EMAIL_FIELD, User::getEmail, User::setEmail);
-		
 		newUser.setUsername(ui.USERNAME_FIELD.getValue());
 		newUser.setPassword(ui.PASSWORD_FIELD.getValue());
 		binder.setBean(newUser);
@@ -61,9 +57,9 @@ public class SignupPage extends MinorTaskPage {
 
 	@Override
 	public void handleDefaultButton() {
-		final String name = newUser.getUsername();//ui.USERNAME_FIELD.getValue();
-		final String email = newUser.getEmail();//EMAIL_FIELD.getValue();
-		final String pass = newUser.getPassword();//ui.PASSWORD_FIELD.getValue();
+		final String name = newUser.getUsername();
+		final String email = newUser.getEmail();
+		final String pass = newUser.getPassword();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
 		chat(name);
@@ -92,11 +88,6 @@ public class SignupPage extends MinorTaskPage {
 			error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
-				chat("User name: "+newUser.getUsername());
-//				user = new User();
-//				user.setUsername(name);
-//				user.setEmail(email);
-//				user.setPassword(pass);
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
 				chat("Welcome to Minor Task @" + name);
