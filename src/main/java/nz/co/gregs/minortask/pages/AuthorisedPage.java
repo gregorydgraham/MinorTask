@@ -11,7 +11,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
