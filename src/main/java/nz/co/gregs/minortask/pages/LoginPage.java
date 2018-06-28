@@ -35,7 +35,7 @@ public class LoginPage extends MinorTaskPage {
 
 		Button signupButton = new Button("Sign Up");
 		signupButton.addClickListener((Button.ClickEvent e) -> {
-			ui.SIGNUP.show();
+			new SignupPage(ui).show();
 		});
 
 		HorizontalLayout buttons = new HorizontalLayout(signupButton, loginButton);
@@ -58,17 +58,17 @@ public class LoginPage extends MinorTaskPage {
 	public void handleDefaultButton() {
 		StringBuilder warningBuffer = new StringBuilder();
 		if (ui.USERNAME_FIELD.getValue().isEmpty() || ui.PASSWORD_FIELD.getValue().isEmpty()) {
-			warningBuffer.append("Name and/or password do not match any known combination\n");
+			warningBuffer.append("Name and/or password needs to be entered\n");
 		} else {
 			User example = new User();
-			example.username.permittedValuesIgnoreCase(ui.USERNAME_FIELD.getValue());
-			example.password.permittedValues(ui.PASSWORD_FIELD.getValue());
+			example.queryUsername().permittedValuesIgnoreCase(ui.USERNAME_FIELD.getValue());
+			example.queryPassword().permittedValues(ui.PASSWORD_FIELD.getValue());
 			try {
 				List<User> users = getDatabase().getDBTable(example).getAllRows();
 				switch (users.size()) {
 					case 1:
-						ui.loginAs(users.get(0).userID.getValue());
-						ui.TASKS.show();
+						ui.loginAs(users.get(0).getUserID());
+						new TasksPage(ui).show();
 						break;
 					case 0:
 						warning("Login Error", "Name and/or password do not match any known combination");

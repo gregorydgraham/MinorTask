@@ -25,34 +25,22 @@ import nz.co.gregs.minortask.datamodel.Task;
  * @author gregorygraham
  */
 public class TaskListPage extends AuthorisedPage {
-	
+
 	private final Long projectID;
-	
+
 	public TaskListPage(MinorTaskUI ui, Long selectedTask) {
 		super(ui);
 		projectID = selectedTask;
 	}
-	
+
 	@Override
 	public void show() {
-		
+
 		VerticalLayout layout = new VerticalLayout();
-		
-		final Button cancelTaskButton = new Button("Back");
-		setEscapeButton(cancelTaskButton);
-		
-		final Button createTaskButton = new Button("New");
-		setAsDefaultButton(createTaskButton);
-		
-		layout.addComponent(new HorizontalLayout(cancelTaskButton, createTaskButton));
-		
+
 		Task example = new Task();
 		example.userID.permittedValues(getUserID());
-		if (projectID == null) {
-			example.projectID.isNull();
-		} else {
-			example.projectID.permittedValues(projectID);
-		}
+		example.projectID.permittedValues(projectID);
 		example.startDate.setSortOrderAscending();
 		try {
 			List<Task> tasks = getDatabase().get(example);
@@ -67,18 +55,18 @@ public class TaskListPage extends AuthorisedPage {
 				final VerticalLayout summary = new VerticalLayout(name, desc);
 				summary.setWidth(10, Sizeable.Unit.CM);
 				summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
-				
-				final TextField startdate = new TextField("Start",Helper.asDateString(task.startDate.getValue(),ui));
-				final TextField readyDate = new TextField("Ready",Helper.asDateString(task.preferredDate.getValue(), ui));
-				final TextField deadline = new TextField("Deadline",Helper.asDateString(task.finalDate.getValue(),ui));
-				
+
+				final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), ui));
+				final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), ui));
+				final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), ui));
+
 				startdate.setReadOnly(true);
 				startdate.setWidth(8, Sizeable.Unit.EM);
 				readyDate.setReadOnly(true);
 				readyDate.setWidth(8, Sizeable.Unit.EM);
 				deadline.setReadOnly(true);
 				deadline.setWidth(8, Sizeable.Unit.EM);
-				
+
 				gridlayout.addComponent(summary);
 				gridlayout.addComponent(startdate);
 				gridlayout.addComponent(readyDate);
@@ -89,18 +77,18 @@ public class TaskListPage extends AuthorisedPage {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-		
+
 		show(layout);
 	}
-	
+
 	@Override
 	public void handleDefaultButton() {
 		new TaskCreationPage(ui, null).show();
 	}
-	
+
 	@Override
 	public void handleEscapeButton() {
 		new TasksPage(ui).show();
 	}
-	
+
 }

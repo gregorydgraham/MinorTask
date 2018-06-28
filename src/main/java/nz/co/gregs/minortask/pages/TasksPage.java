@@ -5,7 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
-import com.vaadin.ui.Button;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import nz.co.gregs.minortask.MinorTaskUI;
 
@@ -13,9 +13,7 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class TasksPage extends AuthorisedPage{
-	
-	Long currentTask = null;
+public class TasksPage extends AuthorisedPage {
 
 	public TasksPage(MinorTaskUI loginUI) {
 		super(loginUI);
@@ -24,28 +22,10 @@ public class TasksPage extends AuthorisedPage{
 	@Override
 	public void show() {
 		VerticalLayout layout = new VerticalLayout();
-
-		final Button createTaskButton = new Button("New");
-		setAsDefaultButton(createTaskButton);
-
-		final Button showTasks = new Button("List");
-		showTasks.addClickListener((event) -> {
-			new TaskListPage(ui, currentTask).show();
-		});
-
-		layout.addComponents(createTaskButton, showTasks);
+		layout.addComponent(new Label("MinorTask is a simple system to help you create projects and tasks."));
+		layout.addComponent(new Label("The key concept is that every task or project is just a series of minor tasks."));
+		layout.addComponent(new Label("MinorTask provides you the tools to break all your tasks and projects into their component minor tasks and complete the successfully."));
 
 		show(layout);
 	}
-
-	@Override
-	public void handleDefaultButton() {
-		new TaskCreationPage(ui, currentTask).show();
-	}
-
-	@Override
-	public void handleEscapeButton() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 }

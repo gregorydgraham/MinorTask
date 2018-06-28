@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.datamodel;
 
+import java.util.Date;
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
@@ -25,20 +26,153 @@ public class User extends DBRow {
 	@DBColumn
 	@DBPrimaryKey
 	@DBAutoIncrement
-	public DBInteger userID = new DBInteger();
+	private final DBInteger userID = new DBInteger();
 
 	@DBColumn
-	public DBStringTrimmed username = new DBStringTrimmed();
+	private final DBStringTrimmed username = new DBStringTrimmed();
 
 	@DBColumn
-	public DBStringTrimmed email = new DBStringTrimmed();
+	private final DBStringTrimmed email = new DBStringTrimmed();
 
 	@DBColumn
-	public DBString password = new DBString();
-	
+	private final DBString password = new DBString();
+
 	@DBColumn
-	public DBDate signupDate=new DBDate();
-	
+	private final DBDate signupDate = new DBDate();
+
 	@DBColumn
-	public DBDate lastLoginDate=new DBDate();
+	private final DBDate lastLoginDate = new DBDate();
+
+	/**
+	 * @return the userID
+	 */
+	public DBInteger queryUserID() {
+		return userID;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public DBStringTrimmed queryUsername() {
+		return username;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public DBStringTrimmed queryEmail() {
+		return email;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public DBString queryPassword() {
+		return password;
+	}
+
+	/**
+	 * @return the signupDate
+	 */
+	public DBDate querySignupDate() {
+		return signupDate;
+	}
+
+	/**
+	 * @return the lastLoginDate
+	 */
+	public DBDate queryLastLoginDate() {
+		return lastLoginDate;
+	}
+
+	/**
+	 * @return the userID
+	 */
+	public Long getUserID() {
+		return userID.getValue();
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username.getValue();
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email.getValue();
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password.getValue();
+	}
+
+	/**
+	 * @return the signupDate
+	 */
+	public Date getSignupDate() {
+		return signupDate.getValue();
+	}
+
+	/**
+	 * @return the lastLoginDate
+	 */
+	public Date getLastLoginDate() {
+		return lastLoginDate.getValue();
+	}
+
+	/**
+	 * @param userID the userID to set
+	 */
+	public void setUserID(Long userID) {
+		this.userID.setValue(userID);
+	}
+
+	/**
+	 * @param userID the userID to set
+	 */
+	public void setUserID(Integer userID) {
+		this.userID.setValue(userID);
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username.setValue(username);
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email.setValue(email);
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password.setValue(password);
+	}
+
+	/**
+	 * @param signupDate the signupDate to set
+	 */
+	public void setSignupDate(Date signupDate) {
+		this.signupDate.setValue(signupDate);
+	}
+
+	/**
+	 * @param lastLoginDate the lastLoginDate to set
+	 */
+	public void setLastLoginDate(Date lastLoginDate) {
+		this.lastLoginDate.setValue(lastLoginDate);
+	}
 }

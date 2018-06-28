@@ -32,10 +32,10 @@ public class MinorTaskUI extends UI {
 
 	private static DBDatabase database;
 
-	public final LoginPage LOGIN = new LoginPage(this);
-	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
-	public final SignupPage SIGNUP = new SignupPage(this);
-	public final TasksPage TASKS = new TasksPage(this);
+//	public final LoginPage LOGIN = new LoginPage(this);
+//	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
+//	public final SignupPage SIGNUP = new SignupPage(this);
+//	public final TasksPage TASKS = new TasksPage(this);
 	public final TextField USERNAME_FIELD = new TextField("Your Name");
 	public final Button LOGOUT_BUTTON = new Button("Log Out");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
@@ -57,9 +57,9 @@ public class MinorTaskUI extends UI {
 		});
 
 		if (notLoggedIn) {
-			LOGIN.show();
+			new LoginPage(this).show();
 		} else {
-			TASKS.show();
+			new TasksPage(this).show();
 		}
 	}
 
@@ -67,7 +67,7 @@ public class MinorTaskUI extends UI {
 		USERNAME_FIELD.clear();
 		PASSWORD_FIELD.clear();
 		notLoggedIn = true;
-		LOGGEDOUT.show();
+		new LoggedoutPage(this).show();
 
 		sess.close();
 	}
@@ -145,10 +145,10 @@ public class MinorTaskUI extends UI {
 	public void setUserID(long userID) {
 		this.userID = userID;
 		User user = new User();
-		user.userID.permittedValues(userID);
+		user.queryUserID().permittedValues(userID);
 		try {
 			User onlyRow = database.get(1l, user).get(0);
-			username = onlyRow.username.getValue();
+			username = onlyRow.getUsername();
 		} catch (SQLException ex) {
 			currentPage.error("SQL ERROR", ex.getLocalizedMessage());
 		} catch (UnexpectedNumberOfRowsException ex) {

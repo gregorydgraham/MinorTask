@@ -32,7 +32,7 @@ public class LoggedoutPage extends MinorTaskPage {
 		
 		Button button = new Button("Return to Login");
 		button.addClickListener((event) -> {
-			ui.LOGIN.show();
+			new LoginPage(ui).show();
 		});
 		
 		layout.addComponents(new Label("Thank you for using MinorTask"),new Link("return to the login page", new ExternalResource("/")));

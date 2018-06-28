@@ -6,6 +6,10 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
@@ -20,37 +24,64 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public abstract class AuthorisedPage extends MinorTaskPage {
 
+	Long currentTask = null;
+	
 	public AuthorisedPage(MinorTaskUI ui) {
 		super(ui);
 	}
 
 	@Override
 	void show(AbstractLayout sublayout) {
-		if (authorised()) {
-			VerticalLayout layout = new VerticalLayout();
-
-			layout.addComponent(ui.LOGOUT_BUTTON);
-			final long userID = getUserID();
-			User example = new User();
-			example.userID.permittedValues(userID);
-			try {
-				final DBTable<User> userTable = getDatabase().getDBTable(example);
-				User user = userTable.getOnlyRow();
-				layout.addComponent(new Label("Welcome to MinorTask " + user.username.getValue()));
-			} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-				sqlerror(ex);
-			}
-			layout.addComponent(sublayout);
-			super.show(layout);
+		if (!authorised()) {
+			new LoginPage(ui).show();
+		} else {
+			HorizontalLayout banner = createBanner();
+			
+			GridLayout vlayout = new GridLayout(1,2);
+			vlayout.addComponent(banner);
+			vlayout.setComponentAlignment(banner, Alignment.TOP_RIGHT);
+			vlayout.addComponent(sublayout);
+			
+			super.show(vlayout);
 		}
 	}
 
-	private boolean authorised() {
-		if (notLoggedIn()) {
-			ui.LOGIN.show();
-			return false;
+	public HorizontalLayout createBanner() {
+		HorizontalLayout banner = new HorizontalLayout();
+		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		final Button createTaskButton = new Button("New");
+		setAsDefaultButton(createTaskButton);
+		final Button showTasks = new Button("List");
+		showTasks.addClickListener((event) -> {
+			new TaskListPage(ui, currentTask).show();
+		});
+		banner.addComponents(createTaskButton, showTasks);
+		final long userID = getUserID();
+		User example = new User();
+		example.queryUserID().permittedValues(userID);
+		try {
+			final DBTable<User> userTable = getDatabase().getDBTable(example);
+			User user = userTable.getOnlyRow();
+			banner.addComponent(new Label("Welcome to MinorTask " + user.getUsername()));
+		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
+			sqlerror(ex);
 		}
-		return true;
+		banner.addComponent(ui.LOGOUT_BUTTON);
+		return banner;
+	}
+
+	private boolean authorised() {
+		return !notLoggedIn();
+	}
+
+	@Override
+	public void handleDefaultButton() {
+		new TaskCreationPage(ui, currentTask).show();
+	}
+
+	@Override
+	public void handleEscapeButton() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 }
