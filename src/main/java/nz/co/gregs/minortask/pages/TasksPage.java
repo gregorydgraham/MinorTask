@@ -16,7 +16,7 @@ import nz.co.gregs.minortask.MinorTaskUI;
 public class TasksPage extends AuthorisedPage {
 
 	public TasksPage(MinorTaskUI loginUI) {
-		super(loginUI);
+		super(loginUI, null);
 	}
 
 	@Override

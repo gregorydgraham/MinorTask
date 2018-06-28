@@ -25,10 +25,10 @@ import nz.co.gregs.dbvolution.expressions.DateExpression;
 @DBRequiredTable
 public class Task extends DBRow {
 
-	@DBColumn
+	@DBColumn(value = "taskid")
 	@DBPrimaryKey
 	@DBAutoIncrement
-	public DBInteger taskid = new DBInteger();
+	public DBInteger taskID = new DBInteger();
 
 	@DBColumn
 	@DBForeignKey(User.class)

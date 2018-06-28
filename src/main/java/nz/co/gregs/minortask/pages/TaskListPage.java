@@ -5,8 +5,11 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.event.FieldEvents;
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.Sizeable;
+import com.vaadin.shared.MouseEventDetails;
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
@@ -17,6 +20,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.datatypes.DBBoolean;
+import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
@@ -28,81 +32,89 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class TaskListPage extends AuthorisedPage {
 
-	private final Long projectID;
-
 	public TaskListPage(MinorTaskUI ui, Long selectedTask) {
-		super(ui);
-		projectID = selectedTask;
+		super(ui, selectedTask);
 	}
 
 	@Override
 	public void show() {
 
 		VerticalLayout layout = new VerticalLayout();
-
-		TaskWithSortColumns example = new TaskWithSortColumns();
-		example.userID.permittedValues(getUserID());
-		example.projectID.permittedValues(projectID);
-		example.startDate.setSortOrderAscending();
-		final DBTable<TaskWithSortColumns> dbTable = getDatabase().getDBTable(example);
-		dbTable.setSortOrder(
-				example.column(example.isOverdue),
-				example.column(example.hasStarted),
-				example.column(example.finalDate),
-				example.column(example.startDate)
-		);
 		try {
-			List<TaskWithSortColumns> tasks = dbTable.getAllRows();
-			layout.addComponent(new Label(tasks.size() + " Tasks Found"));
-			GridLayout gridlayout = new GridLayout(4, 4);
-			for (Task task : tasks) {
-				final LayoutEvents.LayoutClickListener taskClickListener = (event) -> {
-					new TaskListPage(ui, task.taskid.getValue()).show();
-				};
-
-				Label name = new Label(task.name.getValue());
-				Label desc = new Label(task.description.getValue());
-
-				name.setWidth(10, Sizeable.Unit.CM);
-				desc.setWidth(10, Sizeable.Unit.CM);
-				desc.addStyleName("tiny");
-
-				final VerticalLayout summary = new VerticalLayout(name, desc);
-				summary.setWidth(10, Sizeable.Unit.CM);
-				summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
-
-				final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), ui));
-				final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), ui));
-				final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), ui));
-
-				startdate.setReadOnly(true);
-				startdate.setWidth(8, Sizeable.Unit.EM);
-				readyDate.setReadOnly(true);
-				readyDate.setWidth(8, Sizeable.Unit.EM);
-				deadline.setReadOnly(true);
-				deadline.setWidth(8, Sizeable.Unit.EM);
-
-				gridlayout.addComponent(summary);
-				gridlayout.addLayoutClickListener(taskClickListener);
-				gridlayout.addComponent(startdate);
-				gridlayout.addLayoutClickListener(taskClickListener);
-				gridlayout.addComponent(readyDate);
-				gridlayout.addLayoutClickListener(taskClickListener);
-				gridlayout.addComponent(deadline);
-				gridlayout.addLayoutClickListener(taskClickListener);
-				gridlayout.newLine();
+			layout.addComponent(new Label("Current Project: " + currentTask));
+			
+			Label project = new Label("Top Level Projects");
+			final Task projectExample = new Task();
+			projectExample.taskID.permittedValues(currentTask);
+			if (currentTask != null) {
+				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
+				project.setValue(fullTaskDetails.name.getValue());
 			}
-			layout.addComponent(gridlayout);
-		} catch (SQLException ex) {
+			TaskWithSortColumns example = new TaskWithSortColumns();
+			example.userID.permittedValues(getUserID());
+			example.projectID.permittedValues(currentTask);
+			example.startDate.setSortOrderAscending();
+			final DBTable<TaskWithSortColumns> dbTable = getDatabase().getDBTable(example);
+			dbTable.setSortOrder(
+					example.column(example.isOverdue),
+					example.column(example.hasStarted),
+					example.column(example.finalDate),
+					example.column(example.startDate)
+			);
+			List<TaskWithSortColumns> tasks = dbTable.getAllRows();
+			final String caption = tasks.size() + " Tasks Found";
+			layout.addComponent(addTasksToLayout(caption, tasks));
+		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			sqlerror(ex);
 		}
-
 		show(layout);
+	}
+
+	public AbstractLayout addTasksToLayout(String caption, List<TaskWithSortColumns> tasks) {
+		GridLayout gridlayout = new GridLayout(4, 4);
+		gridlayout.addComponent(new Label(caption));
+		gridlayout.newLine();
+		for (Task task : tasks) {
+			TaskClickListener taskClickListener = new TaskClickListener(task);
+
+			Label name = new Label(task.name.getValue());
+			Label desc = new Label(task.description.getValue());
+
+			name.setWidth(10, Sizeable.Unit.CM);
+			desc.setWidth(10, Sizeable.Unit.CM);
+			desc.addStyleName("tiny");
+
+			final VerticalLayout summary = new VerticalLayout(name, desc);
+			summary.setWidth(10, Sizeable.Unit.CM);
+			summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
+
+			final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), ui));
+			final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), ui));
+			final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), ui));
+
+			startdate.setReadOnly(true);
+			startdate.setWidth(8, Sizeable.Unit.EM);
+			readyDate.setReadOnly(true);
+			readyDate.setWidth(8, Sizeable.Unit.EM);
+			deadline.setReadOnly(true);
+			deadline.setWidth(8, Sizeable.Unit.EM);
+
+			summary.addLayoutClickListener(taskClickListener);
+			startdate.addFocusListener(taskClickListener);
+			readyDate.addFocusListener(taskClickListener);
+			deadline.addFocusListener(taskClickListener);
+			gridlayout.addComponent(summary);
+			gridlayout.addComponent(startdate);
+			gridlayout.addComponent(readyDate);
+			gridlayout.addComponent(deadline);
+			gridlayout.newLine();
+		}
+		return gridlayout;
 	}
 
 	@Override
 	public void handleDefaultButton() {
-		new TaskCreationPage(ui, null).show();
+		new TaskCreationPage(ui, currentTask).show();
 	}
 
 	@Override
@@ -125,6 +137,32 @@ public class TaskListPage extends AuthorisedPage {
 			this.preferredDate.setSortOrderAscending();
 			this.finalDate.setSortOrderAscending();
 
+		}
+	}
+
+	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
+
+		private final Task task;
+
+		public TaskClickListener(Task task) {
+			this.task = task;
+		}
+
+		@Override
+		public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+			handleEvent(event);
+		}
+
+		@Override
+		public void focus(FieldEvents.FocusEvent event) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
+			chat("Switching to "+ task.name.getValue());
+			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+				new TaskListPage(ui, task.taskID.getValue()).show();
+			}
 		}
 	}
 

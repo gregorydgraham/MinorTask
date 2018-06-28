@@ -25,8 +25,9 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 
 	Long currentTask = null;
 	
-	public AuthorisedPage(MinorTaskUI ui) {
+	public AuthorisedPage(MinorTaskUI ui, Long currentTask) {
 		super(ui);
+		this.currentTask = currentTask;
 	}
 
 	@Override
@@ -50,9 +51,9 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		final Button createTaskButton = new Button("New");
 		setAsDefaultButton(createTaskButton);
-		final Button showTasks = new Button("List");
+		final Button showTasks = new Button("Top List");
 		showTasks.addClickListener((event) -> {
-			new TaskListPage(ui, currentTask).show();
+			new TaskListPage(ui, null).show();
 		});
 		banner.addComponents(createTaskButton, showTasks);
 		final long userID = getUserID();
@@ -61,7 +62,7 @@ public abstract class AuthorisedPage extends MinorTaskPage {
 		try {
 			final DBTable<User> userTable = getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
-			banner.addComponent(new Label("Welcome to MinorTask " + user.getUsername()));
+			banner.addComponent(new Label("Welcome to MinorTask @" + user.getUsername()));
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 			sqlerror(ex);
 		}
