@@ -7,7 +7,12 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.*;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.User;
@@ -46,6 +51,18 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 	}
 
 	private boolean authorised() {
+		User example = new User();
+		example.queryUserID().permittedValues(getUserID());
+		try {
+			final DBDatabase database = getDatabase();
+			User user = database.getDBTable(example).getOnlyRow();
+			user.setLastLoginDate(new Date());
+			database.update(user);
+		} catch (SQLException|UnexpectedNumberOfRowsException ex) {
+			Logger.getLogger(AuthorisedComponent.class.getName()).log(Level.SEVERE, null, ex);
+			sqlerror(ex);
+			return false;
+		}
 		return !notLoggedIn();
 	}
 

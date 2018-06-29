@@ -85,6 +85,7 @@ public class MinorTaskUI extends UI {
 						= new DBDatabaseCluster(
 								new SQLiteDB(sqliteFile, "admin", "admin"),
 								new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
+				database.setPrintSQLBeforeExecuting(true);
 			} catch (IOException | SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());

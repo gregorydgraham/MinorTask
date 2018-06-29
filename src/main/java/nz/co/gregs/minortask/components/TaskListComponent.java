@@ -42,15 +42,18 @@ public class TaskListComponent extends AuthorisedComponent {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new Label("Current Project: " + currentTaskID));
+			layout.addComponent(new ProjectPathNavigatorComponent(ui, currentTaskID).getAuthorisedComponent());
 			
-			Label project = new Label("Top Level Projects");
-			final Task projectExample = new Task();
-			projectExample.taskID.permittedValues(currentTaskID);
+			Label actualTaskName = new Label("All");
+			final Task actualTask = new Task();
+			actualTask.userID.permittedValues(getUserID());
+			actualTask.taskID.permittedValues(currentTaskID);
 			if (currentTaskID != null) {
-				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
-				project.setValue(fullTaskDetails.name.getValue());
+				final Task fullTaskDetails = getDatabase().getDBTable(actualTask).getOnlyRow();
+				actualTaskName.setValue(fullTaskDetails.name.getValue());
 			}
+			layout.addComponent(actualTaskName);
+			layout.addComponent(new TaskCreationComponent(ui, currentTaskID, actualTask).getAuthorisedComponent());
 			TaskWithSortColumns example = new TaskWithSortColumns();
 			example.userID.permittedValues(getUserID());
 			example.projectID.permittedValues(currentTaskID);

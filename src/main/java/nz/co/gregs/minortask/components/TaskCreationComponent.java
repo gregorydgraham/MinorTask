@@ -51,8 +51,7 @@ public class TaskCreationComponent extends AuthorisedComponent {
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
 
-			name.setMaxLength(20);
-			description.setMaxLength(50);
+			name.setMaxLength(40);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 
@@ -77,22 +76,26 @@ public class TaskCreationComponent extends AuthorisedComponent {
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
+		final LocalDate startDefault = LocalDate.now().plusDays(1);
+		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
+		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
 		if (existingTask == null) {
+
 			final Project projectExample = new Project();
 			projectExample.taskID.permittedValues(currentTaskID);
 			if (currentTaskID != null) {
 				final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
 				project.setValue(fullTaskDetails.name.getValue());
 			}
-			startDate.setValue(LocalDate.now().plusDays(1));
-			preferredEndDate.setValue(LocalDate.now().plusWeeks(1));
-			deadlineDate.setValue(LocalDate.now().plusWeeks(2));
+			startDate.setValue(startDefault);
+			preferredEndDate.setValue(preferredDefault);
+			deadlineDate.setValue(deadlineDefault);
 		} else {
-			name.setValue(existingTask.name.getValue());
-			description.setValue(existingTask.description.getValue());
-			startDate.setValue(Helper.asLocalDate(existingTask.startDate.getValue()));
-			preferredEndDate.setValue(Helper.asLocalDate(existingTask.preferredDate.getValue()));
-			deadlineDate.setValue(Helper.asLocalDate(existingTask.finalDate.getValue()));
+			name.setValue(existingTask.name.getValueWithDefaultValue(""));
+			description.setValue(existingTask.description.getValueWithDefaultValue(""));
+			startDate.setValue(Helper.asLocalDate(existingTask.startDate.getValueWithDefaultValue(Helper.asDate(startDefault))));
+			preferredEndDate.setValue(Helper.asLocalDate(existingTask.preferredDate.getValueWithDefaultValue(Helper.asDate(preferredDefault))));
+			deadlineDate.setValue(Helper.asLocalDate(existingTask.finalDate.getValueWithDefaultValue(Helper.asDate(deadlineDefault))));
 		}
 	}
 

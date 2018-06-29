@@ -77,7 +77,7 @@ public abstract class MinorTaskComponent implements Serializable {
 		ui.currentPage = this;
 	}
 
-	protected DBDatabase getDatabase() {
+	final protected DBDatabase getDatabase() {
 		return ui.getDatabase();
 	}
 

@@ -41,9 +41,9 @@ public class SignupComponent extends MinorTaskComponent {
 		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		
-		newUser.setUsername(ui.USERNAME_FIELD.getValue());
-		newUser.setPassword(ui.PASSWORD_FIELD.getValue());
-		binder.setBean(newUser);
+//		newUser.setUsername(ui.USERNAME_FIELD.getValue());
+//		newUser.setPassword(ui.PASSWORD_FIELD.getValue());
+//		binder.setBean(newUser);
 		
 		Button signupButton = new Button("Request Sign Up");
 		setAsDefaultButton(signupButton);
@@ -59,15 +59,15 @@ public class SignupComponent extends MinorTaskComponent {
 
 	@Override
 	public void handleDefaultButton() {
-		final String name = newUser.getUsername();
-		final String email = newUser.getEmail();
-		final String pass = newUser.getPassword();
+		final String username = ui.USERNAME_FIELD.getValue();
+		final String email = EMAIL_FIELD.getValue();
+		final String pass = ui.PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
-		chat(name);
-		if (name.isEmpty() || pass.isEmpty()) {
+		chat(username);
+		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
-		}if (name.contains(" ")) {
+		}if (username.contains(" ")) {
 			warningBuffer.append("Usernames may not contain spaces\n");
 		}
 		if (!pass.equals(pass2)) {
@@ -77,7 +77,7 @@ public class SignupComponent extends MinorTaskComponent {
 			warningBuffer.append("Passwords must be greater than 10 characters or contain at least one each of lowercase letters, upper case letters, number, and symbols(_+-=!@#$%^&*,./;'<>?:{}|)\n");
 		}
 		User example = new User();
-		example.queryUsername().permittedValuesIgnoreCase(name);
+		example.queryUsername().permittedValuesIgnoreCase(username);
 		try {
 			Long count = getDatabase().getDBTable(example).count();
 			if (count > 0) {
@@ -90,9 +90,12 @@ public class SignupComponent extends MinorTaskComponent {
 			error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
+				newUser.setUsername(username);
+				newUser.setPassword(pass);
+				newUser.setEmail(email);
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
-				chat("Welcome to Minor Task @" + name);
+				chat("Welcome to Minor Task @" + username);
 				new LoginComponent(ui).handleDefaultButton();
 			} catch (SQLException ex) {
 				sqlerror(ex);
