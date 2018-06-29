@@ -107,7 +107,7 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Label("MinorTask is a simple system to help you manage projects and tasks."));
 		layout.addComponent(new Label("The key concept is that every project is just a collection of minor tasks."));
-		layout.addComponent(new Label("MinorTask provides you the tools to break all your tasks and projects into their component minor tasks and complete the successfully."));
+		layout.addComponent(new Label("MinorTask provides you the tools to simplify all your tasks and projects into their component minor tasks and complete the successfully."));
 		return layout;
 	}
 
