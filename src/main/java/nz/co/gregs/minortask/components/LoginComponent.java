@@ -44,6 +44,7 @@ public class LoginComponent extends MinorTaskComponent {
 		buttons.setComponentAlignment(loginButton, Alignment.TOP_RIGHT);
 
 		ui.USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		ui.USERNAME_FIELD.setCursorPosition(0);
 		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.addComponents(ui.USERNAME_FIELD, ui.PASSWORD_FIELD, buttons);

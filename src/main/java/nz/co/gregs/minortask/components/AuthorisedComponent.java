@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.ui.*;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBTable;
@@ -83,7 +82,7 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 		setAsDefaultButton(createTaskButton);
 		final Button showTasks = new Button("Top List");
 		showTasks.addClickListener((event) -> {
-			new TaskListComponent(ui, null).show();
+			new TaskListComponent(ui, null, ui.getTaskExampleForTaskID(null)).show();
 		});
 		banner.addComponents(createTaskButton, showTasks);
 		final long userID = getUserID();

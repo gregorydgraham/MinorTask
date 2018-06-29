@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskCreationComponent extends AuthorisedComponent {
+public class TaskEditorComponent extends AuthorisedComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -32,11 +32,11 @@ public class TaskCreationComponent extends AuthorisedComponent {
 	Button cancelButton = new Button("Cancel");
 	private Task existingTask = null;
 
-	public TaskCreationComponent(MinorTaskUI ui, Long currentTask) {
+	public TaskEditorComponent(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
 	}
 
-	public TaskCreationComponent(MinorTaskUI ui, Long currentTask, Task existingTask) {
+	public TaskEditorComponent(MinorTaskUI ui, Long currentTask, Task existingTask) {
 		super(ui, currentTask);
 		this.existingTask = existingTask;
 	}

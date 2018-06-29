@@ -52,10 +52,11 @@ public class ProjectPathNavigatorComponent extends AuthorisedComponent {
 	}
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button = new Button((task == null ? "All" : task.name.getValue()) + "> ", (event) -> {
-			new TaskListComponent(ui, (task == null ? null : task.taskID.getValue())).show();
+		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
+			final Long taskID = task==null?null:task.taskID.getValue();
+			new TaskListComponent(ui, taskID, ui.getTaskExampleForTaskID(taskID)).show();
 		});
-		button.addStyleName("tiny");
+		button.addStyleNames("tiny", "friendly");
 		return button;
 	}
 

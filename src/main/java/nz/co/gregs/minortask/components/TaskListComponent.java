@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.Sizeable;
@@ -33,8 +34,11 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class TaskListComponent extends AuthorisedComponent {
 
-	public TaskListComponent(MinorTaskUI ui, Long selectedTask) {
+	private final TaskWithSortColumns example;
+
+	public TaskListComponent(MinorTaskUI ui, Long selectedTask, TaskWithSortColumns example) {
 		super(ui, selectedTask);
+		this.example = example;
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class TaskListComponent extends AuthorisedComponent {
 		VerticalLayout layout = new VerticalLayout();
 		try {
 			layout.addComponent(new ProjectPathNavigatorComponent(ui, currentTaskID).getAuthorisedComponent());
-			
+
 			Label actualTaskName = new Label("All");
 			final Task actualTask = new Task();
 			actualTask.userID.permittedValues(getUserID());
@@ -53,11 +57,11 @@ public class TaskListComponent extends AuthorisedComponent {
 				actualTaskName.setValue(fullTaskDetails.name.getValue());
 			}
 			layout.addComponent(actualTaskName);
-			layout.addComponent(new TaskCreationComponent(ui, currentTaskID, actualTask).getAuthorisedComponent());
-			TaskWithSortColumns example = new TaskWithSortColumns();
-			example.userID.permittedValues(getUserID());
-			example.projectID.permittedValues(currentTaskID);
-			example.startDate.setSortOrderAscending();
+
+//			TaskWithSortColumns example = new TaskWithSortColumns();
+//			example.userID.permittedValues(getUserID());
+//			example.projectID.permittedValues(currentTaskID);
+//			example.startDate.setSortOrderAscending();
 			final DBTable<TaskWithSortColumns> dbTable = getDatabase().getDBTable(example);
 			dbTable.setSortOrder(
 					example.column(example.isOverdue),
@@ -126,23 +130,6 @@ public class TaskListComponent extends AuthorisedComponent {
 		new TasksComponent(ui).show();
 	}
 
-	static public class TaskWithSortColumns extends Task {
-
-		@DBColumn
-		public DBBoolean hasStarted = new DBBoolean(this.column(this.startDate).isLessThan(DateExpression.currentDate()));
-
-		@DBColumn
-		public DBBoolean isOverdue = new DBBoolean(this.column(this.finalDate).isLessThan(DateExpression.currentDate()));
-
-		{
-			this.hasStarted.setSortOrderDescending();
-			this.isOverdue.setSortOrderDescending();
-			this.startDate.setSortOrderAscending();
-			this.preferredDate.setSortOrderAscending();
-			this.finalDate.setSortOrderAscending();
-
-		}
-	}
 
 	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
 
@@ -163,11 +150,14 @@ public class TaskListComponent extends AuthorisedComponent {
 		}
 
 		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
-			chat("Switching to "+ task.name.getValue());
+			chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
-				new TaskListComponent(ui, task.taskID.getValue()).show();
+				final Long taskID = task.taskID.getValue();
+				TaskWithSortColumns example = ui.getTaskExampleForTaskID(taskID);
+				new TaskListComponent(ui, taskID, example).show();
 			}
 		}
+
 	}
 
 }

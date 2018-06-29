@@ -18,6 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.minortask.components.TaskListComponent;
+import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.*;
 
 /**
@@ -122,6 +124,13 @@ public class MinorTaskUI extends UI {
 	public void loginAs(Long userID) {
 		this.notLoggedIn=false;
 		this.userID = userID;
+	}
+
+	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
+		TaskWithSortColumns example = new TaskWithSortColumns();
+		example.userID.permittedValues(getUserID());
+		example.projectID.permittedValues(taskID);
+		return example;
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)
