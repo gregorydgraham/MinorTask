@@ -14,6 +14,7 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -57,7 +58,7 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 			User user = database.getDBTable(example).getOnlyRow();
 			user.setLastLoginDate(new Date());
 			database.update(user);
-		} catch (SQLException|UnexpectedNumberOfRowsException ex) {
+		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			Logger.getLogger(AuthorisedComponent.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
 			return false;
@@ -82,7 +83,10 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 		setAsDefaultButton(createTaskButton);
 		final Button showTasks = new Button("Top List");
 		showTasks.addClickListener((event) -> {
-			new TaskListComponent(ui, null, ui.getTaskExampleForTaskID(null)).show();
+			TaskWithSortColumns example = new TaskWithSortColumns();
+			example.userID.permittedValues(getUserID());
+			example.projectID.permittedValues((Long)null);
+			new TaskListComponent(ui, null, example).show();
 		});
 		banner.addComponents(createTaskButton, showTasks);
 		final long userID = getUserID();

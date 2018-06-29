@@ -20,10 +20,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
-import nz.co.gregs.dbvolution.annotations.DBColumn;
-import nz.co.gregs.dbvolution.datatypes.DBBoolean;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -130,7 +127,6 @@ public class TaskListComponent extends AuthorisedComponent {
 		new TasksComponent(ui).show();
 	}
 
-
 	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
 
 		private final Task task;
@@ -153,7 +149,9 @@ public class TaskListComponent extends AuthorisedComponent {
 			chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
-				TaskWithSortColumns example = ui.getTaskExampleForTaskID(taskID);
+				TaskWithSortColumns example = new TaskWithSortColumns();
+				example.userID.permittedValues(getUserID());
+				example.projectID.permittedValues(taskID);
 				new TaskListComponent(ui, taskID, example).show();
 			}
 		}

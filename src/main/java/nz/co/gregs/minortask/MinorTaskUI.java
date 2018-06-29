@@ -126,12 +126,12 @@ public class MinorTaskUI extends UI {
 		this.userID = userID;
 	}
 
-	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
-		TaskWithSortColumns example = new TaskWithSortColumns();
-		example.userID.permittedValues(getUserID());
-		example.projectID.permittedValues(taskID);
-		return example;
-	}
+//	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
+//		TaskWithSortColumns example = new TaskWithSortColumns();
+//		example.userID.permittedValues(getUserID());
+//		example.projectID.permittedValues(taskID);
+//		return example;
+//	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MinorTaskUI.class, productionMode = false)

@@ -17,6 +17,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 
 /**
  *
@@ -53,8 +54,11 @@ public class ProjectPathNavigatorComponent extends AuthorisedComponent {
 
 	public Button getButtonForTaskID(Task task) {
 		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
-			final Long taskID = task==null?null:task.taskID.getValue();
-			new TaskListComponent(ui, taskID, ui.getTaskExampleForTaskID(taskID)).show();
+			final Long taskID = task == null ? null : task.taskID.getValue();
+			TaskWithSortColumns example = new TaskWithSortColumns();
+			example.userID.permittedValues(getUserID());
+			example.projectID.permittedValues(taskID);
+			new TaskListComponent(ui, taskID, example).show();
 		});
 		button.addStyleNames("tiny", "friendly");
 		return button;
