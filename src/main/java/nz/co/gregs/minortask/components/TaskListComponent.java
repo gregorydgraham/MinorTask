@@ -13,6 +13,7 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -20,6 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
@@ -29,37 +31,37 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class TaskListComponent extends AuthorisedComponent {
+public class TaskListComponent extends CustomComponent {
 
 	private final TaskWithSortColumns example;
+	private final MinorTaskUI ui;
+	private final Long selectedTaskID;
 
 	public TaskListComponent(MinorTaskUI ui, Long selectedTask, TaskWithSortColumns example) {
-		super(ui, selectedTask);
+		this.ui = ui;
+		this.selectedTaskID = selectedTask;
 		this.example = example;
+		this.setCompositionRoot(getComponent());
 	}
 
-	@Override
-	public Component getAuthorisedComponent() {
+	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new ProjectPathNavigatorComponent(ui, currentTaskID).getComponent());
+			layout.addComponent(new ProjectPathNavigatorComponent(ui, selectedTaskID).getComponent());
 
 			Label actualTaskName = new Label("All");
 			final Task actualTask = new Task();
-			actualTask.userID.permittedValues(getUserID());
-			actualTask.taskID.permittedValues(currentTaskID);
-			if (currentTaskID != null) {
-				final Task fullTaskDetails = getDatabase().getDBTable(actualTask).getOnlyRow();
+			actualTask.userID.permittedValues(ui.getUserID());
+			actualTask.taskID.permittedValues(selectedTaskID);
+			final DBDatabase database = ui.getDatabase();
+			if (selectedTaskID != null) {
+				final Task fullTaskDetails = database.getDBTable(actualTask).getOnlyRow();
 				actualTaskName.setValue(fullTaskDetails.name.getValue());
 			}
 			layout.addComponent(actualTaskName);
 
-//			TaskWithSortColumns example = new TaskWithSortColumns();
-//			example.userID.permittedValues(getUserID());
-//			example.projectID.permittedValues(currentTaskID);
-//			example.startDate.setSortOrderAscending();
-			final DBTable<TaskWithSortColumns> dbTable = getDatabase().getDBTable(example);
+			final DBTable<TaskWithSortColumns> dbTable = database.getDBTable(example);
 			dbTable.setSortOrder(
 					example.column(example.isOverdue),
 					example.column(example.hasStarted),
@@ -117,14 +119,14 @@ public class TaskListComponent extends AuthorisedComponent {
 		return gridlayout;
 	}
 
-	@Override
+//	@Override
 	public void handleDefaultButton() {
-		new TaskCreationComponent(ui, currentTaskID).show();
+		ui.showTaskCreation(selectedTaskID);
 	}
 
-	@Override
+//	@Override
 	public void handleEscapeButton() {
-		new TasksComponent(ui).show();
+		(ui).showTask();
 	}
 
 	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
@@ -149,10 +151,7 @@ public class TaskListComponent extends AuthorisedComponent {
 			ui.chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
-				TaskWithSortColumns example = new TaskWithSortColumns();
-				example.userID.permittedValues(getUserID());
-				example.projectID.permittedValues(taskID);
-				new TaskListComponent(ui, taskID, example).show();
+				ui.showTask(taskID);
 			}
 		}
 

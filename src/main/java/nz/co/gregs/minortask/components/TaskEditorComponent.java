@@ -5,7 +5,9 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.logging.Level;
@@ -19,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskEditorComponent extends AuthorisedComponent {
+public class TaskEditorComponent extends CustomComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -30,23 +32,20 @@ public class TaskEditorComponent extends AuthorisedComponent {
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
-	private Task existingTask = null;
+	private MinorTaskUI ui;
+	private Long taskID;
 
 	public TaskEditorComponent(MinorTaskUI ui, Long currentTask) {
-		super(ui, currentTask);
+		this.ui =ui;
+		this.taskID = currentTask;
+		setCompositionRoot(getComponent());
 	}
-
-	public TaskEditorComponent(MinorTaskUI ui, Long currentTask, Task existingTask) {
-		super(ui, currentTask);
-		this.existingTask = existingTask;
-	}
-
-	@Override
-	public Component getAuthorisedComponent() {
+	
+	public Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new Label("Current Project To Create Within: " + currentTaskID));
+			layout.addComponent(new Label("Current Project To Create Within: " + taskID));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
@@ -80,9 +79,9 @@ public class TaskEditorComponent extends AuthorisedComponent {
 		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
 		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
 		final Project projectExample = new Project();
-		projectExample.taskID.permittedValues(currentTaskID);
-		if (currentTaskID != null) {
-			final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
+		projectExample.taskID.permittedValues(taskID);
+		if (taskID != null) {
+			final Task fullTaskDetails = ui.getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
 		startDate.setValue(startDefault);
@@ -90,12 +89,11 @@ public class TaskEditorComponent extends AuthorisedComponent {
 		deadlineDate.setValue(deadlineDefault);
 	}
 
-	@Override
 	public void handleDefaultButton() {
 		Task task = new Task();
 
 		task.userID.setValue(ui.getUserID());
-		task.projectID.setValue(currentTaskID);
+		task.projectID.setValue(taskID);
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 //		task.notes.setValue(notes.getValue());
@@ -104,17 +102,30 @@ public class TaskEditorComponent extends AuthorisedComponent {
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
 
 		try {
-			getDatabase().insert(task);
+			ui.getDatabase().insert(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			ui.sqlerror(ex);
 		}
-		new TasksComponent(ui).show();
+		ui.showTask(null);
 	}
 
-	@Override
 	public void handleEscapeButton() {
-		new TasksComponent(ui).show();
+		(ui).showTask();
 	}
 
+	public final void setAsDefaultButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		button.addClickListener((event) -> {
+			handleDefaultButton();
+		});
+	}
+
+	public final void setEscapeButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+		button.addClickListener((event) -> {
+			handleEscapeButton();
+		});
+	}
 }

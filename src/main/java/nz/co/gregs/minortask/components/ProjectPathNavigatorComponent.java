@@ -25,16 +25,16 @@ import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
  * @author gregorygraham
  */
 public class ProjectPathNavigatorComponent extends CustomComponent {
-
+	
 	private final MinorTaskUI ui;
 	private final Long currentTaskID;
-
-	public ProjectPathNavigatorComponent(MinorTaskUI ui, Long currentTask) {
+	
+	public ProjectPathNavigatorComponent(MinorTaskUI ui, Long taskID) {
 		this.ui = ui;
-		this.currentTaskID = currentTask;
+		this.currentTaskID = taskID;
 		setCompositionRoot(getComponent());
 	}
-
+	
 	public final Component getComponent() {
 		try {
 			HorizontalLayout hLayout = new HorizontalLayout();
@@ -55,17 +55,18 @@ public class ProjectPathNavigatorComponent extends CustomComponent {
 		}
 		return new Label("Current Project: " + currentTaskID);
 	}
-
+	
 	public Button getButtonForTaskID(Task task) {
 		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
 			final Long taskID = task == null ? null : task.taskID.getValue();
-			TaskWithSortColumns example = new TaskWithSortColumns();
-			example.userID.permittedValues(ui.getUserID());
-			example.projectID.permittedValues(taskID);
-			new TaskListComponent(ui, taskID, example).show();
+//			TaskWithSortColumns example = new TaskWithSortColumns();
+//			example.userID.permittedValues(ui.getUserID());
+//			example.projectID.permittedValues(taskID);
+			ui.showTask(taskID);
+//			new TaskListComponent(ui, taskID, example).show();
 		});
 		button.addStyleNames("tiny", "friendly");
 		return button;
 	}
-
+	
 }

@@ -20,9 +20,9 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class LoginComponent extends MinorTaskComponent {
+public class LoginPage extends MinorTaskComponent {
 
-	public LoginComponent(MinorTaskUI ui) {
+	public LoginPage(MinorTaskUI ui) {
 		super(ui);
 	}
 
@@ -70,7 +70,7 @@ public class LoginComponent extends MinorTaskComponent {
 				switch (users.size()) {
 					case 1:
 						ui.loginAs(users.get(0).getUserID());
-						new TasksComponent(ui).show();
+						ui.showTask(null);
 						break;
 					case 0:
 						ui.warning("Login Error", "Name and/or password do not match any known combination");

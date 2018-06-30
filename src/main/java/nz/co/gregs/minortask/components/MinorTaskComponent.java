@@ -6,12 +6,9 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTaskUI;
 

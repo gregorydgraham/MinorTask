@@ -1,9 +1,8 @@
 package nz.co.gregs.minortask;
 
-import nz.co.gregs.minortask.components.TasksComponent;
-import nz.co.gregs.minortask.components.LoginComponent;
+import nz.co.gregs.minortask.components.LoginPage;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
-import nz.co.gregs.minortask.components.LoggedoutComponent;
+import nz.co.gregs.minortask.components.LoggedoutPage;
 import com.vaadin.annotations.PreserveOnRefresh;
 import javax.servlet.annotation.WebServlet;
 
@@ -18,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.minortask.components.BannerMenu;
+import nz.co.gregs.minortask.components.FooterMenu;
+import nz.co.gregs.minortask.components.TaskCreationComponent;
 import nz.co.gregs.minortask.components.TaskListComponent;
 import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.*;
@@ -37,10 +39,10 @@ public class MinorTaskUI extends UI {
 
 	private static DBDatabase database;
 
-//	public final LoginComponent LOGIN = new LoginComponent(this);
-//	public final LoggedoutComponent LOGGEDOUT = new LoggedoutComponent(this);
+//	public final LoginPage LOGIN = new LoginPage(this);
+//	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
 //	public final SignupPage SIGNUP = new SignupPage(this);
-//	public final TasksComponent TASKS = new TasksComponent(this);
+//	public final TasksPage TASKS = new TasksPage(this);
 	public final TextField USERNAME_FIELD = new TextField("Your Name");
 	public final Button LOGOUT_BUTTON = new Button("Log Out");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
@@ -49,6 +51,7 @@ public class MinorTaskUI extends UI {
 	public String username = "";
 	private long userID = 0;
 	public MinorTaskComponent currentPage = null;
+	private Long currentTaskID;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -62,9 +65,9 @@ public class MinorTaskUI extends UI {
 		});
 
 		if (notLoggedIn) {
-			new LoginComponent(this).show();
+			new LoginPage(this).show();
 		} else {
-			new TasksComponent(this).show();
+			showTask(null);
 		}
 	}
 
@@ -72,7 +75,7 @@ public class MinorTaskUI extends UI {
 		USERNAME_FIELD.clear();
 		PASSWORD_FIELD.clear();
 		notLoggedIn = true;
-		new LoggedoutComponent(this).show();
+		new LoggedoutPage(this).show();
 
 		sess.close();
 	}
@@ -111,7 +114,7 @@ public class MinorTaskUI extends UI {
 	}
 
 	public DBDatabase getDatabase() {
-		if (database==null){
+		if (database == null) {
 			setupDatabase();
 		}
 		return database;
@@ -122,7 +125,7 @@ public class MinorTaskUI extends UI {
 	}
 
 	public void loginAs(Long userID) {
-		this.notLoggedIn=false;
+		this.notLoggedIn = false;
 		this.userID = userID;
 	}
 
@@ -151,6 +154,41 @@ public class MinorTaskUI extends UI {
 	public final void error(final String topic, final String error) {
 		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
+	}
+
+	public Long getCurrentTaskID() {
+		return currentTaskID;
+	}
+
+	private void setCurrentTaskID(Long newTaskID) {
+		currentTaskID = newTaskID;
+	}
+
+	public void showTask() {
+		showTask(null);
+	}
+
+	public void showTask(Long taskID) {
+		setCurrentTaskID(taskID);
+		TaskWithSortColumns example = new TaskWithSortColumns();
+		example.userID.permittedValues(getUserID());
+		example.projectID.permittedValues(taskID);
+		TaskListComponent taskListComponent = new TaskListComponent(this, taskID, example);
+		VerticalLayout display = new VerticalLayout();
+		display.addComponent(new BannerMenu(this, taskID));
+		display.addComponent(taskListComponent);
+		display.addComponent(new FooterMenu(this, taskID));
+		this.setContent(display);
+	}
+
+	public void showTaskCreation(Long taskID) {
+		setCurrentTaskID(taskID);
+		VerticalLayout display = new VerticalLayout();
+		display.addComponent(new BannerMenu(this, taskID));
+		display.addComponent(new TaskCreationComponent(this, taskID));
+		display.addComponent(new FooterMenu(this, taskID));
+		this.setContent(display);
+
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)

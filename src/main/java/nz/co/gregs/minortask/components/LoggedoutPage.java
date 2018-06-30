@@ -17,9 +17,9 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class LoggedoutComponent extends MinorTaskComponent {
+public class LoggedoutPage extends MinorTaskComponent {
 
-	public LoggedoutComponent(MinorTaskUI ui) {
+	public LoggedoutPage(MinorTaskUI ui) {
 		super(ui);
 	}
 
@@ -33,7 +33,7 @@ public class LoggedoutComponent extends MinorTaskComponent {
 		
 		Button button = new Button("Return to Login");
 		button.addClickListener((event) -> {
-			new LoginComponent(ui).show();
+			new LoginPage(ui).show();
 		});
 		
 		layout.addComponents(new Label("Thank you for using MinorTask"),new Link("return to the login page", new ExternalResource("/")));

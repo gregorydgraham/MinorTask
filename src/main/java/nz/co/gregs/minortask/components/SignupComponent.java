@@ -96,7 +96,7 @@ public class SignupComponent extends MinorTaskComponent {
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
 				ui.chat("Welcome to Minor Task @" + username);
-				new LoginComponent(ui).handleDefaultButton();
+				new LoginPage(ui).handleDefaultButton();
 			} catch (SQLException ex) {
 				ui.sqlerror(ex);
 			}
@@ -105,7 +105,7 @@ public class SignupComponent extends MinorTaskComponent {
 
 	@Override
 	public void handleEscapeButton() {
-		new LoginComponent(ui).show();
+		new LoginPage(ui).show();
 	}
 
 }
