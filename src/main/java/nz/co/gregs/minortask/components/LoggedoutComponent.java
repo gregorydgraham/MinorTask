@@ -34,10 +34,4 @@ public class LoggedoutComponent extends PublicComponent {
 		return layout;
 	}
 
-//	private final void show() {
-//		VerticalLayout verticalLayout = new VerticalLayout();
-//		verticalLayout.addComponent(getComponent());
-//		getUI().setContent(verticalLayout);
-//	}
-
 }

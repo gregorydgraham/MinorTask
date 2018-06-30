@@ -28,6 +28,7 @@ import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.H2MemoryDB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
+import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -82,9 +83,22 @@ public class Helper {
 		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 	}
-	public static final Button LOGOUT_BUTTON = new Button("Log Out");
-	public static final TextField USERNAME_FIELD = new TextField("Your Name");
-	public static final PasswordField PASSWORD_FIELD = new PasswordField("Password");
+//	public static final Button LOGOUT_BUTTON = new Button("Log Out");
+//	public static final TextField USERNAME_FIELD = new TextField("Your Name");
+//	public static final PasswordField PASSWORD_FIELD = new PasswordField("Password");
+
+	public static Task getTask(Long taskID) {
+		Task returnTask = null;
+		final Task task = new Task();
+		task.taskID.permittedValues(taskID);
+		try {
+			returnTask = getDatabase().getDBTable(task).getOnlyRow();
+		} catch (UnexpectedNumberOfRowsException|SQLException ex) {
+			Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+			sqlerror(ex);
+		} 
+		return returnTask;
+	}
 
 	private Helper() {
 	}

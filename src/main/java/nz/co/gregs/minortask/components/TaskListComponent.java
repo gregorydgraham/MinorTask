@@ -31,15 +31,12 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class TaskListComponent extends CustomComponent {
+public class TaskListComponent extends MinorTaskComponent {
 
 	private final TaskWithSortColumns example;
-	private final MinorTaskUI ui;
-	private final Long selectedTaskID;
 
 	public TaskListComponent(MinorTaskUI ui, Long selectedTask, TaskWithSortColumns example) {
-		this.ui = ui;
-		this.selectedTaskID = selectedTask;
+		super(ui, selectedTask);
 		this.example = example;
 		this.setCompositionRoot(getComponent());
 	}
@@ -48,14 +45,14 @@ public class TaskListComponent extends CustomComponent {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new ProjectPathNavigatorComponent(ui, selectedTaskID).getComponent());
+			layout.addComponent(new ProjectPathNavigatorComponent(minortask(), getTaskID()));
 
 			Label actualTaskName = new Label("All");
 			final Task actualTask = new Task();
-			actualTask.userID.permittedValues(ui.getUserID());
-			actualTask.taskID.permittedValues(selectedTaskID);
+			actualTask.userID.permittedValues(minortask().getUserID());
+			actualTask.taskID.permittedValues(getTaskID());
 			final DBDatabase database = Helper.getDatabase();
-			if (selectedTaskID != null) {
+			if (getTaskID() != null) {
 				final Task fullTaskDetails = database.getDBTable(actualTask).getOnlyRow();
 				actualTaskName.setValue(fullTaskDetails.name.getValue());
 			}
@@ -95,9 +92,9 @@ public class TaskListComponent extends CustomComponent {
 			summary.setWidth(10, Sizeable.Unit.CM);
 			summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-			final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), ui));
-			final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), ui));
-			final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), ui));
+			final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), minortask()));
+			final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), minortask()));
+			final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), minortask()));
 
 			startdate.setReadOnly(true);
 			startdate.setWidth(8, Sizeable.Unit.EM);
@@ -121,12 +118,12 @@ public class TaskListComponent extends CustomComponent {
 
 //	@Override
 	public void handleDefaultButton() {
-		ui.showTaskCreation(selectedTaskID);
+		minortask().showTaskCreation(getTaskID());
 	}
 
 //	@Override
 	public void handleEscapeButton() {
-		(ui).showTask();
+		minortask().showTask();
 	}
 
 	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
@@ -151,7 +148,7 @@ public class TaskListComponent extends CustomComponent {
 			Helper.chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
-				ui.showTask(taskID);
+				minortask().showTask(taskID);
 			}
 		}
 

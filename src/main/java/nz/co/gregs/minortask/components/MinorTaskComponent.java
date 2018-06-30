@@ -8,11 +8,11 @@ package nz.co.gregs.minortask.components;
 import nz.co.gregs.minortask.MinorTaskUI;
 
 
-public class PrivateComponent extends PublicComponent {
+public class MinorTaskComponent extends PublicComponent {
 
 	private final Long taskID;
 
-	public PrivateComponent(MinorTaskUI ui, Long taskID) {
+	public MinorTaskComponent(MinorTaskUI ui, Long taskID) {
 		super(ui);
 		this.taskID = taskID;
 	}

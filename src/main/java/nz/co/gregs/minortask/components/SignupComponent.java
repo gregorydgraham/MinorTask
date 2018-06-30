@@ -25,12 +25,20 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public class SignupComponent extends PublicComponent {
 
+	public final TextField USERNAME_FIELD = new TextField("Your Name");
+	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
 	public final PasswordField REPEAT_PASSWORD_FIELD = new PasswordField("Repeat Password");
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
 
 	public SignupComponent(MinorTaskUI loginUI) {
+		this(loginUI, "", "");
+	}
+
+	public SignupComponent(MinorTaskUI loginUI, String username, String password) {
 		super(loginUI);
+		USERNAME_FIELD.setValue(username);
+		PASSWORD_FIELD.setValue(password);
 		setCompositionRoot(getComponent());
 	}
 	
@@ -38,8 +46,8 @@ public class SignupComponent extends PublicComponent {
 		VerticalLayout layout = new VerticalLayout();
 		
 		REPEAT_PASSWORD_FIELD.clear();
-		Helper.USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		Helper.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
+		USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		
 		Button signupButton = new Button("Request Sign Up");
@@ -49,15 +57,15 @@ public class SignupComponent extends PublicComponent {
 		setEscapeButton(returnToLoginButton);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
-		layout.addComponents(Helper.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(Helper.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
+		layout.addComponents(USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
 		
 		return layout;
 	}
 
 	public void handleDefaultButton() {
-		final String username = Helper.USERNAME_FIELD.getValue();
+		final String username = USERNAME_FIELD.getValue();
 		final String email = EMAIL_FIELD.getValue();
-		final String pass = Helper.PASSWORD_FIELD.getValue();
+		final String pass = PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
 		Helper.chat(username);
@@ -92,7 +100,7 @@ public class SignupComponent extends PublicComponent {
 				newUser.setSignupDate(new Date());
 				Helper.getDatabase().insert(newUser);
 				Helper.chat("Welcome to Minor Task @" + username);
-				new LoginPage(minortask()).handleDefaultButton();
+				minortask().loginAs(newUser.getUserID());
 			} catch (SQLException ex) {
 				Helper.sqlerror(ex);
 			}
@@ -100,7 +108,7 @@ public class SignupComponent extends PublicComponent {
 	}
 
 	public void handleEscapeButton() {
-		new LoginPage(minortask()).show();
+		minortask().showLogin(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
 	}
 
 	public final void setAsDefaultButton(Button button) {

@@ -5,12 +5,16 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.Helper;
@@ -21,15 +25,22 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class LoginPage extends OldMinorTaskComponent {
+public class LoginComponent extends PublicComponent {
 
-	public LoginPage(MinorTaskUI ui) {
-		super(ui);
+	private final TextField USERNAME_FIELD = new TextField("Your Name");
+	private final PasswordField PASSWORD_FIELD = new PasswordField("Password");
+
+	public LoginComponent(MinorTaskUI minortask) {
+		this(minortask, "", "");
+	}
+	public LoginComponent(MinorTaskUI minortask, String username, String password) {
+		super(minortask);
+		setCompositionRoot(getComponent());
+		USERNAME_FIELD.setValue(username);
+		PASSWORD_FIELD.setValue(password);
 	}
 
-	
-	@Override
-	public Component getComponent() {
+	private Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
 		loginPanel.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
@@ -38,17 +49,17 @@ public class LoginPage extends OldMinorTaskComponent {
 
 		Button signupButton = new Button("Sign Up");
 		signupButton.addClickListener((Button.ClickEvent e) -> {
-			ui.showSignUp();
+			minortask().showSignUp(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
 		});
 
 		HorizontalLayout buttons = new HorizontalLayout(signupButton, loginButton);
 		buttons.setComponentAlignment(loginButton, Alignment.TOP_RIGHT);
 
-		Helper.USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		Helper.USERNAME_FIELD.setCursorPosition(0);
-		Helper.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
+		USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		USERNAME_FIELD.setCursorPosition(0);
+		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
-		loginPanel.addComponents(Helper.USERNAME_FIELD, Helper.PASSWORD_FIELD, buttons);
+		loginPanel.addComponents(USERNAME_FIELD, PASSWORD_FIELD, buttons);
 		return new GridLayout(
 				3, 3,
 				new VerticalLayout(), new VerticalLayout(), new VerticalLayout(),
@@ -57,21 +68,19 @@ public class LoginPage extends OldMinorTaskComponent {
 		);
 	}
 
-	@Override
 	public void handleDefaultButton() {
 		StringBuilder warningBuffer = new StringBuilder();
-		if (Helper.USERNAME_FIELD.getValue().isEmpty() || Helper.PASSWORD_FIELD.getValue().isEmpty()) {
+		if (USERNAME_FIELD.getValue().isEmpty() || PASSWORD_FIELD.getValue().isEmpty()) {
 			warningBuffer.append("Name and/or password needs to be entered\n");
 		} else {
 			User example = new User();
-			example.queryUsername().permittedValuesIgnoreCase(Helper.USERNAME_FIELD.getValue());
-			example.queryPassword().permittedValues(Helper.PASSWORD_FIELD.getValue());
+			example.queryUsername().permittedValuesIgnoreCase(USERNAME_FIELD.getValue());
+			example.queryPassword().permittedValues(PASSWORD_FIELD.getValue());
 			try {
-				List<User> users = getDatabase().getDBTable(example).getAllRows();
+				List<User> users = Helper.getDatabase().getDBTable(example).getAllRows();
 				switch (users.size()) {
 					case 1:
-						ui.loginAs(users.get(0).getUserID());
-						ui.showTask(null);
+						minortask().loginAs(users.get(0).getUserID());
 						break;
 					case 0:
 						Helper.warning("Login Error", "Name and/or password do not match any known combination");
@@ -89,9 +98,23 @@ public class LoginPage extends OldMinorTaskComponent {
 		}
 	}
 
-	@Override
 	public void handleEscapeButton() {
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	public final void setAsDefaultButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		button.addClickListener((event) -> {
+			handleDefaultButton();
+		});
+	}
+
+	public final void setEscapeButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+		button.addClickListener((event) -> {
+			handleEscapeButton();
+		});
 	}
 
 }

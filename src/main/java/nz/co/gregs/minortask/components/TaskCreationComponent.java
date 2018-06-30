@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskCreationComponent extends CustomComponent {
+public class TaskCreationComponent extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -32,20 +32,25 @@ public class TaskCreationComponent extends CustomComponent {
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
-	private final MinorTaskUI ui;
-	private final Long taskID;
+//	private final MinorTaskUI ui;
+//	private final Long taskID;
 
 	public TaskCreationComponent(MinorTaskUI ui, Long currentTask) {
-		this.ui = ui;
-		this.taskID = currentTask;
+		super(ui, currentTask);
 		this.setCompositionRoot(getComponent());
 	}
 
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new ProjectPathNavigatorComponent(minortask(), getTaskID()));
 		try {
-			layout.addComponent(new Label("Current Project To Create Within: " + taskID));
+			String projectName = "All";
+			if (getTaskID() != null) {
+				Task task = Helper.getTask(getTaskID());
+				projectName = task.name.getValue();
+			}
+			layout.addComponent(new Label("Adding To " + projectName));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
@@ -79,8 +84,8 @@ public class TaskCreationComponent extends CustomComponent {
 		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
 		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
 		final Project projectExample = new Project();
-		projectExample.taskID.permittedValues(taskID);
-		if (taskID != null) {
+		projectExample.taskID.permittedValues(getTaskID());
+		if (getTaskID() != null) {
 			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
@@ -92,8 +97,8 @@ public class TaskCreationComponent extends CustomComponent {
 	public void handleDefaultButton() {
 		Task task = new Task();
 
-		task.userID.setValue(ui.getUserID());
-		task.projectID.setValue(taskID);
+		task.userID.setValue(minortask().getUserID());
+		task.projectID.setValue(getTaskID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 //		task.notes.setValue(notes.getValue());
@@ -107,12 +112,13 @@ public class TaskCreationComponent extends CustomComponent {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		(ui).showTask();
+		minortask().showTask();
 	}
 
 	public void handleEscapeButton() {
-		(ui).showTask();
+		minortask().showTask();
 	}
+
 	public final void setAsDefaultButton(Button button) {
 		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 		button.addStyleName(ValoTheme.BUTTON_PRIMARY);

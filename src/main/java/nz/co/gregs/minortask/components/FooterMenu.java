@@ -14,14 +14,13 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class FooterMenu extends CustomComponent {
+public class FooterMenu extends MinorTaskComponent {
 
-	private final MinorTaskUI ui;
-	private final Long taskID;
+//	private final MinorTaskUI ui;
+//	private final Long taskID;
 
 	public FooterMenu(MinorTaskUI ui, Long taskID) {
-		this.ui = ui;
-		this.taskID = taskID;
+		super(ui, taskID);
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Label("MinorTask is a simple system to help you manage projects and tasks."));
 		layout.addComponent(new Label("The key concept is that every project is just a collection of minor tasks."));

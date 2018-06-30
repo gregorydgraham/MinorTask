@@ -25,23 +25,21 @@ import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
  *
  * @author gregorygraham
  */
-public class ProjectPathNavigatorComponent extends CustomComponent {
-	
-	private final MinorTaskUI ui;
-	private final Long currentTaskID;
-	
-	public ProjectPathNavigatorComponent(MinorTaskUI ui, Long taskID) {
-		this.ui = ui;
-		this.currentTaskID = taskID;
+public class ProjectPathNavigatorComponent extends MinorTaskComponent {
+
+//	private final MinorTaskUI ui;
+//	private final Long currentTaskID;
+	public ProjectPathNavigatorComponent(MinorTaskUI minortask, Long taskID) {
+		super(minortask, taskID);
 		setCompositionRoot(getComponent());
 	}
-	
-	public final Component getComponent() {
+
+	private final Component getComponent() {
 		try {
 			HorizontalLayout hLayout = new HorizontalLayout();
 			hLayout.addComponentAsFirst(getButtonForTaskID(null));
 			final Task task = new Task();
-			task.taskID.permittedValues(this.currentTaskID);
+			task.taskID.permittedValues(getTaskID());
 			DBQuery query = Helper.getDatabase().getDBQuery(task);
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
@@ -54,20 +52,16 @@ public class ProjectPathNavigatorComponent extends CustomComponent {
 			Logger.getLogger(ProjectPathNavigatorComponent.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		return new Label("Current Project: " + currentTaskID);
+		return new Label("Current Project: " + getTaskID());
 	}
-	
+
 	public Button getButtonForTaskID(Task task) {
 		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
 			final Long taskID = task == null ? null : task.taskID.getValue();
-//			TaskWithSortColumns example = new TaskWithSortColumns();
-//			example.userID.permittedValues(ui.getUserID());
-//			example.projectID.permittedValues(taskID);
-			ui.showTask(taskID);
-//			new TaskListComponent(ui, taskID, example).show();
+			minortask().showTask(taskID);
 		});
 		button.addStyleNames("tiny", "friendly");
 		return button;
 	}
-	
+
 }

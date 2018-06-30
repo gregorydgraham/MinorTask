@@ -25,14 +25,13 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class BannerMenu extends CustomComponent {
+public class BannerMenu extends MinorTaskComponent {
 
-	private final MinorTaskUI ui;
-	private final Long taskID;
+//	private final MinorTaskUI ui;
+//	private final Long taskID;
 
 	public BannerMenu(MinorTaskUI ui, Long taskID) {
-		this.ui = ui;
-		this.taskID = taskID;
+		super(ui, taskID);
 		Component banner = getComponent();
 
 		this.setCompositionRoot(banner);
@@ -51,13 +50,13 @@ public class BannerMenu extends CustomComponent {
 
 		final Button showProjects = new Button("Projects");
 		showProjects.addClickListener((event) -> {
-			ui.showTask(null);
+			minortask().showTask(null);
 		});
 		final HorizontalLayout usefulButtons = new HorizontalLayout(createTaskButton, showProjects);
 		banner.addComponents(usefulButtons);
 		banner.setComponentAlignment(usefulButtons, Alignment.TOP_LEFT);
 
-		final long userID = ui.getUserID();
+		final long userID = minortask().getUserID();
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
 		try {
@@ -70,8 +69,14 @@ public class BannerMenu extends CustomComponent {
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 			Helper.sqlerror(ex);
 		}
-		banner.addComponent(Helper.LOGOUT_BUTTON);
-		banner.setComponentAlignment(Helper.LOGOUT_BUTTON, Alignment.TOP_RIGHT);
+		
+		Button logoutButton = new Button("Logout");
+		logoutButton.addClickListener((event) -> {
+			minortask().logout();
+		});
+		
+		banner.addComponent(logoutButton);
+		banner.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
 
 		return banner;
 	}
@@ -85,7 +90,7 @@ public class BannerMenu extends CustomComponent {
 	}
 
 	public void handleDefaultButton() {
-		ui.showTaskCreation(taskID);
+		minortask().showTaskCreation(getTaskID());
 //		new TaskCreationComponent(ui, taskID).show();
 	}
 

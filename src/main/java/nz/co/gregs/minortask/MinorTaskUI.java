@@ -1,6 +1,6 @@
 package nz.co.gregs.minortask;
 
-import nz.co.gregs.minortask.components.LoginPage;
+import nz.co.gregs.minortask.components.LoginComponent;
 import nz.co.gregs.minortask.components.LoggedoutComponent;
 import com.vaadin.annotations.PreserveOnRefresh;
 import javax.servlet.annotation.WebServlet;
@@ -45,32 +45,15 @@ public class MinorTaskUI extends UI {
 
 		Helper.setupDatabase();
 
-		Helper.LOGOUT_BUTTON.addClickListener((Button.ClickEvent event) -> {
-			handleLogoutRequest();
-		});
-
 		if (notLoggedIn) {
-			new LoginPage(this).show();
+			showLogin();
 		} else {
 			showTask(null);
 		}
 	}
 
-	void handleLogoutRequest() {
-		Helper.USERNAME_FIELD.clear();
-		Helper.PASSWORD_FIELD.clear();
-		notLoggedIn = true;
-		this.showLogout();
-
-		sess.close();
-	}
-
-
 	private void setupSession(VaadinRequest vaadinRequest) {
 		sess = VaadinSession.getCurrent();
-		if (!Helper.USERNAME_FIELD.isEmpty()) {
-			username = Helper.USERNAME_FIELD.getValue();
-		}
 	}
 
 
@@ -80,7 +63,8 @@ public class MinorTaskUI extends UI {
 
 	public void loginAs(Long userID) {
 		this.notLoggedIn = false;
-		this.userID = userID;
+		this.userID = userID;	
+		showTask(null);
 	}
 
 	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
@@ -130,20 +114,22 @@ public class MinorTaskUI extends UI {
 	}
 
 	public void showLogin() {
-		this.setContent(new LoginPage(this).getComponent());
+		showPublicContent(new LoginComponent(this));
 	}
 
-	private void showLogout() {
+	public void showLogin(String username, String password) {
+		showPublicContent(new LoginComponent(this, username, password));
+	}
+
+	public void logout() {
 		this.setContent(new LoggedoutComponent(this));
-		Helper.USERNAME_FIELD.clear();
-		Helper.PASSWORD_FIELD.clear();
 		notLoggedIn = true;
 
 		sess.close();
 	}
 
-	public void showSignUp() {
-		showPublicContent(new SignupComponent(this));
+	public void showSignUp(String username, String password) {
+		showPublicContent(new SignupComponent(this, username, password));
 	}
 
 	public void showPublicContent(Component component) {

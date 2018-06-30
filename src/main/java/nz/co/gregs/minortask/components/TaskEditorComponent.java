@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskEditorComponent extends CustomComponent {
+public class TaskEditorComponent extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -32,12 +32,11 @@ public class TaskEditorComponent extends CustomComponent {
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
-	private MinorTaskUI ui;
-	private Long taskID;
+//	private MinorTaskUI ui;
+//	private Long taskID;
 
 	public TaskEditorComponent(MinorTaskUI ui, Long currentTask) {
-		this.ui =ui;
-		this.taskID = currentTask;
+		super(ui, currentTask);
 		setCompositionRoot(getComponent());
 	}
 	
@@ -45,7 +44,8 @@ public class TaskEditorComponent extends CustomComponent {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new Label("Current Project To Create Within: " + taskID));
+			Task task = Helper.getTask(getTaskID());
+			layout.addComponent(new Label("Current Project To Create Within: " + task.name));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
@@ -79,8 +79,8 @@ public class TaskEditorComponent extends CustomComponent {
 		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
 		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
 		final Project projectExample = new Project();
-		projectExample.taskID.permittedValues(taskID);
-		if (taskID != null) {
+		projectExample.taskID.permittedValues(getTaskID());
+		if (getTaskID() != null) {
 			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
@@ -92,8 +92,8 @@ public class TaskEditorComponent extends CustomComponent {
 	public void handleDefaultButton() {
 		Task task = new Task();
 
-		task.userID.setValue(ui.getUserID());
-		task.projectID.setValue(taskID);
+		task.userID.setValue(minortask().getUserID());
+		task.projectID.setValue(getTaskID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 //		task.notes.setValue(notes.getValue());
@@ -107,11 +107,11 @@ public class TaskEditorComponent extends CustomComponent {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		ui.showTask(null);
+		minortask().showTask(null);
 	}
 
 	public void handleEscapeButton() {
-		(ui).showTask();
+		minortask().showTask();
 	}
 
 	public final void setAsDefaultButton(Button button) {
