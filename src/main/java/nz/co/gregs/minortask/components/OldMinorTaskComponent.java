@@ -10,17 +10,18 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.Serializable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
 
 /**
  *
  * @author gregorygraham
  */
-public abstract class MinorTaskComponent implements Serializable {
+public abstract class OldMinorTaskComponent implements Serializable {
 
 	public MinorTaskUI ui;
 
-	public MinorTaskComponent(MinorTaskUI ui) {
+	public OldMinorTaskComponent(MinorTaskUI ui) {
 		this.ui = ui;
 	}
 
@@ -51,11 +52,10 @@ public abstract class MinorTaskComponent implements Serializable {
 		VerticalLayout verticalLayout = new VerticalLayout();
 		verticalLayout.addComponent(getComponent());
 		ui.setContent(verticalLayout);
-		ui.currentPage = this;
 	}
 
 	final protected DBDatabase getDatabase() {
-		return ui.getDatabase();
+		return Helper.getDatabase();
 	}
 
 	protected long getUserID() {

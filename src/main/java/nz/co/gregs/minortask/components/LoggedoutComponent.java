@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
@@ -17,32 +18,26 @@ import nz.co.gregs.minortask.MinorTaskUI;
  *
  * @author gregorygraham
  */
-public class LoggedoutPage extends MinorTaskComponent {
+public class LoggedoutComponent extends PublicComponent {
 
-	public LoggedoutPage(MinorTaskUI ui) {
+	public LoggedoutComponent(MinorTaskUI ui) {
 		super(ui);
+		setCompositionRoot(getComponent());
 	}
 
-	@Override
-	public void handleDefaultButton() {
-	}
-
-	@Override
-	public Component getComponent() {
+	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
-		
-		Button button = new Button("Return to Login");
-		button.addClickListener((event) -> {
-			new LoginPage(ui).show();
-		});
-		
-		layout.addComponents(new Label("Thank you for using MinorTask"),new Link("return to the login page", new ExternalResource("/")));
+
+		layout.addComponents(
+				new Label("Thank you for using MinorTask"), 
+				new Link("return to the login page", new ExternalResource("/")));
 		return layout;
 	}
 
-	@Override
-	public void handleEscapeButton() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+//	private final void show() {
+//		VerticalLayout verticalLayout = new VerticalLayout();
+//		verticalLayout.addComponent(getComponent());
+//		getUI().setContent(verticalLayout);
+//	}
 
 }

@@ -5,7 +5,16 @@
  */
 package nz.co.gregs.minortask;
 
+import com.vaadin.server.Page;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,12 +22,22 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
+import nz.co.gregs.dbvolution.databases.H2MemoryDB;
+import nz.co.gregs.dbvolution.databases.SQLiteDB;
+import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
  * @author gregorygraham
  */
 public class Helper {
+
+	static DBDatabase database;
 
 	public static Date asDate(LocalDate localDate) {
 		return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -44,6 +63,56 @@ public class Helper {
 		return value.substring(0, value.length()<i?value.length():i);
 	}
 
+	public static final void warning(final String topic, final String warning) {
+		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
+		note.show(Page.getCurrent());
+	}
+
+	public static final void error(final String topic, final String error) {
+		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
+		note.show(Page.getCurrent());
+	}
+
+	public static final void chat(String string) {
+		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+	}
+
+	public static final void sqlerror(Exception exp) {
+		Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, exp);
+		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
+		note.show(Page.getCurrent());
+	}
+	public static final Button LOGOUT_BUTTON = new Button("Log Out");
+	public static final TextField USERNAME_FIELD = new TextField("Your Name");
+	public static final PasswordField PASSWORD_FIELD = new PasswordField("Password");
+
 	private Helper() {
+	}
+
+	public static synchronized void setupDatabase() {
+		if (Helper.database == null) {
+			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
+			try {
+				Helper.database = new DBDatabaseCluster(new SQLiteDB(sqliteFile, "admin", "admin"), new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
+				Helper.database.setPrintSQLBeforeExecuting(true);
+			} catch (IOException | SQLException ex) {
+				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
+				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+			}
+		}
+		try {
+			new Notification("Currently serving " + Helper.database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + Helper.database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+		} catch (SQLException ex) {
+			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
+			new Notification("NO DATABASE CONNECTION: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+		}
+	}
+
+	public static DBDatabase getDatabase() {
+		if (Helper.database == null) {
+			setupDatabase();
+		}
+		return Helper.database;
 	}
 }

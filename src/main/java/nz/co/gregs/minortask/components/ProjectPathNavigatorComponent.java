@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
@@ -41,7 +42,7 @@ public class ProjectPathNavigatorComponent extends CustomComponent {
 			hLayout.addComponentAsFirst(getButtonForTaskID(null));
 			final Task task = new Task();
 			task.taskID.permittedValues(this.currentTaskID);
-			DBQuery query = ui.getDatabase().getDBQuery(task);
+			DBQuery query = Helper.getDatabase().getDBQuery(task);
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
 			for (Task ancestor : ancestors) {
@@ -51,7 +52,7 @@ public class ProjectPathNavigatorComponent extends CustomComponent {
 			return hLayout;
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPathNavigatorComponent.class.getName()).log(Level.SEVERE, null, ex);
-			ui.sqlerror(ex);
+			Helper.sqlerror(ex);
 		}
 		return new Label("Current Project: " + currentTaskID);
 	}

@@ -54,7 +54,7 @@ public class TaskListComponent extends CustomComponent {
 			final Task actualTask = new Task();
 			actualTask.userID.permittedValues(ui.getUserID());
 			actualTask.taskID.permittedValues(selectedTaskID);
-			final DBDatabase database = ui.getDatabase();
+			final DBDatabase database = Helper.getDatabase();
 			if (selectedTaskID != null) {
 				final Task fullTaskDetails = database.getDBTable(actualTask).getOnlyRow();
 				actualTaskName.setValue(fullTaskDetails.name.getValue());
@@ -72,7 +72,7 @@ public class TaskListComponent extends CustomComponent {
 			final String caption = tasks.size() + " Tasks Found";
 			layout.addComponent(addTasksToLayout(caption, tasks));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			ui.sqlerror(ex);
+			Helper.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -148,7 +148,7 @@ public class TaskListComponent extends CustomComponent {
 		}
 
 		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
-			ui.chat("Switching to " + task.name.getValue());
+			Helper.chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
 				ui.showTask(taskID);

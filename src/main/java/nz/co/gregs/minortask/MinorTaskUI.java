@@ -1,8 +1,7 @@
 package nz.co.gregs.minortask;
 
 import nz.co.gregs.minortask.components.LoginPage;
-import nz.co.gregs.minortask.components.MinorTaskComponent;
-import nz.co.gregs.minortask.components.LoggedoutPage;
+import nz.co.gregs.minortask.components.LoggedoutComponent;
 import com.vaadin.annotations.PreserveOnRefresh;
 import javax.servlet.annotation.WebServlet;
 
@@ -10,15 +9,11 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.*;
 import com.vaadin.ui.*;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nz.co.gregs.dbvolution.databases.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.components.BannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
+import nz.co.gregs.minortask.components.SignupComponent;
 import nz.co.gregs.minortask.components.TaskCreationComponent;
 import nz.co.gregs.minortask.components.TaskListComponent;
 import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
@@ -37,20 +32,10 @@ import nz.co.gregs.minortask.datamodel.*;
 @PreserveOnRefresh
 public class MinorTaskUI extends UI {
 
-	private static DBDatabase database;
-
-//	public final LoginPage LOGIN = new LoginPage(this);
-//	public final LoggedoutPage LOGGEDOUT = new LoggedoutPage(this);
-//	public final SignupPage SIGNUP = new SignupPage(this);
-//	public final TasksPage TASKS = new TasksPage(this);
-	public final TextField USERNAME_FIELD = new TextField("Your Name");
-	public final Button LOGOUT_BUTTON = new Button("Log Out");
-	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
 	private VaadinSession sess;
 	private boolean notLoggedIn = true;
 	public String username = "";
 	private long userID = 0;
-	public MinorTaskComponent currentPage = null;
 	private Long currentTaskID;
 
 	@Override
@@ -58,9 +43,9 @@ public class MinorTaskUI extends UI {
 
 		setupSession(vaadinRequest);
 
-		setupDatabase();
+		Helper.setupDatabase();
 
-		LOGOUT_BUTTON.addClickListener((Button.ClickEvent event) -> {
+		Helper.LOGOUT_BUTTON.addClickListener((Button.ClickEvent event) -> {
 			handleLogoutRequest();
 		});
 
@@ -72,53 +57,22 @@ public class MinorTaskUI extends UI {
 	}
 
 	void handleLogoutRequest() {
-		USERNAME_FIELD.clear();
-		PASSWORD_FIELD.clear();
+		Helper.USERNAME_FIELD.clear();
+		Helper.PASSWORD_FIELD.clear();
 		notLoggedIn = true;
-		new LoggedoutPage(this).show();
+		this.showLogout();
 
 		sess.close();
 	}
 
-	public synchronized void setupDatabase() {
-		if (database == null) {
-			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
-
-			try {
-				database
-						= new DBDatabaseCluster(
-								new SQLiteDB(sqliteFile, "admin", "admin"),
-								new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
-				database.setPrintSQLBeforeExecuting(true);
-			} catch (IOException | SQLException ex) {
-				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
-			}
-		}
-		try {
-			new Notification("Currently serving "
-					+ database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and "
-					+ database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
-		} catch (SQLException ex) {
-			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-			new Notification("NO DATABASE CONNECTION: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
-		}
-	}
 
 	private void setupSession(VaadinRequest vaadinRequest) {
 		sess = VaadinSession.getCurrent();
-		if (!USERNAME_FIELD.isEmpty()) {
-			username = USERNAME_FIELD.getValue();
+		if (!Helper.USERNAME_FIELD.isEmpty()) {
+			username = Helper.USERNAME_FIELD.getValue();
 		}
 	}
 
-	public DBDatabase getDatabase() {
-		if (database == null) {
-			setupDatabase();
-		}
-		return database;
-	}
 
 	public boolean getNotLoggedIn() {
 		return notLoggedIn;
@@ -136,26 +90,6 @@ public class MinorTaskUI extends UI {
 		return example;
 	}
 
-	public final void sqlerror(Exception exp) {
-		Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, exp);
-		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
-	public final void chat(String string) {
-		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
-	}
-
-	public final void warning(final String topic, final String warning) {
-		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
-	public final void error(final String topic, final String error) {
-		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
 	public Long getCurrentTaskID() {
 		return currentTaskID;
 	}
@@ -169,26 +103,51 @@ public class MinorTaskUI extends UI {
 	}
 
 	public void showTask(Long taskID) {
-		setCurrentTaskID(taskID);
 		TaskWithSortColumns example = new TaskWithSortColumns();
 		example.userID.permittedValues(getUserID());
 		example.projectID.permittedValues(taskID);
 		TaskListComponent taskListComponent = new TaskListComponent(this, taskID, example);
-		VerticalLayout display = new VerticalLayout();
-		display.addComponent(new BannerMenu(this, taskID));
-		display.addComponent(taskListComponent);
-		display.addComponent(new FooterMenu(this, taskID));
-		this.setContent(display);
+
+		showAuthorisedContent(taskID, taskListComponent);
 	}
 
 	public void showTaskCreation(Long taskID) {
-		setCurrentTaskID(taskID);
-		VerticalLayout display = new VerticalLayout();
-		display.addComponent(new BannerMenu(this, taskID));
-		display.addComponent(new TaskCreationComponent(this, taskID));
-		display.addComponent(new FooterMenu(this, taskID));
-		this.setContent(display);
+		showAuthorisedContent(taskID, new TaskCreationComponent(this, taskID));
 
+	}
+
+	private void showAuthorisedContent(Long taskID, Component component) {
+		if (notLoggedIn) {
+			showLogin();
+		} else {
+			setCurrentTaskID(taskID);
+			VerticalLayout display = new VerticalLayout();
+			display.addComponent(new BannerMenu(this, taskID));
+			display.addComponent(component);
+			display.addComponent(new FooterMenu(this, taskID));
+			this.setContent(display);
+		}
+	}
+
+	public void showLogin() {
+		this.setContent(new LoginPage(this).getComponent());
+	}
+
+	private void showLogout() {
+		this.setContent(new LoggedoutComponent(this));
+		Helper.USERNAME_FIELD.clear();
+		Helper.PASSWORD_FIELD.clear();
+		notLoggedIn = true;
+
+		sess.close();
+	}
+
+	public void showSignUp() {
+		showPublicContent(new SignupComponent(this));
+	}
+
+	public void showPublicContent(Component component) {
+		this.setContent(component);
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)
@@ -218,12 +177,12 @@ public class MinorTaskUI extends UI {
 		User user = new User();
 		user.queryUserID().permittedValues(userID);
 		try {
-			User onlyRow = database.get(1l, user).get(0);
+			User onlyRow = Helper.database.get(1l, user).get(0);
 			username = onlyRow.getUsername();
 		} catch (SQLException ex) {
-			error("SQL ERROR", ex.getLocalizedMessage());
+			Helper.error("SQL ERROR", ex.getLocalizedMessage());
 		} catch (UnexpectedNumberOfRowsException ex) {
-			error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
+			Helper.error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
 		}
 
 	}

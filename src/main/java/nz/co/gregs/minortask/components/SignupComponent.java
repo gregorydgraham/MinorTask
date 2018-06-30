@@ -5,15 +5,17 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.data.Binder;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.Date;
+import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -21,29 +23,24 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class SignupComponent extends MinorTaskComponent {
+public class SignupComponent extends PublicComponent {
 
 	public final PasswordField REPEAT_PASSWORD_FIELD = new PasswordField("Repeat Password");
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
-	private final Binder<User> binder = new Binder<>();
 
 	public SignupComponent(MinorTaskUI loginUI) {
 		super(loginUI);
+		setCompositionRoot(getComponent());
 	}
-
-	@Override
-	public Component getComponent() {
+	
+	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 		
 		REPEAT_PASSWORD_FIELD.clear();
-		ui.USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		ui.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
+		Helper.USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		Helper.PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
-		
-//		newUser.setUsername(ui.USERNAME_FIELD.getValue());
-//		newUser.setPassword(ui.PASSWORD_FIELD.getValue());
-//		binder.setBean(newUser);
 		
 		Button signupButton = new Button("Request Sign Up");
 		setAsDefaultButton(signupButton);
@@ -52,19 +49,18 @@ public class SignupComponent extends MinorTaskComponent {
 		setEscapeButton(returnToLoginButton);
 
 		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
-		layout.addComponents(ui.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(ui.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
+		layout.addComponents(Helper.USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(Helper.PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
 		
 		return layout;
 	}
 
-	@Override
 	public void handleDefaultButton() {
-		final String username = ui.USERNAME_FIELD.getValue();
+		final String username = Helper.USERNAME_FIELD.getValue();
 		final String email = EMAIL_FIELD.getValue();
-		final String pass = ui.PASSWORD_FIELD.getValue();
+		final String pass = Helper.PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
-		ui.chat(username);
+		Helper.chat(username);
 		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
 		}if (username.contains(" ")) {
@@ -79,33 +75,46 @@ public class SignupComponent extends MinorTaskComponent {
 		User example = new User();
 		example.queryUsername().permittedValuesIgnoreCase(username);
 		try {
-			Long count = getDatabase().getDBTable(example).count();
+			Long count = Helper.getDatabase().getDBTable(example).count();
 			if (count > 0) {
-				ui.error("You're unique", "Sorry, that username is already taken, please try another one");
+				Helper.error("You're unique", "Sorry, that username is already taken, please try another one");
 			}
 		} catch (SQLException ex) {
-			ui.sqlerror(ex);
+			Helper.sqlerror(ex);
 		}
 		if (warningBuffer.length() > 0) {
-			ui.error("Secure password required", warningBuffer.toString());
+			Helper.error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
 				newUser.setUsername(username);
 				newUser.setPassword(pass);
 				newUser.setEmail(email);
 				newUser.setSignupDate(new Date());
-				getDatabase().insert(newUser);
-				ui.chat("Welcome to Minor Task @" + username);
-				new LoginPage(ui).handleDefaultButton();
+				Helper.getDatabase().insert(newUser);
+				Helper.chat("Welcome to Minor Task @" + username);
+				new LoginPage(minortask()).handleDefaultButton();
 			} catch (SQLException ex) {
-				ui.sqlerror(ex);
+				Helper.sqlerror(ex);
 			}
 		}
 	}
 
-	@Override
 	public void handleEscapeButton() {
-		new LoginPage(ui).show();
+		new LoginPage(minortask()).show();
 	}
 
+	public final void setAsDefaultButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		button.addClickListener((event) -> {
+			handleDefaultButton();
+		});
+	}
+
+	public final void setEscapeButton(Button button) {
+		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+		button.addClickListener((event) -> {
+			handleEscapeButton();
+		});
+	}
 }

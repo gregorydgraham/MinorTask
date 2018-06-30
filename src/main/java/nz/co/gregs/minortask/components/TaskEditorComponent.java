@@ -69,7 +69,7 @@ public class TaskEditorComponent extends CustomComponent {
 							createButton)
 			);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			ui.sqlerror(ex);
+			Helper.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -81,7 +81,7 @@ public class TaskEditorComponent extends CustomComponent {
 		final Project projectExample = new Project();
 		projectExample.taskID.permittedValues(taskID);
 		if (taskID != null) {
-			final Task fullTaskDetails = ui.getDatabase().getDBTable(projectExample).getOnlyRow();
+			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
 		startDate.setValue(startDefault);
@@ -102,10 +102,10 @@ public class TaskEditorComponent extends CustomComponent {
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
 
 		try {
-			ui.getDatabase().insert(task);
+			Helper.getDatabase().insert(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
-			ui.sqlerror(ex);
+			Helper.sqlerror(ex);
 		}
 		ui.showTask(null);
 	}
