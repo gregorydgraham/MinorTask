@@ -33,11 +33,8 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class TaskListComponent extends MinorTaskComponent {
 
-	private final TaskWithSortColumns example;
-
-	public TaskListComponent(MinorTaskUI ui, Long selectedTask, TaskWithSortColumns example) {
+	public TaskListComponent(MinorTaskUI ui, Long selectedTask) {
 		super(ui, selectedTask);
-		this.example = example;
 		this.setCompositionRoot(getComponent());
 	}
 
@@ -45,20 +42,23 @@ public class TaskListComponent extends MinorTaskComponent {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new ProjectPathNavigatorComponent(minortask(), getTaskID()));
+//			layout.addComponent(new ProjectPathNavigatorComponent(minortask(), getTaskID()));
+//
+//			Label actualTaskName = new Label("All");
+//			final Task actualTask = new Task();
+//			actualTask.userID.permittedValues(minortask().getUserID());
+//			actualTask.taskID.permittedValues(getTaskID());
+//			final DBDatabase database = Helper.getDatabase();
+//			if (getTaskID() != null) {
+//				final Task fullTaskDetails = database.getDBTable(actualTask).getOnlyRow();
+//				actualTaskName.setValue(fullTaskDetails.name.getValue());
+//			}
+//			layout.addComponent(actualTaskName);
 
-			Label actualTaskName = new Label("All");
-			final Task actualTask = new Task();
-			actualTask.userID.permittedValues(minortask().getUserID());
-			actualTask.taskID.permittedValues(getTaskID());
-			final DBDatabase database = Helper.getDatabase();
-			if (getTaskID() != null) {
-				final Task fullTaskDetails = database.getDBTable(actualTask).getOnlyRow();
-				actualTaskName.setValue(fullTaskDetails.name.getValue());
-			}
-			layout.addComponent(actualTaskName);
-
-			final DBTable<TaskWithSortColumns> dbTable = database.getDBTable(example);
+			TaskWithSortColumns example = new TaskWithSortColumns();
+			example.userID.permittedValues(minortask().getUserID());
+			example.projectID.permittedValues(getTaskID());
+			final DBTable<TaskWithSortColumns> dbTable =Helper.getDatabase().getDBTable(example);
 			dbTable.setSortOrder(
 					example.column(example.isOverdue),
 					example.column(example.hasStarted),
@@ -68,7 +68,7 @@ public class TaskListComponent extends MinorTaskComponent {
 			List<TaskWithSortColumns> tasks = dbTable.getAllRows();
 			final String caption = tasks.size() + " Tasks Found";
 			layout.addComponent(addTasksToLayout(caption, tasks));
-		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
+		} catch (SQLException ex) {
 			Helper.sqlerror(ex);
 		}
 		return layout;
@@ -92,25 +92,25 @@ public class TaskListComponent extends MinorTaskComponent {
 			summary.setWidth(10, Sizeable.Unit.CM);
 			summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-			final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), minortask()));
-			final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), minortask()));
-			final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), minortask()));
+//			final TextField startdate = new TextField("Start", Helper.asDateString(task.startDate.getValue(), minortask()));
+//			final TextField readyDate = new TextField("Ready", Helper.asDateString(task.preferredDate.getValue(), minortask()));
+//			final TextField deadline = new TextField("Deadline", Helper.asDateString(task.finalDate.getValue(), minortask()));
 
-			startdate.setReadOnly(true);
-			startdate.setWidth(8, Sizeable.Unit.EM);
-			readyDate.setReadOnly(true);
-			readyDate.setWidth(8, Sizeable.Unit.EM);
-			deadline.setReadOnly(true);
-			deadline.setWidth(8, Sizeable.Unit.EM);
+//			startdate.setReadOnly(true);
+//			startdate.setWidth(8, Sizeable.Unit.EM);
+//			readyDate.setReadOnly(true);
+//			readyDate.setWidth(8, Sizeable.Unit.EM);
+//			deadline.setReadOnly(true);
+//			deadline.setWidth(8, Sizeable.Unit.EM);
 
 			summary.addLayoutClickListener(taskClickListener);
-			startdate.addFocusListener(taskClickListener);
-			readyDate.addFocusListener(taskClickListener);
-			deadline.addFocusListener(taskClickListener);
+//			startdate.addFocusListener(taskClickListener);
+//			readyDate.addFocusListener(taskClickListener);
+//			deadline.addFocusListener(taskClickListener);
 			gridlayout.addComponent(summary);
-			gridlayout.addComponent(startdate);
-			gridlayout.addComponent(readyDate);
-			gridlayout.addComponent(deadline);
+//			gridlayout.addComponent(startdate);
+//			gridlayout.addComponent(readyDate);
+//			gridlayout.addComponent(deadline);
 			gridlayout.newLine();
 		}
 		return gridlayout;

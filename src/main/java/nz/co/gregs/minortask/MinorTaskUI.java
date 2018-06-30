@@ -15,6 +15,7 @@ import nz.co.gregs.minortask.components.BannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.SignupComponent;
 import nz.co.gregs.minortask.components.TaskCreationComponent;
+import nz.co.gregs.minortask.components.TaskEditorComponent;
 import nz.co.gregs.minortask.components.TaskListComponent;
 import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.*;
@@ -87,12 +88,9 @@ public class MinorTaskUI extends UI {
 	}
 
 	public void showTask(Long taskID) {
-		TaskWithSortColumns example = new TaskWithSortColumns();
-		example.userID.permittedValues(getUserID());
-		example.projectID.permittedValues(taskID);
-		TaskListComponent taskListComponent = new TaskListComponent(this, taskID, example);
-
-		showAuthorisedContent(taskID, taskListComponent);
+//		TaskListComponent taskListComponent = new TaskListComponent(this, taskID);
+		TaskEditorComponent taskComponent = new TaskEditorComponent(this, taskID);
+		showAuthorisedContent(taskID, taskComponent);
 	}
 
 	public void showTaskCreation(Long taskID) {

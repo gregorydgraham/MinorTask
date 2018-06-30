@@ -39,13 +39,17 @@ public class TaskEditorComponent extends MinorTaskComponent {
 		super(ui, currentTask);
 		setCompositionRoot(getComponent());
 	}
-	
+
 	public Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			Task task = Helper.getTask(getTaskID());
-			layout.addComponent(new Label("Current Project To Create Within: " + task.name));
+			String projectName = "All";
+			if (getTaskID() != null) {
+				Task task = Helper.getTask(getTaskID());
+				projectName = task.name.getValue();
+			}
+			layout.addComponent(new Label("Adding To " + projectName));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
@@ -57,13 +61,14 @@ public class TaskEditorComponent extends MinorTaskComponent {
 			setFieldValues();
 
 			layout.addComponents(
+					new ProjectPathNavigatorComponent(minortask(), getTaskID()),
 					name,
 					description,
 					new HorizontalLayout(
 							startDate,
 							preferredEndDate,
 							deadlineDate),
-					//				notes,
+					new TaskListComponent(minortask(), getTaskID()),
 					new HorizontalLayout(
 							cancelButton,
 							createButton)
