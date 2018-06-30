@@ -64,7 +64,7 @@ public class SignupComponent extends MinorTaskComponent {
 		final String pass = ui.PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
-		chat(username);
+		ui.chat(username);
 		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
 		}if (username.contains(" ")) {
@@ -81,13 +81,13 @@ public class SignupComponent extends MinorTaskComponent {
 		try {
 			Long count = getDatabase().getDBTable(example).count();
 			if (count > 0) {
-				error("You're unique", "Sorry, that username is already taken, please try another one");
+				ui.error("You're unique", "Sorry, that username is already taken, please try another one");
 			}
 		} catch (SQLException ex) {
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		if (warningBuffer.length() > 0) {
-			error("Secure password required", warningBuffer.toString());
+			ui.error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
 				newUser.setUsername(username);
@@ -95,10 +95,10 @@ public class SignupComponent extends MinorTaskComponent {
 				newUser.setEmail(email);
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
-				chat("Welcome to Minor Task @" + username);
+				ui.chat("Welcome to Minor Task @" + username);
 				new LoginComponent(ui).handleDefaultButton();
 			} catch (SQLException ex) {
-				sqlerror(ex);
+				ui.sqlerror(ex);
 			}
 		}
 	}

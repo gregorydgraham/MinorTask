@@ -126,12 +126,32 @@ public class MinorTaskUI extends UI {
 		this.userID = userID;
 	}
 
-//	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
-//		TaskWithSortColumns example = new TaskWithSortColumns();
-//		example.userID.permittedValues(getUserID());
-//		example.projectID.permittedValues(taskID);
-//		return example;
-//	}
+	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
+		TaskWithSortColumns example = new TaskWithSortColumns();
+		example.userID.permittedValues(getUserID());
+		example.projectID.permittedValues(taskID);
+		return example;
+	}
+
+	public final void sqlerror(Exception exp) {
+		Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, exp);
+		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
+		note.show(Page.getCurrent());
+	}
+
+	public final void chat(String string) {
+		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+	}
+
+	public final void warning(final String topic, final String warning) {
+		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
+		note.show(Page.getCurrent());
+	}
+
+	public final void error(final String topic, final String error) {
+		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
+		note.show(Page.getCurrent());
+	}
 
 	@WebServlet(urlPatterns = "/*", name = "MinorTaskUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MinorTaskUI.class, productionMode = false)
@@ -163,9 +183,9 @@ public class MinorTaskUI extends UI {
 			User onlyRow = database.get(1l, user).get(0);
 			username = onlyRow.getUsername();
 		} catch (SQLException ex) {
-			currentPage.error("SQL ERROR", ex.getLocalizedMessage());
+			error("SQL ERROR", ex.getLocalizedMessage());
 		} catch (UnexpectedNumberOfRowsException ex) {
-			currentPage.error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
+			error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
 		}
 
 	}

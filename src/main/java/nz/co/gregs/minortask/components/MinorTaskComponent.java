@@ -35,26 +35,6 @@ public abstract class MinorTaskComponent implements Serializable {
 	
 	public abstract Component getComponent();
 
-	public final void chat(String string) {
-		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
-	}
-
-	public final void warning(final String topic, final String warning) {
-		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
-	public final void error(final String topic, final String error) {
-		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
-	public final void sqlerror(Exception exp) {
-		Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, exp);
-		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
-	}
-
 	public final void setAsDefaultButton(Button button) {
 		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 		button.addStyleName(ValoTheme.BUTTON_PRIMARY);

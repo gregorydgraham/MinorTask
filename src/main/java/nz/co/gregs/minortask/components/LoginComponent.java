@@ -73,10 +73,10 @@ public class LoginComponent extends MinorTaskComponent {
 						new TasksComponent(ui).show();
 						break;
 					case 0:
-						warning("Login Error", "Name and/or password do not match any known combination");
+						ui.warning("Login Error", "Name and/or password do not match any known combination");
 						break;
 					default:
-						warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+						ui.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;
 				}
 			} catch (SQLException ex) {
@@ -84,7 +84,7 @@ public class LoginComponent extends MinorTaskComponent {
 			}
 		}
 		if (warningBuffer.length() > 0) {
-			warning("Login error", warningBuffer.toString());
+			ui.warning("Login error", warningBuffer.toString());
 		}
 	}
 

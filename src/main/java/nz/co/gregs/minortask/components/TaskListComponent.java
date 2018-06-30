@@ -43,7 +43,7 @@ public class TaskListComponent extends AuthorisedComponent {
 
 		VerticalLayout layout = new VerticalLayout();
 		try {
-			layout.addComponent(new ProjectPathNavigatorComponent(ui, currentTaskID).getAuthorisedComponent());
+			layout.addComponent(new ProjectPathNavigatorComponent(ui, currentTaskID).getComponent());
 
 			Label actualTaskName = new Label("All");
 			final Task actualTask = new Task();
@@ -70,7 +70,7 @@ public class TaskListComponent extends AuthorisedComponent {
 			final String caption = tasks.size() + " Tasks Found";
 			layout.addComponent(addTasksToLayout(caption, tasks));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -146,7 +146,7 @@ public class TaskListComponent extends AuthorisedComponent {
 		}
 
 		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
-			chat("Switching to " + task.name.getValue());
+			ui.chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
 				TaskWithSortColumns example = new TaskWithSortColumns();

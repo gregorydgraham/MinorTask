@@ -70,7 +70,7 @@ public class TaskCreationComponent extends AuthorisedComponent {
 							createButton)
 			);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -107,7 +107,7 @@ public class TaskCreationComponent extends AuthorisedComponent {
 			getDatabase().insert(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		new TasksComponent(ui).show();
 	}

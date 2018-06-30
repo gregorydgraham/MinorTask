@@ -60,7 +60,7 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 			database.update(user);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			Logger.getLogger(AuthorisedComponent.class.getName()).log(Level.SEVERE, null, ex);
-			sqlerror(ex);
+			ui.sqlerror(ex);
 			return false;
 		}
 		return !notLoggedIn();
@@ -97,7 +97,7 @@ public abstract class AuthorisedComponent extends MinorTaskComponent {
 			User user = userTable.getOnlyRow();
 			banner.addComponent(new Label("Welcome to MinorTask @" + user.getUsername()));
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		banner.addComponent(ui.LOGOUT_BUTTON);
 		return banner;

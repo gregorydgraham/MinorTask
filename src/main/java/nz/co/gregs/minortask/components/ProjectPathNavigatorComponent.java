@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import java.sql.SQLException;
@@ -23,21 +24,24 @@ import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
  *
  * @author gregorygraham
  */
-public class ProjectPathNavigatorComponent extends AuthorisedComponent {
+public class ProjectPathNavigatorComponent extends CustomComponent {
+
+	private final MinorTaskUI ui;
+	private final Long currentTaskID;
 
 	public ProjectPathNavigatorComponent(MinorTaskUI ui, Long currentTask) {
-		super(ui, currentTask);
-
+		this.ui = ui;
+		this.currentTaskID = currentTask;
+		setCompositionRoot(getComponent());
 	}
 
-	@Override
-	public Component getAuthorisedComponent() {
+	public final Component getComponent() {
 		try {
 			HorizontalLayout hLayout = new HorizontalLayout();
 			hLayout.addComponentAsFirst(getButtonForTaskID(null));
 			final Task task = new Task();
 			task.taskID.permittedValues(this.currentTaskID);
-			DBQuery query = getDatabase().getDBQuery(task);
+			DBQuery query = ui.getDatabase().getDBQuery(task);
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
 			for (Task ancestor : ancestors) {
@@ -47,7 +51,7 @@ public class ProjectPathNavigatorComponent extends AuthorisedComponent {
 			return hLayout;
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPathNavigatorComponent.class.getName()).log(Level.SEVERE, null, ex);
-			sqlerror(ex);
+			ui.sqlerror(ex);
 		}
 		return new Label("Current Project: " + currentTaskID);
 	}
@@ -56,7 +60,7 @@ public class ProjectPathNavigatorComponent extends AuthorisedComponent {
 		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
 			final Long taskID = task == null ? null : task.taskID.getValue();
 			TaskWithSortColumns example = new TaskWithSortColumns();
-			example.userID.permittedValues(getUserID());
+			example.userID.permittedValues(ui.getUserID());
 			example.projectID.permittedValues(taskID);
 			new TaskListComponent(ui, taskID, example).show();
 		});
