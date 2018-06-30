@@ -112,7 +112,7 @@ public class TaskCreationComponent extends MinorTaskComponent {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		minortask().showTask();
+		minortask().showTask(task.taskID.getValue());
 	}
 
 	public void handleEscapeButton() {
