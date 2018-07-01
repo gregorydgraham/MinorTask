@@ -58,6 +58,7 @@ public class TaskCreator extends MinorTaskComponent {
 			setAsDefaultButton(createButton);
 
 			name.setMaxLength(40);
+			description.setWidth(100, Unit.PERCENTAGE);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 
@@ -67,20 +68,22 @@ public class TaskCreator extends MinorTaskComponent {
 					name,
 					description);
 			layout.addComponent(details);
-			VerticalLayout dates = new VerticalLayout(
-					new VerticalLayout(
+			HorizontalLayout dates = new HorizontalLayout(
 							startDate,
 							preferredEndDate,
-							deadlineDate)
+							deadlineDate
 			);
 			dates.setWidthUndefined();
-			VerticalLayout subtaskLists = new VerticalLayout(
-					subtasks,
-					completedTasks);
-			subtaskLists.setWidthUndefined();
-			HorizontalLayout horizontalSplitPanel = new HorizontalLayout(subtaskLists, dates);
-			horizontalSplitPanel.setWidthUndefined();
-			layout.addComponent(horizontalSplitPanel);
+			layout.addComponent(dates);
+			layout.addComponent(subtasks);
+			layout.addComponent(completedTasks);
+//			VerticalLayout subtaskLists = new VerticalLayout(
+//					subtasks,
+//					completedTasks);
+//			subtaskLists.setWidthUndefined();
+//			HorizontalLayout horizontalSplitPanel = new HorizontalLayout(subtaskLists, dates);
+//			horizontalSplitPanel.setWidthUndefined();
+//			layout.addComponent(horizontalSplitPanel);
 			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,

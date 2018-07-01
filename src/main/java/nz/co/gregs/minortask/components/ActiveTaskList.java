@@ -19,6 +19,7 @@ public class ActiveTaskList extends TaskListComponent {
 		super(ui, selectedTask);
 	}
 
+	@Override
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
@@ -34,6 +35,7 @@ public class ActiveTaskList extends TaskListComponent {
 		return tasks;
 	}
 
+	@Override
 	protected String getTaskDescriptor() {
 		return "Active";
 	}
