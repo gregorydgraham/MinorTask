@@ -17,7 +17,6 @@ import nz.co.gregs.minortask.components.SignupComponent;
 import nz.co.gregs.minortask.components.TaskCreationComponent;
 import nz.co.gregs.minortask.components.TaskEditorComponent;
 import nz.co.gregs.minortask.components.TaskListComponent;
-import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.*;
 
 /**
@@ -68,8 +67,8 @@ public class MinorTaskUI extends UI {
 		showTask(null);
 	}
 
-	public TaskWithSortColumns getTaskExampleForTaskID(Long taskID) {
-		TaskWithSortColumns example = new TaskWithSortColumns();
+	public Task.WithSortColumns getTaskExampleForTaskID(Long taskID) {
+		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(getUserID());
 		example.projectID.permittedValues(taskID);
 		return example;

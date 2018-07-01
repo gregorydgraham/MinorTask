@@ -19,7 +19,6 @@ import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
-import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 
 /**
  *

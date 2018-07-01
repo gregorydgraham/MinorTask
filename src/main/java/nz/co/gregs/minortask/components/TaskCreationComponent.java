@@ -26,6 +26,8 @@ public class TaskCreationComponent extends MinorTaskComponent {
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
 	TextField project = new TextField("Project");
+	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
+	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
@@ -68,7 +70,9 @@ public class TaskCreationComponent extends MinorTaskComponent {
 							startDate,
 							preferredEndDate,
 							deadlineDate),
+					subtasks,
 					//				notes,
+					completedTasks,
 					new HorizontalLayout(
 							cancelButton,
 							createButton)
@@ -83,7 +87,7 @@ public class TaskCreationComponent extends MinorTaskComponent {
 		final LocalDate startDefault = LocalDate.now().plusDays(1);
 		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
 		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
-		final Project projectExample = new Project();
+		final Task.Project projectExample = new Task.Project();
 		projectExample.taskID.permittedValues(getTaskID());
 		if (getTaskID() != null) {
 			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();

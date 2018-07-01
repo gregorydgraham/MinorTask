@@ -18,7 +18,6 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Helper;
 import nz.co.gregs.minortask.MinorTaskUI;
-import nz.co.gregs.minortask.datamodel.TaskWithSortColumns;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -46,7 +45,9 @@ public class BannerMenu extends MinorTaskComponent {
 		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 
 		final Button createTaskButton = new Button("New");
-		setAsDefaultButton(createTaskButton);
+		createTaskButton.addClickListener((event) -> {
+			this.handleDefaultButton();
+		});
 
 		final Button showProjects = new Button("Projects");
 		showProjects.addClickListener((event) -> {

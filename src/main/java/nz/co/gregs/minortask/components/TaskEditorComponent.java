@@ -9,7 +9,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
@@ -21,116 +20,51 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskEditorComponent extends MinorTaskComponent {
-
-	TextField name = new TextField("Name");
-	TextField description = new TextField("Description");
-	TextField project = new TextField("Project");
-	TextField notes = new TextField("Notes");
-	DateField startDate = new DateField("Start");
-	DateField preferredEndDate = new DateField("End");
-	DateField deadlineDate = new DateField("Deadline");
-	Button createButton = new Button("Create");
-	Button cancelButton = new Button("Cancel");
-//	private MinorTaskUI ui;
-//	private Long taskID;
+public class TaskEditorComponent extends TaskCreationComponent {
 
 	public TaskEditorComponent(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
-		setCompositionRoot(getComponent());
+		setCompositionRoot(currentTask != null ? getComponent() : new TaskRootComponent(ui, currentTask));
 	}
 
-	public Component getComponent() {
-
-		VerticalLayout layout = new VerticalLayout();
-		try {
-			String projectName = "All";
-			if (getTaskID() != null) {
-				Task task = Helper.getTask(getTaskID());
-				projectName = task.name.getValue();
-			}
-			layout.addComponent(new Label("Adding To " + projectName));
-
-			setEscapeButton(cancelButton);
-			setAsDefaultButton(createButton);
-
-			name.setMaxLength(40);
-			project.setCaption("Part Of:");
-			project.setReadOnly(true);
-
-			setFieldValues();
-
-			layout.addComponents(
-					new ProjectPathNavigatorComponent(minortask(), getTaskID()),
-					name,
-					description,
-					new HorizontalLayout(
-							startDate,
-							preferredEndDate,
-							deadlineDate),
-					new TaskListComponent(minortask(), getTaskID()),
-					new HorizontalLayout(
-							cancelButton,
-							createButton)
-			);
-		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			Helper.sqlerror(ex);
-		}
-		return layout;
-	}
-
+	@Override
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
-		final LocalDate startDefault = LocalDate.now().plusDays(1);
-		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
-		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
-		final Project projectExample = new Project();
-		projectExample.taskID.permittedValues(getTaskID());
-		if (getTaskID() != null) {
-			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();
-			project.setValue(fullTaskDetails.name.getValue());
+		final Long taskID = getTaskID();
+		if (taskID != null) {
+			Task task = Helper.getTask(taskID);
+			name.setValue(task.name.toString());
+			description.setValue(task.description.toString());
+			startDate.setValue(Helper.asLocalDate(task.startDate.dateValue()));
+			preferredEndDate.setValue(Helper.asLocalDate(task.preferredDate.dateValue()));
+			deadlineDate.setValue(Helper.asLocalDate(task.finalDate.dateValue()));
+			
+			createButton.setCaption("Save");
 		}
-		startDate.setValue(startDefault);
-		preferredEndDate.setValue(preferredDefault);
-		deadlineDate.setValue(deadlineDefault);
 	}
 
+	@Override
 	public void handleDefaultButton() {
-		Task task = new Task();
+		Task task = Helper.getTask(getTaskID());
 
+		Helper.chat("TASKID = "+task.taskID.getValue());
 		task.userID.setValue(minortask().getUserID());
-		task.projectID.setValue(getTaskID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
-//		task.notes.setValue(notes.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
 		task.preferredDate.setValue(Helper.asDate(preferredEndDate.getValue()));
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
 
 		try {
-			Helper.getDatabase().insert(task);
+			Helper.getDatabase().update(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		minortask().showTask(null);
+		minortask().showTask(getTaskID());
 	}
 
+	@Override
 	public void handleEscapeButton() {
-		minortask().showTask();
-	}
-
-	public final void setAsDefaultButton(Button button) {
-		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		button.addClickListener((event) -> {
-			handleDefaultButton();
-		});
-	}
-
-	public final void setEscapeButton(Button button) {
-		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
-		button.addClickListener((event) -> {
-			handleEscapeButton();
-		});
+		minortask().showTask(getTaskID());
 	}
 }
