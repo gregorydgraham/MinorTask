@@ -11,6 +11,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -42,6 +43,10 @@ public class LoginComponent extends PublicComponent {
 
 	private Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
+		final Label welcomeLabel = new Label("Welcome To MinorTask");
+		welcomeLabel.setWidthUndefined();
+		welcomeLabel.addStyleName("huge");
+		loginPanel.addComponent(welcomeLabel);
 		loginPanel.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
 		Button loginButton = new Button("Login");
