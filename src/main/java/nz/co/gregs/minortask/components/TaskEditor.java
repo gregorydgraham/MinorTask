@@ -5,9 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,9 +17,9 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskEditorComponent extends TaskCreationComponent {
+public class TaskEditor extends TaskCreator {
 
-	public TaskEditorComponent(MinorTaskUI ui, Long currentTask) {
+	public TaskEditor(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
 		setCompositionRoot(currentTask != null ? getComponent() : new TaskRootComponent(ui, currentTask));
 	}
@@ -57,7 +54,7 @@ public class TaskEditorComponent extends TaskCreationComponent {
 		try {
 			Helper.getDatabase().update(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
 		minortask().showTask(getTaskID());

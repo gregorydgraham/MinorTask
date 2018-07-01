@@ -19,7 +19,7 @@ public class TaskRootComponent extends MinorTaskComponent {
 
 	public TaskRootComponent(MinorTaskUI ui, Long taskID) {
 		super(ui, taskID);
-		setCompositionRoot(taskID==null?getComponent():new TaskEditorComponent(ui, taskID));
+		setCompositionRoot(taskID==null?getComponent():new TaskEditor(ui, taskID));
 	}
 
 	private Component getComponent() {
@@ -31,7 +31,7 @@ public class TaskRootComponent extends MinorTaskComponent {
 		}
 
 		layout.addComponents(
-				new ProjectPathNavigatorComponent(minortask(), getTaskID()),
+				new ProjectPathNavigator(minortask(), getTaskID()),
 				new ActiveTaskList(minortask(), getTaskID()),
 				new CompletedTaskList(minortask(), getTaskID())
 		);

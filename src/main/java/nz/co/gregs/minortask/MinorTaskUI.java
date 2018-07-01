@@ -14,8 +14,8 @@ import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.components.BannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.SignupComponent;
-import nz.co.gregs.minortask.components.TaskCreationComponent;
-import nz.co.gregs.minortask.components.TaskEditorComponent;
+import nz.co.gregs.minortask.components.TaskCreator;
+import nz.co.gregs.minortask.components.TaskEditor;
 import nz.co.gregs.minortask.components.TaskListComponent;
 import nz.co.gregs.minortask.datamodel.*;
 
@@ -88,12 +88,12 @@ public class MinorTaskUI extends UI {
 
 	public void showTask(Long taskID) {
 //		TaskListComponent taskListComponent = new TaskListComponent(this, taskID);
-		TaskEditorComponent taskComponent = new TaskEditorComponent(this, taskID);
+		TaskEditor taskComponent = new TaskEditor(this, taskID);
 		showAuthorisedContent(taskID, taskComponent);
 	}
 
 	public void showTaskCreation(Long taskID) {
-		showAuthorisedContent(taskID, new TaskCreationComponent(this, taskID));
+		showAuthorisedContent(taskID, new TaskCreator(this, taskID));
 
 	}
 

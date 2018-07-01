@@ -24,11 +24,11 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class ProjectPathNavigatorComponent extends MinorTaskComponent {
+public class ProjectPathNavigator extends MinorTaskComponent {
 
 //	private final MinorTaskUI ui;
 //	private final Long currentTaskID;
-	public ProjectPathNavigatorComponent(MinorTaskUI minortask, Long taskID) {
+	public ProjectPathNavigator(MinorTaskUI minortask, Long taskID) {
 		super(minortask, taskID);
 		setCompositionRoot(getComponent());
 	}
@@ -48,7 +48,7 @@ public class ProjectPathNavigatorComponent extends MinorTaskComponent {
 			}
 			return hLayout;
 		} catch (SQLException ex) {
-			Logger.getLogger(ProjectPathNavigatorComponent.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(ProjectPathNavigator.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
 		return new Label("Current Project: " + getTaskID());

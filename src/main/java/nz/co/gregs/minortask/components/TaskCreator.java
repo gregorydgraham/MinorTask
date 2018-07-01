@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskCreationComponent extends MinorTaskComponent {
+public class TaskCreator extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -37,7 +37,7 @@ public class TaskCreationComponent extends MinorTaskComponent {
 //	private final MinorTaskUI ui;
 //	private final Long taskID;
 
-	public TaskCreationComponent(MinorTaskUI ui, Long currentTask) {
+	public TaskCreator(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
 		this.setCompositionRoot(getComponent());
 	}
@@ -45,14 +45,14 @@ public class TaskCreationComponent extends MinorTaskComponent {
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(new ProjectPathNavigatorComponent(minortask(), getTaskID()));
+		layout.addComponent(new ProjectPathNavigator(minortask(), getTaskID()));
 		try {
 			String projectName = "All";
 			if (getTaskID() != null) {
 				Task task = Helper.getTask(getTaskID());
 				projectName = task.name.getValue();
 			}
-			layout.addComponent(new Label("Adding To " + projectName));
+//			layout.addComponent(new Label("Adding To " + projectName));
 
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
@@ -63,20 +63,28 @@ public class TaskCreationComponent extends MinorTaskComponent {
 
 			setFieldValues();
 
-			layout.addComponents(
+			HorizontalLayout details = new HorizontalLayout(
 					name,
-					description,
-					new HorizontalLayout(
+					description);
+			layout.addComponent(details);
+			VerticalLayout dates = new VerticalLayout(
+					new VerticalLayout(
 							startDate,
 							preferredEndDate,
-							deadlineDate),
+							deadlineDate)
+			);
+			dates.setWidthUndefined();
+			VerticalLayout subtaskLists = new VerticalLayout(
 					subtasks,
-					//				notes,
-					completedTasks,
+					completedTasks);
+			subtaskLists.setWidthUndefined();
+			HorizontalLayout horizontalSplitPanel = new HorizontalLayout(subtaskLists, dates);
+			horizontalSplitPanel.setWidthUndefined();
+			layout.addComponent(horizontalSplitPanel);
+			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,
-							createButton)
-			);
+							createButton));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			Helper.sqlerror(ex);
 		}
@@ -113,7 +121,7 @@ public class TaskCreationComponent extends MinorTaskComponent {
 		try {
 			Helper.getDatabase().insert(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(TaskCreationComponent.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
 		minortask().showTask(task.taskID.getValue());
