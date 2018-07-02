@@ -131,8 +131,6 @@ public class TaskEditor extends MinorTaskComponent {
 				completedDate.setVisible(false);
 			} else {
 				completedDate.setValue(Helper.asLocalDate(completed));
-//				this.setReadOnly(true);
-//				reopenButton.setEnabled(true);
 			}
 
 			final Date now = new Date();
@@ -158,11 +156,11 @@ public class TaskEditor extends MinorTaskComponent {
 		}
 	}
 
-	public void handleDefaultButton() {
+	public void saveTask() {
 		Task task = Helper.getTask(getTaskID());
 
 		Helper.chat("TASKID = " + task.taskID.getValue());
-		task.userID.setValue(minortask().getUserID());
+//		task.userID.setValue(minortask().getUserID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
@@ -186,7 +184,7 @@ public class TaskEditor extends MinorTaskComponent {
 		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		button.addClickListener((event) -> {
-			handleDefaultButton();
+			saveTask();
 		});
 	}
 
@@ -242,13 +240,6 @@ public class TaskEditor extends MinorTaskComponent {
 		@Override
 		public void buttonClick(Button.ClickEvent event) {
 			Task task = completeTask(taskID);
-//			Task task = Helper.getTask(taskID);
-//			task.completionDate.setValue(new Date());
-//			try {
-//				Helper.getDatabase().update(task);
-//			} catch (SQLException ex) {
-//				Helper.sqlerror(ex);
-//			}
 			if (task == null) {
 				minortask.showTask(null);
 			} else {
@@ -260,7 +251,7 @@ public class TaskEditor extends MinorTaskComponent {
 			if (taskID != null) {
 				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
 				for (Task subtask : subtasks) {
-					Helper.warning("Task", subtask.name.toString());
+//					Helper.warning("Task", subtask.name.toString());
 					completeTask(subtask.taskID.getValue());
 				}
 				Task task = Helper.getTask(taskID);
