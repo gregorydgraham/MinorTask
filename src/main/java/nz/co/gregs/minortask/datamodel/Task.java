@@ -56,6 +56,9 @@ public class Task extends DBRow {
 
 	@DBColumn
 	public final DBStringEnum<Task.Status> status = new DBStringEnum<Task.Status>();
+	
+	@DBColumn
+	public final DBDate completionDate = new DBDate();
 
 //	@DBColumn
 //	public DBLargeText notes = new DBLargeText();
@@ -91,7 +94,7 @@ public class Task extends DBRow {
 		CREATED("Active"),
 		COMPLETED("Completed");
 		
-		private String niceName;
+		private final String niceName;
 		
 		Status(String niceName){
 			this.niceName = niceName;
@@ -102,6 +105,7 @@ public class Task extends DBRow {
 			return name();
 		}
 		
+		@Override
 		public String toString(){
 			return niceName;
 		}
