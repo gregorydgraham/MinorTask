@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import java.util.List;
@@ -32,8 +33,13 @@ public abstract class TaskListComponent extends MinorTaskComponent {
 		try {
 
 			List<Task.WithSortColumns> tasks = getTasksToList();
+			
 			final String caption = tasks.size() + " " + getTaskDescriptor() + " Tasks";
 			layout.setCaption(caption);
+			final Label label = new Label(caption);
+			label.addStyleName("small");
+			layout.addComponent(label);
+			
 			for (Task task : tasks) {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}

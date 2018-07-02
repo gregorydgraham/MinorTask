@@ -10,11 +10,10 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.logging.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.*;
 import nz.co.gregs.minortask.datamodel.*;
 
 /**
@@ -27,6 +26,7 @@ public class TaskCreator extends MinorTaskComponent {
 	TextField description = new TextField("Description");
 	TextField project = new TextField("Project");
 	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
+	Button completedButton = new Button("Complete This Task");
 	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
@@ -53,6 +53,9 @@ public class TaskCreator extends MinorTaskComponent {
 			description.setWidthUndefined();
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
+			
+			completedButton.addStyleName("danger");
+			completedButton.addClickListener(new CompleteTaskListener(getTaskID()));
 
 			setFieldValues();
 
@@ -69,6 +72,7 @@ public class TaskCreator extends MinorTaskComponent {
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
+			layout.addComponent(completedButton);
 			layout.addComponent(completedTasks);
 			layout.addComponent(
 					new HorizontalLayout(
@@ -132,6 +136,40 @@ public class TaskCreator extends MinorTaskComponent {
 		button.addClickListener((event) -> {
 			handleEscapeButton();
 		});
+	}
+
+	private static class CompleteTaskListener implements Button.ClickListener {
+
+		private final Long taskID;
+
+		public CompleteTaskListener(Long taskID) {
+			this.taskID = taskID;
+		}
+
+		@Override
+		public void buttonClick(Button.ClickEvent event) {
+			completeTask(taskID);
+			Task task = Helper.getTask(taskID);
+			task.status.setValue(Task.Status.COMPLETED);
+			try {
+				Helper.getDatabase().update(task);
+			} catch (SQLException ex) {
+				Helper.sqlerror(ex);
+			}
+			
+		}
+		
+		private void completeTask(Long taskID){
+			if (taskID!=null){
+				List<Task> subtasks = Helper.getSubTasks(taskID);
+				for (Task subtask : subtasks){
+					completeTask(subtask.taskID.getValue());
+				}
+				Task task = Helper.getTask(taskID);
+				task.status.setValue(Task.Status.COMPLETED);
+				task.completionDate.setValue(new Date());
+			}
+		}
 	}
 
 }

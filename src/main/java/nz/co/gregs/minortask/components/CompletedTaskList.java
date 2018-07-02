@@ -30,7 +30,9 @@ public class CompletedTaskList extends TaskListComponent {
 		example.projectID.permittedValues(getTaskID());
 		example.status.permittedValues(Task.Status.COMPLETED);
 		final DBTable<Task.WithSortColumns> dbTable = Helper.getDatabase().getDBTable(example);
+		example.completionDate.setSortOrderDescending();
 		dbTable.setSortOrder(
+				example.column(example.completionDate),
 				example.column(example.name),
 				example.column(example.taskID)
 		);

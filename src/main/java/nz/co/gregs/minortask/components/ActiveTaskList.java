@@ -24,6 +24,7 @@ public class ActiveTaskList extends TaskListComponent {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(getTaskID());
+		example.status.excludedValues(Task.Status.COMPLETED);
 		final DBTable<Task.WithSortColumns> dbTable =Helper.getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
 				example.column(example.isOverdue),

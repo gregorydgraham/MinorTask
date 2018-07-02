@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
@@ -96,6 +98,20 @@ public class Helper {
 			sqlerror(ex);
 		} 
 		return returnTask;
+	}
+
+	public static List<Task> getSubTasks(Long taskID) {
+		ArrayList<Task> arrayList = new ArrayList<Task>();
+		final Task example = new Task();
+		example.projectID.permittedValues(taskID);
+		try {
+			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
+			return allRows;
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		
+		return arrayList;
 	}
 
 	private Helper() {
