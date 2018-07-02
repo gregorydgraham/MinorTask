@@ -9,7 +9,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
@@ -38,7 +37,7 @@ public class BannerMenu extends MinorTaskComponent {
 		this.setHeightUndefined();
 	}
 
-	protected Component getComponent() {
+	final protected Component getComponent() {
 		HorizontalLayout banner = new HorizontalLayout();
 		banner.setWidth(100, Unit.PERCENTAGE);
 		banner.setHeightUndefined();

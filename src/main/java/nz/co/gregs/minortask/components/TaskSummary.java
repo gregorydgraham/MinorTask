@@ -7,11 +7,9 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.LayoutEvents;
-import com.vaadin.server.Sizeable;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import com.vaadin.icons.VaadinIcons;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -27,18 +25,31 @@ public class TaskSummary extends MinorTaskComponent {
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());
 
-		name.setWidth(10, Sizeable.Unit.CM);
-		desc.setWidth(20, Sizeable.Unit.CM);
-		desc.setHeight(3, Sizeable.Unit.EM);
+		name.setWidthUndefined();
+		desc.setWidthUndefined();
 		desc.addStyleName("tiny");
 		
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
-		summary.setWidth(10, Sizeable.Unit.CM);
+		summary.setWidth(100,Unit.PERCENTAGE);
 		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
-		summary.addLayoutClickListener(new TaskClickListener(task));
-		summary.addStyleName("card");
-		this.setCompositionRoot(summary);
+		
+		Label arrow = new Label("");
+		arrow.setIcon(VaadinIcons.ANGLE_RIGHT);
+		arrow.setSizeUndefined();
+		arrow.setHeight(100, Unit.PERCENTAGE);
+		
+		final HorizontalLayout hlayout= new HorizontalLayout();
+		hlayout.setSpacing(false);
+		hlayout.setWidth(100, Unit.PERCENTAGE);
+		hlayout.addStyleName("card");
+		
+		hlayout.addComponent(summary);
+		hlayout.addComponent(arrow);
+		hlayout.setComponentAlignment(arrow, Alignment.MIDDLE_RIGHT);
+		
+		hlayout.addLayoutClickListener(new TaskClickListener(task));
+		this.setCompositionRoot(hlayout);
 	}
 
 	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener {
@@ -60,7 +71,6 @@ public class TaskSummary extends MinorTaskComponent {
 		}
 
 		public void handleEvent(LayoutEvents.LayoutClickEvent event) {
-			//Helper.chat("Switching to " + task.name.getValue());
 			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
 				final Long taskID = task.taskID.getValue();
 				minortask().showTask(taskID);

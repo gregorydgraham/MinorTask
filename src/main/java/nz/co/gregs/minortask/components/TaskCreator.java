@@ -34,8 +34,6 @@ public class TaskCreator extends MinorTaskComponent {
 	DateField deadlineDate = new DateField("Deadline");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
-//	private final MinorTaskUI ui;
-//	private final Long taskID;
 
 	public TaskCreator(MinorTaskUI ui, Long currentTask) {
 		super(ui, currentTask);
@@ -45,20 +43,14 @@ public class TaskCreator extends MinorTaskComponent {
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
+		layout.setWidthUndefined();
 		layout.addComponent(new ProjectPathNavigator(minortask(), getTaskID()));
 		try {
-			String projectName = "All";
-			if (getTaskID() != null) {
-				Task task = Helper.getTask(getTaskID());
-				projectName = task.name.getValue();
-			}
-//			layout.addComponent(new Label("Adding To " + projectName));
-
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);
 
-			name.setMaxLength(40);
-			description.setWidth(100, Unit.PERCENTAGE);
+			name.setWidthUndefined();
+			description.setWidthUndefined();
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 
@@ -67,6 +59,7 @@ public class TaskCreator extends MinorTaskComponent {
 			HorizontalLayout details = new HorizontalLayout(
 					name,
 					description);
+			details.setWidthUndefined();
 			layout.addComponent(details);
 			HorizontalLayout dates = new HorizontalLayout(
 							startDate,
@@ -77,13 +70,6 @@ public class TaskCreator extends MinorTaskComponent {
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
 			layout.addComponent(completedTasks);
-//			VerticalLayout subtaskLists = new VerticalLayout(
-//					subtasks,
-//					completedTasks);
-//			subtaskLists.setWidthUndefined();
-//			HorizontalLayout horizontalSplitPanel = new HorizontalLayout(subtaskLists, dates);
-//			horizontalSplitPanel.setWidthUndefined();
-//			layout.addComponent(horizontalSplitPanel);
 			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,
@@ -116,7 +102,6 @@ public class TaskCreator extends MinorTaskComponent {
 		task.projectID.setValue(getTaskID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
-//		task.notes.setValue(notes.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
 		task.preferredDate.setValue(Helper.asDate(preferredEndDate.getValue()));
 		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
