@@ -7,10 +7,7 @@ package nz.co.gregs.minortask;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
+import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.H2MemoryDB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
@@ -105,21 +103,25 @@ public class Helper {
 
 	public static synchronized void setupDatabase() {
 		if (Helper.database == null) {
-			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
-			try {
-				Helper.database = new DBDatabaseCluster(new SQLiteDB(sqliteFile, "admin", "admin"), new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
-				Helper.database.setPrintSQLBeforeExecuting(true);
-			} catch (IOException | SQLException ex) {
+			try{
+				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
+//			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+//			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
+//			try {
+//				Helper.database = new DBDatabaseCluster(new SQLiteDB(sqliteFile, "admin", "admin"), new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
+//				Helper.database.setPrintSQLBeforeExecuting(true);
+			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+//				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+				sqlerror(ex);
 			}
 		}
 		try {
 			new Notification("Currently serving " + Helper.database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + Helper.database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-			new Notification("NO DATABASE CONNECTION: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+//			new Notification("NO DATABASE CONNECTION: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+			sqlerror(ex);
 		}
 	}
 

@@ -16,7 +16,6 @@ import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.SignupComponent;
 import nz.co.gregs.minortask.components.TaskCreator;
 import nz.co.gregs.minortask.components.TaskEditor;
-import nz.co.gregs.minortask.components.TaskListComponent;
 import nz.co.gregs.minortask.datamodel.*;
 
 /**
