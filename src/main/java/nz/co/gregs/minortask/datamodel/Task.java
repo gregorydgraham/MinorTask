@@ -54,9 +54,9 @@ public class Task extends DBRow {
 	@DBColumn
 	public final DBDate finalDate = new DBDate();
 
-	@DBColumn
-	public final DBStringEnum<Task.Status> status = new DBStringEnum<Task.Status>();
-	
+//	@DBColumn
+//	public final DBStringEnum<Task.Status> status = new DBStringEnum<Task.Status>();
+
 	@DBColumn
 	public final DBDate completionDate = new DBDate();
 
@@ -89,27 +89,27 @@ public class Task extends DBRow {
 		}
 	}
 	
-	public static enum Status implements DBEnumValue<String>{
-
-		CREATED("Active"),
-		COMPLETED("Completed");
-		
-		private final String niceName;
-		
-		Status(String niceName){
-			this.niceName = niceName;
-		}
-
-		@Override
-		public String getCode() {
-			return name();
-		}
-		
-		@Override
-		public String toString(){
-			return niceName;
-		}
-		
-	}
+//	public static enum Status implements DBEnumValue<String>{
+//
+//		CREATED("Active"),
+//		COMPLETED("Completed");
+//		
+//		private final String niceName;
+//		
+//		Status(String niceName){
+//			this.niceName = niceName;
+//		}
+//
+//		@Override
+//		public String getCode() {
+//			return name();
+//		}
+//		
+//		@Override
+//		public String toString(){
+//			return niceName;
+//		}
+//		
+//	}
 
 }

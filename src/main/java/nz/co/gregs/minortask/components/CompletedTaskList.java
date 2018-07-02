@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.Helper;
@@ -28,7 +29,7 @@ public class CompletedTaskList extends TaskListComponent {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(getTaskID());
-		example.status.permittedValues(Task.Status.COMPLETED);
+		example.completionDate.excludedValues((Date) null);
 		final DBTable<Task.WithSortColumns> dbTable = Helper.getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
 		dbTable.setSortOrder(

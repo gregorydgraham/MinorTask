@@ -107,7 +107,7 @@ public class Helper {
 		ArrayList<Task> arrayList = new ArrayList<Task>();
 		final Task example = new Task();
 		example.projectID.permittedValues(taskID);
-		example.status.excludedValues(Task.Status.COMPLETED);
+		example.completionDate.permittedValues((Date) null);
 		try {
 			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
 			return allRows;

@@ -11,6 +11,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -32,15 +33,19 @@ public class TaskEditor extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
-	TextField project = new TextField("Project");
 	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
 	Button completeButton = new Button("Complete This Task");
+	Button reopenButton = new Button("Reopen This Task");
 	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
-	Button statusIndicator = new Button("creating");
+	DateField completedDate = new DateField("Completed");
+	Label activeIndicator = new Label("Active");
+	Label startedIndicator = new Label("Started");
+	Label overdueIndicator = new Label("Overdue");
+	Label completedIndicator = new Label("COMPLETED");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
@@ -60,19 +65,31 @@ public class TaskEditor extends MinorTaskComponent {
 
 			name.setWidthUndefined();
 			description.setWidthUndefined();
-			statusIndicator.setWidth(100, Unit.PERCENTAGE);
-			project.setCaption("Part Of:");
-			project.setReadOnly(true);
+			activeIndicator.setWidth(100, Unit.PERCENTAGE);
+			startedIndicator.setWidth(100, Unit.PERCENTAGE);
+			overdueIndicator.setWidth(100, Unit.PERCENTAGE);
+			completedIndicator.setWidth(100, Unit.PERCENTAGE);
+			activeIndicator.setVisible(false);
+			startedIndicator.setVisible(false);
+			overdueIndicator.setVisible(false);
+			completedIndicator.setVisible(false);
+			overdueIndicator.addStyleName("danger");
+			completedIndicator.addStyleName("danger");
 
 			completeButton.addStyleName("danger");
 			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
+			completeButton.setVisible(false);
+
+			reopenButton.addStyleName("friendly");
+			reopenButton.addClickListener(new ReopenTaskListener(minortask(), getTaskID()));
+			reopenButton.setVisible(false);
 
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
 					name,
-					description, statusIndicator);
-			details.setComponentAlignment(statusIndicator, Alignment.BOTTOM_RIGHT);
+					description, activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
+//			details.setComponentAlignment(activeIndicator, Alignment.BOTTOM_RIGHT);
 			details.setWidthUndefined();
 
 			layout.addComponent(details);
@@ -80,17 +97,19 @@ public class TaskEditor extends MinorTaskComponent {
 			HorizontalLayout dates = new HorizontalLayout(
 					startDate,
 					preferredEndDate,
-					deadlineDate
+					deadlineDate,
+					completedDate
 			);
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
 			layout.addComponent(completeButton);
-			layout.addComponent(completedTasks);
+			layout.addComponent(reopenButton);
 			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,
 							createButton));
+			layout.addComponent(completedTasks);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			Helper.sqlerror(ex);
 		}
@@ -106,27 +125,34 @@ public class TaskEditor extends MinorTaskComponent {
 			startDate.setValue(Helper.asLocalDate(task.startDate.dateValue()));
 			preferredEndDate.setValue(Helper.asLocalDate(task.preferredDate.dateValue()));
 			deadlineDate.setValue(Helper.asLocalDate(task.finalDate.dateValue()));
-
-			final Task.Status status = task.status.enumValue();
-			final Date now = new Date();
-			if (task.completionDate != null) {
-
-				statusIndicator.removeStyleName("friendly");
-				statusIndicator.addStyleName("danger");
-
-				completeButton = new Button("Reopen Task");
-				completeButton.addStyleName("friendly");
-				completeButton.removeStyleName("danger");
-				completeButton.addClickListener(new ReopenTaskListener(minortask(), getTaskID()));
-			} else if (task.finalDate.dateValue().before(now)) {
-				statusIndicator.removeStyleName("friendly");
-				statusIndicator.addStyleName("danger");
-			} else if (task.startDate.dateValue().before(now)) {
-				statusIndicator.removeStyleName("danger");
-				statusIndicator.addStyleName("friendly");
+			completedDate.setReadOnly(true);
+			final Date completed = task.completionDate.dateValue();
+			if (completed == null) {
+				completedDate.setVisible(false);
 			} else {
-				statusIndicator.setCaption(Task.Status.CREATED.toString());
-				statusIndicator.setStyleName("friendly");
+				completedDate.setValue(Helper.asLocalDate(completed));
+//				this.setReadOnly(true);
+//				reopenButton.setEnabled(true);
+			}
+
+			final Date now = new Date();
+			if (task.completionDate.dateValue() != null) {
+				completedIndicator.setVisible(true);
+				reopenButton.setVisible(true);
+				name.setReadOnly(true);
+				description.setReadOnly(true);
+				startDate.setReadOnly(true);
+				preferredEndDate.setReadOnly(true);
+				deadlineDate.setReadOnly(true);
+			} else {
+				completeButton.setVisible(true);
+				if (task.finalDate.dateValue().before(now)) {
+					overdueIndicator.setVisible(true);
+				} else if (task.startDate.dateValue().before(now)) {
+					startedIndicator.setVisible(true);
+				} else {
+					activeIndicator.setVisible(true);
+				}
 			}
 			createButton.setCaption("Save");
 		}
@@ -185,7 +211,7 @@ public class TaskEditor extends MinorTaskComponent {
 		public void buttonClick(Button.ClickEvent event) {
 			List<Task> projectPathTasks = Helper.getProjectPathTasks(taskID);
 			for (Task projectPathTask : projectPathTasks) {
-				projectPathTask.status.setValue(Task.Status.CREATED);
+				projectPathTask.completionDate.setValue((Date) null);
 				try {
 					Helper.getDatabase().update(projectPathTask);
 				} catch (SQLException ex) {
@@ -193,7 +219,7 @@ public class TaskEditor extends MinorTaskComponent {
 				}
 			}
 			Task task = Helper.getTask(taskID);
-			task.status.setValue(Task.Status.CREATED);
+			task.completionDate.setValue((Date) null);
 			try {
 				Helper.getDatabase().update(task);
 			} catch (SQLException ex) {
@@ -215,18 +241,22 @@ public class TaskEditor extends MinorTaskComponent {
 
 		@Override
 		public void buttonClick(Button.ClickEvent event) {
-			completeTask(taskID);
-			Task task = Helper.getTask(taskID);
-			task.status.setValue(Task.Status.COMPLETED);
-			try {
-				Helper.getDatabase().update(task);
-			} catch (SQLException ex) {
-				Helper.sqlerror(ex);
+			Task task = completeTask(taskID);
+//			Task task = Helper.getTask(taskID);
+//			task.completionDate.setValue(new Date());
+//			try {
+//				Helper.getDatabase().update(task);
+//			} catch (SQLException ex) {
+//				Helper.sqlerror(ex);
+//			}
+			if (task == null) {
+				minortask.showTask(null);
+			} else {
+				minortask.showTask(task.projectID.getValue());
 			}
-			minortask.showTask(task.projectID.getValue());
 		}
 
-		private void completeTask(Long taskID) {
+		private Task completeTask(Long taskID) {
 			if (taskID != null) {
 				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
 				for (Task subtask : subtasks) {
@@ -234,14 +264,15 @@ public class TaskEditor extends MinorTaskComponent {
 					completeTask(subtask.taskID.getValue());
 				}
 				Task task = Helper.getTask(taskID);
-				task.status.setValue(Task.Status.COMPLETED);
 				task.completionDate.setValue(new Date());
 				try {
 					Helper.getDatabase().update(task);
 				} catch (SQLException ex) {
 					Helper.sqlerror(ex);
 				}
+				return task;
 			}
+			return null;
 		}
 	}
 }
