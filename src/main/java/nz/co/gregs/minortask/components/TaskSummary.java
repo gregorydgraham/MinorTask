@@ -15,11 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class TaskSummary extends MinorTaskComponent {
 
-	public TaskSummary(MinorTaskUI ui, Long taskID) {
-		super(ui, taskID);
-	}
-
-	TaskSummary(MinorTaskUI minortask, Long taskID, Task task) {
+	public TaskSummary(MinorTaskUI minortask, Long taskID, Task task) {
 		super(minortask, taskID);
 		
 		Label name = new Label(task.name.getValue());
