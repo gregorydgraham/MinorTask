@@ -100,10 +100,11 @@ public class Helper {
 		return returnTask;
 	}
 
-	public static List<Task> getSubTasks(Long taskID) {
+	public static List<Task> getActiveSubtasks(Long taskID) {
 		ArrayList<Task> arrayList = new ArrayList<Task>();
 		final Task example = new Task();
 		example.projectID.permittedValues(taskID);
+		example.status.excludedValues(Task.Status.COMPLETED);
 		try {
 			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
 			return allRows;

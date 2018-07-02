@@ -55,7 +55,7 @@ public class TaskCreator extends MinorTaskComponent {
 			project.setReadOnly(true);
 			
 			completedButton.addStyleName("danger");
-			completedButton.addClickListener(new CompleteTaskListener(getTaskID()));
+			completedButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
 
 			setFieldValues();
 
@@ -141,8 +141,10 @@ public class TaskCreator extends MinorTaskComponent {
 	private static class CompleteTaskListener implements Button.ClickListener {
 
 		private final Long taskID;
+		private final MinorTaskUI minortask;
 
-		public CompleteTaskListener(Long taskID) {
+		public CompleteTaskListener(MinorTaskUI minortask, Long taskID) {
+			this.minortask = minortask;
 			this.taskID = taskID;
 		}
 
@@ -156,18 +158,24 @@ public class TaskCreator extends MinorTaskComponent {
 			} catch (SQLException ex) {
 				Helper.sqlerror(ex);
 			}
-			
+			minortask.showTask(task.projectID.getValue());
 		}
 		
 		private void completeTask(Long taskID){
 			if (taskID!=null){
-				List<Task> subtasks = Helper.getSubTasks(taskID);
+				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
 				for (Task subtask : subtasks){
+					Helper.warning("Task", subtask.name.toString());
 					completeTask(subtask.taskID.getValue());
 				}
 				Task task = Helper.getTask(taskID);
 				task.status.setValue(Task.Status.COMPLETED);
 				task.completionDate.setValue(new Date());
+				try {
+					Helper.getDatabase().update(task);
+				} catch (SQLException ex) {
+					Helper.sqlerror(ex);
+				}
 			}
 		}
 	}
