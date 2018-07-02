@@ -105,6 +105,7 @@ public class MinorTaskUI extends UI {
 			display.addComponent(component);
 			display.addComponent(new FooterMenu(this, taskID));
 			this.setContent(display);
+			this.setScrollTop(0);
 		}
 	}
 

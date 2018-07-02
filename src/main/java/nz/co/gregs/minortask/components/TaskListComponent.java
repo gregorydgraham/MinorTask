@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,7 +23,9 @@ public abstract class TaskListComponent extends MinorTaskComponent {
 
 	public TaskListComponent(MinorTaskUI ui, Long selectedTask) {
 		super(ui, selectedTask);
-		this.setCompositionRoot(getComponent());
+		Panel panel = new Panel();
+		panel.setContent(getComponent());
+		this.setCompositionRoot(panel);
 	}
 
 	public final Component getComponent() {

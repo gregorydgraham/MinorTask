@@ -39,7 +39,7 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button = new Button((task == null ? "All" : task.name.getValue()) + " > ", (event) -> {
+		final Button button = new Button((task == null ? "Projects" : task.name.getValue()) + " > ", (event) -> {
 			final Long taskID = task == null ? null : task.taskID.getValue();
 			minortask().showTask(taskID);
 		});

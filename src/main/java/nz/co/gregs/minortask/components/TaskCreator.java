@@ -10,7 +10,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.logging.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.*;
@@ -25,14 +24,14 @@ public class TaskCreator extends MinorTaskComponent {
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
 	TextField project = new TextField("Project");
-	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
-	Button completeButton = new Button("Complete This Task");
-	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
+//	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
+//	Button completeButton = new Button("Complete This Task");
+//	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
-	Button statusIndicator = new Button("creating");
+//	Button statusIndicator = new Button("creating");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
@@ -52,19 +51,15 @@ public class TaskCreator extends MinorTaskComponent {
 
 			name.setWidthUndefined();
 			description.setWidthUndefined();
-			statusIndicator.setWidth(100, Unit.PERCENTAGE);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 			
-			completeButton.addStyleName("danger");
-			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
-
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
 					name,
-					description, statusIndicator);
-			details.setComponentAlignment(statusIndicator, Alignment.BOTTOM_RIGHT);
+					description);
+//			details.setComponentAlignment(statusIndicator, Alignment.BOTTOM_RIGHT);
 			details.setWidthUndefined();
 			
 			layout.addComponent(details);
@@ -76,9 +71,9 @@ public class TaskCreator extends MinorTaskComponent {
 			);
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
-			layout.addComponent(subtasks);
-			layout.addComponent(completeButton);
-			layout.addComponent(completedTasks);
+//			layout.addComponent(subtasks);
+//			layout.addComponent(completeButton);
+//			layout.addComponent(completedTasks);
 			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,
@@ -142,47 +137,4 @@ public class TaskCreator extends MinorTaskComponent {
 			handleEscapeButton();
 		});
 	}
-
-	private static class CompleteTaskListener implements Button.ClickListener {
-
-		private final Long taskID;
-		private final MinorTaskUI minortask;
-
-		public CompleteTaskListener(MinorTaskUI minortask, Long taskID) {
-			this.minortask = minortask;
-			this.taskID = taskID;
-		}
-
-		@Override
-		public void buttonClick(Button.ClickEvent event) {
-			completeTask(taskID);
-			Task task = Helper.getTask(taskID);
-			task.status.setValue(Task.Status.COMPLETED);
-			try {
-				Helper.getDatabase().update(task);
-			} catch (SQLException ex) {
-				Helper.sqlerror(ex);
-			}
-			minortask.showTask(task.projectID.getValue());
-		}
-		
-		private void completeTask(Long taskID){
-			if (taskID!=null){
-				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
-				for (Task subtask : subtasks){
-					Helper.warning("Task", subtask.name.toString());
-					completeTask(subtask.taskID.getValue());
-				}
-				Task task = Helper.getTask(taskID);
-				task.status.setValue(Task.Status.COMPLETED);
-				task.completionDate.setValue(new Date());
-				try {
-					Helper.getDatabase().update(task);
-				} catch (SQLException ex) {
-					Helper.sqlerror(ex);
-				}
-			}
-		}
-	}
-
 }
