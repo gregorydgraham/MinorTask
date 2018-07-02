@@ -26,12 +26,13 @@ public class TaskCreator extends MinorTaskComponent {
 	TextField description = new TextField("Description");
 	TextField project = new TextField("Project");
 	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
-	Button completedButton = new Button("Complete This Task");
+	Button completeButton = new Button("Complete This Task");
 	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
+	Button statusIndicator = new Button("creating");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
@@ -51,19 +52,23 @@ public class TaskCreator extends MinorTaskComponent {
 
 			name.setWidthUndefined();
 			description.setWidthUndefined();
+			statusIndicator.setWidth(100, Unit.PERCENTAGE);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 			
-			completedButton.addStyleName("danger");
-			completedButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
+			completeButton.addStyleName("danger");
+			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
 
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
 					name,
-					description);
+					description, statusIndicator);
+			details.setComponentAlignment(statusIndicator, Alignment.BOTTOM_RIGHT);
 			details.setWidthUndefined();
+			
 			layout.addComponent(details);
+			
 			HorizontalLayout dates = new HorizontalLayout(
 							startDate,
 							preferredEndDate,
@@ -72,7 +77,7 @@ public class TaskCreator extends MinorTaskComponent {
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
-			layout.addComponent(completedButton);
+			layout.addComponent(completeButton);
 			layout.addComponent(completedTasks);
 			layout.addComponent(
 					new HorizontalLayout(

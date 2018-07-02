@@ -25,9 +25,6 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public class BannerMenu extends MinorTaskComponent {
 
-//	private final MinorTaskUI ui;
-//	private final Long taskID;
-
 	public BannerMenu(MinorTaskUI ui, Long taskID) {
 		super(ui, taskID);
 		Component banner = getComponent();
@@ -35,6 +32,16 @@ public class BannerMenu extends MinorTaskComponent {
 		this.setCompositionRoot(banner);
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeightUndefined();
+	}
+
+	@Override
+	public final void setWidth(float width, Unit unit) {
+		super.setWidth(width, unit);
+	}
+
+	@Override
+	public final void setHeightUndefined() {
+		super.setHeightUndefined();
 	}
 
 	final protected Component getComponent() {
@@ -91,7 +98,6 @@ public class BannerMenu extends MinorTaskComponent {
 
 	public void handleDefaultButton() {
 		minortask().showTaskCreation(getTaskID());
-//		new TaskCreationComponent(ui, taskID).show();
 	}
 
 }

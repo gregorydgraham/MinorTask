@@ -23,12 +23,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.H2MemoryDB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -79,7 +82,7 @@ public class Helper {
 	}
 
 	public static final void sqlerror(Exception exp) {
-		Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, exp);
+		Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, exp);
 		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 	}
@@ -147,5 +150,19 @@ public class Helper {
 			setupDatabase();
 		}
 		return Helper.database;
+	}
+
+	public static List<Task> getProjectPathTasks(Long taskID) {
+		try {
+			final Task task = new Task();
+			task.taskID.permittedValues(taskID);
+			DBQuery query = Helper.getDatabase().getDBQuery(task);
+			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
+			List<Task> ancestors = recurse.getAncestors();
+			return ancestors;
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		return new ArrayList<>();
 	}
 }

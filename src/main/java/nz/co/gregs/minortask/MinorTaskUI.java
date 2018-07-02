@@ -86,7 +86,6 @@ public class MinorTaskUI extends UI {
 	}
 
 	public void showTask(Long taskID) {
-//		TaskListComponent taskListComponent = new TaskListComponent(this, taskID);
 		TaskEditor taskComponent = new TaskEditor(this, taskID);
 		showAuthorisedContent(taskID, taskComponent);
 	}
