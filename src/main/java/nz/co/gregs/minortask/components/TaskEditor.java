@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.data.HasValue;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
@@ -182,7 +181,6 @@ public class TaskEditor extends MinorTaskComponent {
 	public void saveTask() {
 		Task task = Helper.getTask(getTaskID());
 
-//		Helper.warning("Saving Task", "TASKID = " + task.taskID.getValue());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
@@ -195,7 +193,6 @@ public class TaskEditor extends MinorTaskComponent {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-//		minortask().showTask(getTaskID());
 	}
 
 	public void handleEscapeButton() {
