@@ -36,7 +36,9 @@
 
   // Insert your own theme rules here
 	.neutral {
-		background-color: gray;
-		color: #97bee5;
+	}
+	.completed {
+		background-color: #afafaf;
+		border-radius: 10px;
 	}
 }

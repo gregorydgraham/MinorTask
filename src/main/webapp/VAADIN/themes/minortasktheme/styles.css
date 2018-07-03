@@ -15060,7 +15060,7 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
-.minortasktheme .neutral {
-	background-color: gray;
-	color: #97bee5;
+.minortasktheme .completed {
+	background-color: #afafaf;
+	border-radius: 10px;
 }

@@ -78,6 +78,8 @@ public class TaskEditor extends MinorTaskComponent {
 			startedIndicator.addStyleName("friendly");
 			overdueIndicator.addStyleName("danger");
 			completedIndicator.addStyleName("neutral");
+			completedDate.setVisible(false);
+			completedDate.setReadOnly(true);
 
 			completeButton.addStyleName("danger");
 			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
@@ -145,18 +147,15 @@ public class TaskEditor extends MinorTaskComponent {
 			startDate.setValue(Helper.asLocalDate(task.startDate.dateValue()));
 			preferredEndDate.setValue(Helper.asLocalDate(task.preferredDate.dateValue()));
 			deadlineDate.setValue(Helper.asLocalDate(task.finalDate.dateValue()));
-			completedDate.setReadOnly(true);
-			final Date completed = task.completionDate.dateValue();
-			if (completed == null) {
-				completedDate.setVisible(false);
-			} else {
-				completedDate.setValue(Helper.asLocalDate(completed));
-			}
 
-			final Date now = new Date();
-			if (task.completionDate.dateValue() != null) {
+			final Date completed = task.completionDate.dateValue();
+
+			if (completed != null) {
+				completedDate.setValue(Helper.asLocalDate(completed));
+				this.addStyleName("completed");
 				completedIndicator.setVisible(true);
 				reopenButton.setVisible(true);
+
 				name.setReadOnly(true);
 				description.setReadOnly(true);
 				startDate.setReadOnly(true);
@@ -164,6 +163,7 @@ public class TaskEditor extends MinorTaskComponent {
 				deadlineDate.setReadOnly(true);
 			} else {
 				completeButton.setVisible(true);
+				final Date now = new Date();
 				if (task.finalDate.dateValue().before(now)) {
 					overdueIndicator.setVisible(true);
 				} else if (task.startDate.dateValue().before(now)) {
