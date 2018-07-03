@@ -19,6 +19,8 @@ import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class ActiveTaskList extends MinorTaskComponent {
+
+	private Button newTaskButton = new Button("New Task");
 	
 	public ActiveTaskList(MinorTaskUI ui, Long selectedTask) {
 		super(ui, selectedTask);
@@ -41,13 +43,13 @@ public class ActiveTaskList extends MinorTaskComponent {
 			final Label label = new Label(caption);
 			label.addStyleName("small");
 			layout.addComponent(label);
-			final Button button = new Button("New Task");
-			button.addStyleName("friendly");
-			button.setWidth(100, Unit.PERCENTAGE);
-			button.addClickListener((event) -> {
+			
+			newTaskButton.addStyleName("friendly");
+			newTaskButton.setWidth(100, Unit.PERCENTAGE);
+			newTaskButton.addClickListener((event) -> {
 				minortask().showTaskCreation(this.getTaskID());
 			});
-			layout.addComponent(button);
+			layout.addComponent(newTaskButton);
 			for (Task task : tasks) {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}
@@ -72,4 +74,8 @@ public class ActiveTaskList extends MinorTaskComponent {
 		List<Task.WithSortColumns> tasks = dbTable.getAllRows();
 		return tasks;
 	}	
+
+	void disableNewButton() {
+		this.newTaskButton.setEnabled(false);
+	}
 }

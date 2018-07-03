@@ -161,6 +161,7 @@ public class TaskEditor extends MinorTaskComponent {
 				startDate.setReadOnly(true);
 				preferredEndDate.setReadOnly(true);
 				deadlineDate.setReadOnly(true);
+				subtasks.disableNewButton();
 			} else {
 				completeButton.setVisible(true);
 				final Date now = new Date();
