@@ -43,7 +43,7 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 			final Long taskID = task == null ? null : task.taskID.getValue();
 			minortask().showTask(taskID);
 		});
-		button.addStyleNames("tiny", "friendly");
+		button.addStyleNames("tiny", "projectpath");
 		return button;
 	}
 

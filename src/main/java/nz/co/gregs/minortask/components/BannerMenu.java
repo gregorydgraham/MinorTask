@@ -45,24 +45,16 @@ public class BannerMenu extends MinorTaskComponent {
 		super.setHeightUndefined();
 	}
 
+	@Override
+	public final void addStyleName(String style) {
+		super.addStyleName(style);
+	}
+
 	final protected Component getComponent() {
 		HorizontalLayout banner = new HorizontalLayout();
 		banner.setWidth(100, Unit.PERCENTAGE);
 		banner.setHeightUndefined();
 		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
-
-		final Button createTaskButton = new Button("New");
-		createTaskButton.addClickListener((event) -> {
-			this.handleDefaultButton();
-		});
-
-		final Button showProjects = new Button("Projects");
-		showProjects.addClickListener((event) -> {
-			minortask().showTask(null);
-		});
-		final HorizontalLayout usefulButtons = new HorizontalLayout(createTaskButton, showProjects);
-		banner.addComponents(usefulButtons);
-		banner.setComponentAlignment(usefulButtons, Alignment.TOP_LEFT);
 
 		final long userID = minortask().getUserID();
 		User example = new User();

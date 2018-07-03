@@ -15061,6 +15061,17 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .minortasktheme .completed {
-	background-color: #afafaf;
+	background-color: #ccccff;
 	border-radius: 10px;
+}
+
+.minortasktheme .banner {
+	border-radius: 10px;
+	align-items: center;
+}
+
+.minortasktheme .projectpath {
+	background-color: #ccffcc;
+	background-image: -webkit-linear-gradient(top, #ccffcc 2%, #bbeebb 98%);
+	background-image: linear, to bottom, #ccffcc 2%, #bbeebb 98%;
 }

@@ -38,7 +38,19 @@
 	.neutral {
 	}
 	.completed {
-		background-color: #afafaf;
+		background-color: #cccccc;
 		border-radius: 10px;
+	}
+	.banner {
+		/*background-color: #0e0e0e;*/
+		/*color: #afafaf;*/
+		border-radius: 10px;
+		align-items: center;
+	}
+	.projectpath{
+		background-color: #ccffcc;
+
+		background-image: -webkit-linear-gradient(top, #ccffcc 2%, #bbeebb 98%);
+		background-image: linear-gradient(to bottom,#ccffcc 2%, #bbeebb 98%);
 	}
 }
