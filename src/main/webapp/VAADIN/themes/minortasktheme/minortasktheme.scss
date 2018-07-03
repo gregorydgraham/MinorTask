@@ -35,4 +35,8 @@
   @include valo;
 
   // Insert your own theme rules here
+	.neutral {
+		background-color: gray;
+		color: #97bee5;
+	}
 }

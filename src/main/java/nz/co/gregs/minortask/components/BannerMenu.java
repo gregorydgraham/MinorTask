@@ -32,6 +32,7 @@ public class BannerMenu extends MinorTaskComponent {
 		this.setCompositionRoot(banner);
 		this.setWidth(100, Unit.PERCENTAGE);
 		this.setHeightUndefined();
+		this.addStyleName("banner");
 	}
 
 	@Override

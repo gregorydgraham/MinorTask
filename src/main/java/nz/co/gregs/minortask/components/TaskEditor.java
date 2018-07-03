@@ -5,7 +5,9 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -16,6 +18,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -64,7 +67,7 @@ public class TaskEditor extends MinorTaskComponent {
 			setAsDefaultButton(createButton);
 
 			name.setWidthUndefined();
-			description.setWidthUndefined();
+			description.setWidth(100, Unit.PERCENTAGE);
 			activeIndicator.setWidth(100, Unit.PERCENTAGE);
 			startedIndicator.setWidth(100, Unit.PERCENTAGE);
 			overdueIndicator.setWidth(100, Unit.PERCENTAGE);
@@ -73,8 +76,9 @@ public class TaskEditor extends MinorTaskComponent {
 			startedIndicator.setVisible(false);
 			overdueIndicator.setVisible(false);
 			completedIndicator.setVisible(false);
+			startedIndicator.addStyleName("friendly");
 			overdueIndicator.addStyleName("danger");
-			completedIndicator.addStyleName("danger");
+			completedIndicator.addStyleName("neutral");
 
 			completeButton.addStyleName("danger");
 			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
@@ -89,7 +93,6 @@ public class TaskEditor extends MinorTaskComponent {
 			HorizontalLayout details = new HorizontalLayout(
 					name,
 					description, activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
-//			details.setComponentAlignment(activeIndicator, Alignment.BOTTOM_RIGHT);
 			details.setWidthUndefined();
 
 			layout.addComponent(details);
@@ -105,15 +108,33 @@ public class TaskEditor extends MinorTaskComponent {
 			layout.addComponent(subtasks);
 			layout.addComponent(completeButton);
 			layout.addComponent(reopenButton);
-			layout.addComponent(
-					new HorizontalLayout(
-							cancelButton,
-							createButton));
 			layout.addComponent(completedTasks);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			Helper.sqlerror(ex);
 		}
 		return layout;
+	}
+
+	protected void addChangeListeners() {
+		final HasValue.ValueChangeListener<String> stringChange = (event) -> {
+			saveTask();
+		};
+		name.addValueChangeListener(stringChange);
+		description.addValueChangeListener(stringChange);
+
+		name.setValueChangeMode(ValueChangeMode.BLUR);
+		description.setValueChangeMode(ValueChangeMode.BLUR);
+
+		final HasValue.ValueChangeListener<LocalDate> dateChange = (event) -> {
+			saveTask();
+		};
+		startDate.addValueChangeListener(dateChange);
+		preferredEndDate.addValueChangeListener(dateChange);
+		deadlineDate.addValueChangeListener(dateChange);
+
+		startDate.setTextFieldEnabled(false);
+		preferredEndDate.setTextFieldEnabled(false);
+		deadlineDate.setTextFieldEnabled(false);
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
@@ -153,14 +174,15 @@ public class TaskEditor extends MinorTaskComponent {
 				}
 			}
 			createButton.setCaption("Save");
+
+			addChangeListeners();
 		}
 	}
 
 	public void saveTask() {
 		Task task = Helper.getTask(getTaskID());
 
-		Helper.chat("TASKID = " + task.taskID.getValue());
-//		task.userID.setValue(minortask().getUserID());
+//		Helper.warning("Saving Task", "TASKID = " + task.taskID.getValue());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
 		task.startDate.setValue(Helper.asDate(startDate.getValue()));
@@ -173,7 +195,7 @@ public class TaskEditor extends MinorTaskComponent {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
 			Helper.sqlerror(ex);
 		}
-		minortask().showTask(getTaskID());
+//		minortask().showTask(getTaskID());
 	}
 
 	public void handleEscapeButton() {
@@ -251,7 +273,6 @@ public class TaskEditor extends MinorTaskComponent {
 			if (taskID != null) {
 				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
 				for (Task subtask : subtasks) {
-//					Helper.warning("Task", subtask.name.toString());
 					completeTask(subtask.taskID.getValue());
 				}
 				Task task = Helper.getTask(taskID);

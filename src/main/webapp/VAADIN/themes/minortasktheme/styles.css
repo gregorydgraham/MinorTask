@@ -15059,3 +15059,8 @@ div.v-layout.v-horizontal.v-widget {
 	width: 19px;
 	overflow: hidden;
 }
+
+.minortasktheme .neutral {
+	background-color: gray;
+	color: #97bee5;
+}
