@@ -35,6 +35,7 @@ public class TaskEditor extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
+	ProjectPicker project = new ProjectPicker(minortask(), getTaskID());
 	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
@@ -96,7 +97,6 @@ public class TaskEditor extends MinorTaskComponent {
 					description, activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
 			details.setWidthUndefined();
 
-			layout.addComponent(details);
 
 			HorizontalLayout dates = new HorizontalLayout(
 					startDate,
@@ -105,6 +105,8 @@ public class TaskEditor extends MinorTaskComponent {
 					completedDate
 			);
 			dates.setWidthUndefined();
+			layout.addComponent(project);
+			layout.addComponent(details);
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
 			layout.addComponent(completeButton);
@@ -141,7 +143,7 @@ public class TaskEditor extends MinorTaskComponent {
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		final Long taskID = getTaskID();
 		if (taskID != null) {
-			Task task = Helper.getTask(taskID);
+			Task task = Helper.getTask(taskID, minortask().getUserID());
 			name.setValue(task.name.toString());
 			description.setValue(task.description.toString());
 			startDate.setValue(Helper.asLocalDate(task.startDate.dateValue()));
@@ -180,7 +182,7 @@ public class TaskEditor extends MinorTaskComponent {
 	}
 
 	public void saveTask() {
-		Task task = Helper.getTask(getTaskID());
+		Task task = Helper.getTask(getTaskID(), minortask().getUserID());
 
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
@@ -227,7 +229,7 @@ public class TaskEditor extends MinorTaskComponent {
 
 		@Override
 		public void buttonClick(Button.ClickEvent event) {
-			List<Task> projectPathTasks = Helper.getProjectPathTasks(taskID);
+			List<Task> projectPathTasks = Helper.getProjectPathTasks(taskID, minortask.getUserID());
 			for (Task projectPathTask : projectPathTasks) {
 				projectPathTask.completionDate.setValue((Date) null);
 				try {
@@ -236,7 +238,7 @@ public class TaskEditor extends MinorTaskComponent {
 					Helper.sqlerror(ex);
 				}
 			}
-			Task task = Helper.getTask(taskID);
+			Task task = Helper.getTask(taskID, minortask.getUserID());
 			task.completionDate.setValue((Date) null);
 			try {
 				Helper.getDatabase().update(task);
@@ -269,11 +271,11 @@ public class TaskEditor extends MinorTaskComponent {
 
 		private Task completeTask(Long taskID) {
 			if (taskID != null) {
-				List<Task> subtasks = Helper.getActiveSubtasks(taskID);
+				List<Task> subtasks = Helper.getActiveSubtasks(taskID, minortask.getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
-				Task task = Helper.getTask(taskID);
+				Task task = Helper.getTask(taskID, minortask.getUserID());
 				task.completionDate.setValue(new Date());
 				try {
 					Helper.getDatabase().update(task);

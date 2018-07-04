@@ -6,11 +6,8 @@
 package nz.co.gregs.minortask;
 
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -26,12 +23,8 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
-import nz.co.gregs.dbvolution.databases.H2MemoryDB;
-import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -64,7 +57,7 @@ public class Helper {
 	}
 
 	public static String shorten(String value, int i) {
-		return value.substring(0, value.length()<i?value.length():i);
+		return value.substring(0, value.length() < i ? value.length() : i);
 	}
 
 	public static final void warning(final String topic, final String warning) {
@@ -85,28 +78,31 @@ public class Helper {
 		Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, exp);
 		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
+//		final StackTraceElement[] stackTraceArray = exp.getStackTrace();
+//		for (StackTraceElement stackTraceElement : stackTraceArray) {
+//			if (stackTraceElement.toString().contains("minortask")) {
+//				note = new Notification("SQL ERROR", stackTraceElement.toString(), Notification.Type.ERROR_MESSAGE);
+//				note.show(Page.getCurrent());
+//				break;
+//			}
+//		}
 	}
-//	public static final Button LOGOUT_BUTTON = new Button("Log Out");
-//	public static final TextField USERNAME_FIELD = new TextField("Your Name");
-//	public static final PasswordField PASSWORD_FIELD = new PasswordField("Password");
 
-	public static Task getTask(Long taskID) {
+	public static Task getTask(Long taskID, final long userID) {
 		Task returnTask = null;
-		final Task task = new Task();
+		final Task task = getTaskExample(taskID, userID);
 		task.taskID.permittedValues(taskID);
 		try {
 			returnTask = getDatabase().getDBTable(task).getOnlyRow();
-		} catch (UnexpectedNumberOfRowsException|SQLException ex) {
-			Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 			sqlerror(ex);
-		} 
+		}
 		return returnTask;
 	}
 
-	public static List<Task> getActiveSubtasks(Long taskID) {
+	public static List<Task> getActiveSubtasks(Long taskID, final long userID) {
 		ArrayList<Task> arrayList = new ArrayList<Task>();
-		final Task example = new Task();
-		example.projectID.permittedValues(taskID);
+		final Task example = getProjectExample(taskID, userID);
 		example.completionDate.permittedValues((Date) null);
 		try {
 			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
@@ -114,7 +110,7 @@ public class Helper {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-		
+
 		return arrayList;
 	}
 
@@ -123,7 +119,7 @@ public class Helper {
 
 	public static synchronized void setupDatabase() {
 		if (Helper.database == null) {
-			try{
+			try {
 				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
 //			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 //			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
@@ -152,10 +148,9 @@ public class Helper {
 		return Helper.database;
 	}
 
-	public static List<Task> getProjectPathTasks(Long taskID) {
+	public static List<Task> getProjectPathTasks(Long taskID, final long userID) {
 		try {
-			final Task task = new Task();
-			task.taskID.permittedValues(taskID);
+			final Task task = getTaskExample(taskID, userID);
 			DBQuery query = Helper.getDatabase().getDBQuery(task);
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
@@ -164,5 +159,21 @@ public class Helper {
 			sqlerror(ex);
 		}
 		return new ArrayList<>();
+	}
+
+	public static Task getTaskExample(final Long taskID, final long userID) {
+		Task task;
+		task = new Task();
+		task.taskID.permittedValues(taskID);
+		task.userID.permittedValues(userID);
+		return task;
+	}
+
+	public static Task getProjectExample(Long taskID, long userID) {
+		Task task;
+		task = new Task();
+		task.projectID.permittedValues(taskID);
+		task.userID.permittedValues(userID);
+		return task;
 	}
 }

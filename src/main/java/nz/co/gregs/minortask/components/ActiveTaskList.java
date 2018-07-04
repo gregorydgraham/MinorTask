@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class ActiveTaskList extends MinorTaskComponent {
 
-	private Button newTaskButton = new Button("New Task");
+	private final Button newTaskButton = new Button("Add Subtask");
 	
 	public ActiveTaskList(MinorTaskUI ui, Long selectedTask) {
 		super(ui, selectedTask);

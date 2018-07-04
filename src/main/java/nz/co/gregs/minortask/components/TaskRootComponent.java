@@ -26,7 +26,7 @@ public class TaskRootComponent extends MinorTaskComponent {
 		VerticalLayout layout = new VerticalLayout();
 		String projectName = "All";
 		if (getTaskID() != null) {
-			Task task = Helper.getTask(getTaskID());
+			Task task = Helper.getTask(getTaskID(), minortask().getUserID());
 			projectName = task.name.getValue();
 		}
 

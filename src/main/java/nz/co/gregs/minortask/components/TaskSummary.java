@@ -32,11 +32,11 @@ public class TaskSummary extends MinorTaskComponent {
 		summary.setWidth(100, Unit.PERCENTAGE);
 		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-		Label arrow = new Label(""+Helper.getActiveSubtasks(task.taskID.longValue()).size());
+		Label arrow = new Label("" + Helper.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
 		arrow.setIcon(VaadinIcons.ANGLE_RIGHT);
 		arrow.setSizeUndefined();
 		arrow.setHeight(100, Unit.PERCENTAGE);
-		final HorizontalLayout hlayout= new HorizontalLayout();
+		final HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSpacing(false);
 		hlayout.setWidth(100, Unit.PERCENTAGE);
 		hlayout.addStyleName("card");
