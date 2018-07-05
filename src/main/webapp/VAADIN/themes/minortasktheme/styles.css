@@ -15071,7 +15071,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .minortasktheme .projectpath {
-	background-color: #ccffcc;
-	background-image: -webkit-linear-gradient(top, #ccffcc 2%, #bbeebb 98%);
-	background-image: linear, to bottom, #ccffcc 2%, #bbeebb 98%;
+	background-color: #beb;
+	background-image: -webkit-linear-gradient(#cfc 2%, #beb 98%);
+	background-image: linear, false, zip(#cfc #beb);
+	border: 0;
 }

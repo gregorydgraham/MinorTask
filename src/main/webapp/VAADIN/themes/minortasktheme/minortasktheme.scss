@@ -47,10 +47,12 @@
 		border-radius: 10px;
 		align-items: center;
 	}
-	.projectpath{
-		background-color: #ccffcc;
 
-		background-image: -webkit-linear-gradient(top, #ccffcc 2%, #bbeebb 98%);
-		background-image: linear-gradient(to bottom,#ccffcc 2%, #bbeebb 98%);
+	.projectpath{
+		background-color: #beb;
+
+		background-image: -webkit-linear-gradient(#cfc 2%, #beb 98%);
+		background-image: linear-gradient(#cfc , #beb);
+		border: 0;
 	}
 }

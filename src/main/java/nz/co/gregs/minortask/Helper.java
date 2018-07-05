@@ -121,14 +121,8 @@ public class Helper {
 		if (Helper.database == null) {
 			try {
 				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
-//			final String basePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-//			final File sqliteFile = new File(basePath + "/WEB-INF/MinorTask.sqlite");
-//			try {
-//				Helper.database = new DBDatabaseCluster(new SQLiteDB(sqliteFile, "admin", "admin"), new H2MemoryDB("MinorTask.h2", "admin", "admin", true));
-//				Helper.database.setPrintSQLBeforeExecuting(true);
 			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-//				new Notification("NO DATABASE: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
 				sqlerror(ex);
 			}
 		}
@@ -136,7 +130,6 @@ public class Helper {
 			new Notification("Currently serving " + Helper.database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + Helper.database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-//			new Notification("NO DATABASE CONNECTION: " + ex.getMessage(), Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
 			sqlerror(ex);
 		}
 	}

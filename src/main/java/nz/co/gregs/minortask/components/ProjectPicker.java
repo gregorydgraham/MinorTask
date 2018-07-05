@@ -39,7 +39,7 @@ public class ProjectPicker extends MinorTaskComponent {
 	}
 
 	private Component getCurrentProjectComponent() {
-		Button button = new Button("Projects >");
+		Button button = new Button("Projects");
 		try {
 			Task task = new Task();
 			Task.Project project = new Task.Project();
@@ -49,7 +49,10 @@ public class ProjectPicker extends MinorTaskComponent {
 			if (allRows.size() == 1) {
 				Task.Project projectFound = allRows.get(0).get(project);
 				if (projectFound != null) {
-					button = new Button(projectFound.name.stringValue());
+					final String projectName = projectFound.name.stringValue();
+					if (!projectName.isEmpty()) {
+						button = new Button(projectName);
+					}
 				}
 			}
 		} catch (SQLException ex) {
