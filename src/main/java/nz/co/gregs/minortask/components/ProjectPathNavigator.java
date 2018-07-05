@@ -28,7 +28,7 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 	private final Component getComponent() {
 		HorizontalLayout hLayout = new HorizontalLayout();
 		hLayout.addComponentAsFirst(getButtonForTaskID(null));
-		List<Task> ancestors = MinorTask.getProjectPathTasks(getTaskID(), minortask().getUserID());
+		List<Task> ancestors = minortask().getProjectPathTasks(getTaskID(), minortask().getUserID());
 		for (Task ancestor : ancestors) {
 			final Button label = getButtonForTaskID(ancestor);
 			hLayout.addComponent(label, 1);

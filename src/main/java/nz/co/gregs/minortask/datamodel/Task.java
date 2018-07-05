@@ -63,6 +63,9 @@ public class Task extends DBRow {
 //	@DBColumn
 //	public DBLargeText notes = new DBLargeText();
 
+	public String toString(){
+		return name.getValue();
+	}
 	/**
 	 *
 	 * @author gregorygraham
@@ -88,28 +91,4 @@ public class Task extends DBRow {
 			this.finalDate.setSortOrderAscending();
 		}
 	}
-	
-//	public static enum Status implements DBEnumValue<String>{
-//
-//		CREATED("Active"),
-//		COMPLETED("Completed");
-//		
-//		private final String niceName;
-//		
-//		Status(String niceName){
-//			this.niceName = niceName;
-//		}
-//
-//		@Override
-//		public String getCode() {
-//			return name();
-//		}
-//		
-//		@Override
-//		public String toString(){
-//			return niceName;
-//		}
-//		
-//	}
-
 }

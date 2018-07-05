@@ -50,22 +50,26 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+	 <dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
+			<version>8.4.4</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
+			<version>8.4.4</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
+			<version>8.4.4</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
-		</dependency>
+			<version>8.4.4</version>
+	 </dependency>
 	 <dependency>
 	  <groupId>${project.groupId}</groupId>
 	  <artifactId>dbvolution7</artifactId>

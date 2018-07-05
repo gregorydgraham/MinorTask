@@ -59,14 +59,14 @@ public class BannerMenu extends MinorTaskComponent {
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
 		try {
-			final DBTable<User> userTable = MinorTask.getDatabase().getDBTable(example);
+			final DBTable<User> userTable = getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
 			final Label label = new Label("Welcome to MinorTask @" + user.getUsername());
 			label.setWidth(100, Unit.PERCENTAGE);
 			banner.addComponent(label);
 			banner.setComponentAlignment(label, Alignment.TOP_CENTER);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 		
 		Button logoutButton = new Button("Logout");

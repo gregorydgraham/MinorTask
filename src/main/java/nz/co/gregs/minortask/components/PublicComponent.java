@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 
 /**
@@ -15,7 +16,7 @@ import nz.co.gregs.minortask.MinorTask;
  */
 public abstract class PublicComponent extends CustomComponent{
 
-	private final MinorTask minortask;
+	protected final MinorTask minortask;
 
 	public PublicComponent(MinorTask minortask) {
 		this.minortask = minortask;
@@ -26,6 +27,13 @@ public abstract class PublicComponent extends CustomComponent{
 	 */
 	public MinorTask minortask() {
 		return minortask;
+	}
+
+	/**
+	 * @return the ui
+	 */
+	public DBDatabase getDatabase() {
+		return minortask.getDatabase();
 	}
 
 	@Override

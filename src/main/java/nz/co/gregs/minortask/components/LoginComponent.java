@@ -85,7 +85,7 @@ public class LoginComponent extends PublicComponent {
 			example.queryUsername().permittedValuesIgnoreCase(username);
 			example.queryPassword().permittedValues(password);
 			try {
-				final DBDatabase database = MinorTask.getDatabase();
+				final DBDatabase database = getDatabase();
 				final DBQuery query = database.getDBQuery(example);
 				List<User> users = query.getAllInstancesOf(example);
 				switch (users.size()) {
@@ -93,10 +93,10 @@ public class LoginComponent extends PublicComponent {
 						minortask().loginAs(users.get(0).getUserID());
 						break;
 					case 0:
-						MinorTask.warning("Login Error", "Name and/or password do not match any known combination");
+						minortask.warning("Login Error", "Name and/or password do not match any known combination");
 						break;
 					default:
-						MinorTask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+						minortask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;
 				}
 			} catch (SQLException ex) {
@@ -104,7 +104,7 @@ public class LoginComponent extends PublicComponent {
 			}
 		}
 		if (warningBuffer.length() > 0) {
-			MinorTask.warning("Login error", warningBuffer.toString());
+			minortask.warning("Login error", warningBuffer.toString());
 		}
 	}
 

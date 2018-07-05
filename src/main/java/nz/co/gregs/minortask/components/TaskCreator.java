@@ -72,7 +72,7 @@ public class TaskCreator extends MinorTaskComponent {
 							cancelButton,
 							createButton));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			MinorTask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		return layout;
 	}
@@ -84,7 +84,7 @@ public class TaskCreator extends MinorTaskComponent {
 		final Task.Project projectExample = new Task.Project();
 		projectExample.taskID.permittedValues(getTaskID());
 		if (getTaskID() != null) {
-			final Task fullTaskDetails = MinorTask.getDatabase().getDBTable(projectExample).getOnlyRow();
+			final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
 		startDate.setValue(startDefault);
@@ -104,10 +104,10 @@ public class TaskCreator extends MinorTaskComponent {
 		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
 
 		try {
-			MinorTask.getDatabase().insert(task);
+			getDatabase().insert(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			MinorTask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		minortask().showTask(task.taskID.getValue());
 	}

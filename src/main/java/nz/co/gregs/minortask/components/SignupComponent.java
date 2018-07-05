@@ -16,7 +16,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.Date;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -68,7 +67,7 @@ public class SignupComponent extends PublicComponent {
 		final String pass = PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
-		MinorTask.chat(username);
+		minortask.chat(username);
 		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
 		}if (username.contains(" ")) {
@@ -83,26 +82,26 @@ public class SignupComponent extends PublicComponent {
 		User example = new User();
 		example.queryUsername().permittedValuesIgnoreCase(username);
 		try {
-			Long count = MinorTask.getDatabase().getDBTable(example).count();
+			Long count = getDatabase().getDBTable(example).count();
 			if (count > 0) {
-				MinorTask.error("You're unique", "Sorry, that username is already taken, please try another one");
+				minortask.error("You're unique", "Sorry, that username is already taken, please try another one");
 			}
 		} catch (SQLException ex) {
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 		if (warningBuffer.length() > 0) {
-			MinorTask.error("Secure password required", warningBuffer.toString());
+			minortask.error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
 				newUser.setUsername(username);
 				newUser.setPassword(pass);
 				newUser.setEmail(email);
 				newUser.setSignupDate(new Date());
-				MinorTask.getDatabase().insert(newUser);
-				MinorTask.chat("Welcome to Minor Task @" + username);
+				getDatabase().insert(newUser);
+				minortask.chat("Welcome to Minor Task @" + username);
 				minortask().loginAs(newUser.getUserID());
 			} catch (SQLException ex) {
-				MinorTask.sqlerror(ex);
+				minortask.sqlerror(ex);
 			}
 		}
 	}

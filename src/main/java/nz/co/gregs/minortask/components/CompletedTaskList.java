@@ -47,7 +47,7 @@ public class CompletedTaskList extends MinorTaskComponent {
 				layout.addComponent(taskSummary);
 			}
 		} catch (SQLException ex) {
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -57,7 +57,7 @@ public class CompletedTaskList extends MinorTaskComponent {
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.excludedValues((Date) null);
-		final DBTable<Task.WithSortColumns> dbTable = MinorTask.getDatabase().getDBTable(example);
+		final DBTable<Task.WithSortColumns> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
 		dbTable.setSortOrder(
 				example.column(example.completionDate),

@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.datamodel.Task;
 
 
 public class MinorTaskComponent extends PublicComponent {
@@ -22,6 +23,21 @@ public class MinorTaskComponent extends PublicComponent {
 	 */
 	public Long getTaskID() {
 		return taskID;
+	}
+
+	/**
+	 * @return the taskID
+	 */
+	public Task getTask() {
+		return getTask(taskID);
+	}
+
+	/**
+	 * @param taskID
+	 * @return the taskID
+	 */
+	public Task getTask(Long taskID) {
+		return minortask().getTask(taskID, minortask().getUserID());
 	}
 	
 }

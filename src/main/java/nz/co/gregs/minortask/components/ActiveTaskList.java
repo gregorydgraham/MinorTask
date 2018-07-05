@@ -53,7 +53,7 @@ public class ActiveTaskList extends MinorTaskComponent {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}
 		} catch (SQLException ex) {
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -63,7 +63,7 @@ public class ActiveTaskList extends MinorTaskComponent {
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permittedValues((Date) null);
-		final DBTable<Task.WithSortColumns> dbTable = MinorTask.getDatabase().getDBTable(example);
+		final DBTable<Task.WithSortColumns> dbTable = minortask().getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
 				example.column(example.isOverdue),
 				example.column(example.hasStarted),

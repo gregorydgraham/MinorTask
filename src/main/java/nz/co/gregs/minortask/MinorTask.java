@@ -76,21 +76,21 @@ public class MinorTask {
 		return value.substring(0, value.length() < i ? value.length() : i);
 	}
 
-	public static final void warning(final String topic, final String warning) {
+	public final void warning(final String topic, final String warning) {
 		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
 		note.show(Page.getCurrent());
 	}
 
-	public static final void error(final String topic, final String error) {
+	public final void error(final String topic, final String error) {
 		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 	}
 
-	public static final void chat(String string) {
+	public final void chat(String string) {
 		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 	}
 
-	public static final void sqlerror(Exception exp) {
+	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
@@ -104,7 +104,7 @@ public class MinorTask {
 //		}
 	}
 
-	public static Task getTask(Long taskID, final long userID) {
+	public Task getTask(Long taskID, final long userID) {
 		Task returnTask = null;
 		final Task task = getTaskExample(taskID, userID);
 		task.taskID.permittedValues(taskID);
@@ -116,7 +116,7 @@ public class MinorTask {
 		return returnTask;
 	}
 
-	public static List<Task> getActiveSubtasks(Long taskID, final long userID) {
+	public List<Task> getActiveSubtasks(Long taskID, final long userID) {
 		ArrayList<Task> arrayList = new ArrayList<Task>();
 		final Task example = getProjectExample(taskID, userID);
 		example.completionDate.permittedValues((Date) null);
@@ -130,7 +130,7 @@ public class MinorTask {
 		return arrayList;
 	}
 
-	public static synchronized void setupDatabase() {
+	public synchronized void setupDatabase() {
 		if (database == null) {
 			try {
 				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
@@ -147,14 +147,14 @@ public class MinorTask {
 		}
 	}
 
-	public static synchronized DBDatabase getDatabase() {
+	public synchronized DBDatabase getDatabase() {
 		if (database == null) {
 			setupDatabase();
 		}
 		return database;
 	}
 
-	public static List<Task> getProjectPathTasks(Long taskID, final long userID) {
+	public List<Task> getProjectPathTasks(Long taskID, final long userID) {
 		try {
 			final Task task = getTaskExample(taskID, userID);
 			DBQuery query = getDatabase().getDBQuery(task);
@@ -208,13 +208,13 @@ public class MinorTask {
 		return currentTaskID;
 	}
 
-	public Task.WithSortColumns getTaskExampleForTaskID(Long taskID) {
+	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(getUserID());
 		example.projectID.permittedValues(taskID);
 		return example;
 	}
-
+	
 	/**
 	 * @param userID the userID to set
 	 */

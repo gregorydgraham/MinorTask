@@ -1,7 +1,5 @@
 package nz.co.gregs.minortask;
 
-import nz.co.gregs.minortask.components.LoginComponent;
-import nz.co.gregs.minortask.components.LoggedoutComponent;
 import com.vaadin.annotations.PreserveOnRefresh;
 import javax.servlet.annotation.WebServlet;
 
@@ -9,14 +7,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.*;
 import com.vaadin.ui.*;
-import java.sql.SQLException;
-import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.components.BannerMenu;
-import nz.co.gregs.minortask.components.FooterMenu;
-import nz.co.gregs.minortask.components.SignupComponent;
-import nz.co.gregs.minortask.components.TaskCreator;
-import nz.co.gregs.minortask.components.TaskEditor;
-import nz.co.gregs.minortask.datamodel.*;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser

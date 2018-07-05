@@ -113,7 +113,7 @@ public class TaskEditor extends MinorTaskComponent {
 			layout.addComponent(reopenButton);
 			layout.addComponent(completedTasks);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -143,7 +143,7 @@ public class TaskEditor extends MinorTaskComponent {
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		final Long taskID = getTaskID();
 		if (taskID != null) {
-			Task task = MinorTask.getTask(taskID, minortask().getUserID());
+			Task task = getTask();
 			name.setValue(task.name.toString());
 			description.setValue(task.description.toString());
 			startDate.setValue(MinorTask.asLocalDate(task.startDate.dateValue()));
@@ -182,7 +182,7 @@ public class TaskEditor extends MinorTaskComponent {
 	}
 
 	public void saveTask() {
-		Task task = MinorTask.getTask(getTaskID(), minortask().getUserID());
+		Task task = getTask();
 
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
@@ -191,10 +191,10 @@ public class TaskEditor extends MinorTaskComponent {
 		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
 
 		try {
-			MinorTask.getDatabase().update(task);
+			getDatabase().update(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			MinorTask.sqlerror(ex);
+			minortask.sqlerror(ex);
 		}
 	}
 
@@ -229,21 +229,21 @@ public class TaskEditor extends MinorTaskComponent {
 
 		@Override
 		public void buttonClick(Button.ClickEvent event) {
-			List<Task> projectPathTasks = MinorTask.getProjectPathTasks(taskID, minortask.getUserID());
+			List<Task> projectPathTasks = minortask.getProjectPathTasks(taskID, minortask.getUserID());
 			for (Task projectPathTask : projectPathTasks) {
 				projectPathTask.completionDate.setValue((Date) null);
 				try {
-					MinorTask.getDatabase().update(projectPathTask);
+					minortask.getDatabase().update(projectPathTask);
 				} catch (SQLException ex) {
-					MinorTask.sqlerror(ex);
+					minortask.sqlerror(ex);
 				}
 			}
-			Task task = MinorTask.getTask(taskID, minortask.getUserID());
+			Task task = minortask.getTask(taskID, minortask.getUserID());
 			task.completionDate.setValue((Date) null);
 			try {
-				MinorTask.getDatabase().update(task);
+				minortask.getDatabase().update(task);
 			} catch (SQLException ex) {
-				MinorTask.sqlerror(ex);
+				minortask.sqlerror(ex);
 			}
 			minortask.showTask(taskID);
 		}
@@ -271,16 +271,16 @@ public class TaskEditor extends MinorTaskComponent {
 
 		private Task completeTask(Long taskID) {
 			if (taskID != null) {
-				List<Task> subtasks = MinorTask.getActiveSubtasks(taskID, minortask.getUserID());
+				List<Task> subtasks = minortask.getActiveSubtasks(taskID, minortask.getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
-				Task task = MinorTask.getTask(taskID, minortask.getUserID());
+				Task task = minortask.getTask(taskID, minortask.getUserID());
 				task.completionDate.setValue(new Date());
 				try {
-					MinorTask.getDatabase().update(task);
+					minortask.getDatabase().update(task);
 				} catch (SQLException ex) {
-					MinorTask.sqlerror(ex);
+					minortask.sqlerror(ex);
 				}
 				return task;
 			}

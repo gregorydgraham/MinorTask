@@ -31,7 +31,7 @@ public class TaskSummary extends MinorTaskComponent {
 		summary.setWidth(100, Unit.PERCENTAGE);
 		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-		Label arrow = new Label("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
+		Label arrow = new Label("" + minortask.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
 		arrow.setIcon(VaadinIcons.ANGLE_RIGHT);
 		arrow.setSizeUndefined();
 		arrow.setHeight(100, Unit.PERCENTAGE);
