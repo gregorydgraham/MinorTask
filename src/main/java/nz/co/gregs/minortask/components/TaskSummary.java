@@ -22,7 +22,7 @@ public class TaskSummary extends MinorTaskComponent {
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());
 
-		name.setWidthUndefined();
+		name.setWidth(100, Unit.PERCENTAGE);
 		desc.setWidth(100, Unit.PERCENTAGE);
 		desc.addStyleName("tiny");
 
