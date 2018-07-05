@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 
 /**
  *
@@ -15,17 +15,17 @@ import nz.co.gregs.minortask.MinorTaskUI;
  */
 public abstract class PublicComponent extends CustomComponent{
 
-	private final MinorTaskUI minorTaskUI;
+	private final MinorTask minortask;
 
-	public PublicComponent(MinorTaskUI ui) {
-		this.minorTaskUI = ui;
+	public PublicComponent(MinorTask minortask) {
+		this.minortask = minortask;
 	}
 
 	/**
 	 * @return the ui
 	 */
-	public MinorTaskUI minortask() {
-		return minorTaskUI;
+	public MinorTask minortask() {
+		return minortask;
 	}
 
 	@Override

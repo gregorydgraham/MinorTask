@@ -6,8 +6,12 @@
 package nz.co.gregs.minortask;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,14 +29,26 @@ import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.datamodel.Task;
-import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.components.*;
+import nz.co.gregs.minortask.datamodel.*;
 
 /**
  *
  * @author gregorygraham
  */
-public class Helper {
+public class MinorTask {
+
+	private long userID = 0;
+	private Long currentTaskID;
+	boolean notLoggedIn = true;
+	public String username = "";
+	private VaadinSession sess;
+	private final MinorTaskUI ui;
+
+	public MinorTask(MinorTaskUI ui) {
+		this.ui = ui;
+		setupDatabase();
+	}
 
 	static DBDatabase database;
 
@@ -53,7 +69,7 @@ public class Helper {
 	}
 
 	public static String asDateString(Date value, UI ui) {
-		return Helper.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(ui.getLocale()));
+		return MinorTask.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(ui.getLocale()));
 	}
 
 	public static String shorten(String value, int i) {
@@ -75,7 +91,7 @@ public class Helper {
 	}
 
 	public static final void sqlerror(Exception exp) {
-		Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, exp);
+		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 //		final StackTraceElement[] stackTraceArray = exp.getStackTrace();
@@ -114,11 +130,8 @@ public class Helper {
 		return arrayList;
 	}
 
-	private Helper() {
-	}
-
 	public static synchronized void setupDatabase() {
-		if (Helper.database == null) {
+		if (database == null) {
 			try {
 				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
 			} catch (SQLException ex) {
@@ -127,7 +140,7 @@ public class Helper {
 			}
 		}
 		try {
-			new Notification("Currently serving " + Helper.database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + Helper.database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+			new Notification("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
@@ -135,16 +148,16 @@ public class Helper {
 	}
 
 	public static DBDatabase getDatabase() {
-		if (Helper.database == null) {
+		if (database == null) {
 			setupDatabase();
 		}
-		return Helper.database;
+		return database;
 	}
 
 	public static List<Task> getProjectPathTasks(Long taskID, final long userID) {
 		try {
 			final Task task = getTaskExample(taskID, userID);
-			DBQuery query = Helper.getDatabase().getDBQuery(task);
+			DBQuery query = getDatabase().getDBQuery(task);
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
 			return ancestors;
@@ -168,5 +181,114 @@ public class Helper {
 		task.projectID.permittedValues(taskID);
 		task.userID.permittedValues(userID);
 		return task;
+	}
+
+	public void showLogin() {
+		showPublicContent(new LoginComponent(this));
+	}
+
+	public void showLogin(String username, String password) {
+		showPublicContent(new LoginComponent(this, username, password));
+	}
+
+	public void showTask() {
+		showTask(null);
+	}
+
+	public void showTask(Long taskID) {
+		TaskEditor taskComponent = new TaskEditor(this, taskID);
+		showAuthorisedContent(taskID, taskComponent);
+	}
+
+	public void showTaskCreation(Long taskID) {
+		showAuthorisedContent(taskID, new TaskCreator(this, taskID));
+	}
+
+	public Long getCurrentTaskID() {
+		return currentTaskID;
+	}
+
+	public Task.WithSortColumns getTaskExampleForTaskID(Long taskID) {
+		Task.WithSortColumns example = new Task.WithSortColumns();
+		example.userID.permittedValues(getUserID());
+		example.projectID.permittedValues(taskID);
+		return example;
+	}
+
+	/**
+	 * @param userID the userID to set
+	 */
+	public void setUserID(long userID) {
+		this.userID = userID;
+		User user = new User();
+		user.queryUserID().permittedValues(userID);
+		try {
+			User onlyRow = getDatabase().get(1L, user).get(0);
+			username = onlyRow.getUsername();
+		} catch (SQLException ex) {
+			error("SQL ERROR", ex.getLocalizedMessage());
+		} catch (UnexpectedNumberOfRowsException ex) {
+			error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
+		}
+	}
+
+	public void loginAs(Long userID) {
+		this.notLoggedIn = false;
+		this.userID = userID;
+		showTask(null);
+	}
+
+	void setupSession(VaadinRequest vaadinRequest) {
+		sess = VaadinSession.getCurrent();
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	private void showAuthorisedContent(Long taskID, Component component) {
+		if (notLoggedIn) {
+			showLogin();
+		} else {
+			setCurrentTaskID(taskID);
+			VerticalLayout display = new VerticalLayout();
+			display.addComponent(new BannerMenu(this, taskID));
+			display.addComponent(component);
+			display.addComponent(new FooterMenu(this, taskID));
+			ui.setContent(display);
+			ui.setScrollTop(0);
+		}
+	}
+
+	public void logout() {
+		ui.setContent(new LoggedoutComponent(this));
+		notLoggedIn = true;
+		sess.close();
+	}
+
+	public void showPublicContent(Component component) {
+		ui.setContent(component);
+	}
+
+	public boolean getNotLoggedIn() {
+		return notLoggedIn;
+	}
+
+	public void showSignUp(String username, String password) {
+		showPublicContent(new SignupComponent(this, username, password));
+	}
+
+	private void setCurrentTaskID(Long newTaskID) {
+		currentTaskID = newTaskID;
+	}
+
+	/**
+	 * @return the userID
+	 */
+	public long getUserID() {
+		return userID;
 	}
 }

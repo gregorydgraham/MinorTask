@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.Helper;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.*;
 
@@ -52,9 +52,9 @@ public class TaskEditor extends MinorTaskComponent {
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
-	public TaskEditor(MinorTaskUI ui, Long currentTask) {
-		super(ui, currentTask);
-		setCompositionRoot(currentTask != null ? getComponent() : new TaskRootComponent(ui, currentTask));
+	public TaskEditor(MinorTask minortask, Long currentTask) {
+		super(minortask, currentTask);
+		setCompositionRoot(currentTask != null ? getComponent() : new TaskRootComponent(minortask, currentTask));
 	}
 
 	public final Component getComponent() {
@@ -113,7 +113,7 @@ public class TaskEditor extends MinorTaskComponent {
 			layout.addComponent(reopenButton);
 			layout.addComponent(completedTasks);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -143,17 +143,17 @@ public class TaskEditor extends MinorTaskComponent {
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		final Long taskID = getTaskID();
 		if (taskID != null) {
-			Task task = Helper.getTask(taskID, minortask().getUserID());
+			Task task = MinorTask.getTask(taskID, minortask().getUserID());
 			name.setValue(task.name.toString());
 			description.setValue(task.description.toString());
-			startDate.setValue(Helper.asLocalDate(task.startDate.dateValue()));
-			preferredEndDate.setValue(Helper.asLocalDate(task.preferredDate.dateValue()));
-			deadlineDate.setValue(Helper.asLocalDate(task.finalDate.dateValue()));
+			startDate.setValue(MinorTask.asLocalDate(task.startDate.dateValue()));
+			preferredEndDate.setValue(MinorTask.asLocalDate(task.preferredDate.dateValue()));
+			deadlineDate.setValue(MinorTask.asLocalDate(task.finalDate.dateValue()));
 
 			final Date completed = task.completionDate.dateValue();
 
 			if (completed != null) {
-				completedDate.setValue(Helper.asLocalDate(completed));
+				completedDate.setValue(MinorTask.asLocalDate(completed));
 				this.addStyleName("completed");
 				completedIndicator.setVisible(true);
 				reopenButton.setVisible(true);
@@ -182,19 +182,19 @@ public class TaskEditor extends MinorTaskComponent {
 	}
 
 	public void saveTask() {
-		Task task = Helper.getTask(getTaskID(), minortask().getUserID());
+		Task task = MinorTask.getTask(getTaskID(), minortask().getUserID());
 
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
-		task.startDate.setValue(Helper.asDate(startDate.getValue()));
-		task.preferredDate.setValue(Helper.asDate(preferredEndDate.getValue()));
-		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
+		task.startDate.setValue(MinorTask.asDate(startDate.getValue()));
+		task.preferredDate.setValue(MinorTask.asDate(preferredEndDate.getValue()));
+		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
 
 		try {
-			Helper.getDatabase().update(task);
+			MinorTask.getDatabase().update(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 	}
 
@@ -220,30 +220,30 @@ public class TaskEditor extends MinorTaskComponent {
 	private static class ReopenTaskListener implements Button.ClickListener {
 
 		private final Long taskID;
-		private final MinorTaskUI minortask;
+		private final MinorTask minortask;
 
-		public ReopenTaskListener(MinorTaskUI minortask, Long taskID) {
+		public ReopenTaskListener(MinorTask minortask, Long taskID) {
 			this.minortask = minortask;
 			this.taskID = taskID;
 		}
 
 		@Override
 		public void buttonClick(Button.ClickEvent event) {
-			List<Task> projectPathTasks = Helper.getProjectPathTasks(taskID, minortask.getUserID());
+			List<Task> projectPathTasks = MinorTask.getProjectPathTasks(taskID, minortask.getUserID());
 			for (Task projectPathTask : projectPathTasks) {
 				projectPathTask.completionDate.setValue((Date) null);
 				try {
-					Helper.getDatabase().update(projectPathTask);
+					MinorTask.getDatabase().update(projectPathTask);
 				} catch (SQLException ex) {
-					Helper.sqlerror(ex);
+					MinorTask.sqlerror(ex);
 				}
 			}
-			Task task = Helper.getTask(taskID, minortask.getUserID());
+			Task task = MinorTask.getTask(taskID, minortask.getUserID());
 			task.completionDate.setValue((Date) null);
 			try {
-				Helper.getDatabase().update(task);
+				MinorTask.getDatabase().update(task);
 			} catch (SQLException ex) {
-				Helper.sqlerror(ex);
+				MinorTask.sqlerror(ex);
 			}
 			minortask.showTask(taskID);
 		}
@@ -252,9 +252,9 @@ public class TaskEditor extends MinorTaskComponent {
 	private static class CompleteTaskListener implements Button.ClickListener {
 
 		private final Long taskID;
-		private final MinorTaskUI minortask;
+		private final MinorTask minortask;
 
-		public CompleteTaskListener(MinorTaskUI minortask, Long taskID) {
+		public CompleteTaskListener(MinorTask minortask, Long taskID) {
 			this.minortask = minortask;
 			this.taskID = taskID;
 		}
@@ -271,16 +271,16 @@ public class TaskEditor extends MinorTaskComponent {
 
 		private Task completeTask(Long taskID) {
 			if (taskID != null) {
-				List<Task> subtasks = Helper.getActiveSubtasks(taskID, minortask.getUserID());
+				List<Task> subtasks = MinorTask.getActiveSubtasks(taskID, minortask.getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
-				Task task = Helper.getTask(taskID, minortask.getUserID());
+				Task task = MinorTask.getTask(taskID, minortask.getUserID());
 				task.completionDate.setValue(new Date());
 				try {
-					Helper.getDatabase().update(task);
+					MinorTask.getDatabase().update(task);
 				} catch (SQLException ex) {
-					Helper.sqlerror(ex);
+					MinorTask.sqlerror(ex);
 				}
 				return task;
 			}

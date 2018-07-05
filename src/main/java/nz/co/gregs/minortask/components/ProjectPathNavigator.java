@@ -9,8 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import java.util.List;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -21,7 +20,7 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 
 //	private final MinorTaskUI ui;
 //	private final Long currentTaskID;
-	public ProjectPathNavigator(MinorTaskUI minortask, Long taskID) {
+	public ProjectPathNavigator(MinorTask minortask, Long taskID) {
 		super(minortask, taskID);
 		setCompositionRoot(getComponent());
 	}
@@ -29,7 +28,7 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 	private final Component getComponent() {
 		HorizontalLayout hLayout = new HorizontalLayout();
 		hLayout.addComponentAsFirst(getButtonForTaskID(null));
-		List<Task> ancestors = Helper.getProjectPathTasks(getTaskID(), minortask().getUserID());
+		List<Task> ancestors = MinorTask.getProjectPathTasks(getTaskID(), minortask().getUserID());
 		for (Task ancestor : ancestors) {
 			final Button label = getButtonForTaskID(ancestor);
 			hLayout.addComponent(label, 1);

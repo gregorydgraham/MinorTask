@@ -18,8 +18,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -31,10 +30,10 @@ public class LoginComponent extends PublicComponent {
 	private final TextField USERNAME_FIELD = new TextField("Your Name");
 	private final PasswordField PASSWORD_FIELD = new PasswordField("Password");
 
-	public LoginComponent(MinorTaskUI minortask) {
+	public LoginComponent(MinorTask minortask) {
 		this(minortask, "", "");
 	}
-	public LoginComponent(MinorTaskUI minortask, String username, String password) {
+	public LoginComponent(MinorTask minortask, String username, String password) {
 		super(minortask);
 		setCompositionRoot(getComponent());
 		USERNAME_FIELD.setValue(username);
@@ -82,16 +81,16 @@ public class LoginComponent extends PublicComponent {
 			example.queryUsername().permittedValuesIgnoreCase(USERNAME_FIELD.getValue());
 			example.queryPassword().permittedValues(PASSWORD_FIELD.getValue());
 			try {
-				List<User> users = Helper.getDatabase().getDBTable(example).getAllRows();
+				List<User> users = MinorTask.getDatabase().getDBTable(example).getAllRows();
 				switch (users.size()) {
 					case 1:
 						minortask().loginAs(users.get(0).getUserID());
 						break;
 					case 0:
-						Helper.warning("Login Error", "Name and/or password do not match any known combination");
+						MinorTask.warning("Login Error", "Name and/or password do not match any known combination");
 						break;
 					default:
-						Helper.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+						MinorTask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;
 				}
 			} catch (SQLException ex) {
@@ -99,7 +98,7 @@ public class LoginComponent extends PublicComponent {
 			}
 		}
 		if (warningBuffer.length() > 0) {
-			Helper.warning("Login error", warningBuffer.toString());
+			MinorTask.warning("Login error", warningBuffer.toString());
 		}
 	}
 

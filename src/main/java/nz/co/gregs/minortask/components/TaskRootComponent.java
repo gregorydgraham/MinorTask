@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
-import nz.co.gregs.minortask.Helper;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -17,18 +17,18 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class TaskRootComponent extends MinorTaskComponent {
 
-	public TaskRootComponent(MinorTaskUI ui, Long taskID) {
-		super(ui, taskID);
-		setCompositionRoot(taskID==null?getComponent():new TaskEditor(ui, taskID));
+	public TaskRootComponent(MinorTask minortask, Long taskID) {
+		super(minortask, taskID);
+		setCompositionRoot(taskID==null?getComponent():new TaskEditor(minortask, taskID));
 	}
 
 	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
-		String projectName = "All";
-		if (getTaskID() != null) {
-			Task task = Helper.getTask(getTaskID(), minortask().getUserID());
-			projectName = task.name.getValue();
-		}
+//		String projectName = "All";
+//		if (getTaskID() != null) {
+//			Task task = MinorTask.getTask(getTaskID(), minortask().getUserID());
+//			projectName = task.name.getValue();
+//		}
 
 		layout.addComponents(
 				new ProjectPathNavigator(minortask(), getTaskID()),

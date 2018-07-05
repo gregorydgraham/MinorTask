@@ -11,13 +11,12 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
 import com.vaadin.icons.VaadinIcons;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class TaskSummary extends MinorTaskComponent {
 
-	public TaskSummary(MinorTaskUI minortask, Long taskID, Task task) {
+	public TaskSummary(MinorTask minortask, Long taskID, Task task) {
 		super(minortask, taskID);
 
 		Label name = new Label(task.name.getValue());
@@ -32,7 +31,7 @@ public class TaskSummary extends MinorTaskComponent {
 		summary.setWidth(100, Unit.PERCENTAGE);
 		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-		Label arrow = new Label("" + Helper.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
+		Label arrow = new Label("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
 		arrow.setIcon(VaadinIcons.ANGLE_RIGHT);
 		arrow.setSizeUndefined();
 		arrow.setHeight(100, Unit.PERCENTAGE);

@@ -6,13 +6,11 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.server.ExternalResource;
-import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.VerticalLayout;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 
 /**
  *
@@ -20,8 +18,8 @@ import nz.co.gregs.minortask.MinorTaskUI;
  */
 public class LoggedoutComponent extends PublicComponent {
 
-	public LoggedoutComponent(MinorTaskUI ui) {
-		super(ui);
+	public LoggedoutComponent(MinorTask minortask) {
+		super(minortask);
 		setCompositionRoot(getComponent());
 	}
 

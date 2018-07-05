@@ -15,8 +15,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -25,8 +24,8 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public class BannerMenu extends MinorTaskComponent {
 
-	public BannerMenu(MinorTaskUI ui, Long taskID) {
-		super(ui, taskID);
+	public BannerMenu(MinorTask minortask, Long taskID) {
+		super(minortask, taskID);
 		Component banner = getComponent();
 
 		this.setCompositionRoot(banner);
@@ -60,14 +59,14 @@ public class BannerMenu extends MinorTaskComponent {
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
 		try {
-			final DBTable<User> userTable = Helper.getDatabase().getDBTable(example);
+			final DBTable<User> userTable = MinorTask.getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
 			final Label label = new Label("Welcome to MinorTask @" + user.getUsername());
 			label.setWidth(100, Unit.PERCENTAGE);
 			banner.addComponent(label);
 			banner.setComponentAlignment(label, Alignment.TOP_CENTER);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		
 		Button logoutButton = new Button("Logout");

@@ -15,7 +15,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.Date;
-import nz.co.gregs.minortask.Helper;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -31,12 +31,12 @@ public class SignupComponent extends PublicComponent {
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
 
-	public SignupComponent(MinorTaskUI loginUI) {
-		this(loginUI, "", "");
+	public SignupComponent(MinorTask minortask) {
+		this(minortask, "", "");
 	}
 
-	public SignupComponent(MinorTaskUI loginUI, String username, String password) {
-		super(loginUI);
+	public SignupComponent(MinorTask minortask, String username, String password) {
+		super(minortask);
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
 		setCompositionRoot(getComponent());
@@ -68,7 +68,7 @@ public class SignupComponent extends PublicComponent {
 		final String pass = PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
-		Helper.chat(username);
+		MinorTask.chat(username);
 		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
 		}if (username.contains(" ")) {
@@ -83,26 +83,26 @@ public class SignupComponent extends PublicComponent {
 		User example = new User();
 		example.queryUsername().permittedValuesIgnoreCase(username);
 		try {
-			Long count = Helper.getDatabase().getDBTable(example).count();
+			Long count = MinorTask.getDatabase().getDBTable(example).count();
 			if (count > 0) {
-				Helper.error("You're unique", "Sorry, that username is already taken, please try another one");
+				MinorTask.error("You're unique", "Sorry, that username is already taken, please try another one");
 			}
 		} catch (SQLException ex) {
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		if (warningBuffer.length() > 0) {
-			Helper.error("Secure password required", warningBuffer.toString());
+			MinorTask.error("Secure password required", warningBuffer.toString());
 		} else {
 			try {
 				newUser.setUsername(username);
 				newUser.setPassword(pass);
 				newUser.setEmail(email);
 				newUser.setSignupDate(new Date());
-				Helper.getDatabase().insert(newUser);
-				Helper.chat("Welcome to Minor Task @" + username);
+				MinorTask.getDatabase().insert(newUser);
+				MinorTask.chat("Welcome to Minor Task @" + username);
 				minortask().loginAs(newUser.getUserID());
 			} catch (SQLException ex) {
-				Helper.sqlerror(ex);
+				MinorTask.sqlerror(ex);
 			}
 		}
 	}

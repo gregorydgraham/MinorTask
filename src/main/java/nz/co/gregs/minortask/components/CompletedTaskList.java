@@ -13,14 +13,13 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
-import nz.co.gregs.minortask.Helper;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class CompletedTaskList extends MinorTaskComponent {
 
-	public CompletedTaskList(MinorTaskUI ui, Long selectedTask) {
-		super(ui, selectedTask);
+	public CompletedTaskList(MinorTask minortask, Long selectedTask) {
+		super(minortask, selectedTask);
 		Panel panel = new Panel();
 		panel.setContent(getComponent());
 		this.setCompositionRoot(panel);
@@ -48,7 +47,7 @@ public class CompletedTaskList extends MinorTaskComponent {
 				layout.addComponent(taskSummary);
 			}
 		} catch (SQLException ex) {
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -58,7 +57,7 @@ public class CompletedTaskList extends MinorTaskComponent {
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.excludedValues((Date) null);
-		final DBTable<Task.WithSortColumns> dbTable = Helper.getDatabase().getDBTable(example);
+		final DBTable<Task.WithSortColumns> dbTable = MinorTask.getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
 		dbTable.setSortOrder(
 				example.column(example.completionDate),

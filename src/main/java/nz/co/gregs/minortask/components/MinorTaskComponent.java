@@ -5,15 +5,15 @@
  */
 package nz.co.gregs.minortask.components;
 
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 
 
 public class MinorTaskComponent extends PublicComponent {
 
 	private final Long taskID;
 
-	public MinorTaskComponent(MinorTaskUI ui, Long taskID) {
-		super(ui);
+	public MinorTaskComponent(MinorTask minortask, Long taskID) {
+		super(minortask);
 		this.taskID = taskID;
 	}
 

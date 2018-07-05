@@ -5,10 +5,9 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
-import nz.co.gregs.minortask.MinorTaskUI;
+import nz.co.gregs.minortask.MinorTask;
 
 /**
  *
@@ -19,8 +18,8 @@ public class FooterMenu extends MinorTaskComponent {
 //	private final MinorTaskUI ui;
 //	private final Long taskID;
 
-	public FooterMenu(MinorTaskUI ui, Long taskID) {
-		super(ui, taskID);
+	public FooterMenu(MinorTask minortask, Long taskID) {
+		super(minortask, taskID);
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Label("MinorTask is a simple system to help you manage projects and tasks."));
 		layout.addComponent(new Label("The key concept is that every project is just a collection of minor tasks."));

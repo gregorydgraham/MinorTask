@@ -35,8 +35,8 @@ public class TaskCreator extends MinorTaskComponent {
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
-	public TaskCreator(MinorTaskUI ui, Long currentTask) {
-		super(ui, currentTask);
+	public TaskCreator(MinorTask minortask, Long currentTask) {
+		super(minortask, currentTask);
 		this.setCompositionRoot(getComponent());
 	}
 
@@ -79,7 +79,7 @@ public class TaskCreator extends MinorTaskComponent {
 							cancelButton,
 							createButton));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		return layout;
 	}
@@ -91,7 +91,7 @@ public class TaskCreator extends MinorTaskComponent {
 		final Task.Project projectExample = new Task.Project();
 		projectExample.taskID.permittedValues(getTaskID());
 		if (getTaskID() != null) {
-			final Task fullTaskDetails = Helper.getDatabase().getDBTable(projectExample).getOnlyRow();
+			final Task fullTaskDetails = MinorTask.getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
 		startDate.setValue(startDefault);
@@ -106,15 +106,15 @@ public class TaskCreator extends MinorTaskComponent {
 		task.projectID.setValue(getTaskID());
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
-		task.startDate.setValue(Helper.asDate(startDate.getValue()));
-		task.preferredDate.setValue(Helper.asDate(preferredEndDate.getValue()));
-		task.finalDate.setValue(Helper.asDate(deadlineDate.getValue()));
+		task.startDate.setValue(MinorTask.asDate(startDate.getValue()));
+		task.preferredDate.setValue(MinorTask.asDate(preferredEndDate.getValue()));
+		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
 
 		try {
-			Helper.getDatabase().insert(task);
+			MinorTask.getDatabase().insert(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			Helper.sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		minortask().showTask(task.taskID.getValue());
 	}
