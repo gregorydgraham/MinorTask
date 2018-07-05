@@ -45,10 +45,6 @@ public class TaskSummary extends MinorTaskComponent {
 		hlayout.setComponentAlignment(arrow, Alignment.MIDDLE_RIGHT);
 		hlayout.addLayoutClickListener(new TaskClickListener(task));
 
-//		Panel panel = new Panel();
-//		panel.setIcon(VaadinIcons.ANGLE_RIGHT);
-//		panel.setContent(summary);
-//		panel.addClickListener(new TaskClickListener(task));
 		this.setCompositionRoot(hlayout);
 	}
 
