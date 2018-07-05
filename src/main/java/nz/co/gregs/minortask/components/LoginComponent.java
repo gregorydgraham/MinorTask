@@ -18,6 +18,8 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -74,14 +76,18 @@ public class LoginComponent extends PublicComponent {
 
 	public void handleDefaultButton() {
 		StringBuilder warningBuffer = new StringBuilder();
-		if (USERNAME_FIELD.getValue().isEmpty() || PASSWORD_FIELD.getValue().isEmpty()) {
+		final String username = USERNAME_FIELD.getValue();
+		final String password = PASSWORD_FIELD.getValue();
+		if (username.isEmpty() || password.isEmpty()) {
 			warningBuffer.append("Name and/or password needs to be entered\n");
 		} else {
 			User example = new User();
-			example.queryUsername().permittedValuesIgnoreCase(USERNAME_FIELD.getValue());
-			example.queryPassword().permittedValues(PASSWORD_FIELD.getValue());
+			example.queryUsername().permittedValuesIgnoreCase(username);
+			example.queryPassword().permittedValues(password);
 			try {
-				List<User> users = MinorTask.getDatabase().getDBTable(example).getAllRows();
+				final DBDatabase database = MinorTask.getDatabase();
+				final DBQuery query = database.getDBQuery(example);
+				List<User> users = query.getAllInstancesOf(example);
 				switch (users.size()) {
 					case 1:
 						minortask().loginAs(users.get(0).getUserID());

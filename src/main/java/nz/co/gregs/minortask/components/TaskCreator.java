@@ -24,14 +24,10 @@ public class TaskCreator extends MinorTaskComponent {
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
 	TextField project = new TextField("Project");
-//	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
-//	Button completeButton = new Button("Complete This Task");
-//	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
 	TextField notes = new TextField("Notes");
 	DateField startDate = new DateField("Start");
 	DateField preferredEndDate = new DateField("End");
 	DateField deadlineDate = new DateField("Deadline");
-//	Button statusIndicator = new Button("creating");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 
@@ -50,6 +46,7 @@ public class TaskCreator extends MinorTaskComponent {
 			setAsDefaultButton(createButton);
 
 			name.setWidthUndefined();
+			name.setCursorPosition(0);
 			description.setWidthUndefined();
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
@@ -59,7 +56,6 @@ public class TaskCreator extends MinorTaskComponent {
 			HorizontalLayout details = new HorizontalLayout(
 					name,
 					description);
-//			details.setComponentAlignment(statusIndicator, Alignment.BOTTOM_RIGHT);
 			details.setWidthUndefined();
 			
 			layout.addComponent(details);
@@ -71,9 +67,6 @@ public class TaskCreator extends MinorTaskComponent {
 			);
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
-//			layout.addComponent(subtasks);
-//			layout.addComponent(completeButton);
-//			layout.addComponent(completedTasks);
 			layout.addComponent(
 					new HorizontalLayout(
 							cancelButton,

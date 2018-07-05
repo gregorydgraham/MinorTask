@@ -147,7 +147,7 @@ public class MinorTask {
 		}
 	}
 
-	public static DBDatabase getDatabase() {
+	public static synchronized DBDatabase getDatabase() {
 		if (database == null) {
 			setupDatabase();
 		}
