@@ -191,8 +191,12 @@ public class MinorTask {
 		showPublicContent(new LoginComponent(this, username, password));
 	}
 
-	public void showTask() {
+	public void showTopLevelTasks() {
 		showTask(null);
+	}
+
+	public void showCurrentTask() {
+		showTask(currentTaskID);
 	}
 
 	public void showTask(Long taskID) {

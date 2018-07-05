@@ -13,6 +13,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -24,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.MinorTaskUI;
 import nz.co.gregs.minortask.datamodel.*;
 
 /**
@@ -34,7 +34,7 @@ import nz.co.gregs.minortask.datamodel.*;
 public class TaskEditor extends MinorTaskComponent {
 
 	TextField name = new TextField("Name");
-	TextField description = new TextField("Description");
+	TextArea description = new TextArea("Description");
 	ProjectPicker project = new ProjectPicker(minortask(), getTaskID());
 	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
 	Button completeButton = new Button("Complete This Task");
@@ -68,6 +68,7 @@ public class TaskEditor extends MinorTaskComponent {
 
 			name.setWidthUndefined();
 			description.setWidth(100, Unit.PERCENTAGE);
+			description.setHeight(3, Unit.CM);
 			activeIndicator.setWidth(100, Unit.PERCENTAGE);
 			startedIndicator.setWidth(100, Unit.PERCENTAGE);
 			overdueIndicator.setWidth(100, Unit.PERCENTAGE);
@@ -93,10 +94,9 @@ public class TaskEditor extends MinorTaskComponent {
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
-					name,
-					description, activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
+					name, project,
+					activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
 			details.setWidthUndefined();
-
 
 			HorizontalLayout dates = new HorizontalLayout(
 					startDate,
@@ -105,8 +105,8 @@ public class TaskEditor extends MinorTaskComponent {
 					completedDate
 			);
 			dates.setWidthUndefined();
-			layout.addComponent(project);
 			layout.addComponent(details);
+			layout.addComponent(description);
 			layout.addComponent(dates);
 			layout.addComponent(subtasks);
 			layout.addComponent(completeButton);
@@ -122,7 +122,10 @@ public class TaskEditor extends MinorTaskComponent {
 		final HasValue.ValueChangeListener<String> stringChange = (event) -> {
 			saveTask();
 		};
-		name.addValueChangeListener(stringChange);
+		name.addValueChangeListener((event) -> {
+			saveTask();
+			minortask.showCurrentTask();
+		});
 		description.addValueChangeListener(stringChange);
 
 		name.setValueChangeMode(ValueChangeMode.BLUR);
@@ -159,6 +162,7 @@ public class TaskEditor extends MinorTaskComponent {
 				reopenButton.setVisible(true);
 
 				name.setReadOnly(true);
+				project.setEnabled(false);
 				description.setReadOnly(true);
 				startDate.setReadOnly(true);
 				preferredEndDate.setReadOnly(true);

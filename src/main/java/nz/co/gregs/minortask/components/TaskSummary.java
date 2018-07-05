@@ -28,7 +28,7 @@ public class TaskSummary extends MinorTaskComponent {
 
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
-		summary.setWidth(100, Unit.PERCENTAGE);
+		summary.setWidth(50, Unit.EM);
 		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
 		Label arrow = new Label("" + minortask.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());

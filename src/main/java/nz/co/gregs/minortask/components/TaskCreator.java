@@ -47,18 +47,19 @@ public class TaskCreator extends MinorTaskComponent {
 
 			name.setWidthUndefined();
 			name.setCursorPosition(0);
-			description.setWidthUndefined();
+			description.setWidth(100, Unit.PERCENTAGE);
+			description.setHeight(3, Unit.CM);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
 			
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
-					name,
-					description);
+					name);
 			details.setWidthUndefined();
 			
 			layout.addComponent(details);
+			layout.addComponent(description);
 			
 			HorizontalLayout dates = new HorizontalLayout(
 							startDate,
@@ -113,7 +114,7 @@ public class TaskCreator extends MinorTaskComponent {
 	}
 
 	public void handleEscapeButton() {
-		minortask().showTask();
+		minortask().showCurrentTask();
 	}
 
 	public final void setAsDefaultButton(Button button) {

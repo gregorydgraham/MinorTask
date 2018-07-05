@@ -5,17 +5,19 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQueryRow;
+import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -24,6 +26,7 @@ public class ProjectPicker extends MinorTaskComponent {
 	public ProjectPicker(MinorTask minortask, Long taskID) {
 		super(minortask, taskID);
 		this.setCompositionRoot(getCurrentProjectComponent());
+		this.setCaption("Project");
 	}
 
 	private Component getPickerComponent() {
@@ -31,13 +34,21 @@ public class ProjectPicker extends MinorTaskComponent {
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getUserID());
 			example.name.setSortOrderAscending();
-			
+
 			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
-			
+
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 //			taskList.setItems(listOfTasks);
 			taskList.setSelectedItem(getTask());
+
+			taskList.addValueChangeListener(new ProjectChosenListener(minortask, this, getTaskID(), minortask.getUserID()));
+			taskList.addBlurListener((event) -> {
+				this.setCompositionRoot(getCurrentProjectComponent());
+			});
+//			taskList.setCaption("Project");
+			taskList.setScrollToSelectedItem(true);
+			taskList.focus();
 			return taskList;
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,6 +64,7 @@ public class ProjectPicker extends MinorTaskComponent {
 			Task.Project project = new Task.Project();
 			task.taskID.permittedValues(getTaskID());
 			task.userID.permittedValues(minortask().getUserID());
+			task.completionDate.permittedValues((Date) null);
 			List<DBQueryRow> allRows = getDatabase().getDBQuery(task).addOptional(project).getAllRows();
 			if (allRows.size() == 1) {
 				Task.Project projectFound = allRows.get(0).get(project);
@@ -69,88 +81,51 @@ public class ProjectPicker extends MinorTaskComponent {
 		button.addClickListener((event) -> {
 			this.setCompositionRoot(getPickerComponent());
 		});
+//		button.setCaption("Project");
 		button.setWidthUndefined();
 		return button;
 	}
 
-//	private void addProjectsToLeftPanel(VerticalLayout projectList) {
-//		try {
-//			final Long taskID = getTaskID();
-//			final long userID = minortask().getUserID();
-//			Task task = MinorTask.getTaskExample(taskID, userID);
-//			final Project project = new Project();
-//			List<DBQueryRow> rows = MinorTask.getDatabase().getDBQuery(task).addOptional(project).getAllRows();
-//			if (rows.size() == 1) {
-//				DBQueryRow row = rows.get(0);
-//				Project currentProject = row.get(project);
-//				if (currentProject == null) {
-//					addProjectSelectionButton(projectList, taskID, userID, null);
-//				} else {
-//					Task superProjectExample = MinorTask.getProjectExample(currentProject.projectID.getValue(), userID);
-//					List<Task> allProjects = MinorTask.getDatabase().getDBTable(superProjectExample).getAllRows();
-//					for (Task selectableTask : allProjects) {
-//						addProjectSelectionButton(projectList, taskID, userID, selectableTask);
-//					}
-//				}
-//			}
-//		} catch (SQLException ex) {
-//			MinorTask.sqlerror(ex);
-//		}
-//	}
-
-//	protected void addProjectSelectionButton(AbstractLayout projectList, final Long taskID, final long userID, Task allProject) {
-//		final Button button = new Button(allProject == null ? "Projects" : allProject.name.toString());
-//		button.addClickListener(
-//				new ProjectChosenListener(
-//						this,
-//						taskID,
-//						userID,
-//						allProject == null ? null : allProject.taskID.getValue()
-//				)
-//		);
-//		projectList.addComponent(button);
-//	}
-
-//	private void addPeerTasksToRightPanel(VerticalLayout subtaskList) {
-//		try {
-//			final Long taskID = getTaskID();
-//			final long userID = minortask().getUserID();
-//			Task task = MinorTask.getTask(taskID, userID);
-//			Task projectExample = MinorTask.getProjectExample(task.projectID.getValue(), userID);
-//			List<Task> subtasks = MinorTask.getDatabase().getDBTable(projectExample).getAllRows();
-//			for (Task subtask : subtasks) {
-//				if (!subtask.taskID.getValue().equals(taskID)) {
-//					addProjectSelectionButton(subtaskList, taskID, userID, subtask);
-//				}
-//			}
-//		} catch (SQLException ex) {
-//			MinorTask.sqlerror(ex);
-//		}
-//	}
-
-	private static class ProjectChosenListener implements Button.ClickListener {
+	private static class ProjectChosenListener implements HasValue.ValueChangeListener<Task> {
 
 		private final Long taskID;
 		private final Long userID;
-		private final Long projectID;
 		private final ProjectPicker picker;
 		private final MinorTask minortask;
 
-		public ProjectChosenListener(MinorTask minortask, ProjectPicker picker, Long taskID, Long userID, Long projectID) {
+		public ProjectChosenListener(MinorTask minortask, ProjectPicker picker, Long taskID, Long userID) {
 			this.minortask = minortask;
 			this.picker = picker;
 			this.taskID = taskID;
 			this.userID = userID;
-			this.projectID = projectID;
 		}
 
 		@Override
-		public void buttonClick(Button.ClickEvent event) {
+		public void valueChange(HasValue.ValueChangeEvent<Task> event) {
 			try {
 				Task task = minortask.getTask(taskID, userID);
-				task.projectID.setValue(projectID);
-				minortask.getDatabase().update(task);
-				picker.setCompositionRoot(picker.getCurrentProjectComponent());
+				final Task selectedProject = event.getValue();
+				if (selectedProject != null) {
+					// prevent self-projects
+					final Long newProjectID = selectedProject.taskID.getValue();
+					if (newProjectID != null && taskID.equals(newProjectID)) {
+						minortask.chat("No self-contained projects please");
+					} else {
+						// ensure the tree integrity by promoting any separated tasks
+						List<Task> projectPathTasks = minortask.getProjectPathTasks(newProjectID, minortask.getUserID());
+						for (Task projectPathTask : projectPathTasks) {
+							final DBInteger projectID = projectPathTask.projectID;
+							if (taskID.equals(projectID.longValue())) {
+								projectPathTask.projectID.setValue(task.projectID.getValue());
+								minortask.getDatabase().update(projectPathTask);
+							}
+						}
+						task.projectID.setValue(newProjectID);
+						minortask.getDatabase().update(task);
+						picker.setCompositionRoot(picker.getCurrentProjectComponent());
+						minortask.showCurrentTask();
+					}
+				}
 			} catch (SQLException ex) {
 				minortask.sqlerror(ex);
 			}
@@ -165,10 +140,9 @@ public class ProjectPicker extends MinorTaskComponent {
 
 		@Override
 		public Object getId(Task item) {
-			return item.taskID.getValue();
+			return item.name.getValue();
 		}
-		
-		
+
 	}
 
 }

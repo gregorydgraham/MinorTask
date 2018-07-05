@@ -86,6 +86,7 @@ public class LoginComponent extends PublicComponent {
 			example.queryPassword().permittedValues(password);
 			try {
 				final DBDatabase database = getDatabase();
+				database.setPrintSQLBeforeExecuting(true);
 				final DBQuery query = database.getDBQuery(example);
 				List<User> users = query.getAllInstancesOf(example);
 				switch (users.size()) {
