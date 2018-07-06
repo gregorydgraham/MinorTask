@@ -21,9 +21,15 @@ public class FooterMenu extends MinorTaskComponent {
 	public FooterMenu(MinorTask minortask, Long taskID) {
 		super(minortask, taskID);
 		VerticalLayout layout = new VerticalLayout();
-		layout.addComponent(new Label("MinorTask is a simple system to help you manage projects and tasks."));
-		layout.addComponent(new Label("The key concept is that every project is just a collection of minor tasks."));
-		layout.addComponent(new Label("MinorTask provides you the tools to simplify all your tasks and projects into their component minor tasks and complete the successfully."));
+		final Label label = new Label("MinorTask is a simple system to help you manage projects and tasks.");
+		label.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(label);
+		final Label label1 = new Label("The key concept is that every project is just a collection of minor tasks.");
+		label1.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(label1);
+		final Label label2 = new Label("MinorTask provides you the tools to simplify all your tasks and projects into their component minor tasks and complete the successfully.");
+		label2.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(label2);
 		this.setCompositionRoot(layout);
 	}
 

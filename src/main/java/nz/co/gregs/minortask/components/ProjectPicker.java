@@ -29,6 +29,11 @@ public class ProjectPicker extends MinorTaskComponent {
 		this.setCaption("Project");
 	}
 
+	@Override
+	public final void setCaption(String caption) {
+		super.setCaption(caption);
+	}
+
 	private Component getPickerComponent() {
 		try {
 			Task example = new Task();
@@ -39,14 +44,12 @@ public class ProjectPicker extends MinorTaskComponent {
 
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-//			taskList.setItems(listOfTasks);
 			taskList.setSelectedItem(getTask());
 
 			taskList.addValueChangeListener(new ProjectChosenListener(minortask, this, getTaskID(), minortask.getUserID()));
 			taskList.addBlurListener((event) -> {
 				this.setCompositionRoot(getCurrentProjectComponent());
 			});
-//			taskList.setCaption("Project");
 			taskList.setScrollToSelectedItem(true);
 			taskList.focus();
 			return taskList;
