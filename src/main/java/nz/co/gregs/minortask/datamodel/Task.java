@@ -13,10 +13,8 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBBoolean;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
-import nz.co.gregs.dbvolution.datatypes.DBEnumValue;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBString;
-import nz.co.gregs.dbvolution.datatypes.DBStringEnum;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 
 /**
@@ -63,6 +61,7 @@ public class Task extends DBRow {
 //	@DBColumn
 //	public DBLargeText notes = new DBLargeText();
 
+	@Override
 	public String toString(){
 		return name.getValue();
 	}

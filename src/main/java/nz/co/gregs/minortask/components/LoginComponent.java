@@ -19,6 +19,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
@@ -86,9 +87,9 @@ public class LoginComponent extends PublicComponent {
 			example.queryPassword().permittedValues(password);
 			try {
 				final DBDatabase database = getDatabase();
-				database.setPrintSQLBeforeExecuting(true);
-				final DBQuery query = database.getDBQuery(example);
-				List<User> users = query.getAllInstancesOf(example);
+//				database.setPrintSQLBeforeExecuting(true);
+				final DBTable<User> query = database.getDBTable(example);
+				List<User> users = query.getAllRows();
 				switch (users.size()) {
 					case 1:
 						minortask().loginAs(users.get(0).getUserID());

@@ -12,6 +12,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -36,7 +37,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class MinorTask {
+public class MinorTask implements Serializable{
 
 	private long userID = 0;
 	private Long currentTaskID;
@@ -130,7 +131,7 @@ public class MinorTask {
 		return arrayList;
 	}
 
-	public synchronized void setupDatabase() {
+	public final synchronized void setupDatabase() {
 		if (database == null) {
 			try {
 				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
