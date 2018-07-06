@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -40,15 +41,23 @@ public class ActiveTaskList extends MinorTaskComponent {
 			final String caption = tasks.size() + " Active Tasks";
 			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.addStyleName("small");
-			layout.addComponent(label);
+			label.setWidth(100, Unit.PERCENTAGE);
+//			label.addStyleName("small");
+
+			Label spacer = new Label();
+			spacer.setWidth(100, Unit.PERCENTAGE);
 			
 			newTaskButton.addStyleName("friendly");
-			newTaskButton.setWidth(100, Unit.PERCENTAGE);
+			newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
 			newTaskButton.addClickListener((event) -> {
 				minortask().showTaskCreation(this.getTaskID());
 			});
-			layout.addComponent(newTaskButton);
+			
+			HorizontalLayout header = new HorizontalLayout();
+			header.addComponents(label, spacer, newTaskButton);
+			header.setWidth(100, Unit.PERCENTAGE);
+			
+			layout.addComponent(header);
 			for (Task task : tasks) {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}
