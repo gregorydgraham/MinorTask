@@ -135,16 +135,18 @@ public class MinorTask implements Serializable{
 
 	public final synchronized void setupDatabase() {
 		if (database == null) {
+				final String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
-				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfigWrong.yml");
+				database = new DBDatabaseClusterWithConfigFile(configFile);
 			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-				sqlerror(ex);
+				new Notification("Unable to find database " + configFile, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+//				sqlerror(ex);
 				try {
 					database = new DBDatabaseCluster(new H2MemoryDB("minortask-default", "admin", "admin", true));
 				} catch (SQLException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
-					sqlerror(ex1);
+					sqlerror(ex);
 				}
 			}
 		}
