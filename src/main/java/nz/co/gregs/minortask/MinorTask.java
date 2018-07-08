@@ -143,8 +143,10 @@ public class MinorTask implements Serializable {
 			final String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
 				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
-				database = dbDatabaseClusterWithConfigFile;
-			} catch (SQLException ex) {
+				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
+					database = dbDatabaseClusterWithConfigFile;
+				}
+			} catch (Exception ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
@@ -155,7 +157,7 @@ public class MinorTask implements Serializable {
 //					database = dbDatabaseCluster;
 //					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 					database = new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin");
-				} catch (SQLException|IOException ex1) {
+				} catch (SQLException | IOException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 					System.err.println("" + ex.getLocalizedMessage());
 					sqlerror(ex);
