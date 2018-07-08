@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -22,23 +23,24 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class ActiveTaskList extends MinorTaskComponent {
 
 	private final AddTaskButton newTaskButton = new AddTaskButton(minortask, getTaskID());
-	
+
 	public ActiveTaskList(MinorTask minortask, Long selectedTask) {
 		super(minortask, selectedTask);
 		Panel panel = new Panel();
 		panel.setContent(getComponent());
 		this.setCompositionRoot(panel);
 	}
-	
+
 	public final Component getComponent() {
-		
+
 		VerticalLayout layout = new VerticalLayout();
+		layout.addStyleName("activetasklist");
 		layout.setSpacing(false);
 		layout.addStyleName("well");
 		try {
-			
+
 			List<Task.WithSortColumns> tasks = getTasksToList();
-			
+
 			final String caption = tasks.size() + " Active Tasks";
 			layout.setCaption(caption);
 			final Label label = new Label(caption);
@@ -46,30 +48,28 @@ public class ActiveTaskList extends MinorTaskComponent {
 
 			Label spacer = new Label();
 			spacer.setWidth(100, Unit.PERCENTAGE);
-			
+
 			HorizontalLayout header = new HorizontalLayout();
 			header.addComponents(label, spacer);
 			header.setWidth(100, Unit.PERCENTAGE);
-			
+
 			layout.addComponent(header);
 			for (Task task : tasks) {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}
-			
-			HorizontalLayout footer = new HorizontalLayout();
-			footer.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
+
+			AbstractLayout footer = new HorizontalLayout();
 			footer.setWidth(100, Unit.PERCENTAGE);
-			Label footerSpacer = new Label();
-			footerSpacer.setWidth(100, Unit.PERCENTAGE);
-			footer.addComponents(footerSpacer, newTaskButton);
+			footer.addComponents(newTaskButton);
+			footer.addStyleNames("activelist", "footer");
 			layout.addComponent(footer);
-			
+
 		} catch (SQLException ex) {
 			minortask.sqlerror(ex);
 		}
 		return layout;
 	}
-	
+
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
@@ -84,7 +84,7 @@ public class ActiveTaskList extends MinorTaskComponent {
 		);
 		List<Task.WithSortColumns> tasks = dbTable.getAllRows();
 		return tasks;
-	}	
+	}
 
 	void disableNewButton() {
 		this.newTaskButton.setEnabled(false);
