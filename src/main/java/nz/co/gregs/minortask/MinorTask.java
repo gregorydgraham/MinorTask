@@ -28,7 +28,9 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
+import nz.co.gregs.dbvolution.databases.H2MemoryDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.datamodel.*;
@@ -134,10 +136,16 @@ public class MinorTask implements Serializable{
 	public final synchronized void setupDatabase() {
 		if (database == null) {
 			try {
-				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfig.yml");
+				database = new DBDatabaseClusterWithConfigFile("MinorTaskDatabaseConfigWrong.yml");
 			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 				sqlerror(ex);
+				try {
+					database = new DBDatabaseCluster(new H2MemoryDB("minortask-default", "admin", "admin", true));
+				} catch (SQLException ex1) {
+					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
+					sqlerror(ex1);
+				}
 			}
 		}
 		try {
