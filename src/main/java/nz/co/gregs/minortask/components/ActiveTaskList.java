@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class ActiveTaskList extends MinorTaskComponent {
 
-	private final Button newTaskButton = new Button("Add Subtask");
+	private final AddTaskButton newTaskButton = new AddTaskButton(minortask, getTaskID());
 	
 	public ActiveTaskList(MinorTask minortask, Long selectedTask) {
 		super(minortask, selectedTask);
@@ -41,17 +41,17 @@ public class ActiveTaskList extends MinorTaskComponent {
 			final String caption = tasks.size() + " Active Tasks";
 			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.setWidth(100, Unit.PERCENTAGE);
+			label.setWidthUndefined();//100, Unit.PERCENTAGE);
 //			label.addStyleName("small");
 
 			Label spacer = new Label();
 			spacer.setWidth(100, Unit.PERCENTAGE);
 			
-			newTaskButton.addStyleName("friendly");
-			newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
-			newTaskButton.addClickListener((event) -> {
-				minortask().showTaskCreation(this.getTaskID());
-			});
+//			newTaskButton.addStyleName("friendly");
+//			newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
+//			newTaskButton.addClickListener((event) -> {
+//				minortask().showTaskCreation(this.getTaskID());
+//			});
 			
 			HorizontalLayout header = new HorizontalLayout();
 			header.addComponents(label, spacer, newTaskButton);

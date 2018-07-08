@@ -12,6 +12,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -31,6 +33,7 @@ import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.H2MemoryDB;
+import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.datamodel.*;
@@ -39,7 +42,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class MinorTask implements Serializable{
+public class MinorTask implements Serializable {
 
 	private long userID = 0;
 	private Long currentTaskID;
@@ -95,7 +98,9 @@ public class MinorTask implements Serializable{
 
 	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
-		Notification note = new Notification("SQL ERROR", exp.getLocalizedMessage(), Notification.Type.ERROR_MESSAGE);
+		final String localizedMessage = exp.getLocalizedMessage();
+		System.err.println(""+localizedMessage);
+		Notification note = new Notification("SQL ERROR", localizedMessage, Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 //		final StackTraceElement[] stackTraceArray = exp.getStackTrace();
 //		for (StackTraceElement stackTraceElement : stackTraceArray) {
@@ -135,7 +140,7 @@ public class MinorTask implements Serializable{
 
 	public final synchronized void setupDatabase() {
 		if (database == null) {
-				final String configFile = "MinorTaskDatabaseConfig.yml";
+			final String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
 				database = new DBDatabaseClusterWithConfigFile(configFile);
 			} catch (SQLException ex) {
@@ -143,10 +148,12 @@ public class MinorTask implements Serializable{
 				new Notification("Unable to find database " + configFile, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 //				sqlerror(ex);
 				try {
-					database = new DBDatabaseCluster(new H2MemoryDB("minortask-default", "admin", "admin", true));
+					database = new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 				} catch (SQLException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 					sqlerror(ex);
+				} catch (IOException ex1) {
+					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 				}
 			}
 		}
@@ -229,7 +236,7 @@ public class MinorTask implements Serializable{
 		example.projectID.permittedValues(taskID);
 		return example;
 	}
-	
+
 	/**
 	 * @param userID the userID to set
 	 */
