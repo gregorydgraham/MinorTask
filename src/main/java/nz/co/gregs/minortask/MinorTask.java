@@ -142,7 +142,8 @@ public class MinorTask implements Serializable {
 		if (database == null) {
 			final String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
-				database = new DBDatabaseClusterWithConfigFile(configFile);
+				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
+				database = dbDatabaseClusterWithConfigFile;
 			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
