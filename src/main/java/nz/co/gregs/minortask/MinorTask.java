@@ -99,7 +99,7 @@ public class MinorTask implements Serializable {
 	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		final String localizedMessage = exp.getLocalizedMessage();
-		System.err.println(""+localizedMessage);
+		System.err.println("" + localizedMessage);
 		Notification note = new Notification("SQL ERROR", localizedMessage, Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
 //		final StackTraceElement[] stackTraceArray = exp.getStackTrace();
@@ -145,7 +145,9 @@ public class MinorTask implements Serializable {
 				database = new DBDatabaseClusterWithConfigFile(configFile);
 			} catch (SQLException ex) {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
-				new Notification("Unable to find database " + configFile, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+				final String error = "Unable to find database " + configFile;
+				System.err.println("" + error);
+				new Notification(error, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 //				sqlerror(ex);
 				try {
 					final DBDatabaseCluster dbDatabaseCluster = new DBDatabaseCluster();
@@ -153,6 +155,7 @@ public class MinorTask implements Serializable {
 					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 				} catch (SQLException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
+					System.err.println("" + ex.getLocalizedMessage());
 					sqlerror(ex);
 				} catch (IOException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
