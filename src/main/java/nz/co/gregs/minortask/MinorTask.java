@@ -150,15 +150,14 @@ public class MinorTask implements Serializable {
 				new Notification(error, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 //				sqlerror(ex);
 				try {
-					final DBDatabaseCluster dbDatabaseCluster = new DBDatabaseCluster();
-					database = dbDatabaseCluster;
-					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
-				} catch (SQLException ex1) {
+//					final DBDatabaseCluster dbDatabaseCluster = new DBDatabaseCluster();
+//					database = dbDatabaseCluster;
+//					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
+					database = new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin");
+				} catch (SQLException|IOException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 					System.err.println("" + ex.getLocalizedMessage());
 					sqlerror(ex);
-				} catch (IOException ex1) {
-					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 				}
 			}
 		}
