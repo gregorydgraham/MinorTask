@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -41,26 +42,28 @@ public class ActiveTaskList extends MinorTaskComponent {
 			final String caption = tasks.size() + " Active Tasks";
 			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.setWidthUndefined();//100, Unit.PERCENTAGE);
-//			label.addStyleName("small");
+			label.setWidthUndefined();
 
 			Label spacer = new Label();
 			spacer.setWidth(100, Unit.PERCENTAGE);
 			
-//			newTaskButton.addStyleName("friendly");
-//			newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
-//			newTaskButton.addClickListener((event) -> {
-//				minortask().showTaskCreation(this.getTaskID());
-//			});
-			
 			HorizontalLayout header = new HorizontalLayout();
-			header.addComponents(label, spacer, newTaskButton);
+			header.addComponents(label, spacer);
 			header.setWidth(100, Unit.PERCENTAGE);
 			
 			layout.addComponent(header);
 			for (Task task : tasks) {
 				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
 			}
+			
+			HorizontalLayout footer = new HorizontalLayout();
+			footer.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
+			footer.setWidth(100, Unit.PERCENTAGE);
+			Label footerSpacer = new Label();
+			footerSpacer.setWidth(100, Unit.PERCENTAGE);
+			footer.addComponents(footerSpacer, newTaskButton);
+			layout.addComponent(footer);
+			
 		} catch (SQLException ex) {
 			minortask.sqlerror(ex);
 		}

@@ -30,17 +30,4 @@ public class AddTaskButton extends MinorTaskComponent {
 		panel.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		this.setCompositionRoot(panel);
 	}
-
-	@Override
-	public void addStyleName(String style) {
-		super.addStyleName(style);
-		newTaskButton.addStyleName(style);
-	}
-
-	@Override
-	public void addStyleNames(String... style) {
-		super.addStyleNames(style);
-		newTaskButton.addStyleNames(style);
-	}
-
 }
