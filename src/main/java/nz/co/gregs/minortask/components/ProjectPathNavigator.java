@@ -34,7 +34,6 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 			hLayout.addComponent(label, 1);
 		}
 		final AddTaskButton addTaskButton = new AddTaskButton(minortask, getTaskID());
-		addTaskButton.addStyleNames("tiny");
 		hLayout.addComponent(addTaskButton);
 		return hLayout;
 	}

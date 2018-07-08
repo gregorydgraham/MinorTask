@@ -20,7 +20,7 @@ public class AddTaskButton extends MinorTaskComponent {
 	public AddTaskButton(MinorTask minortask, Long taskID) {
 		super(minortask, taskID);
 		HorizontalLayout panel = new HorizontalLayout();
-		newTaskButton.addStyleName("friendly");
+		newTaskButton.addStyleNames("friendly", "tiny");
 		newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
 		newTaskButton.addClickListener((event) -> {
 			minortask().showTaskCreation(this.getTaskID());
