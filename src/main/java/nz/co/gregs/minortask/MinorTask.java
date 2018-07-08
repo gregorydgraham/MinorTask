@@ -148,7 +148,9 @@ public class MinorTask implements Serializable {
 				new Notification("Unable to find database " + configFile, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
 //				sqlerror(ex);
 				try {
-					database = new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
+					final DBDatabaseCluster dbDatabaseCluster = new DBDatabaseCluster();
+					database = dbDatabaseCluster;
+					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 				} catch (SQLException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 					sqlerror(ex);
