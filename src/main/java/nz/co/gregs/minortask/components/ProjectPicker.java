@@ -114,17 +114,34 @@ public class ProjectPicker extends MinorTaskComponent {
 					if (newProjectID != null && taskID.equals(newProjectID)) {
 						minortask.chat("No self-contained projects please");
 					} else {
+						final Long taskProjectID = task.projectID.getValue();
+						final Date taskStartDate = task.startDate.getValue();
+						final Date taskDeadlineDate = task.finalDate.getValue();
 						// ensure the tree integrity by promoting any separated tasks
 						List<Task> projectPathTasks = minortask.getProjectPathTasks(newProjectID, minortask.getUserID());
 						for (Task projectPathTask : projectPathTasks) {
 							final DBInteger projectID = projectPathTask.projectID;
 							if (taskID.equals(projectID.longValue())) {
-								projectPathTask.projectID.setValue(task.projectID.getValue());
+								projectPathTask.projectID.setValue(taskProjectID);
+							}
+							// force the starting date upwards
+							if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
+								projectPathTask.startDate.setValue(taskStartDate);
+							}
+							// force the deadline downwards
+							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
+							if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
+								task.finalDate.setValue(projectPathTaskDeadlineDate);
+							}
+							// save the project task if necessary
+							if (projectPathTask.hasChangedSimpleTypes()) {
 								minortask.getDatabase().update(projectPathTask);
 							}
 						}
 						task.projectID.setValue(newProjectID);
 						minortask.getDatabase().update(task);
+						// enforce date constraints on tree
+						minortask.enforceDateConstraintsOnTaskTree(task);
 						picker.setCompositionRoot(picker.getCurrentProjectComponent());
 						minortask.showCurrentTask();
 					}

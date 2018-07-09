@@ -51,20 +51,20 @@ public class TaskCreator extends MinorTaskComponent {
 			description.setHeight(3, Unit.CM);
 			project.setCaption("Part Of:");
 			project.setReadOnly(true);
-			
+
 			setFieldValues();
 
 			HorizontalLayout details = new HorizontalLayout(
 					name);
 			details.setWidthUndefined();
-			
+
 			layout.addComponent(details);
 			layout.addComponent(description);
-			
+
 			HorizontalLayout dates = new HorizontalLayout(
-							startDate,
-							preferredEndDate,
-							deadlineDate
+					startDate,
+					preferredEndDate,
+					deadlineDate
 			);
 			dates.setWidthUndefined();
 			layout.addComponent(dates);
@@ -79,18 +79,43 @@ public class TaskCreator extends MinorTaskComponent {
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
-		final LocalDate startDefault = LocalDate.now().plusDays(1);
-		final LocalDate preferredDefault = LocalDate.now().plusWeeks(1);
-		final LocalDate deadlineDefault = LocalDate.now().plusWeeks(2);
+		LocalDate startDefault = LocalDate.now().plusDays(1);
+		LocalDate preferredDefault = LocalDate.now().plusWeeks(2);
+		LocalDate deadlineDefault = LocalDate.now().plusMonths(1);
 		final Task.Project projectExample = new Task.Project();
 		projectExample.taskID.permittedValues(getTaskID());
 		if (getTaskID() != null) {
 			final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
 			project.setValue(fullTaskDetails.name.getValue());
 		}
-		startDate.setValue(startDefault);
-		preferredEndDate.setValue(preferredDefault);
-		deadlineDate.setValue(deadlineDefault);
+
+		Task.Project taskProject = getProject();
+		if (taskProject != null) {
+			
+			final LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
+			final LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
+
+			startDefault = startDefault.isAfter(projectStart)?startDefault:projectStart;
+			preferredDefault = preferredDefault.isAfter(projectStart)?preferredDefault:projectStart;
+			preferredDefault = preferredDefault.isBefore(projectEnd)?preferredDefault:projectEnd;
+			deadlineDefault = deadlineDefault.isBefore(projectEnd)?deadlineDefault:projectEnd;
+			
+			startDate.setValue(startDefault);
+			preferredEndDate.setValue(preferredDefault);
+			deadlineDate.setValue(deadlineDefault);
+
+			startDate.setRangeStart(projectStart);
+			startDate.setRangeEnd(projectEnd);
+			preferredEndDate.setRangeStart(projectStart);
+			preferredEndDate.setRangeEnd(projectEnd);
+			deadlineDate.setRangeStart(projectStart);
+			deadlineDate.setRangeEnd(projectEnd);
+		} else {
+			startDate.setValue(startDefault);
+			preferredEndDate.setValue(preferredDefault);
+			deadlineDate.setValue(deadlineDefault);
+
+		}
 	}
 
 	public void handleDefaultButton() {

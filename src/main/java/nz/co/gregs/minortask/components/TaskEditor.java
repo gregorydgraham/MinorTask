@@ -153,6 +153,21 @@ public class TaskEditor extends MinorTaskComponent {
 			preferredEndDate.setValue(MinorTask.asLocalDate(task.preferredDate.dateValue()));
 			deadlineDate.setValue(MinorTask.asLocalDate(task.finalDate.dateValue()));
 
+			Task.Project taskProject = getProject();
+			if (taskProject != null) {
+				LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
+				LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
+				if (projectStart.isAfter(projectEnd)) {
+					projectStart = projectEnd.minusDays(1);
+				}
+				startDate.setRangeStart(projectStart);
+				startDate.setRangeEnd(projectEnd);
+				preferredEndDate.setRangeStart(projectStart);
+				preferredEndDate.setRangeEnd(projectEnd);
+				deadlineDate.setRangeStart(projectStart);
+				deadlineDate.setRangeEnd(projectEnd);
+			}
+
 			final Date completed = task.completionDate.dateValue();
 
 			if (completed != null) {

@@ -30,11 +30,10 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
-import nz.co.gregs.dbvolution.databases.H2MemoryDB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.datamodel.*;
 
@@ -102,14 +101,6 @@ public class MinorTask implements Serializable {
 		System.err.println("" + localizedMessage);
 		Notification note = new Notification("SQL ERROR", localizedMessage, Notification.Type.ERROR_MESSAGE);
 		note.show(Page.getCurrent());
-//		final StackTraceElement[] stackTraceArray = exp.getStackTrace();
-//		for (StackTraceElement stackTraceElement : stackTraceArray) {
-//			if (stackTraceElement.toString().contains("minortask")) {
-//				note = new Notification("SQL ERROR", stackTraceElement.toString(), Notification.Type.ERROR_MESSAGE);
-//				note.show(Page.getCurrent());
-//				break;
-//			}
-//		}
 	}
 
 	public Task getTask(Long taskID, final long userID) {
@@ -151,11 +142,7 @@ public class MinorTask implements Serializable {
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
 				new Notification(error, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
-//				sqlerror(ex);
 				try {
-//					final DBDatabaseCluster dbDatabaseCluster = new DBDatabaseCluster();
-//					database = dbDatabaseCluster;
-//					dbDatabaseCluster.addDatabaseAndWait(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 					database = new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin");
 				} catch (SQLException | IOException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
@@ -186,6 +173,19 @@ public class MinorTask implements Serializable {
 			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
 			List<Task> ancestors = recurse.getAncestors();
 			return ancestors;
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		return new ArrayList<>();
+	}
+
+	public List<TreeNode<Task>> getProjectTreeTasks(Long taskID, final long userID) {
+		try {
+			final Task task = getTaskExample(taskID, userID);
+			DBQuery query = getDatabase().getDBQuery(task);
+			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
+			List<TreeNode<Task>> descendants = recurse.getTrees();
+			return descendants;
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -319,5 +319,58 @@ public class MinorTask implements Serializable {
 	 */
 	public long getUserID() {
 		return userID;
+	}
+
+	public void enforceDateConstraintsOnTaskTree(Task task) {
+		List<TreeNode<Task>> projectTreeTasks = this.getProjectTreeTasks(task.taskID.getValue(), task.userID.getValue());
+		for (TreeNode<Task> projectTreeTaskNode : projectTreeTasks) {
+			enforceDateConstraintsOnTaskTree(task, projectTreeTaskNode);
+		}
+	}
+
+	private void enforceDateConstraintsOnTaskTree(Task task, TreeNode<Task> node) {
+		Task subtask = node.getData();
+		final Date taskStart = task.startDate.getValue();
+		final Date taskDeadline = task.finalDate.getValue();
+		if (taskDeadline.before(subtask.finalDate.getValue())) {
+			subtask.finalDate.setValue(taskDeadline);
+			try {
+				getDatabase().update(subtask);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}
+		final Date subtaskStart = subtask.startDate.getValue();
+		if (subtaskStart.before(taskStart)) {
+			task.startDate.setValue(subtaskStart);
+			try {
+				getDatabase().update(task);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}
+	}
+
+	public Task.Project getProject() {
+		if (getCurrentTaskID() == null) {
+			return null;
+		} else {
+			final Task.Project project = new Task.Project();
+			try {
+				List<Task.Project> projects = getDatabase().getDBQuery(getTask(), project).getAllInstancesOf(project);
+				if (projects.isEmpty()) {
+					return null;
+				} else {
+					return projects.get(0);
+				}
+			} catch (SQLException ex) {
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		return null;
+	}
+
+	public Task getTask() {
+		return getTask(getCurrentTaskID(), getUserID());
 	}
 }

@@ -33,6 +33,13 @@ public class MinorTaskComponent extends PublicComponent {
 	}
 
 	/**
+	 * @return the taskID
+	 */
+	public Task.Project getProject() {
+		return minortask.getProject();
+	}
+
+	/**
 	 * @param taskID
 	 * @return the taskID
 	 */
