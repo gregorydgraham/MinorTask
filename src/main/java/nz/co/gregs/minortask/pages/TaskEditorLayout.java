@@ -29,7 +29,9 @@ public class TaskEditorLayout extends VerticalLayout implements HasUrlParameter<
 
 	public TaskEditorLayout() {
 		add(new MinorTaskTemplate());
+		add(new BannerMenu(null));
 		add(new TaskEditor(null));
+		add(new FooterMenu(null));
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 		hlayout.setVerticalComponentAlignment(Alignment.CENTER, arrow);
 //		hlayout.addLayoutClickListener(new TaskClickListener(task));
 		this.addClickListener((event) -> {
-			minortask().chat("Opening " + task.taskID.longValue());
+			minortask().chat("Opening " + task.name.stringValue());
 			minortask().showTask(task.taskID.longValue());
 		});
 		this.add(hlayout);

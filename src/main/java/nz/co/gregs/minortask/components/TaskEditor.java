@@ -144,14 +144,9 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 		startDate.addValueChangeListener(dateChange);
 		preferredEndDate.addValueChangeListener(dateChange);
 		deadlineDate.addValueChangeListener(dateChange);
-
-//		startDate.setTextFieldEnabled(false);
-//		preferredEndDate.setTextFieldEnabled(false);
-//		deadlineDate.setTextFieldEnabled(false);
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
-//		final Long taskID = this.taskID;
 		if (taskID != null) {
 			Task task = getTask(taskID);
 			if (task != null) {
@@ -224,6 +219,7 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
 			minortask().sqlerror(ex);
 		}
+		minortask().chat("Saved.");
 	}
 
 	public void handleEscapeButton() {
@@ -231,15 +227,12 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 	}
 
 	public final void setAsDefaultButton(Button button) {
-//		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-//		button.addClassName(ValoTheme.BUTTON_PRIMARY);
 		button.addClickListener((event) -> {
 			saveTask();
 		});
 	}
 
 	public final void setEscapeButton(Button button) {
-//		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 		button.addClickListener((event) -> {
 			handleEscapeButton();
 		});
@@ -257,8 +250,6 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 
 		@Override
 		public void onComponentEvent(ClickEvent<Button> event) {
-//		@Override
-//		public void buttonClick(Button.ClickEvent event) {
 			List<Task> projectPathTasks = getProjectPathTasks(taskID);
 			for (Task projectPathTask : projectPathTasks) {
 				projectPathTask.completionDate.setValue((Date) null);
@@ -291,8 +282,6 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 
 		@Override
 		public void onComponentEvent(ClickEvent<Button> event) {
-//		@Override
-//		public void buttonClick(Button.ClickEvent event) {
 			Task task = completeTask(taskID);
 			if (task == null) {
 				minortask().showTask(null);
