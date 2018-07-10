@@ -42,6 +42,7 @@ public class SignupComponent extends VerticalLayout implements HasMinorTask {
 
 		REPEAT_PASSWORD_FIELD.clear();
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
+		USERNAME_FIELD.focus();
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 

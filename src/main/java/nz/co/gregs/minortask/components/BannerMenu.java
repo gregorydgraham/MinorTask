@@ -53,6 +53,7 @@ public class BannerMenu extends HorizontalLayout implements HasMinorTask {
 		}
 
 		Button logoutButton = new Button("Logout");
+		logoutButton.setSizeUndefined();
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});

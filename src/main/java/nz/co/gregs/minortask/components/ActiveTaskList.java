@@ -23,7 +23,9 @@ public class ActiveTaskList extends VerticalLayout implements HasMinorTask{
 	public ActiveTaskList(Long selectedTask) {
 		this.selectedTask = selectedTask;
 		newTaskButton = new AddTaskButton(selectedTask);
+		newTaskButton.addClassName("addbutton");
 		add(getComponent());
+		this.addClassName("tasklist");
 	}
 
 	public final Component getComponent() {

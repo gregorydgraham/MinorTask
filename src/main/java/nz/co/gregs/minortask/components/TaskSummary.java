@@ -17,11 +17,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNotifier<Component> {
 
-//	private final Long taskID;
-//	private final Task task;
 	public TaskSummary(Long taskID, Task task) {
-//		this.taskID = taskID;
-//		this.task = task;
 
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());
@@ -37,7 +33,7 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
 		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
-//		arrow.setIcon(VaadinIcon.ANGLE_RIGHT);
+		arrow.setIconAfterText(true);
 		arrow.setSizeUndefined();
 		arrow.setHeight("100%");
 		final HorizontalLayout hlayout = new HorizontalLayout();

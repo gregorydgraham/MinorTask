@@ -10,19 +10,19 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
-import com.vaadin.flow.server.VaadinSession;
 import java.sql.SQLException;
 import java.util.List;
+import javafx.scene.input.KeyCode;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
  * @author gregorygraham
  */
-public class LoginComponent extends VerticalLayout implements HasMinorTask {
+@Tag("minortask-login")
+public class LoginComponent extends VerticalLayout implements HasMinorTask, HasComponents, KeyNotifier, HasDefaultButton {
 
 	private final TextField USERNAME_FIELD = new TextField("Your Name");
 	private final PasswordField PASSWORD_FIELD = new PasswordField("Password");
@@ -30,7 +30,8 @@ public class LoginComponent extends VerticalLayout implements HasMinorTask {
 	public LoginComponent() {
 		this("", "");
 	}
-	public LoginComponent( String username, String password) {
+
+	public LoginComponent(String username, String password) {
 		super();
 		add(getComponent());
 		USERNAME_FIELD.setValue(username);
@@ -46,7 +47,11 @@ public class LoginComponent extends VerticalLayout implements HasMinorTask {
 		loginPanel.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
 		Button loginButton = new Button("Login");
-		setAsDefaultButton(loginButton);
+		setAsDefaultButton(loginButton, (event) -> {
+			handleDefaultButton();
+		}, (event) -> {
+			handleDefaultButton();
+		});
 
 		Button signupButton = new Button("Sign Up");
 		signupButton.addClickListener((event) -> {
@@ -108,22 +113,7 @@ public class LoginComponent extends VerticalLayout implements HasMinorTask {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public final void setAsDefaultButton(Button button) {
-//		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-//		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		button.addClickListener((event) -> {
-			handleDefaultButton();
-		});
-	}
-
-	public final void setEscapeButton(Button button) {
-//		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
-		button.addClickListener((event) -> {
-			handleEscapeButton();
-		});
-	}
-
 	public void setUsername(String parameter) {
-		this.USERNAME_FIELD.setValue(parameter==null?"":parameter);
+		this.USERNAME_FIELD.setValue(parameter == null ? "" : parameter);
 	}
 }

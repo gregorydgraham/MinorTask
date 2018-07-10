@@ -88,7 +88,7 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 		completedDate.setVisible(false);
 		completedDate.setReadOnly(true);
 
-		completeButton.addClassName("danger");
+		completeButton.addClassNames("danger", "completebutton");
 		completeButton.addClickListener(new CompleteTaskListener(minortask(), taskID));
 		completeButton.setVisible(false);
 
