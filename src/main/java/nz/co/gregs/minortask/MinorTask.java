@@ -7,8 +7,10 @@ package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinSession;
 import java.io.File;
@@ -56,11 +58,6 @@ public class MinorTask implements Serializable {
 //	private final MinorTaskUI ui;
 
 	public MinorTask() {
-//		this.ui = null;
-		setupDatabase();
-	}
-
-	public MinorTask(MinorTaskUI ui) {
 //		this.ui = ui;
 		setupDatabase();
 	}
@@ -92,19 +89,30 @@ public class MinorTask implements Serializable {
 	}
 
 	public final void warning(final String topic, final String warning) {
-		Notification note = new Notification(new Label(topic), new Label(warning));
+		Button closeButton = new Button("Oh well...");
+		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(warning), closeButton);
+		Notification note = new Notification(layout);
+		closeButton.addClickListener((event) -> {
+			note.close();
+		});
 		note.setPosition(Notification.Position.MIDDLE);
+		note.setDuration(5000);
 		note.open();
 	}
 
 	public final void error(final String topic, final String error) {
-		Notification note = new Notification(new Label(topic), new Label(error));
+		Button closeButton = new Button("Oh well...");
+		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error), closeButton);
+		Notification note = new Notification(layout);
+		closeButton.addClickListener((event) -> {
+			note.close();
+		});
 		note.setPosition(Notification.Position.TOP_CENTER);
 		note.open();
 	}
 
 	public final void chat(String string) {
-		Notification note = new Notification(string, 5000);
+		Notification note = new Notification(string, 3000);
 		note.setPosition(Notification.Position.BOTTOM_END);
 		note.open();
 	}
@@ -113,7 +121,11 @@ public class MinorTask implements Serializable {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		final String localizedMessage = exp.getLocalizedMessage();
 		System.err.println("" + localizedMessage);
-		Notification note = new Notification(new Label("SQL ERROR"), new Label(localizedMessage));
+		Button closeButton = new Button("Oh well...");
+		Notification note = new Notification(new Label("SQL ERROR"), new Label(localizedMessage), closeButton);
+		closeButton.addClickListener((event) -> {
+			note.close();
+		});
 		note.setPosition(Notification.Position.MIDDLE);
 		note.open();
 	}
@@ -153,7 +165,7 @@ public class MinorTask implements Serializable {
 					database = dbDatabaseClusterWithConfigFile;
 				}
 			} catch (Exception ex) {
-				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
 				sqlerror(ex);
@@ -169,7 +181,7 @@ public class MinorTask implements Serializable {
 		try {
 			chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
 		} catch (SQLException ex) {
-			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
 		}
 	}
