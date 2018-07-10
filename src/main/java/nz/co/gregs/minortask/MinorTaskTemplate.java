@@ -22,5 +22,6 @@ public class MinorTaskTemplate extends PolymerTemplate<MinorTaskTemplate.MinorTa
     /**
      * Template model which defines the single "value" property.
      */
-    public interface MinorTaskModel extends TemplateModel {}
+    public interface MinorTaskModel extends TemplateModel {
+		}
 }

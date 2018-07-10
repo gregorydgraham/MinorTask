@@ -7,7 +7,10 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -16,7 +19,6 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 
 //	private final Long taskID;
 //	private final Task task;
-
 	public TaskSummary(Long taskID, Task task) {
 //		this.taskID = taskID;
 //		this.task = task;
@@ -33,7 +35,8 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 		summary.setWidth("30EM");
 		summary.setDefaultHorizontalComponentAlignment(Alignment.START);
 
-		Label arrow = new Label("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size());
+		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
+		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
 //		arrow.setIcon(VaadinIcon.ANGLE_RIGHT);
 		arrow.setSizeUndefined();
 		arrow.setHeight("100%");
@@ -47,7 +50,7 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 		hlayout.setVerticalComponentAlignment(Alignment.CENTER, arrow);
 //		hlayout.addLayoutClickListener(new TaskClickListener(task));
 		this.addClickListener((event) -> {
-			minortask().chat("Opening "+task.taskID.longValue());
+			minortask().chat("Opening " + task.taskID.longValue());
 			minortask().showTask(task.taskID.longValue());
 		});
 		this.add(hlayout);
