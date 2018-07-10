@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
@@ -14,6 +15,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
+@Tag("completed-task-list")
 public class CompletedTaskList extends VerticalLayout implements HasMinorTask{
 
 	private final Long taskID;

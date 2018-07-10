@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
  *
  * @author gregorygraham
  */
+@Tag("add-task-button")
 public class AddTaskButton extends HorizontalLayout implements HasMinorTask{
 		final Button newTaskButton = new Button("+ Add Subtask");
 	private final Long originatingTaskID;
@@ -20,6 +22,7 @@ public class AddTaskButton extends HorizontalLayout implements HasMinorTask{
 		this.originatingTaskID = taskID;
 //		HorizontalLayout panel = new HorizontalLayout();
 		newTaskButton.addClassNames("friendly", "tiny", "addtaskbutton");
+		newTaskButton.getElement().setAttribute("theme", "success primary");
 		newTaskButton.setSizeUndefined();
 		newTaskButton.addClickListener((event) -> {
 			minortask().showTaskCreation(originatingTaskID);
