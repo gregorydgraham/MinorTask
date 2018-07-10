@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class SignupComponent extends VerticalLayout implements HasMinorTask{
+public class SignupComponent extends VerticalLayout implements HasMinorTask {
 
 	public final TextField USERNAME_FIELD = new TextField("Your Name");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");
@@ -36,15 +36,15 @@ public class SignupComponent extends VerticalLayout implements HasMinorTask{
 		PASSWORD_FIELD.setValue(password);
 		add(getComponent());
 	}
-	
+
 	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
-		
+
 		REPEAT_PASSWORD_FIELD.clear();
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
-		
+
 		Button signupButton = new Button("Request Sign Up");
 		setAsDefaultButton(signupButton);
 
@@ -53,7 +53,7 @@ public class SignupComponent extends VerticalLayout implements HasMinorTask{
 
 		HorizontalLayout buttonLayout = new HorizontalLayout(returnToLoginButton, signupButton);
 		layout.add(USERNAME_FIELD, EMAIL_FIELD, new HorizontalLayout(PASSWORD_FIELD, REPEAT_PASSWORD_FIELD), buttonLayout);
-		
+
 		return layout;
 	}
 
@@ -66,13 +66,15 @@ public class SignupComponent extends VerticalLayout implements HasMinorTask{
 		minortask().chat(username);
 		if (username.isEmpty() || pass.isEmpty()) {
 			warningBuffer.append("Blank names and passwords are not allowed\n");
-		}if (username.contains(" ")) {
+		}
+		if (username.contains(" ")) {
 			warningBuffer.append("Usernames may not contain spaces\n");
 		}
 		if (!pass.equals(pass2)) {
 			warningBuffer.append("The passwords do not match, try typing them again\n");
 		}
-		if (!(pass.length() > 10 || (pass.matches("[a-z]") && pass.matches("[A-Z]") && pass.matches("[0-9]") && pass.matches("[ _+-=!@#$%^&*(),./;'<>?:{}|]")))) {
+		if (!(pass.length() > 10
+				|| !(pass.matches("[a-z]") && pass.matches("[A-Z]") && pass.matches("[0-9]") && pass.matches("[ _+-=!@#$%^&*(),./;'<>?:{}|]")))) {
 			warningBuffer.append("Passwords must be greater than 10 characters or contain at least one each of lowercase letters, upper case letters, number, and symbols(_+-=!@#$%^&*,./;'<>?:{}|)\n");
 		}
 		User example = new User();
@@ -122,6 +124,6 @@ public class SignupComponent extends VerticalLayout implements HasMinorTask{
 	}
 
 	public void setUsername(String parameter) {
-		this.USERNAME_FIELD.setValue(parameter==null?"":parameter);
+		this.USERNAME_FIELD.setValue(parameter == null ? "" : parameter);
 	}
 }
