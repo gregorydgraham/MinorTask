@@ -5,13 +5,12 @@
  */
 package nz.co.gregs.minortask;
 
-import com.vaadin.server.Page;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.VaadinSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,12 +29,18 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.datamodel.*;
+import nz.co.gregs.minortask.pages.LoginLayout;
+import nz.co.gregs.minortask.pages.LogoutLayout;
+import nz.co.gregs.minortask.pages.SignUpLayout;
+import nz.co.gregs.minortask.pages.TaskCreatorLayout;
+import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -47,15 +52,20 @@ public class MinorTask implements Serializable {
 	private Long currentTaskID;
 	boolean notLoggedIn = true;
 	public String username = "";
-	private VaadinSession sess;
-	private final MinorTaskUI ui;
+//	private VaadinSession sess;
+//	private final MinorTaskUI ui;
 
-	public MinorTask(MinorTaskUI ui) {
-		this.ui = ui;
+	public MinorTask() {
+//		this.ui = null;
 		setupDatabase();
 	}
 
-	static DBDatabase database;
+	public MinorTask(MinorTaskUI ui) {
+//		this.ui = ui;
+		setupDatabase();
+	}
+
+	static DBDatabaseCluster database;
 
 	public static Date asDate(LocalDate localDate) {
 		return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -82,25 +92,30 @@ public class MinorTask implements Serializable {
 	}
 
 	public final void warning(final String topic, final String warning) {
-		Notification note = new Notification(topic, warning, Notification.Type.WARNING_MESSAGE);
-		note.show(Page.getCurrent());
+		Notification note = new Notification(new Label(topic), new Label(warning));
+		note.setPosition(Notification.Position.MIDDLE);
+		note.open();
 	}
 
 	public final void error(final String topic, final String error) {
-		Notification note = new Notification(topic, error, Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
+		Notification note = new Notification(new Label(topic), new Label(error));
+		note.setPosition(Notification.Position.TOP_CENTER);
+		note.open();
 	}
 
 	public final void chat(String string) {
-		new Notification(string, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+		Notification note = new Notification(string, 5000);
+		note.setPosition(Notification.Position.BOTTOM_END);
+		note.open();
 	}
 
 	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		final String localizedMessage = exp.getLocalizedMessage();
 		System.err.println("" + localizedMessage);
-		Notification note = new Notification("SQL ERROR", localizedMessage, Notification.Type.ERROR_MESSAGE);
-		note.show(Page.getCurrent());
+		Notification note = new Notification(new Label("SQL ERROR"), new Label(localizedMessage));
+		note.setPosition(Notification.Position.MIDDLE);
+		note.open();
 	}
 
 	public Task getTask(Long taskID, final long userID) {
@@ -141,9 +156,9 @@ public class MinorTask implements Serializable {
 				Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
-				new Notification(error, Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+				sqlerror(ex);
 				try {
-					database = new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin");
+					database = new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 				} catch (SQLException | IOException ex1) {
 					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 					System.err.println("" + ex.getLocalizedMessage());
@@ -152,14 +167,14 @@ public class MinorTask implements Serializable {
 			}
 		}
 		try {
-			new Notification("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks", Notification.Type.HUMANIZED_MESSAGE).show(Page.getCurrent());
+			chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTaskUI.class.getName()).log(Level.SEVERE, null, ex);
 			sqlerror(ex);
 		}
 	}
 
-	public synchronized DBDatabase getDatabase() {
+	public synchronized DBDatabaseCluster getDatabase() {
 		if (database == null) {
 			setupDatabase();
 		}
@@ -209,11 +224,13 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showLogin() {
-		showPublicContent(new LoginComponent(this));
+
+//		showPublicContent(new LoginComponent(this));
 	}
 
 	public void showLogin(String username, String password) {
-		showPublicContent(new LoginComponent(this, username, password));
+		UI.getCurrent().navigate(LoginLayout.class, username);
+//		showPublicContent(new LoginComponent(this, username, password));
 	}
 
 	public void showTopLevelTasks() {
@@ -225,12 +242,14 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showTask(Long taskID) {
-		TaskEditor taskComponent = new TaskEditor(this, taskID);
-		showAuthorisedContent(taskID, taskComponent);
+		UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
+//		TaskEditor taskComponent = new TaskEditor(taskID);
+//		showAuthorisedContent(taskID, taskComponent);
 	}
 
 	public void showTaskCreation(Long taskID) {
-		showAuthorisedContent(taskID, new TaskCreator(this, taskID));
+		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
+//		showAuthorisedContent(taskID, new TaskCreator(taskID));
 	}
 
 	public Long getCurrentTaskID() {
@@ -267,10 +286,9 @@ public class MinorTask implements Serializable {
 		showTask(null);
 	}
 
-	void setupSession(VaadinRequest vaadinRequest) {
-		sess = VaadinSession.getCurrent();
-	}
-
+//	void setupSession(VaadinRequest vaadinRequest) {
+//		sess = VaadinSession.getCurrent();
+//	}
 	/**
 	 * @return the username
 	 */
@@ -284,22 +302,23 @@ public class MinorTask implements Serializable {
 		} else {
 			setCurrentTaskID(taskID);
 			VerticalLayout display = new VerticalLayout();
-			display.addComponent(new BannerMenu(this, taskID));
-			display.addComponent(component);
-			display.addComponent(new FooterMenu(this, taskID));
-			ui.setContent(display);
-			ui.setScrollTop(0);
+			display.add(new BannerMenu(taskID));
+			display.add(component);
+			display.add(new FooterMenu(taskID));
+//			ui.setContent(display);
+//			ui.setScrollTop(0);
 		}
 	}
 
 	public void logout() {
-		ui.setContent(new LoggedoutComponent(this));
+		UI.getCurrent().navigate(LogoutLayout.class);
+//		ui.setContent(new LoggedoutComponent(this));
 		notLoggedIn = true;
-		sess.close();
+		VaadinSession.getCurrent().close();
 	}
 
 	public void showPublicContent(Component component) {
-		ui.setContent(component);
+//		ui.setContent(component);
 	}
 
 	public boolean getNotLoggedIn() {
@@ -307,10 +326,14 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showSignUp(String username, String password) {
-		showPublicContent(new SignupComponent(this, username, password));
+//		showPublicContent(new SignupComponent(this, username, password));
+		UI.getCurrent().navigate(
+				SignUpLayout.class,
+				username
+		);
 	}
 
-	private void setCurrentTaskID(Long newTaskID) {
+	public void setCurrentTaskID(Long newTaskID) {
 		currentTaskID = newTaskID;
 	}
 

@@ -5,11 +5,12 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.data.HasValue;
-import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
@@ -21,17 +22,14 @@ import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class ProjectPicker extends MinorTaskComponent {
+public class ProjectPicker extends HorizontalLayout implements HasMinorTask{
 
-	public ProjectPicker(MinorTask minortask, Long taskID) {
-		super(minortask, taskID);
-		this.setCompositionRoot(getCurrentProjectComponent());
-		this.setCaption("Project");
-	}
+	private final Long taskID;
 
-	@Override
-	public final void setCaption(String caption) {
-		super.setCaption(caption);
+	public ProjectPicker(Long taskID) {
+		this.taskID = taskID;
+		this.add(getCurrentProjectComponent());
+//		this.setCaption("Project");
 	}
 
 	private Component getPickerComponent() {
@@ -44,13 +42,14 @@ public class ProjectPicker extends MinorTaskComponent {
 
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-			taskList.setSelectedItem(getTask());
+//			taskList.setSelectedItem(taskID);
 
-			taskList.addValueChangeListener(new ProjectChosenListener(minortask, this, getTaskID(), minortask.getUserID()));
+			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID, minortask().getUserID()));
 			taskList.addBlurListener((event) -> {
-				this.setCompositionRoot(getCurrentProjectComponent());
+				this.removeAll();
+				this.add(getCurrentProjectComponent());
 			});
-			taskList.setScrollToSelectedItem(true);
+//			taskList.setScrollToSelectedItem(true);
 			taskList.focus();
 			return taskList;
 		} catch (SQLException ex) {
@@ -65,7 +64,7 @@ public class ProjectPicker extends MinorTaskComponent {
 		try {
 			Task task = new Task();
 			Task.Project project = new Task.Project();
-			task.taskID.permittedValues(getTaskID());
+			task.taskID.permittedValues(taskID);
 			task.userID.permittedValues(minortask().getUserID());
 			task.completionDate.permittedValues((Date) null);
 			List<DBQueryRow> allRows = getDatabase().getDBQuery(task).addOptional(project).getAllRows();
@@ -79,17 +78,18 @@ public class ProjectPicker extends MinorTaskComponent {
 				}
 			}
 		} catch (SQLException ex) {
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		button.addClickListener((event) -> {
-			this.setCompositionRoot(getPickerComponent());
+			this.removeAll();
+			this.add(getPickerComponent());
 		});
 //		button.setCaption("Project");
-		button.setWidthUndefined();
+		button.setSizeUndefined();
 		return button;
 	}
 
-	private static class ProjectChosenListener implements HasValue.ValueChangeListener<Task> {
+	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
 
 		private final Long taskID;
 		private final Long userID;
@@ -103,8 +103,11 @@ public class ProjectPicker extends MinorTaskComponent {
 			this.userID = userID;
 		}
 
+		
+
 		@Override
-		public void valueChange(HasValue.ValueChangeEvent<Task> event) {
+		public void valueChanged(HasValue.ValueChangeEvent<Task> event) {
+			//public void valueChange(HasValue.ValueChangeEvent<Task> event) {
 			try {
 				Task task = minortask.getTask(taskID, userID);
 				final Task selectedProject = event.getValue();
@@ -142,7 +145,7 @@ public class ProjectPicker extends MinorTaskComponent {
 						minortask.getDatabase().update(task);
 						// enforce date constraints on tree
 						minortask.enforceDateConstraintsOnTaskTree(task);
-						picker.setCompositionRoot(picker.getCurrentProjectComponent());
+						picker.add(picker.getCurrentProjectComponent());
 						minortask.showCurrentTask();
 					}
 				}

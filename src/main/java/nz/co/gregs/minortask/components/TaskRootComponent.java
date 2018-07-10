@@ -5,28 +5,26 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.VerticalLayout;
-import nz.co.gregs.minortask.MinorTask;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 /**
  *
  * @author gregorygraham
  */
-public class TaskRootComponent extends MinorTaskComponent {
+public class TaskRootComponent extends VerticalLayout {
 
-	public TaskRootComponent(MinorTask minortask, Long taskID) {
-		super(minortask, taskID);
-		setCompositionRoot(taskID==null?getComponent():new TaskEditor(minortask, taskID));
+	public TaskRootComponent(Long taskID) {
+		add(taskID==null?getComponent():new TaskEditor(taskID));
 	}
 
 	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.addComponents(
-				new ProjectPathNavigator(minortask(), getTaskID()),
-				new ActiveTaskList(minortask(), getTaskID()),
-				new CompletedTaskList(minortask(), getTaskID())
+		layout.add(
+				new ProjectPathNavigator(null),
+				new ActiveTaskList(null),
+				new CompletedTaskList(null)
 		);
 		return layout;
 	}

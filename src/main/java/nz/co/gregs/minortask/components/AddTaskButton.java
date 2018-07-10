@@ -5,29 +5,26 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import nz.co.gregs.minortask.MinorTask;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 /**
  *
  * @author gregorygraham
  */
-public class AddTaskButton extends MinorTaskComponent {
+public class AddTaskButton extends HorizontalLayout implements HasMinorTask{
 		final Button newTaskButton = new Button("+ Add Subtask");
+	private final Long originatingTaskID;
 
-	public AddTaskButton(MinorTask minortask, Long taskID) {
-		super(minortask, taskID);
-		HorizontalLayout panel = new HorizontalLayout();
-		newTaskButton.addStyleNames("friendly", "tiny", "addtaskbutton");
-		newTaskButton.setWidthUndefined();//(100, Unit.PERCENTAGE);
+	public AddTaskButton(Long taskID) {
+		this.originatingTaskID = taskID;
+//		HorizontalLayout panel = new HorizontalLayout();
+		newTaskButton.addClassNames("friendly", "tiny", "addtaskbutton");
+		newTaskButton.setSizeUndefined();
 		newTaskButton.addClickListener((event) -> {
-			minortask().showTaskCreation(this.getTaskID());
+			minortask().showTaskCreation(originatingTaskID);
 		});
-		panel.setWidthUndefined();
-		panel.addComponent(newTaskButton);
-		panel.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
-		this.setCompositionRoot(panel);
+		setSizeUndefined();
+		add(newTaskButton);
 	}
 }

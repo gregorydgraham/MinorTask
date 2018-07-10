@@ -5,55 +5,38 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
  * @author gregorygraham
  */
-public class BannerMenu extends MinorTaskComponent {
+public class BannerMenu extends HorizontalLayout implements HasMinorTask {
 
-	public BannerMenu(MinorTask minortask, Long taskID) {
-		super(minortask, taskID);
+	private final Long taskID;
+
+	public BannerMenu(Long taskID) {
+		this.taskID = taskID;
 		Component banner = getComponent();
 
-		this.setCompositionRoot(banner);
-		this.setWidth(100, Unit.PERCENTAGE);
-		this.setHeightUndefined();
-		this.addStyleName("banner");
-	}
-
-	@Override
-	public final void setWidth(float width, Unit unit) {
-		super.setWidth(width, unit);
-	}
-
-	@Override
-	public final void setHeightUndefined() {
-		super.setHeightUndefined();
-	}
-
-	@Override
-	public final void addStyleName(String style) {
-		super.addStyleName(style);
+		this.add(banner);
+		this.setSizeUndefined();
+		this.setWidth("100%");
+		this.addClassName("banner");
 	}
 
 	final protected Component getComponent() {
 		HorizontalLayout banner = new HorizontalLayout();
-		banner.setWidth(100, Unit.PERCENTAGE);
-		banner.setHeightUndefined();
-		banner.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		banner.setSizeUndefined();
+		banner.setWidth("100%");
+		banner.setDefaultVerticalComponentAlignment(Alignment.START);
 
 		final long userID = minortask().getUserID();
 		User example = new User();
@@ -62,34 +45,34 @@ public class BannerMenu extends MinorTaskComponent {
 			final DBTable<User> userTable = getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
 			final Label label = new Label("Welcome to MinorTask @" + user.getUsername());
-			label.setWidth(100, Unit.PERCENTAGE);
-			banner.addComponent(label);
-			banner.setComponentAlignment(label, Alignment.TOP_CENTER);
+			label.setSizeFull();
+			banner.add(label);
+			banner.setVerticalComponentAlignment(Alignment.CENTER, label);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
-		
+
 		Button logoutButton = new Button("Logout");
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
-		
-		banner.addComponent(logoutButton);
-		banner.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
+
+		banner.add(logoutButton);
+		banner.setVerticalComponentAlignment(Alignment.START, logoutButton);
 
 		return banner;
 	}
 
 	public final void setAsDefaultButton(Button button) {
-		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+//		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		button.addClickListener((event) -> {
 			handleDefaultButton();
 		});
 	}
 
 	public void handleDefaultButton() {
-		minortask().showTaskCreation(getTaskID());
+		minortask().showTaskCreation(taskID);
 	}
 
 }

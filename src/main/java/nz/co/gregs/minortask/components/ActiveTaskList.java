@@ -5,67 +5,62 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class ActiveTaskList extends MinorTaskComponent {
+public class ActiveTaskList extends VerticalLayout implements HasMinorTask{
 
-	private final AddTaskButton newTaskButton = new AddTaskButton(minortask, getTaskID());
+	private final AddTaskButton newTaskButton;
+	private final Long selectedTask;
 
-	public ActiveTaskList(MinorTask minortask, Long selectedTask) {
-		super(minortask, selectedTask);
-		Panel panel = new Panel();
-		panel.setContent(getComponent());
-		this.setCompositionRoot(panel);
+	public ActiveTaskList(Long selectedTask) {
+		this.selectedTask = selectedTask;
+		newTaskButton = new AddTaskButton(selectedTask);
+		add(getComponent());
 	}
 
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.addStyleName("activetasklist");
+		layout.addClassName("activetasklist");
 		layout.setSpacing(false);
-		layout.addStyleName("well");
+		layout.addClassName("well");
 		try {
 
 			List<Task.WithSortColumns> tasks = getTasksToList();
 
 			final String caption = tasks.size() + " Active Tasks";
-			layout.setCaption(caption);
+//			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.setWidthUndefined();
+			label.setSizeUndefined();
 
 			Label spacer = new Label();
-			spacer.setWidth(100, Unit.PERCENTAGE);
+			spacer.setWidth("100%");
 
 			HorizontalLayout header = new HorizontalLayout();
-			header.addComponents(label, spacer);
-			header.setWidth(100, Unit.PERCENTAGE);
+			header.add(label, spacer);
+			header.setWidth("100%");
 
-			layout.addComponent(header);
+			layout.add(header);
 			for (Task task : tasks) {
-				layout.addComponent(new TaskSummary(minortask(), getTaskID(), task));
+				layout.add(new TaskSummary(selectedTask, task));
 			}
 
-			AbstractLayout footer = new HorizontalLayout();
-			footer.setWidth(100, Unit.PERCENTAGE);
-			footer.addComponents(newTaskButton);
-			footer.addStyleNames("activelist", "footer");
-			layout.addComponent(footer);
+			HorizontalLayout footer = new HorizontalLayout();
+			footer.setWidth("100%");
+			footer.add(newTaskButton);
+			footer.addClassNames("activelist", "footer");
+			layout.add(footer);
 
 		} catch (SQLException ex) {
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		return layout;
 	}
@@ -73,7 +68,7 @@ public class ActiveTaskList extends MinorTaskComponent {
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(getTaskID());
+		example.projectID.permittedValues(selectedTask);
 		example.completionDate.permittedValues((Date) null);
 		final DBTable<Task.WithSortColumns> dbTable = minortask().getDatabase().getDBTable(example);
 		dbTable.setSortOrder(

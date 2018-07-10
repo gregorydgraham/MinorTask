@@ -5,8 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 
@@ -14,7 +13,7 @@ import nz.co.gregs.minortask.MinorTask;
  *
  * @author gregorygraham
  */
-public abstract class PublicComponent extends CustomComponent{
+public abstract class PublicComponent extends VerticalLayout{
 
 	protected final MinorTask minortask;
 
@@ -34,11 +33,6 @@ public abstract class PublicComponent extends CustomComponent{
 	 */
 	public DBDatabase getDatabase() {
 		return minortask.getDatabase();
-	}
-
-	@Override
-	protected final void setCompositionRoot(Component compositionRoot) {
-		super.setCompositionRoot(compositionRoot);
 	}
 	
 	

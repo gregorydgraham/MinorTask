@@ -5,37 +5,41 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.util.Collections;
 import java.util.List;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
-public class ProjectPathNavigator extends MinorTaskComponent {
+public class ProjectPathNavigator extends HorizontalLayout implements HasMinorTask{
+
+	private final Long taskID;
 
 //	private final MinorTaskUI ui;
 //	private final Long currentTaskID;
-	public ProjectPathNavigator(MinorTask minortask, Long taskID) {
-		super(minortask, taskID);
-		setCompositionRoot(getComponent());
+	public ProjectPathNavigator(Long taskID) {
+		this.taskID = taskID;
+		buildComponent();
 	}
 
-	private Component getComponent() {
-		HorizontalLayout hLayout = new HorizontalLayout();
-		hLayout.addComponentAsFirst(getButtonForTaskID(null));
-		List<Task> ancestors = minortask().getProjectPathTasks(getTaskID(), minortask().getUserID());
+	private void buildComponent() {
+//		HorizontalLayout hLayout = new HorizontalLayout();
+		add(getButtonForTaskID(null));
+		List<Task> ancestors = minortask().getProjectPathTasks(taskID, minortask().getUserID());
+		Collections.reverse(ancestors);
 		for (Task ancestor : ancestors) {
 			final Button label = getButtonForTaskID(ancestor);
-			hLayout.addComponent(label, 1);
+			add(label);
 		}
-		final AddTaskButton addTaskButton = new AddTaskButton(minortask, getTaskID());
-		hLayout.addComponent(addTaskButton);
-		return hLayout;
+		final AddTaskButton addTaskButton = new AddTaskButton(taskID);
+		add(addTaskButton);
+//		return hLayout;
 	}
 
 
@@ -44,7 +48,9 @@ public class ProjectPathNavigator extends MinorTaskComponent {
 			final Long taskID = task == null ? null : task.taskID.getValue();
 			minortask().showTask(taskID);
 		});
-		button.addStyleNames("tiny", "projectpath");
+		button.setSizeUndefined();
+		button.setWidth("100%");
+		button.addClassNames("tiny", "projectpath");
 		return button;
 	}
 

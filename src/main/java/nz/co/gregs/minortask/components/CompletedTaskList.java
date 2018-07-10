@@ -5,49 +5,46 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class CompletedTaskList extends MinorTaskComponent {
+public class CompletedTaskList extends VerticalLayout implements HasMinorTask{
 
-	public CompletedTaskList(MinorTask minortask, Long selectedTask) {
-		super(minortask, selectedTask);
-		Panel panel = new Panel();
-		panel.setContent(getComponent());
-		this.setCompositionRoot(panel);
-		this.addStyleName("completed");
+	private final Long taskID;
+
+	public CompletedTaskList(Long selectedTask) {
+		this.taskID = selectedTask;
+		add(getComponent());
+		this.addClassName("completed");
 	}
 
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(false);
-		layout.addStyleName("well");
+		layout.addClassName("well");
 		try {
 
 			List<Task.WithSortColumns> tasks = getTasksToList();
 			
 			final String caption = tasks.size() + " Completed Tasks";
-			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.addStyleName("small");
-			layout.addComponent(label);
+			label.addClassName("small");
+			layout.add(label);
 			
 			for (Task task : tasks) {
-				final TaskSummary taskSummary = new TaskSummary(minortask(), getTaskID(), task);
-				taskSummary.addStyleName("completed");
-				layout.addComponent(taskSummary);
+				final TaskSummary taskSummary = new TaskSummary(taskID, task);
+				taskSummary.addClassName("completed");
+				layout.add(taskSummary);
 			}
 		} catch (SQLException ex) {
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		return layout;
 	}
@@ -55,7 +52,7 @@ public class CompletedTaskList extends MinorTaskComponent {
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(getTaskID());
+		example.projectID.permittedValues(taskID);
 		example.completionDate.excludedValues((Date) null);
 		final DBTable<Task.WithSortColumns> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();

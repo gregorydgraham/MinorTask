@@ -5,18 +5,19 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.data.HasValue;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -25,218 +26,226 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.datamodel.*;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
-public class TaskEditor extends MinorTaskComponent {
+public class TaskEditor extends VerticalLayout implements HasMinorTask {
 
 	TextField name = new TextField("Name");
 	TextArea description = new TextArea("Description");
-	ProjectPicker project = new ProjectPicker(minortask(), getTaskID());
-	ActiveTaskList subtasks = new ActiveTaskList(minortask(), getTaskID());
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
-	CompletedTaskList completedTasks = new CompletedTaskList(minortask(), getTaskID());
+	ProjectPicker project;
+	ActiveTaskList subtasks;
+	CompletedTaskList completedTasks;
 	TextField notes = new TextField("Notes");
-	DateField startDate = new DateField("Start");
-	DateField preferredEndDate = new DateField("End");
-	DateField deadlineDate = new DateField("Deadline");
-	DateField completedDate = new DateField("Completed");
+	DatePicker startDate = new DatePicker("Start");
+	DatePicker preferredEndDate = new DatePicker("End");
+	DatePicker deadlineDate = new DatePicker("Deadline");
+	DatePicker completedDate = new DatePicker("Completed");
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
 	Label overdueIndicator = new Label("Overdue");
 	Label completedIndicator = new Label("COMPLETED");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
+	private final Long taskID;
 
-	public TaskEditor(MinorTask minortask, Long currentTask) {
-		super(minortask, currentTask);
-		setCompositionRoot(currentTask != null ? getComponent() : new TaskRootComponent(minortask, currentTask));
+	public TaskEditor(Long currentTask) {
+		this.taskID = currentTask;
+		project = new ProjectPicker(currentTask);
+		subtasks = new ActiveTaskList(currentTask);
+		completedTasks = new CompletedTaskList(currentTask);
+		add(currentTask != null ? getComponent() : new TaskRootComponent(currentTask));
 	}
 
 	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
-		layout.setWidthUndefined();
-		layout.addComponent(new ProjectPathNavigator(minortask(), getTaskID()));
+		layout.setSizeUndefined();
+		layout.add(new ProjectPathNavigator(taskID));
+
+		setEscapeButton(cancelButton);
+		setAsDefaultButton(createButton);
+
+		name.setSizeUndefined();
+		description.setWidth("100%");
+		description.setHeight("3cm");
+		activeIndicator.setWidth("100%");
+		startedIndicator.setWidth("100%");
+		overdueIndicator.setWidth("100%");
+		completedIndicator.setWidth("100%");
+		activeIndicator.setVisible(false);
+		startedIndicator.setVisible(false);
+		overdueIndicator.setVisible(false);
+		completedIndicator.setVisible(false);
+		startedIndicator.addClassName("friendly");
+		overdueIndicator.addClassName("danger");
+		completedIndicator.addClassName("neutral");
+		completedDate.setVisible(false);
+		completedDate.setReadOnly(true);
+
+		completeButton.addClassName("danger");
+		completeButton.addClickListener(new CompleteTaskListener(minortask(), taskID));
+		completeButton.setVisible(false);
+
+		reopenButton.addClassName("friendly");
+		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
+		reopenButton.setVisible(false);
+
+		HorizontalLayout details = new HorizontalLayout(
+				name, project,
+				activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
+		details.setSizeUndefined();
+
+		HorizontalLayout dates = new HorizontalLayout(
+				startDate,
+				preferredEndDate,
+				deadlineDate,
+				completedDate
+		);
+		dates.setSizeUndefined();
+		layout.add(details);
+		layout.add(description);
+		layout.add(dates);
+		layout.add(subtasks);
+		layout.add(completeButton);
+		layout.add(reopenButton);
+		layout.add(completedTasks);
 		try {
-			setEscapeButton(cancelButton);
-			setAsDefaultButton(createButton);
-
-			name.setWidthUndefined();
-			description.setWidth(100, Unit.PERCENTAGE);
-			description.setHeight(3, Unit.CM);
-			activeIndicator.setWidth(100, Unit.PERCENTAGE);
-			startedIndicator.setWidth(100, Unit.PERCENTAGE);
-			overdueIndicator.setWidth(100, Unit.PERCENTAGE);
-			completedIndicator.setWidth(100, Unit.PERCENTAGE);
-			activeIndicator.setVisible(false);
-			startedIndicator.setVisible(false);
-			overdueIndicator.setVisible(false);
-			completedIndicator.setVisible(false);
-			startedIndicator.addStyleName("friendly");
-			overdueIndicator.addStyleName("danger");
-			completedIndicator.addStyleName("neutral");
-			completedDate.setVisible(false);
-			completedDate.setReadOnly(true);
-
-			completeButton.addStyleName("danger");
-			completeButton.addClickListener(new CompleteTaskListener(minortask(), getTaskID()));
-			completeButton.setVisible(false);
-
-			reopenButton.addStyleName("friendly");
-			reopenButton.addClickListener(new ReopenTaskListener(minortask(), getTaskID()));
-			reopenButton.setVisible(false);
-
 			setFieldValues();
-
-			HorizontalLayout details = new HorizontalLayout(
-					name, project,
-					activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
-			details.setWidthUndefined();
-
-			HorizontalLayout dates = new HorizontalLayout(
-					startDate,
-					preferredEndDate,
-					deadlineDate,
-					completedDate
-			);
-			dates.setWidthUndefined();
-			layout.addComponent(details);
-			layout.addComponent(description);
-			layout.addComponent(dates);
-			layout.addComponent(subtasks);
-			layout.addComponent(completeButton);
-			layout.addComponent(reopenButton);
-			layout.addComponent(completedTasks);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 		return layout;
 	}
 
 	protected void addChangeListeners() {
-		final HasValue.ValueChangeListener<String> stringChange = (event) -> {
-			saveTask();
-		};
+//		final HasValue.ValueChangeListener<String> stringChange = (event) -> {
+//			saveTask();
+//		};
 		name.addValueChangeListener((event) -> {
 			saveTask();
-			minortask.showCurrentTask();
+			minortask().showCurrentTask();
 		});
-		description.addValueChangeListener(stringChange);
+		description.addValueChangeListener((event) -> {
+			saveTask();
+		});
 
-		name.setValueChangeMode(ValueChangeMode.BLUR);
-		description.setValueChangeMode(ValueChangeMode.BLUR);
-
-		final HasValue.ValueChangeListener<LocalDate> dateChange = (event) -> {
+		name.setValueChangeMode(ValueChangeMode.ON_BLUR);
+		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
+		final HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<DatePicker, LocalDate>> dateChange = (event) -> {
 			saveTask();
 		};
+
 		startDate.addValueChangeListener(dateChange);
 		preferredEndDate.addValueChangeListener(dateChange);
 		deadlineDate.addValueChangeListener(dateChange);
 
-		startDate.setTextFieldEnabled(false);
-		preferredEndDate.setTextFieldEnabled(false);
-		deadlineDate.setTextFieldEnabled(false);
+//		startDate.setTextFieldEnabled(false);
+//		preferredEndDate.setTextFieldEnabled(false);
+//		deadlineDate.setTextFieldEnabled(false);
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
-		final Long taskID = getTaskID();
+//		final Long taskID = this.taskID;
 		if (taskID != null) {
-			Task task = getTask();
-			name.setValue(task.name.toString());
-			description.setValue(task.description.toString());
-			startDate.setValue(MinorTask.asLocalDate(task.startDate.dateValue()));
-			preferredEndDate.setValue(MinorTask.asLocalDate(task.preferredDate.dateValue()));
-			deadlineDate.setValue(MinorTask.asLocalDate(task.finalDate.dateValue()));
+			Task task = getTask(taskID);
+			if (task != null) {
+				name.setValue(task.name.stringValue());
+				description.setValue(task.description.toString());
+				startDate.setValue(asLocalDate(task.startDate.dateValue()));
+				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
+				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
 
-			Task.Project taskProject = getProject();
-			if (taskProject != null) {
-				LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
-				LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
-				if (projectStart.isAfter(projectEnd)) {
-					projectStart = projectEnd.minusDays(1);
+				Task.Project taskProject = minortask().getProject();
+				if (taskProject != null) {
+					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
+					LocalDate projectEnd = asLocalDate(taskProject.finalDate.getValue());
+					if (projectStart.isAfter(projectEnd)) {
+						projectStart = projectEnd.minusDays(1);
+					}
+					startDate.setMin(projectStart);
+					startDate.setMax(projectEnd);
+					preferredEndDate.setMin(projectStart);
+					preferredEndDate.setMax(projectEnd);
+					deadlineDate.setMin(projectStart);
+					deadlineDate.setMax(projectEnd);
 				}
-				startDate.setRangeStart(projectStart);
-				startDate.setRangeEnd(projectEnd);
-				preferredEndDate.setRangeStart(projectStart);
-				preferredEndDate.setRangeEnd(projectEnd);
-				deadlineDate.setRangeStart(projectStart);
-				deadlineDate.setRangeEnd(projectEnd);
-			}
 
-			final Date completed = task.completionDate.dateValue();
+				final Date completed = task.completionDate.dateValue();
 
-			if (completed != null) {
-				completedDate.setValue(MinorTask.asLocalDate(completed));
-				this.addStyleName("completed");
-				completedIndicator.setVisible(true);
-				reopenButton.setVisible(true);
+				if (completed != null) {
+					completedDate.setValue(asLocalDate(completed));
+					this.addClassName("completed");
+					completedIndicator.setVisible(true);
+					reopenButton.setVisible(true);
 
-				name.setReadOnly(true);
-				project.setEnabled(false);
-				description.setReadOnly(true);
-				startDate.setReadOnly(true);
-				preferredEndDate.setReadOnly(true);
-				deadlineDate.setReadOnly(true);
-				subtasks.disableNewButton();
-			} else {
-				completeButton.setVisible(true);
-				final Date now = new Date();
-				if (task.finalDate.dateValue().before(now)) {
-					overdueIndicator.setVisible(true);
-				} else if (task.startDate.dateValue().before(now)) {
-					startedIndicator.setVisible(true);
+					name.setReadOnly(true);
+					project.setEnabled(false);
+					description.setReadOnly(true);
+					startDate.setReadOnly(true);
+					preferredEndDate.setReadOnly(true);
+					deadlineDate.setReadOnly(true);
+					subtasks.disableNewButton();
 				} else {
-					activeIndicator.setVisible(true);
+					completeButton.setVisible(true);
+					final Date now = new Date();
+					if (task.finalDate.dateValue().before(now)) {
+						overdueIndicator.setVisible(true);
+					} else if (task.startDate.dateValue().before(now)) {
+						startedIndicator.setVisible(true);
+					} else {
+						activeIndicator.setVisible(true);
+					}
 				}
-			}
-			createButton.setCaption("Save");
+				createButton.setText("Save");
 
-			addChangeListeners();
+				addChangeListeners();
+			}
 		}
 	}
 
 	public void saveTask() {
-		Task task = getTask();
+		Task task = getTask(taskID);
 
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());
-		task.startDate.setValue(MinorTask.asDate(startDate.getValue()));
-		task.preferredDate.setValue(MinorTask.asDate(preferredEndDate.getValue()));
-		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
+		task.startDate.setValue(asDate(startDate.getValue()));
+		task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
+		task.finalDate.setValue(asDate(deadlineDate.getValue()));
 
 		try {
 			getDatabase().update(task);
 		} catch (SQLException ex) {
 			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			minortask.sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 	}
 
 	public void handleEscapeButton() {
-		minortask().showTask(getTaskID());
+		minortask().showTask(taskID);
 	}
 
 	public final void setAsDefaultButton(Button button) {
-		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+//		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+//		button.addClassName(ValoTheme.BUTTON_PRIMARY);
 		button.addClickListener((event) -> {
 			saveTask();
 		});
 	}
 
 	public final void setEscapeButton(Button button) {
-		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+//		button.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 		button.addClickListener((event) -> {
 			handleEscapeButton();
 		});
 	}
 
-	private static class ReopenTaskListener implements Button.ClickListener {
+	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
 
 		private final Long taskID;
 		private final MinorTask minortask;
@@ -247,28 +256,30 @@ public class TaskEditor extends MinorTaskComponent {
 		}
 
 		@Override
-		public void buttonClick(Button.ClickEvent event) {
-			List<Task> projectPathTasks = minortask.getProjectPathTasks(taskID, minortask.getUserID());
+		public void onComponentEvent(ClickEvent<Button> event) {
+//		@Override
+//		public void buttonClick(Button.ClickEvent event) {
+			List<Task> projectPathTasks = getProjectPathTasks(taskID);
 			for (Task projectPathTask : projectPathTasks) {
 				projectPathTask.completionDate.setValue((Date) null);
 				try {
-					minortask.getDatabase().update(projectPathTask);
+					minortask().getDatabase().update(projectPathTask);
 				} catch (SQLException ex) {
-					minortask.sqlerror(ex);
+					minortask().sqlerror(ex);
 				}
 			}
-			Task task = minortask.getTask(taskID, minortask.getUserID());
+			Task task = minortask().getTask(taskID, minortask().getUserID());
 			task.completionDate.setValue((Date) null);
 			try {
-				minortask.getDatabase().update(task);
+				minortask().getDatabase().update(task);
 			} catch (SQLException ex) {
-				minortask.sqlerror(ex);
+				minortask().sqlerror(ex);
 			}
-			minortask.showTask(taskID);
+			minortask().showTask(taskID);
 		}
 	}
 
-	private static class CompleteTaskListener implements Button.ClickListener {
+	private class CompleteTaskListener implements ComponentEventListener<ClickEvent<Button>> {
 
 		private final Long taskID;
 		private final MinorTask minortask;
@@ -279,27 +290,29 @@ public class TaskEditor extends MinorTaskComponent {
 		}
 
 		@Override
-		public void buttonClick(Button.ClickEvent event) {
+		public void onComponentEvent(ClickEvent<Button> event) {
+//		@Override
+//		public void buttonClick(Button.ClickEvent event) {
 			Task task = completeTask(taskID);
 			if (task == null) {
-				minortask.showTask(null);
+				minortask().showTask(null);
 			} else {
-				minortask.showTask(task.projectID.getValue());
+				minortask().showTask(task.projectID.getValue());
 			}
 		}
 
 		private Task completeTask(Long taskID) {
 			if (taskID != null) {
-				List<Task> subtasks = minortask.getActiveSubtasks(taskID, minortask.getUserID());
+				List<Task> subtasks = minortask().getActiveSubtasks(taskID, minortask().getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
-				Task task = minortask.getTask(taskID, minortask.getUserID());
+				Task task = minortask().getTask(taskID, minortask().getUserID());
 				task.completionDate.setValue(new Date());
 				try {
-					minortask.getDatabase().update(task);
+					minortask().getDatabase().update(task);
 				} catch (SQLException ex) {
-					minortask.sqlerror(ex);
+					minortask().sqlerror(ex);
 				}
 				return task;
 			}

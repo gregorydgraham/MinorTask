@@ -5,78 +5,83 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.event.FieldEvents;
-import com.vaadin.event.LayoutEvents;
-import com.vaadin.event.MouseEvents;
-import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.*;
-import com.vaadin.icons.VaadinIcons;
-import nz.co.gregs.minortask.MinorTask;
+import com.vaadin.flow.component.ClickNotifier;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class TaskSummary extends MinorTaskComponent {
+public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNotifier<Component> {
 
-	public TaskSummary(MinorTask minortask, Long taskID, Task task) {
-		super(minortask, taskID);
+//	private final Long taskID;
+//	private final Task task;
+
+	public TaskSummary(Long taskID, Task task) {
+//		this.taskID = taskID;
+//		this.task = task;
 
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());
 
-		name.setWidth(100, Unit.PERCENTAGE);
-		desc.setWidth(100, Unit.PERCENTAGE);
-		desc.addStyleName("tiny");
+		name.setSizeFull();
+		desc.setSizeFull();
+		desc.addClassName("tiny");
 
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
-		summary.setWidth(30, Unit.EM);
-		summary.setDefaultComponentAlignment(Alignment.TOP_LEFT);
+		summary.setWidth("30EM");
+		summary.setDefaultHorizontalComponentAlignment(Alignment.START);
 
-		Label arrow = new Label("" + minortask.getActiveSubtasks(task.taskID.longValue(), minortask.getUserID()).size());
-		arrow.setIcon(VaadinIcons.ANGLE_RIGHT);
+		Label arrow = new Label("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size());
+//		arrow.setIcon(VaadinIcon.ANGLE_RIGHT);
 		arrow.setSizeUndefined();
-		arrow.setHeight(100, Unit.PERCENTAGE);
+		arrow.setHeight("100%");
 		final HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSpacing(false);
-		hlayout.setWidth(100, Unit.PERCENTAGE);
-		hlayout.addStyleName("card");
+		hlayout.setSizeFull();
+		hlayout.addClassName("card");
 
-		hlayout.addComponent(summary);
-		hlayout.addComponent(arrow);
-		hlayout.setComponentAlignment(arrow, Alignment.MIDDLE_RIGHT);
-		hlayout.addLayoutClickListener(new TaskClickListener(task));
-
-		this.setCompositionRoot(hlayout);
+		hlayout.add(summary);
+		hlayout.add(arrow);
+		hlayout.setVerticalComponentAlignment(Alignment.CENTER, arrow);
+//		hlayout.addLayoutClickListener(new TaskClickListener(task));
+		this.addClickListener((event) -> {
+			minortask().chat("Opening "+task.taskID.longValue());
+			minortask().showTask(task.taskID.longValue());
+		});
+		this.add(hlayout);
 	}
 
-	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener, MouseEvents.ClickListener {
-
-		private final Task task;
-
-		public TaskClickListener(Task task) {
-			this.task = task;
-		}
-
-		@Override
-		public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
-				handleEvent();
-			}
-		}
-
-		@Override
-		public void focus(FieldEvents.FocusEvent event) {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-
-		public void handleEvent() {
-			final Long taskID = task.taskID.getValue();
-			minortask().showTask(taskID);
-		}
-
-		@Override
-		public void click(MouseEvents.ClickEvent event) {
-			handleEvent();
-		}
-
-	}
+//	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener, MouseEvents.ClickListener {
+//
+//		private final Task task;
+//
+//		public TaskClickListener(Task task) {
+//			this.task = task;
+//		}
+//
+//		@Override
+//		public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+//			if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+//				handleEvent();
+//			}
+//		}
+//
+//		@Override
+//		public void focus(FieldEvents.FocusEvent event) {
+//			throw new UnsupportedOperationException("Not supported yet.");
+//		}
+//
+//		public void handleEvent() {
+//			final Long taskID = task.taskID.getValue();
+//			minortask().showTask(taskID);
+//		}
+//
+//		@Override
+//		public void click(MouseEvents.ClickEvent event) {
+//			handleEvent();
+//		}
+//
+//	}
 }
