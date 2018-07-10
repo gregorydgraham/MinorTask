@@ -21,7 +21,7 @@ public class CompletedTaskList extends VerticalLayout implements HasMinorTask{
 	public CompletedTaskList(Long selectedTask) {
 		this.taskID = selectedTask;
 		add(getComponent());
-		this.addClassName("completed");
+		this.addClassNames("completed", "tasklist");
 	}
 
 	public final Component getComponent() {

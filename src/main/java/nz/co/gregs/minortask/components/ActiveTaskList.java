@@ -39,15 +39,14 @@ public class ActiveTaskList extends VerticalLayout implements HasMinorTask{
 			List<Task.WithSortColumns> tasks = getTasksToList();
 
 			final String caption = tasks.size() + " Active Tasks";
-//			layout.setCaption(caption);
 			final Label label = new Label(caption);
-			label.setSizeUndefined();
+			label.setWidth("100%");
 
-			Label spacer = new Label();
-			spacer.setWidth("100%");
+//			Label spacer = new Label();
+//			spacer.setWidth("100%");
 
 			HorizontalLayout header = new HorizontalLayout();
-			header.add(label, spacer);
+			header.add(label);
 			header.setWidth("100%");
 
 			layout.add(header);

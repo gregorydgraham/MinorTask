@@ -39,7 +39,7 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 		final HorizontalLayout hlayout = new HorizontalLayout();
 		hlayout.setSpacing(false);
 		hlayout.setSizeFull();
-		hlayout.addClassName("card");
+		hlayout.addClassNames("card");
 
 		hlayout.add(summary);
 		hlayout.add(arrow);
@@ -50,6 +50,7 @@ public class TaskSummary extends VerticalLayout implements HasMinorTask, ClickNo
 			minortask().showTask(task.taskID.longValue());
 		});
 		this.add(hlayout);
+		this.addClassName("tasksummary");
 	}
 
 //	private class TaskClickListener implements LayoutEvents.LayoutClickListener, FieldEvents.FocusListener, MouseEvents.ClickListener {

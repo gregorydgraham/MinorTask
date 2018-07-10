@@ -89,7 +89,7 @@ public class MinorTask implements Serializable {
 	}
 
 	public final void warning(final String topic, final String warning) {
-		Button closeButton = new Button("Oh well...");
+		Button closeButton = new Button("Nevermind");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(warning), closeButton);
 		Notification note = new Notification(layout);
 		closeButton.addClickListener((event) -> {
@@ -101,7 +101,7 @@ public class MinorTask implements Serializable {
 	}
 
 	public final void error(final String topic, final String error) {
-		Button closeButton = new Button("Oh well...");
+		Button closeButton = new Button("Oops");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error), closeButton);
 		Notification note = new Notification(layout);
 		closeButton.addClickListener((event) -> {
@@ -121,7 +121,7 @@ public class MinorTask implements Serializable {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		final String localizedMessage = exp.getLocalizedMessage();
 		System.err.println("" + localizedMessage);
-		Button closeButton = new Button("Oh well...");
+		Button closeButton = new Button("Darn it!");
 		Notification note = new Notification(new Label("SQL ERROR"), new Label(localizedMessage), closeButton);
 		closeButton.addClickListener((event) -> {
 			note.close();
