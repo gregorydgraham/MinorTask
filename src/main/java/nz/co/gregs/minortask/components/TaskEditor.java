@@ -124,9 +124,6 @@ public class TaskEditor extends VerticalLayout implements HasMinorTask {
 	}
 
 	protected void addChangeListeners() {
-//		final HasValue.ValueChangeListener<String> stringChange = (event) -> {
-//			saveTask();
-//		};
 		name.addValueChangeListener((event) -> {
 			saveTask();
 			minortask().showCurrentTask();

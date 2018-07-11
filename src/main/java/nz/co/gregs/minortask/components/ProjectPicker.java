@@ -29,7 +29,6 @@ public class ProjectPicker extends HorizontalLayout implements HasMinorTask{
 	public ProjectPicker(Long taskID) {
 		this.taskID = taskID;
 		this.add(getCurrentProjectComponent());
-//		this.setCaption("Project");
 	}
 
 	private Component getPickerComponent() {
@@ -42,14 +41,12 @@ public class ProjectPicker extends HorizontalLayout implements HasMinorTask{
 
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-//			taskList.setSelectedItem(taskID);
 
 			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID, minortask().getUserID()));
 			taskList.addBlurListener((event) -> {
 				this.removeAll();
 				this.add(getCurrentProjectComponent());
 			});
-//			taskList.setScrollToSelectedItem(true);
 			taskList.focus();
 			return taskList;
 		} catch (SQLException ex) {

@@ -21,8 +21,8 @@ public class AddTaskButton extends HorizontalLayout implements HasMinorTask{
 	public AddTaskButton(Long taskID) {
 		this.originatingTaskID = taskID;
 //		HorizontalLayout panel = new HorizontalLayout();
-		newTaskButton.addClassNames("friendly", "tiny", "addtaskbutton");
-		newTaskButton.getElement().setAttribute("theme", "success primary");
+		newTaskButton.addClassNames("addtaskbutton");
+		newTaskButton.getElement().setAttribute("theme", "small success primary");
 		newTaskButton.setSizeUndefined();
 		newTaskButton.addClickListener((event) -> {
 			minortask().showTaskCreation(originatingTaskID);
