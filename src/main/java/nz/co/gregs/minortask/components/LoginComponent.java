@@ -65,12 +65,7 @@ public class LoginComponent extends VerticalLayout implements HasMinorTask, HasC
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, buttons);
-		return loginPanel;/*new GridLayout(
-				3, 3,
-				new VerticalLayout(), new VerticalLayout(), new VerticalLayout(),
-				new VerticalLayout(), loginPanel, new VerticalLayout(),
-				new VerticalLayout(), new VerticalLayout(), new VerticalLayout()
-		);*/
+		return loginPanel;
 	}
 
 	public void handleDefaultButton() {

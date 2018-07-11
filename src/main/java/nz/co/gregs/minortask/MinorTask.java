@@ -10,6 +10,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
@@ -51,6 +53,7 @@ public class MinorTask implements Serializable {
 	private Long currentTaskID;
 	boolean notLoggedIn = true;
 	public String username = "";
+	private Location loginDestination;
 
 	public MinorTask() {
 		setupDatabase();
@@ -285,7 +288,17 @@ public class MinorTask implements Serializable {
 	public synchronized void loginAs(Long userID) {
 		this.notLoggedIn = false;
 		this.userID = userID;
-		showTask(null);
+		if (this.loginDestination != null) {
+			UI.getCurrent()
+					.getRouter()
+					.navigate(
+							UI.getCurrent(),
+							loginDestination,
+							NavigationTrigger.PROGRAMMATIC
+					);
+		} else {
+			showTask(null);
+		}
 	}
 
 	/**
@@ -375,5 +388,9 @@ public class MinorTask implements Serializable {
 
 	public Task getTask() {
 		return getTask(getCurrentTaskID(), getUserID());
+	}
+
+	public void setLoginDestination(Location location) {
+		this.loginDestination = location;
 	}
 }

@@ -25,13 +25,9 @@ import nz.co.gregs.minortask.components.TaskEditor;
 @HtmlImport("styles/shared-styles.html")
 @Route("task")
 @RouteAlias("edit")
-public class TaskEditorLayout extends VerticalLayout implements HasUrlParameter<Long>{
+public class TaskEditorLayout extends VerticalLayout implements ChecksLogin{
 
 	public TaskEditorLayout() {
-		add(new MinorTaskTemplate());
-		add(new BannerMenu(null));
-		add(new TaskEditor(null));
-		add(new FooterMenu(null));
 	}
 
 	@Override

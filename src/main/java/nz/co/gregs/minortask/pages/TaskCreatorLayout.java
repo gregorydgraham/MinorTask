@@ -24,10 +24,9 @@ import nz.co.gregs.minortask.components.TaskCreator;
 @HtmlImport("styles/shared-styles.html")
 @Route("create")
 @RouteAlias("new")
-public class TaskCreatorLayout extends VerticalLayout implements HasUrlParameter<Long> {
+public class TaskCreatorLayout extends VerticalLayout implements ChecksLogin {
 
 	public TaskCreatorLayout() {
-		buildComponent(null);
 	}
 
 	@Override
