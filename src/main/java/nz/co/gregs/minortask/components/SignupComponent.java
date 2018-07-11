@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class SignupComponent extends VerticalLayout implements HasMinorTask {
+public class SignupComponent extends VerticalLayout implements MinorTaskComponent {
 
 	public final TextField USERNAME_FIELD = new TextField("Your Name");
 	public final PasswordField PASSWORD_FIELD = new PasswordField("Password");

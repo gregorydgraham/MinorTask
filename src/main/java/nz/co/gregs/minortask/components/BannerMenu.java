@@ -24,7 +24,7 @@ public class BannerMenu extends HorizontalLayout implements RequiresLogin {
 
 	public BannerMenu(Long taskID) {
 		this.taskID = taskID;
-		Component banner = getComponent();
+		Component banner = buildComponent();
 
 		this.add(banner);
 		this.setSizeUndefined();
@@ -32,7 +32,7 @@ public class BannerMenu extends HorizontalLayout implements RequiresLogin {
 		this.addClassName("banner");
 	}
 
-	final protected Component getComponent() {
+	public final Component buildComponent() {
 		HorizontalLayout banner = new HorizontalLayout();
 		banner.setSizeUndefined();
 		banner.setWidth("100%");

@@ -12,7 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
  *
  * @author gregorygraham
  */
-public class FooterMenu extends VerticalLayout implements HasMinorTask {
+public class FooterMenu extends VerticalLayout implements MinorTaskComponent {
 
 	private final Long taskID;
 

@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.User;
  * @author gregorygraham
  */
 @Tag("minortask-login")
-public class LoginComponent extends VerticalLayout implements HasMinorTask, HasComponents, KeyNotifier, HasDefaultButton {
+public class LoginComponent extends VerticalLayout implements MinorTaskComponent, HasComponents, KeyNotifier, HasDefaultButton {
 
 	private final TextField USERNAME_FIELD = new TextField("Your Name");
 	private final PasswordField PASSWORD_FIELD = new PasswordField("Password");

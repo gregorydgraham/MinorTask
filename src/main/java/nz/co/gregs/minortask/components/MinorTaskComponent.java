@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.server.VaadinSession;
 import java.time.LocalDate;
 import java.util.Date;
@@ -17,7 +18,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public interface HasMinorTask {
+public interface MinorTaskComponent {
 
 	default MinorTask minortask() {
 		final VaadinSession session = VaadinSession.getCurrent();
@@ -36,14 +37,6 @@ public interface HasMinorTask {
 	default Task getTask(Long taskID) {
 		return minortask().getTask(taskID, minortask().getUserID());
 	}
-
-//	default Long getTaskID() {
-//		return minortask().getCurrentTaskID();
-//	}
-
-//	default void setTaskID(Long currentTaskID) {
-//		minortask().setCurrentTaskID(currentTaskID);
-//	}
 
 	default Long getUserID() {
 		return minortask().getUserID();

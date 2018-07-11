@@ -22,11 +22,11 @@ public class CompletedTaskList extends VerticalLayout implements RequiresLogin{
 
 	public CompletedTaskList(Long selectedTask) {
 		this.taskID = selectedTask;
-		add(getComponent());
+		add(buildComponent());
 		this.addClassNames("completed", "tasklist");
 	}
 
-	public final Component getComponent() {
+	public final Component buildComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSpacing(false);

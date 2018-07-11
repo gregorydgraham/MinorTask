@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
  *
  * @author gregorygraham
  */
-public class LoggedoutComponent extends VerticalLayout implements HasMinorTask {
+public class LoggedoutComponent extends VerticalLayout implements MinorTaskComponent {
 
 	public LoggedoutComponent() {
 		super();

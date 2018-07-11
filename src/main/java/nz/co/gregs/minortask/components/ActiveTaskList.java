@@ -17,7 +17,7 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("active-task-list")
-public class ActiveTaskList extends VerticalLayout implements RequiresLogin{
+public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
 
 	private final AddTaskButton newTaskButton;
 	private final Long selectedTask;
@@ -26,11 +26,11 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin{
 		this.selectedTask = selectedTask;
 		newTaskButton = new AddTaskButton(selectedTask);
 		newTaskButton.addClassName("addbutton");
-		add(getComponent());
+		buildComponent();
 		this.addClassName("tasklist");
 	}
 
-	public final Component getComponent() {
+	public final void buildComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.addClassName("activetasklist");
@@ -43,9 +43,6 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin{
 			final String caption = tasks.size() + " Active Tasks";
 			final Label label = new Label(caption);
 			label.setWidth("100%");
-
-//			Label spacer = new Label();
-//			spacer.setWidth("100%");
 
 			HorizontalLayout header = new HorizontalLayout();
 			header.add(label);
@@ -65,7 +62,7 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin{
 		} catch (SQLException ex) {
 			minortask().sqlerror(ex);
 		}
-		return layout;
+		add(layout);
 	}
 
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
