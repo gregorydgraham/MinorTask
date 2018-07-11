@@ -5,14 +5,13 @@
  */
 package nz.co.gregs.minortask;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,16 +29,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
-import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
-import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.datamodel.*;
-import nz.co.gregs.minortask.pages.LoginLayout;
-import nz.co.gregs.minortask.pages.LogoutLayout;
+import nz.co.gregs.minortask.pages.LoginPage;
+import nz.co.gregs.minortask.pages.LoggedOutPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -54,11 +51,8 @@ public class MinorTask implements Serializable {
 	private Long currentTaskID;
 	boolean notLoggedIn = true;
 	public String username = "";
-//	private VaadinSession sess;
-//	private final MinorTaskUI ui;
 
 	public MinorTask() {
-//		this.ui = ui;
 		setupDatabase();
 	}
 
@@ -126,11 +120,12 @@ public class MinorTask implements Serializable {
 		closeButton.addClickListener((event) -> {
 			note.close();
 		});
-		note.setPosition(Notification.Position.MIDDLE);
+		note.getElement().setAttribute("theme", "error");
+		note.setPosition(Notification.Position.TOP_CENTER);
 		note.open();
 	}
 
-	public Task getTask(Long taskID, final long userID) {
+	public Task getTask(Long taskID, final Long userID) {
 		Task returnTask = null;
 		final Task task = getTaskExample(taskID, userID);
 		task.taskID.permittedValues(taskID);
@@ -142,7 +137,7 @@ public class MinorTask implements Serializable {
 		return returnTask;
 	}
 
-	public List<Task> getActiveSubtasks(Long taskID, final long userID) {
+	public List<Task> getActiveSubtasks(Long taskID, final Long userID) {
 		ArrayList<Task> arrayList = new ArrayList<Task>();
 		final Task example = getProjectExample(taskID, userID);
 		example.completionDate.permittedValues((Date) null);
@@ -236,13 +231,11 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showLogin() {
-
-//		showPublicContent(new LoginComponent(this));
+		UI.getCurrent().navigate(LoginPage.class);
 	}
 
 	public void showLogin(String username, String password) {
-		UI.getCurrent().navigate(LoginLayout.class, username);
-//		showPublicContent(new LoginComponent(this, username, password));
+		UI.getCurrent().navigate(LoginPage.class, username);
 	}
 
 	public void showTopLevelTasks() {
@@ -255,13 +248,10 @@ public class MinorTask implements Serializable {
 
 	public void showTask(Long taskID) {
 		UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
-//		TaskEditor taskComponent = new TaskEditor(taskID);
-//		showAuthorisedContent(taskID, taskComponent);
 	}
 
 	public void showTaskCreation(Long taskID) {
 		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
-//		showAuthorisedContent(taskID, new TaskCreator(taskID));
 	}
 
 	public Long getCurrentTaskID() {
@@ -292,15 +282,12 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public void loginAs(Long userID) {
+	public synchronized void loginAs(Long userID) {
 		this.notLoggedIn = false;
 		this.userID = userID;
 		showTask(null);
 	}
 
-//	void setupSession(VaadinRequest vaadinRequest) {
-//		sess = VaadinSession.getCurrent();
-//	}
 	/**
 	 * @return the username
 	 */
@@ -308,37 +295,18 @@ public class MinorTask implements Serializable {
 		return username;
 	}
 
-	private void showAuthorisedContent(Long taskID, Component component) {
-		if (notLoggedIn) {
-			showLogin();
-		} else {
-			setCurrentTaskID(taskID);
-			VerticalLayout display = new VerticalLayout();
-			display.add(new BannerMenu(taskID));
-			display.add(component);
-			display.add(new FooterMenu(taskID));
-//			ui.setContent(display);
-//			ui.setScrollTop(0);
-		}
-	}
-
 	public void logout() {
-		UI.getCurrent().navigate(LogoutLayout.class);
-//		ui.setContent(new LoggedoutComponent(this));
+		UI.getCurrent().navigate(LoggedOutPage.class);
 		notLoggedIn = true;
 		VaadinSession.getCurrent().close();
 	}
 
-	public void showPublicContent(Component component) {
-//		ui.setContent(component);
-	}
-
 	public boolean getNotLoggedIn() {
-		return notLoggedIn;
+		return notLoggedIn
+				|| !VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
 	}
 
 	public void showSignUp(String username, String password) {
-//		showPublicContent(new SignupComponent(this, username, password));
 		UI.getCurrent().navigate(
 				SignUpLayout.class,
 				username

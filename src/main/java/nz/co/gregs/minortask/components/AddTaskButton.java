@@ -14,7 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
  * @author gregorygraham
  */
 @Tag("add-task-button")
-public class AddTaskButton extends HorizontalLayout implements HasMinorTask{
+public class AddTaskButton extends HorizontalLayout implements RequiresLogin{
 		final Button newTaskButton = new Button("+ Add Subtask");
 	private final Long originatingTaskID;
 

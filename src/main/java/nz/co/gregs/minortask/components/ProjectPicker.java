@@ -22,7 +22,7 @@ import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class ProjectPicker extends HorizontalLayout implements HasMinorTask{
+public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
 
 	private final Long taskID;
 

@@ -17,7 +17,7 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("active-task-list")
-public class ActiveTaskList extends VerticalLayout implements HasMinorTask{
+public class ActiveTaskList extends VerticalLayout implements RequiresLogin{
 
 	private final AddTaskButton newTaskButton;
 	private final Long selectedTask;

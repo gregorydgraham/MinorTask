@@ -16,7 +16,7 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("completed-task-list")
-public class CompletedTaskList extends VerticalLayout implements HasMinorTask{
+public class CompletedTaskList extends VerticalLayout implements RequiresLogin{
 
 	private final Long taskID;
 

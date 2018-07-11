@@ -32,7 +32,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class TaskEditor extends VerticalLayout implements HasMinorTask {
+public class TaskEditor extends VerticalLayout implements RequiresLogin {
 
 	TextField name = new TextField("Name");
 	TextArea description = new TextArea("Description");

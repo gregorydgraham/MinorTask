@@ -18,7 +18,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  * @author gregorygraham
  */
 @Tag("project-path-navigator")
-public class ProjectPathNavigator extends HorizontalLayout implements HasMinorTask {
+public class ProjectPathNavigator extends HorizontalLayout implements RequiresLogin {
 
 	private final Long taskID;
 

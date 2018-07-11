@@ -18,7 +18,7 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class BannerMenu extends HorizontalLayout implements HasMinorTask {
+public class BannerMenu extends HorizontalLayout implements RequiresLogin {
 
 	private final Long taskID;
 

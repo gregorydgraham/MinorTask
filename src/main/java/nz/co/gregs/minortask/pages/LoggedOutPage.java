@@ -7,13 +7,10 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
-import nz.co.gregs.minortask.components.LoginComponent;
+import nz.co.gregs.minortask.components.LoggedoutComponent;
 
 
 /**
@@ -21,21 +18,16 @@ import nz.co.gregs.minortask.components.LoginComponent;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("")
-@RouteAlias("login")
-public class LoginLayout extends VerticalLayout implements HasUrlParameter<String>{
+@Route("bye")
+@RouteAlias("loggedout")
+public class LoggedOutPage extends VerticalLayout{
 
-	LoginComponent loginComponent = new LoginComponent();
+	LoggedoutComponent component = new LoggedoutComponent();
 		
-	public LoginLayout() {
+	public LoggedOutPage() {
 		final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
 		add(minorTaskTemplate);
-		add(loginComponent);
-	}
-
-	@Override
-	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-		loginComponent.setUsername(parameter);
+		add(component);
 	}
 	
 }
