@@ -30,10 +30,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.datamodel.*;
@@ -50,7 +53,6 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
 public class MinorTask implements Serializable {
 
 	private long userID = 0;
-	private Long currentTaskID;
 	boolean notLoggedIn = true;
 	public String username = "";
 	private Location loginDestination;
@@ -62,27 +64,23 @@ public class MinorTask implements Serializable {
 	static DBDatabaseCluster database;
 
 	public static Date asDate(LocalDate localDate) {
-		return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		return localDate == null ? null : Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	public static Date asDate(LocalDateTime localDateTime) {
-		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		return localDateTime == null ? null : Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	public static LocalDate asLocalDate(Date date) {
-		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		return date == null ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
 	public static LocalDateTime asLocalDateTime(Date date) {
-		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-	}
-
-	public static String asDateString(Date value, UI ui) {
-		return MinorTask.asLocalDate(value).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(ui.getLocale()));
+		return date == null ? null : Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 
 	public static String shorten(String value, int i) {
-		return value.substring(0, value.length() < i ? value.length() : i);
+		return value == null ? null : value.substring(0, value.length() < i ? value.length() : i);
 	}
 
 	public final void warning(final String topic, final String warning) {
@@ -128,13 +126,30 @@ public class MinorTask implements Serializable {
 		note.open();
 	}
 
-	public Task getTask(Long taskID, final Long userID) throws InaccessibleTaskException {
+	public Task getTask(Long taskID) throws InaccessibleTaskException {
+		return getTask(taskID, getUserID());
+	}
+
+	private Task getTask(Long taskID, final Long userID) throws InaccessibleTaskException {
+		System.out.println("nz.co.gregs.minortask.MinorTask.getTask() TASKID:" + taskID);
+		System.out.println("nz.co.gregs.minortask.MinorTask.getTask() USERID:" + userID);
+
 		Task returnTask = null;
-		final Task task = getTaskExample(taskID, userID);
-		task.taskID.permittedValues(taskID);
+		if (taskID == null) {
+			return returnTask;
+		}
+		final Task example = new Task();//getTaskExample(taskID, userID);
+		example.taskID.permittedValues(taskID);
+		example.userID.permittedValues(userID);
 		try {
-			returnTask = getDatabase().getDBTable(task).getOnlyRow();
+			return getDatabase().getDBTable(example).getOnlyRow();
+//			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
+//			for(Task row: allRows){
+//				System.out.println(""+row);
+//			}
+//			if(allRows.size()==1){return allRows.get(0);}
 		} catch (UnexpectedNumberOfRowsException ex) {
+			warning("Incorrect Number Of Rows", "" + ex.getActualRows() + " <> " + ex.getExpectedRows());
 			throw new InaccessibleTaskException(taskID);
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -219,7 +234,7 @@ public class MinorTask implements Serializable {
 		return new ArrayList<>();
 	}
 
-	public static Task getTaskExample(final Long taskID, final long userID) {
+	public static Task getTaskExample(final Long taskID, final Long userID) {
 		Task task;
 		task = new Task();
 		task.taskID.permittedValues(taskID);
@@ -247,20 +262,12 @@ public class MinorTask implements Serializable {
 		showTask(null);
 	}
 
-	public void showCurrentTask() {
-		showTask(currentTaskID);
-	}
-
 	public void showTask(Long taskID) {
 		UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
 	}
 
 	public void showTaskCreation(Long taskID) {
 		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
-	}
-
-	public Long getCurrentTaskID() {
-		return currentTaskID;
 	}
 
 	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
@@ -294,9 +301,9 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public synchronized void loginAs(Long userID) {
+	public synchronized void loginAs(Long userID) throws UnknownUserException, TooManyUsersException {
 		this.notLoggedIn = false;
-		this.userID = userID;
+		this.setUserID(userID);
 		if (this.loginDestination != null) {
 			UI.getCurrent()
 					.getRouter()
@@ -319,7 +326,6 @@ public class MinorTask implements Serializable {
 
 	public void logout() {
 		UI.getCurrent().navigate(LoggedOutPage.class);
-		this.currentTaskID = null;
 		this.loginDestination = null;
 		this.userID = 0;
 		this.username = null;
@@ -337,10 +343,6 @@ public class MinorTask implements Serializable {
 				SignUpLayout.class,
 				username
 		);
-	}
-
-	public void setCurrentTaskID(Long newTaskID) {
-		currentTaskID = newTaskID;
 	}
 
 	/**
@@ -380,31 +382,29 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public Task.Project getProject() throws InaccessibleTaskException {
-		if (getCurrentTaskID() == null) {
-			return null;
-		} else {
-			final Task.Project project = new Task.Project();
-			try {
-				List<Task.Project> projects = getDatabase().getDBQuery(getTask(), project).getAllInstancesOf(project);
-				if (projects.isEmpty()) {
-					return null;
-				} else {
-					return projects.get(0);
-				}
-			} catch (SQLException ex) {
-				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		return null;
-	}
-
-	public Task getTask() throws InaccessibleTaskException {
-		return getTask(getCurrentTaskID(), getUserID());
-	}
-
 	public void setLoginDestination(Location location) {
 		this.loginDestination = location;
+	}
+
+	public Task.TaskAndProject getTaskAndProject(Long taskID) throws InaccessibleTaskException {
+		if (taskID != null) {
+			final Task example = new Task();
+			example.taskID.permittedValues(taskID);
+			example.userID.permittedValues(getUserID());
+			final Task.Project projectExample = new Task.Project();
+			DBQuery dbQuery = getDatabase().getDBQuery(example).addOptional(projectExample);
+			try {
+				System.out.println(dbQuery.getSQLForQuery());
+				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
+				final DBQueryRow onlyRow = allRows.get(0);
+				return new Task.TaskAndProject(onlyRow.get(example), onlyRow.get(projectExample));
+			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException ex) {
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (UnexpectedNumberOfRowsException ex) {
+				throw new InaccessibleTaskException(taskID);
+			}
+		}
+		return new Task.TaskAndProject(null, null);
 	}
 
 	public static class InaccessibleTaskException extends Exception {
@@ -413,13 +413,13 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	private static class TooManyUsersException extends Exception {
+	public static class TooManyUsersException extends Exception {
 
 		public TooManyUsersException() {
 		}
 	}
 
-	private static class UnknownUserException extends Exception {
+	public static class UnknownUserException extends Exception {
 
 		public UnknownUserException() {
 		}

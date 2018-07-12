@@ -13,6 +13,9 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -101,6 +104,10 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 				minortask().loginAs(newUser.getUserID());
 			} catch (SQLException ex) {
 				minortask().sqlerror(ex);
+			} catch (MinorTask.UnknownUserException ex) {
+				minortask().warning("Login Error", "Name and/or password do not match any known combination");
+			} catch (MinorTask.TooManyUsersException ex) {
+				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 			}
 		}
 	}

@@ -17,9 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
+import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.BannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.TaskEditor;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
@@ -41,22 +43,18 @@ public class TaskEditorLayout extends VerticalLayout implements ChecksLogin, Has
 		taskID = parameter;
 		add(new MinorTaskTemplate());
 		add(new BannerMenu(parameter));
-		try {
-			add(new TaskEditor(parameter));
-		} catch (MinorTask.InaccessibleTaskException ex) {
-			Logger.getLogger(TaskEditorLayout.class.getName()).log(Level.SEVERE, null, ex);
-			add(new Label("Access Denied"));
-		}
+		add(new TaskEditor(parameter));
 		add(new FooterMenu(parameter));
 	}
 
 	@Override
 	public String getPageTitle() {
 		try {
-			if (taskID == null) {
+			final Task task = getTask(taskID);
+			if (taskID == null || task == null) {
 				return "MinorTask: Projects";
 			} else {
-				return "MinorTask: " + getTask(taskID);
+				return "MinorTask: " + task.name.stringValue();
 			}
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			Logger.getLogger(TaskEditorLayout.class.getName()).log(Level.SEVERE, null, ex);

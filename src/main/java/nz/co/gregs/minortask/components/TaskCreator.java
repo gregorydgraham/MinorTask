@@ -93,7 +93,7 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 			project.setValue(fullTaskDetails.name.getValue());
 		}
 
-		Task.Project taskProject = minortask().getProject();
+		Task taskProject = getTask(projectID);
 		if (taskProject != null) {
 			
 			final LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
@@ -143,7 +143,7 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 	}
 
 	public void handleEscapeButton() {
-		minortask().showCurrentTask();
+		minortask().showTask(projectID);
 	}
 
 	public final void setAsDefaultButton(Button button) {

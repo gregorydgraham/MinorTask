@@ -12,8 +12,11 @@ import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -96,6 +99,10 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 				}
 			} catch (SQLException ex) {
 				warningBuffer.append("SQL FAILED: ").append(ex.getLocalizedMessage());
+			} catch (MinorTask.UnknownUserException ex) {
+				minortask().warning("Login Error", "Name and/or password do not match any known combination");
+			} catch (MinorTask.TooManyUsersException ex) {
+				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 			}
 		}
 		if (warningBuffer.length() > 0) {

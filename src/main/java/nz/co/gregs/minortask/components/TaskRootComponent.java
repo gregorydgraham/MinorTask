@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import nz.co.gregs.minortask.MinorTask;
 
 /**
  *
@@ -15,7 +14,7 @@ import nz.co.gregs.minortask.MinorTask;
  */
 public class TaskRootComponent extends VerticalLayout implements RequiresLogin{
 
-	public TaskRootComponent(Long taskID) throws MinorTask.InaccessibleTaskException {
+	public TaskRootComponent(Long taskID) {
 		add(taskID==null?getComponent():new TaskEditor(taskID));
 	}
 

@@ -10,8 +10,10 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,13 +24,19 @@ import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
+public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 
 	private final Long taskID;
+	private Task.TaskAndProject taskAndProject;
 
 	public ProjectPicker(Long taskID) {
-		this.taskID = taskID;
-		this.add(getCurrentProjectComponent());
+			this.taskID = taskID;
+		try {
+			taskAndProject = getTaskAndProject(taskID);
+			this.add(getCurrentProjectComponent());
+		} catch (MinorTask.InaccessibleTaskException ex) {
+			this.add(new AccessDeniedComponent());
+		}
 	}
 
 	private Component getPickerComponent() {
@@ -39,75 +47,71 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
 			example.name.setSortOrderAscending();
 
 			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
-
+//
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
-			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID, minortask().getUserID()));
+			taskList.setValue(taskAndProject.getProject());
+
+			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
 			taskList.addBlurListener((event) -> {
 				this.removeAll();
 				this.add(getCurrentProjectComponent());
 			});
-			taskList.focus();
+
 			return taskList;
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
 			minortask().sqlerror(ex);
+			return new ComboBox("Projects");
 		}
-		return new Button("Oops");
 	}
 
 	private Component getCurrentProjectComponent() {
-		Button button = new Button("Projects");
 		try {
-			Task task = new Task();
-			Task.Project project = new Task.Project();
-			task.taskID.permittedValues(taskID);
-			task.userID.permittedValues(minortask().getUserID());
-			task.completionDate.permittedValues((Date) null);
-			List<DBQueryRow> allRows = getDatabase().getDBQuery(task).addOptional(project).getAllRows();
-			if (allRows.size() == 1) {
-				Task.Project projectFound = allRows.get(0).get(project);
-				if (projectFound != null) {
-					final String projectName = projectFound.name.stringValue();
-					if (!projectName.isEmpty()) {
-						button = new Button(projectName);
-					}
+			TextField button = new TextField("Project");
+			taskAndProject = getTaskAndProject(taskID);
+			Task.Project projectFound = taskAndProject.getProject();
+			if (projectFound == null) {
+				button.setValue("Projects");
+			} else {
+				final String projectName = projectFound.name.stringValue();
+				if (!projectName.isEmpty()) {
+					button.setValue(projectName);
 				}
 			}
-		} catch (SQLException ex) {
-			minortask().sqlerror(ex);
+
+			button.addFocusListener(
+					(event) -> {
+						removeAll();
+//						add(new ComboBox("Projects"));
+						add(getPickerComponent());
+					}
+			);
+			button.setSizeUndefined();
+			return button;
+		} catch (MinorTask.InaccessibleTaskException ex) {
+			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
+			return new AccessDeniedComponent();
 		}
-		button.addClickListener((event) -> {
-			this.removeAll();
-			this.add(getPickerComponent());
-		});
-//		button.setCaption("Project");
-		button.setSizeUndefined();
-		return button;
 	}
 
 	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
 
 		private final Long taskID;
-		private final Long userID;
 		private final ProjectPicker picker;
 		private final MinorTask minortask;
 
-		public ProjectChosenListener(MinorTask minortask, ProjectPicker picker, Long taskID, Long userID) {
+		public ProjectChosenListener(MinorTask minortask, ProjectPicker picker, Long taskID) {
 			this.minortask = minortask;
 			this.picker = picker;
 			this.taskID = taskID;
-			this.userID = userID;
 		}
-
-		
 
 		@Override
 		public void valueChanged(HasValue.ValueChangeEvent<Task> event) {
-			//public void valueChange(HasValue.ValueChangeEvent<Task> event) {
 			try {
-				Task task = minortask.getTask(taskID, userID);
+				Task task = minortask.getTask(taskID);
 				final Task selectedProject = event.getValue();
 				if (selectedProject != null) {
 					// prevent self-projects
@@ -144,10 +148,10 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
 						// enforce date constraints on tree
 						minortask.enforceDateConstraintsOnTaskTree(task);
 						picker.add(picker.getCurrentProjectComponent());
-						minortask.showCurrentTask();
+						minortask.showTask(taskID);
 					}
 				}
-			} catch (SQLException|MinorTask.InaccessibleTaskException ex) {
+			} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
 				minortask.sqlerror(ex);
 			}
 		}

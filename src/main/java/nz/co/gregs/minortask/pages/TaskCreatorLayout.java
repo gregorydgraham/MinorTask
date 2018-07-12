@@ -14,6 +14,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
+import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.BannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.TaskCreator;
@@ -36,7 +37,7 @@ public class TaskCreatorLayout extends VerticalLayout implements ChecksLogin {
 			buildComponent(parameter);
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			removeAll();
-			add(new Label("Access Denied"));
+			add(new AccessDeniedComponent());
 		}
 	}
 

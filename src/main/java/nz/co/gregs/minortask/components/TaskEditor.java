@@ -35,6 +35,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class TaskEditor extends VerticalLayout implements RequiresLogin {
 
 	TextField name = new TextField("Name");
+	TextField user = new TextField("User");
 	TextArea description = new TextArea("Description");
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
@@ -53,16 +54,24 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
 	private final Long taskID;
+	private Task.TaskAndProject taskAndProject;
 
-	public TaskEditor(Long currentTask) throws MinorTask.InaccessibleTaskException {
+	public TaskEditor(Long currentTask) {
 		this.taskID = currentTask;
-		project = new ProjectPicker(currentTask);
-		subtasks = new ActiveTaskList(currentTask);
-		completedTasks = new CompletedTaskList(currentTask);
-		add(currentTask != null ? getComponent() : new TaskRootComponent(currentTask));
+		try {
+
+			taskAndProject = getTaskAndProject(taskID);
+			project = new ProjectPicker(currentTask);
+
+			subtasks = new ActiveTaskList(currentTask);
+			completedTasks = new CompletedTaskList(currentTask);
+			add(currentTask != null ? getComponent() : new TaskRootComponent(currentTask));
+		} catch (MinorTask.InaccessibleTaskException ex) {
+			add(new AccessDeniedComponent());
+		}
 	}
 
-	public final Component getComponent() throws MinorTask.InaccessibleTaskException {
+	public final Component getComponent() {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
@@ -126,7 +135,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	protected void addChangeListeners() {
 		name.addValueChangeListener((event) -> {
 			saveTask();
-			minortask().showCurrentTask();
+			minortask().showTask(taskID);
 		});
 		description.addValueChangeListener((event) -> {
 			saveTask();
@@ -143,9 +152,9 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 		deadlineDate.addValueChangeListener(dateChange);
 	}
 
-	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
+	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		if (taskID != null) {
-			Task task = getTask(taskID);
+			Task task = taskAndProject.getTask();
 			if (task != null) {
 				name.setValue(task.name.stringValue());
 				description.setValue(task.description.toString());
@@ -153,19 +162,21 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
 
-				Task.Project taskProject = minortask().getProject();
+				Task.Project taskProject = taskAndProject.getProject();
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
 					LocalDate projectEnd = asLocalDate(taskProject.finalDate.getValue());
-					if (projectStart.isAfter(projectEnd)) {
-						projectStart = projectEnd.minusDays(1);
+					if (projectStart != null && projectEnd != null) {
+						if (projectStart.isAfter(projectEnd)) {
+							projectStart = projectEnd.minusDays(1);
+						}
+						startDate.setMin(projectStart);
+						startDate.setMax(projectEnd.minusDays(1));
+						preferredEndDate.setMin(projectStart);
+						preferredEndDate.setMax(projectEnd);
+						deadlineDate.setMin(projectStart.plusDays(1));
+						deadlineDate.setMax(projectEnd);
 					}
-					startDate.setMin(projectStart);
-					startDate.setMax(projectEnd);
-					preferredEndDate.setMin(projectStart);
-					preferredEndDate.setMax(projectEnd);
-					deadlineDate.setMin(projectStart);
-					deadlineDate.setMax(projectEnd);
 				}
 
 				final Date completed = task.completionDate.dateValue();

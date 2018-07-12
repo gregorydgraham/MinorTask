@@ -34,7 +34,7 @@ public interface MinorTaskComponent {
 	}
 
 	default Task getTask(Long taskID) throws MinorTask.InaccessibleTaskException {
-		return minortask().getTask(taskID, minortask().getUserID());
+		return minortask().getTask(taskID);
 	}
 
 	default Long getUserID() {
@@ -53,4 +53,11 @@ public interface MinorTaskComponent {
 		return minortask().getProjectPathTasks(taskID, getUserID());
 	}
 
+	default public Task.TaskAndProject getTaskAndProject(Long taskID) throws MinorTask.InaccessibleTaskException {
+		return minortask().getTaskAndProject(taskID);
+	}
+
+	default public Task.Project getProjectOfTask(Long taskID) throws MinorTask.InaccessibleTaskException {
+		return getTaskAndProject(taskID).getProject();
+	}
 }
