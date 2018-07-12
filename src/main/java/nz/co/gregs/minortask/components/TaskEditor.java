@@ -54,7 +54,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	Button cancelButton = new Button("Cancel");
 	private final Long taskID;
 
-	public TaskEditor(Long currentTask) {
+	public TaskEditor(Long currentTask) throws MinorTask.InaccessibleTaskException {
 		this.taskID = currentTask;
 		project = new ProjectPicker(currentTask);
 		subtasks = new ActiveTaskList(currentTask);
@@ -62,7 +62,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 		add(currentTask != null ? getComponent() : new TaskRootComponent(currentTask));
 	}
 
-	public final Component getComponent() {
+	public final Component getComponent() throws MinorTask.InaccessibleTaskException {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
@@ -143,7 +143,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 		deadlineDate.addValueChangeListener(dateChange);
 	}
 
-	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
+	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
 		if (taskID != null) {
 			Task task = getTask(taskID);
 			if (task != null) {
@@ -202,21 +202,25 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	}
 
 	public void saveTask() {
-		Task task = getTask(taskID);
-
-		task.name.setValue(name.getValue());
-		task.description.setValue(description.getValue());
-		task.startDate.setValue(asDate(startDate.getValue()));
-		task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
-		task.finalDate.setValue(asDate(deadlineDate.getValue()));
-
 		try {
-			getDatabase().update(task);
-		} catch (SQLException ex) {
-			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
-			minortask().sqlerror(ex);
+			Task task = getTask(taskID);
+
+			task.name.setValue(name.getValue());
+			task.description.setValue(description.getValue());
+			task.startDate.setValue(asDate(startDate.getValue()));
+			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
+			task.finalDate.setValue(asDate(deadlineDate.getValue()));
+
+			try {
+				getDatabase().update(task);
+			} catch (SQLException ex) {
+				Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
+				minortask().sqlerror(ex);
+			}
+			minortask().chat("Saved.");
+		} catch (MinorTask.InaccessibleTaskException ex) {
+			Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		minortask().chat("Saved.");
 	}
 
 	public void handleEscapeButton() {
@@ -256,12 +260,17 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 					minortask().sqlerror(ex);
 				}
 			}
-			Task task = minortask().getTask(taskID, minortask().getUserID());
-			task.completionDate.setValue((Date) null);
+			Task task;
 			try {
-				minortask().getDatabase().update(task);
-			} catch (SQLException ex) {
-				minortask().sqlerror(ex);
+				task = getTask(taskID);
+				task.completionDate.setValue((Date) null);
+				try {
+					minortask().getDatabase().update(task);
+				} catch (SQLException ex) {
+					minortask().sqlerror(ex);
+				}
+			} catch (MinorTask.InaccessibleTaskException ex) {
+				Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			minortask().showTask(taskID);
 		}
@@ -270,30 +279,32 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	private class CompleteTaskListener implements ComponentEventListener<ClickEvent<Button>> {
 
 		private final Long taskID;
-		private final MinorTask minortask;
 
 		public CompleteTaskListener(MinorTask minortask, Long taskID) {
-			this.minortask = minortask;
 			this.taskID = taskID;
 		}
 
 		@Override
 		public void onComponentEvent(ClickEvent<Button> event) {
-			Task task = completeTask(taskID);
-			if (task == null) {
-				minortask().showTask(null);
-			} else {
-				minortask().showTask(task.projectID.getValue());
+			try {
+				Task task = completeTask(taskID);
+				if (task == null) {
+					minortask().showTask(null);
+				} else {
+					minortask().showTask(task.projectID.getValue());
+				}
+			} catch (MinorTask.InaccessibleTaskException ex) {
+				Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 
-		private Task completeTask(Long taskID) {
+		private Task completeTask(Long taskID) throws MinorTask.InaccessibleTaskException {
 			if (taskID != null) {
 				List<Task> subtasks = minortask().getActiveSubtasks(taskID, minortask().getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
-				Task task = minortask().getTask(taskID, minortask().getUserID());
+				Task task = getTask(taskID);
 				task.completionDate.setValue(new Date());
 				try {
 					minortask().getDatabase().update(task);

@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.server.VaadinSession;
 import java.time.LocalDate;
 import java.util.Date;
@@ -34,7 +33,7 @@ public interface MinorTaskComponent {
 		return minortask().getDatabase();
 	}
 
-	default Task getTask(Long taskID) {
+	default Task getTask(Long taskID) throws MinorTask.InaccessibleTaskException {
 		return minortask().getTask(taskID, minortask().getUserID());
 	}
 

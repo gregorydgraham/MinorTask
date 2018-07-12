@@ -35,12 +35,12 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 	Button cancelButton = new Button("Cancel");
 	private final Long projectID;
 
-	public TaskCreator(Long currentTask) {
+	public TaskCreator(Long currentTask) throws MinorTask.InaccessibleTaskException {
 		this.projectID= currentTask;
 		this.add(getComponent());
 	}
 
-	public final Component getComponent() {
+	public final Component getComponent() throws MinorTask.InaccessibleTaskException {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
@@ -82,7 +82,7 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 		return layout;
 	}
 
-	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
+	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
 		LocalDate startDefault = LocalDate.now().plusDays(1);
 		LocalDate preferredDefault = LocalDate.now().plusWeeks(2);
 		LocalDate deadlineDefault = LocalDate.now().plusMonths(1);

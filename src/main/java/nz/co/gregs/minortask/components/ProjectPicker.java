@@ -35,6 +35,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
 		try {
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getUserID());
+			example.completionDate.permittedValues((Date) null);
 			example.name.setSortOrderAscending();
 
 			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
@@ -146,7 +147,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin{
 						minortask.showCurrentTask();
 					}
 				}
-			} catch (SQLException ex) {
+			} catch (SQLException|MinorTask.InaccessibleTaskException ex) {
 				minortask.sqlerror(ex);
 			}
 		}

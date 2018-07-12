@@ -128,13 +128,15 @@ public class MinorTask implements Serializable {
 		note.open();
 	}
 
-	public Task getTask(Long taskID, final Long userID) {
+	public Task getTask(Long taskID, final Long userID) throws InaccessibleTaskException {
 		Task returnTask = null;
 		final Task task = getTaskExample(taskID, userID);
 		task.taskID.permittedValues(taskID);
 		try {
 			returnTask = getDatabase().getDBTable(task).getOnlyRow();
-		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
+		} catch (UnexpectedNumberOfRowsException ex) {
+			throw new InaccessibleTaskException(taskID);
+		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
 		return returnTask;
@@ -270,8 +272,10 @@ public class MinorTask implements Serializable {
 
 	/**
 	 * @param userID the userID to set
+	 * @throws nz.co.gregs.minortask.MinorTask.UnknownUserException
+	 * @throws nz.co.gregs.minortask.MinorTask.TooManyUsersException
 	 */
-	public void setUserID(long userID) {
+	public void setUserID(long userID) throws UnknownUserException, TooManyUsersException {
 		this.userID = userID;
 		User user = new User();
 		user.queryUserID().permittedValues(userID);
@@ -282,6 +286,11 @@ public class MinorTask implements Serializable {
 			error("SQL ERROR", ex.getLocalizedMessage());
 		} catch (UnexpectedNumberOfRowsException ex) {
 			error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
+			if (ex.getActualRows() > ex.getExpectedRows()) {
+				throw new TooManyUsersException();
+			} else {
+				throw new UnknownUserException();
+			}
 		}
 	}
 
@@ -310,6 +319,10 @@ public class MinorTask implements Serializable {
 
 	public void logout() {
 		UI.getCurrent().navigate(LoggedOutPage.class);
+		this.currentTaskID = null;
+		this.loginDestination = null;
+		this.userID = 0;
+		this.username = null;
 		notLoggedIn = true;
 		VaadinSession.getCurrent().close();
 	}
@@ -367,7 +380,7 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public Task.Project getProject() {
+	public Task.Project getProject() throws InaccessibleTaskException {
 		if (getCurrentTaskID() == null) {
 			return null;
 		} else {
@@ -386,11 +399,29 @@ public class MinorTask implements Serializable {
 		return null;
 	}
 
-	public Task getTask() {
+	public Task getTask() throws InaccessibleTaskException {
 		return getTask(getCurrentTaskID(), getUserID());
 	}
 
 	public void setLoginDestination(Location location) {
 		this.loginDestination = location;
+	}
+
+	public static class InaccessibleTaskException extends Exception {
+
+		public InaccessibleTaskException(Long taskID) {
+		}
+	}
+
+	private static class TooManyUsersException extends Exception {
+
+		public TooManyUsersException() {
+		}
+	}
+
+	private static class UnknownUserException extends Exception {
+
+		public UnknownUserException() {
+		}
 	}
 }
