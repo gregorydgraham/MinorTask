@@ -35,8 +35,8 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 	Button cancelButton = new Button("Cancel");
 	private final Long projectID;
 
-	public TaskCreator(Long currentTask) throws MinorTask.InaccessibleTaskException {
-		this.projectID= currentTask;
+	public TaskCreator(Long projectID) throws MinorTask.InaccessibleTaskException {
+		this.projectID= projectID;
 		this.add(getComponent());
 	}
 
@@ -44,7 +44,7 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigator(projectID));
+		layout.add(new ProjectPathNavigatorWithNewTask(projectID));
 		try {
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);

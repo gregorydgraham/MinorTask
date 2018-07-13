@@ -18,11 +18,11 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class BannerMenu extends HorizontalLayout implements RequiresLogin {
+public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLogin {
 
 	private final Long taskID;
 
-	public BannerMenu(Long taskID) {
+	public AuthorisedBannerMenu(Long taskID) {
 		this.taskID = taskID;
 		Component banner = buildComponent();
 
@@ -49,7 +49,7 @@ public class BannerMenu extends HorizontalLayout implements RequiresLogin {
 			banner.add(label);
 			banner.setVerticalComponentAlignment(Alignment.CENTER, label);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			minortask().sqlerror(ex);
+			//minortask().sqlerror(ex);
 		}
 
 		Button logoutButton = new Button("Logout");
@@ -62,18 +62,6 @@ public class BannerMenu extends HorizontalLayout implements RequiresLogin {
 		banner.setVerticalComponentAlignment(Alignment.START, logoutButton);
 
 		return banner;
-	}
-
-	public final void setAsDefaultButton(Button button) {
-//		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-//		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		button.addClickListener((event) -> {
-			handleDefaultButton();
-		});
-	}
-
-	public void handleDefaultButton() {
-		minortask().showTaskCreation(taskID);
 	}
 
 }

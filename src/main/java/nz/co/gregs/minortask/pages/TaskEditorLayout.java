@@ -18,8 +18,10 @@ import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.BannerMenu;
+import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
+import nz.co.gregs.minortask.components.LoginComponent;
+import nz.co.gregs.minortask.components.PublicBannerMenu;
 import nz.co.gregs.minortask.components.TaskEditor;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -42,9 +44,13 @@ public class TaskEditorLayout extends VerticalLayout implements ChecksLogin, Has
 		removeAll();
 		taskID = parameter;
 		add(new MinorTaskTemplate());
-		add(new BannerMenu(parameter));
-		add(new TaskEditor(parameter));
-		add(new FooterMenu(parameter));
+		if (minortask().getNotLoggedIn()) {
+			minortask().showLogin();
+		} else {
+			add(new AuthorisedBannerMenu(parameter));
+			add(new TaskEditor(parameter));
+			add(new FooterMenu());
+		}
 	}
 
 	@Override

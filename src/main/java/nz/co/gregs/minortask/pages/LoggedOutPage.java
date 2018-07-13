@@ -10,7 +10,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
+import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.LoggedoutComponent;
+import nz.co.gregs.minortask.components.PublicBannerMenu;
 
 
 /**
@@ -27,7 +29,9 @@ public class LoggedOutPage extends VerticalLayout{
 	public LoggedOutPage() {
 		final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
 		add(minorTaskTemplate);
+		add(new PublicBannerMenu());
 		add(component);
+		add(new FooterMenu());
 	}
 	
 }

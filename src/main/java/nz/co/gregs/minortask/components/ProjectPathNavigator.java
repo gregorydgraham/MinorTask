@@ -27,18 +27,14 @@ public class ProjectPathNavigator extends HorizontalLayout implements RequiresLo
 		buildComponent();
 	}
 
-	private void buildComponent() {
+	protected void buildComponent() {
 		add(getButtonForTaskID(null));
-		List<Task> ancestors = minortask().getProjectPathTasks(taskID, minortask().getUserID());
+		List<Task> ancestors = minortask().getProjectPathTasks(getTaskID(), minortask().getUserID());
 		Collections.reverse(ancestors);
 		for (Task ancestor : ancestors) {
 			final Button taskButton = getButtonForTaskID(ancestor);
 			add(taskButton);
 		}
-		final AddTaskButton addTaskButton = new AddTaskButton(taskID);
-		addTaskButton.addClassNames("small", "projectpath");
-		addTaskButton.getElement().setAttribute("theme", "small");
-		add(addTaskButton);
 	}
 
 	public Button getButtonForTaskID(Task task) {
@@ -46,13 +42,23 @@ public class ProjectPathNavigator extends HorizontalLayout implements RequiresLo
 			final Long foundID = task == null ? null : task.taskID.getValue();
 			minortask().showTask(foundID);
 		});
+		formatButton(button);
+		return button;
+	}
+
+	protected void formatButton(final Button button) {
 		button.setIcon(VaadinIcon.ANGLE_RIGHT.create());
 		button.setIconAfterText(true);
 		button.setSizeUndefined();
-//		button.setWidth("100%");
 		button.addClassNames("small", "projectpath");
 		button.getElement().setAttribute("theme", "small");
-		return button;
+	}
+
+	/**
+	 * @return the taskID
+	 */
+	public Long getTaskID() {
+		return taskID;
 	}
 
 }

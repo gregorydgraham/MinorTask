@@ -14,12 +14,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
  */
 public class FooterMenu extends VerticalLayout implements MinorTaskComponent {
 
-	private final Long taskID;
-
 //	private final MinorTaskUI ui;
 //	private final Long taskID;
-	public FooterMenu(Long taskID) {
-		this.taskID=taskID;
+	public FooterMenu() {
 		final Label label = new Label("MinorTask is a simple system to help you manage projects and tasks.");
 		label.setSizeFull();
 		add(label);

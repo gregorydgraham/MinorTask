@@ -22,7 +22,7 @@ public class TaskRootComponent extends VerticalLayout implements RequiresLogin{
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.add(
-				new ProjectPathNavigator(null),
+				new ProjectPathNavigatorWithAdd(null),
 				new ActiveTaskList(null),
 				new CompletedTaskList(null)
 		);

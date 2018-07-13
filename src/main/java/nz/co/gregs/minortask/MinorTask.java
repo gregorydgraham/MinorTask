@@ -22,8 +22,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +43,7 @@ import nz.co.gregs.minortask.pages.LoggedOutPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -56,6 +55,8 @@ public class MinorTask implements Serializable {
 	boolean notLoggedIn = true;
 	public String username = "";
 	private Location loginDestination;
+
+	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 
 	public MinorTask() {
 		setupDatabase();
@@ -405,6 +406,14 @@ public class MinorTask implements Serializable {
 			}
 		}
 		return new Task.TaskAndProject(null, null);
+	}
+
+	public boolean isLoggedIn() {
+		return this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
+	}
+
+	public String getApplicationName() {
+		return "MinorTask";
 	}
 
 	public static class InaccessibleTaskException extends Exception {

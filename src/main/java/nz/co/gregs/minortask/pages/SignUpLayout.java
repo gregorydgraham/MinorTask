@@ -13,6 +13,7 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
+import nz.co.gregs.minortask.components.PublicBannerMenu;
 import nz.co.gregs.minortask.components.SignupComponent;
 
 
@@ -28,6 +29,7 @@ public class SignUpLayout extends VerticalLayout implements HasUrlParameter<Stri
 	public SignUpLayout() {
 		signupComponent = new SignupComponent("", "");
 		add(new MinorTaskTemplate());
+		add(new PublicBannerMenu());
 		add(signupComponent);
 	}
 	public final SignupComponent signupComponent;

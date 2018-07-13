@@ -14,6 +14,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.LoginComponent;
+import nz.co.gregs.minortask.components.PublicBannerMenu;
 
 
 /**
@@ -30,6 +31,7 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 	public LoginPage() {
 		final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
 		add(minorTaskTemplate);
+		add(new PublicBannerMenu());
 		add(loginComponent);
 	}
 
