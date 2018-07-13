@@ -44,7 +44,7 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigatorWithNewTask(projectID));
+		layout.add(new ProjectPathNavigator.WithNewTaskLabel(projectID));
 		try {
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createButton);

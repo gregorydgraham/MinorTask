@@ -75,7 +75,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigatorWithAdd(taskID));
+		layout.add(new ProjectPathNavigator.WithAddTaskButton(taskID));
 
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);

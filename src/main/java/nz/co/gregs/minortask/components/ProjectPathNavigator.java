@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -38,7 +39,7 @@ public class ProjectPathNavigator extends HorizontalLayout implements RequiresLo
 	}
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button = new Button((task == null ? "Projects" : task.name.getValue()), (event) -> {
+		final Button button = new Button((task == null ? "Projects" : task.name.getValue()), (ClickEvent<Button> event) -> {
 			final Long foundID = task == null ? null : task.taskID.getValue();
 			minortask().showTask(foundID);
 		});
@@ -59,6 +60,38 @@ public class ProjectPathNavigator extends HorizontalLayout implements RequiresLo
 	 */
 	public Long getTaskID() {
 		return taskID;
+	}
+
+	public static class WithAddTaskButton extends ProjectPathNavigator {
+
+		public WithAddTaskButton(Long taskID) {
+			super(taskID);
+		}
+
+		@Override
+		protected void buildComponent() {
+			super.buildComponent();
+			final AddTaskButton addTaskButton = new AddTaskButton(getTaskID());
+			addTaskButton.addClassNames("small", "projectpath");
+			addTaskButton.getElement().setAttribute("theme", "small");
+			add(addTaskButton);
+		}
+	}
+
+	public static class WithNewTaskLabel extends ProjectPathNavigator {
+
+		public WithNewTaskLabel(Long taskID) {
+			super(taskID);
+		}
+
+		@Override
+		protected void buildComponent() {
+			super.buildComponent();
+			final Button newTaskButton = new Button("New Task...");
+			formatButton(newTaskButton);
+			//		newTaskButton.setEnabled(false);
+			add(newTaskButton);
+		}
 	}
 
 }
