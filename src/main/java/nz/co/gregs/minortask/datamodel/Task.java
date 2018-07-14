@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.datamodel;
 
+import java.io.Serializable;
 import java.util.Objects;
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
@@ -69,8 +70,8 @@ public class Task extends DBRow {
 	public boolean equals(Object obj) {
 		if (obj instanceof Task) {
 			Task otherTask = (Task) obj;
-			if (this.getDefined()&&otherTask.getDefined()) {
-			return this.taskID.longValue().equals(otherTask.taskID.longValue());
+			if (this.getDefined() && otherTask.getDefined()) {
+				return this.taskID.longValue().equals(otherTask.taskID.longValue());
 			}
 		}
 		return super.equals(obj);
@@ -118,7 +119,7 @@ public class Task extends DBRow {
 		}
 	}
 
-	public static class TaskAndProject {
+	public static class TaskAndProject implements Serializable {
 
 		private final Task task;
 		private final Project project;
