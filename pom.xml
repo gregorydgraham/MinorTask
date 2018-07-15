@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>dbvolution7</artifactId>
-			<version>0.9.15-SNAPSHOT</version>
+			<version>0.9.15</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
