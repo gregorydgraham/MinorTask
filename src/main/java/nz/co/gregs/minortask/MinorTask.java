@@ -17,6 +17,7 @@ import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
+import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.datamodel.*;
@@ -115,7 +117,7 @@ public class MinorTask implements Serializable {
 
 	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
-		final String localizedMessage = exp.getLocalizedMessage();
+		final String localizedMessage = exp.getMessage();
 		System.err.println("" + localizedMessage);
 		Button closeButton = new Button("Darn it!");
 		Notification note = new Notification(new Label("SQL ERROR"), new Label(localizedMessage), closeButton);
@@ -180,26 +182,33 @@ public class MinorTask implements Serializable {
 				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
 					database = dbDatabaseClusterWithConfigFile;
 				}
-			} catch (Exception ex) {
+			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
-				sqlerror(ex);
-				try {
-					database = new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
-				} catch (SQLException | IOException ex1) {
-					Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
-					System.err.println("" + ex.getLocalizedMessage());
-					sqlerror(ex);
-				}
+//				sqlerror(ex);
+			} 
+		}
+		if (database != null) {
+			try {
+				chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
+			} catch (Exception ex) {
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		} else {
+			try {
+				database = getEmergencyDatabase();
+			} catch (Exception ex1) {
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
+				System.err.println("" + ex1.getLocalizedMessage());
+				sqlerror(ex1);
 			}
 		}
-		try {
-			chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
-		} catch (SQLException ex) {
-			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-			sqlerror(ex);
-		}
+	}
+
+	protected DBDatabaseCluster getEmergencyDatabase() throws IOException, SQLException {
+		warning("No Database Configured", "No database configuration was found, MinorTask is now running on the temporary database.");
+		return new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 	}
 
 	public synchronized DBDatabaseCluster getDatabase() {

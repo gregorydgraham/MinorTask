@@ -13,9 +13,9 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
+import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.LoginComponent;
 import nz.co.gregs.minortask.components.PublicBannerMenu;
-
 
 /**
  *
@@ -24,20 +24,25 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
 @HtmlImport("styles/shared-styles.html")
 @Route("")
 @RouteAlias("login")
-public class LoginPage extends VerticalLayout implements HasUrlParameter<String>{
+public class LoginPage extends VerticalLayout implements HasUrlParameter<String> {
 
 	LoginComponent loginComponent = new LoginComponent();
-		
+
 	public LoginPage() {
-		final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
-		add(minorTaskTemplate);
-		add(new PublicBannerMenu());
-		add(loginComponent);
+		try {
+			final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
+			add(minorTaskTemplate);
+			add(new PublicBannerMenu());
+			add(loginComponent);
+			add(new FooterMenu());
+		} catch (Exception ex) {
+			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): "+ex.getClass().getSimpleName()+" -> "+ex.getMessage());
+		}
 	}
 
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		loginComponent.setUsername(parameter);
 	}
-	
+
 }

@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -17,11 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
-import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
-import nz.co.gregs.minortask.components.LoginComponent;
-import nz.co.gregs.minortask.components.PublicBannerMenu;
 import nz.co.gregs.minortask.components.TaskEditor;
 import nz.co.gregs.minortask.datamodel.Task;
 

@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/minortask"/>
+<Context path="/minortask">
+	<!--	<Resource name="jdbc/db1" auth="Container" type="javax.sql.DataSource"
+	driverClassName="org.sqlite.JDBC" url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask.sqlite"
+	username="admin" password="admin" />-->
+	
+	
+</Context>
