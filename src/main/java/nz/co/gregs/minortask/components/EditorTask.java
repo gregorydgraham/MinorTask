@@ -32,7 +32,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class TaskEditor extends VerticalLayout implements RequiresLogin {
+public class EditorTask extends VerticalLayout implements RequiresLogin {
 
 	TextField name = new TextField("Name");
 	TextField user = new TextField("User");
@@ -56,7 +56,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
 
-	public TaskEditor(Long currentTask) {
+	public EditorTask(Long currentTask) {
 		this.taskID = currentTask;
 		try {
 
@@ -65,7 +65,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 
 			subtasks = new ActiveTaskList(currentTask);
 			completedTasks = new CompletedTaskList(currentTask);
-			add(currentTask != null ? getComponent() : new TaskRootComponent(currentTask));
+			add(currentTask != null ? getComponent() : new RootTaskComponent(currentTask));
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
 		}
@@ -225,12 +225,12 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 			try {
 				getDatabase().update(task);
 			} catch (SQLException ex) {
-				Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 				minortask().sqlerror(ex);
 			}
 			minortask().chat("Saved.");
 		} catch (MinorTask.InaccessibleTaskException ex) {
-			Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(EditorTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -281,7 +281,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 					minortask().sqlerror(ex);
 				}
 			} catch (MinorTask.InaccessibleTaskException ex) {
-				Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(EditorTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			minortask().showTask(taskID);
 		}
@@ -305,7 +305,7 @@ public class TaskEditor extends VerticalLayout implements RequiresLogin {
 					minortask().showTask(task.projectID.getValue());
 				}
 			} catch (MinorTask.InaccessibleTaskException ex) {
-				Logger.getLogger(TaskEditor.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(EditorTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 

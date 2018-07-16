@@ -22,7 +22,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-public class TaskCreator extends VerticalLayout implements RequiresLogin{
+public class CreateTask extends VerticalLayout implements RequiresLogin{
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -31,11 +31,12 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 	DatePicker startDate = new DatePicker("Start");
 	DatePicker preferredEndDate = new DatePicker("End");
 	DatePicker deadlineDate = new DatePicker("Deadline");
-	Button createButton = new Button("Create");
+	Button createAndShowTaskButton = new Button("Create and Edit");
+	Button createAndShowProjectButton = new Button("Create and Return To Project");
 	Button cancelButton = new Button("Cancel");
 	private final Long projectID;
 
-	public TaskCreator(Long projectID) throws MinorTask.InaccessibleTaskException {
+	public CreateTask(Long projectID) throws MinorTask.InaccessibleTaskException {
 		this.projectID= projectID;
 		this.add(getComponent());
 	}
@@ -47,7 +48,10 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 		layout.add(new ProjectPathNavigator.WithNewTaskLabel(projectID));
 		try {
 			setEscapeButton(cancelButton);
-			setAsDefaultButton(createButton);
+			setAsDefaultButton(createAndShowProjectButton);
+			createAndShowTaskButton.addClickListener((event) -> {
+				saveAndEdit();
+			});
 
 			name.setSizeUndefined();
 			name.focus();
@@ -72,10 +76,10 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 			);
 			dates.setSizeUndefined();
 			layout.add(dates);
-			layout.add(
-					new HorizontalLayout(
+			layout.add(new HorizontalLayout(
 							cancelButton,
-							createButton));
+							createAndShowTaskButton,
+							createAndShowProjectButton));
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			minortask().sqlerror(ex);
 		}
@@ -122,9 +126,22 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 		}
 	}
 
-	public void handleDefaultButton() {
-		Task task = new Task();
+	public void saveAndEdit() {
+		Task task = saveTask();
+		minortask().showTask(task.taskID.getValue());
+	}
 
+	public void saveAndProject() {
+		Task task = saveTask();
+		minortask().showTask(task.projectID.getValue());
+	}
+
+	public void handleEscapeButton() {
+		minortask().showTask(projectID);
+	}
+
+	protected Task saveTask() {
+		Task task = new Task();
 		task.userID.setValue(minortask().getUserID());
 		task.projectID.setValue(projectID);
 		task.name.setValue(name.getValue());
@@ -132,25 +149,20 @@ public class TaskCreator extends VerticalLayout implements RequiresLogin{
 		task.startDate.setValue(MinorTask.asDate(startDate.getValue()));
 		task.preferredDate.setValue(MinorTask.asDate(preferredEndDate.getValue()));
 		task.finalDate.setValue(MinorTask.asDate(deadlineDate.getValue()));
-
 		try {
 			getDatabase().insert(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(TaskCreator.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 			minortask().sqlerror(ex);
 		}
-		minortask().showTask(task.taskID.getValue());
-	}
-
-	public void handleEscapeButton() {
-		minortask().showTask(projectID);
+		return task;
 	}
 
 	public final void setAsDefaultButton(Button button) {
 //		button.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-//		button.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		button.getElement().setAttribute("theme", "success primary");
 		button.addClickListener((event) -> {
-			handleDefaultButton();
+			saveAndProject();
 		});
 	}
 

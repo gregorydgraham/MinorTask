@@ -81,7 +81,6 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 			example.queryPassword().permittedValues(password);
 			try {
 				final DBDatabase database = minortask().getDatabase();
-//				database.setPrintSQLBeforeExecuting(true);
 				final DBTable<User> query = database.getDBTable(example);
 				List<User> users = query.getAllRows();
 				switch (users.size()) {
