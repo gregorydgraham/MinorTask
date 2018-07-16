@@ -12,6 +12,8 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
@@ -28,6 +30,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 @HtmlImport("styles/shared-styles.html")
 @Route("task")
 @RouteAlias("edit")
+@Theme(Lumo.class)
 public class TaskEditorLayout extends VerticalLayout implements ChecksLogin, HasDynamicTitle {
 
 	private Long taskID = null;

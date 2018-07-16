@@ -27,6 +27,7 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 		Component banner = buildComponent();
 
 		this.add(banner);
+		this.getElement().setAttribute("theme", "success primary");
 		this.setSizeUndefined();
 		this.setWidth("100%");
 		this.addClassName("banner");
