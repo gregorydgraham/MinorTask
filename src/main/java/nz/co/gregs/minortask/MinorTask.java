@@ -116,6 +116,12 @@ public class MinorTask implements Serializable {
 		note.open();
 	}
 
+	public final void debug(String string) {
+		Notification note = new Notification(string, 3000);
+		note.setPosition(Notification.Position.BOTTOM_END);
+		note.open();
+	}
+
 	public final void sqlerror(Exception exp) {
 		Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, exp);
 		final String localizedMessage = exp.getMessage();
@@ -142,16 +148,11 @@ public class MinorTask implements Serializable {
 		if (taskID == null) {
 			return returnTask;
 		}
-		final Task example = new Task();//getTaskExample(taskID, userID);
+		final Task example = new Task();
 		example.taskID.permittedValues(taskID);
 		example.userID.permittedValues(userID);
 		try {
 			return getDatabase().getDBTable(example).getOnlyRow();
-//			List<Task> allRows = getDatabase().getDBTable(example).getAllRows();
-//			for(Task row: allRows){
-//				System.out.println(""+row);
-//			}
-//			if(allRows.size()==1){return allRows.get(0);}
 		} catch (UnexpectedNumberOfRowsException ex) {
 			warning("Incorrect Number Of Rows", "" + ex.getActualRows() + " <> " + ex.getExpectedRows());
 			throw new InaccessibleTaskException(taskID);
@@ -182,6 +183,8 @@ public class MinorTask implements Serializable {
 				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
 				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
 					database = dbDatabaseClusterWithConfigFile;
+					debug("Database created from \""+configFile+ "\" in "+(new File(configFile).getAbsolutePath()));
+				
 				}
 			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
 				warning("Configuration Missing", "We were unable to find the database configuration \""+configFile+ "\" in "+(new File(configFile).getAbsolutePath()));
