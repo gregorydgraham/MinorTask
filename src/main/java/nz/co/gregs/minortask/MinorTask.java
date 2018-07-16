@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -183,26 +184,31 @@ public class MinorTask implements Serializable {
 					database = dbDatabaseClusterWithConfigFile;
 				}
 			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
+				warning("Configuration Missing", "We were unable to find the database configuration \""+configFile+ "\" in "+(new File(configFile).getAbsolutePath()));
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
 //				sqlerror(ex);
-			} 
-		}
-		if (database != null) {
-			try {
-				chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
-			} catch (Exception ex) {
-				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		} else {
+		}
+		if (database == null) {
 			try {
 				database = getEmergencyDatabase();
+				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
 			} catch (Exception ex1) {
+				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 				System.err.println("" + ex1.getLocalizedMessage());
 				sqlerror(ex1);
 			}
+		}
+	}
+
+	public void chatAboutUsers() {
+		try {
+			chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
+		} catch (SQLException ex) {
+			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 

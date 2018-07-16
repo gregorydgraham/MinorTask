@@ -12,6 +12,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.LoginComponent;
@@ -30,13 +31,15 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 
 	public LoginPage() {
 		try {
+			MinorTask minorTask = new MinorTask();
 			final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
 			add(minorTaskTemplate);
 			add(new PublicBannerMenu());
 			add(loginComponent);
 			add(new FooterMenu());
+			minorTask.chatAboutUsers();
 		} catch (Exception ex) {
-			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): "+ex.getClass().getSimpleName()+" -> "+ex.getMessage());
+			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): " + ex.getClass().getSimpleName() + " -> " + ex.getMessage());
 		}
 	}
 

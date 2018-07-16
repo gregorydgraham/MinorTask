@@ -107,11 +107,8 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		}
 	}
 
-	public void handleEscapeButton() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	public void setUsername(String parameter) {
 		this.USERNAME_FIELD.setValue(parameter == null ? "" : parameter);
+		PASSWORD_FIELD.focus();
 	}
 }
