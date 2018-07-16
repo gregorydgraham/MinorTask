@@ -191,6 +191,16 @@
 							</artifactItems>
 						</configuration>
 					</execution>
+					<execution>
+						<id>unpack-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludes>META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA</excludes>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
