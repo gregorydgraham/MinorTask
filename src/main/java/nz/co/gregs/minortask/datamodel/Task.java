@@ -71,7 +71,15 @@ public class Task extends DBRow {
 		if (obj instanceof Task) {
 			Task otherTask = (Task) obj;
 			if (this.getDefined() && otherTask.getDefined()) {
-				return this.taskID.longValue().equals(otherTask.taskID.longValue());
+				final Long taskIDValue = this.taskID.longValue();
+				final Long otherTaskIDValue = otherTask.taskID.longValue();
+				if ((taskIDValue == null && taskIDValue != otherTaskIDValue)) {
+					return false;
+				} else if ((taskIDValue == null && taskIDValue == otherTaskIDValue)) {
+					return true;
+				} else {
+					return taskIDValue.equals(otherTaskIDValue);
+				}
 			}
 		}
 		return super.equals(obj);

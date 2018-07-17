@@ -191,7 +191,6 @@ public class MinorTask implements Serializable {
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
-//				sqlerror(ex);
 			}
 		}
 		if (database == null) {

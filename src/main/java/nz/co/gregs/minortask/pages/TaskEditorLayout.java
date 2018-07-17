@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
-import nz.co.gregs.minortask.components.EditorTask;
+import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -47,7 +47,7 @@ public class TaskEditorLayout extends VerticalLayout implements ChecksLogin, Has
 			minortask().showLogin();
 		} else {
 			add(new AuthorisedBannerMenu(parameter));
-			add(new EditorTask(parameter));
+			add(new EditTask(parameter));
 			add(new FooterMenu());
 		}
 	}

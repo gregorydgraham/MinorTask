@@ -15,7 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 public class RootTaskComponent extends VerticalLayout implements RequiresLogin{
 
 	public RootTaskComponent(Long taskID) {
-		add(taskID==null?getComponent():new EditorTask(taskID));
+		add(taskID==null?getComponent():new EditTask(taskID));
 	}
 
 	private Component getComponent() {
