@@ -18,6 +18,7 @@ import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.CreateTask;
+import nz.co.gregs.minortask.components.TaskTabs;
 
 /**
  *
@@ -45,6 +46,7 @@ public class TaskCreatorLayout extends VerticalLayout implements ChecksLogin {
 		removeAll();
 		add(new MinorTaskTemplate());
 		add(new AuthorisedBannerMenu(parameter));
+			add(new TaskTabs(TaskTabs.Option.Creator));
 		add(new CreateTask(parameter));
 		add(new FooterMenu());
 	}
