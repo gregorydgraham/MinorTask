@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
@@ -35,77 +34,6 @@ public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 			setDataProvider(new TasksDataProvider(listOfTasks));
 		} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
 			Logger.getLogger(ProjectSelector.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-
-//	private Component getPickerComponent() {
-//		try {
-//			Task example = new Task();
-//			example.userID.permittedValues(minortask().getUserID());
-//			example.completionDate.permittedValues((Date) null);
-//			example.name.setSortOrderAscending();
-//
-//			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
-////
-//			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
-//			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-//
-//			taskList.setValue(taskAndProject.getProject());
-//
-//			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
-//			taskList.addBlurListener((event) -> {
-//				this.removeAll();
-//				this.add(getCurrentProjectComponent());
-//			});
-//
-//			return taskList;
-//		} catch (SQLException ex) {
-//			Logger.getLogger(ProjectSelector.class.getName()).log(Level.SEVERE, null, ex);
-//			minortask().sqlerror(ex);
-//			return new ComboBox("Projects");
-//		}
-//	}
-//	private Component getCurrentProjectComponent() {
-//		try {
-//			TextField button = new TextField("Project");
-//			taskAndProject = getTaskAndProject(taskID);
-//			Task.Project projectFound = taskAndProject.getProject();
-//			if (projectFound == null) {
-//				button.setValue("Projects");
-//			} else {
-//				final String projectName = projectFound.name.stringValue();
-//				if (!projectName.isEmpty()) {
-//					button.setValue(projectName);
-//				}
-//			}
-//
-//			button.addFocusListener(
-//					(event) -> {
-//						removeAll();
-//						add(getPickerComponent());
-//					}
-//			);
-//			button.setSizeUndefined();
-//			return button;
-//		} catch (MinorTask.InaccessibleTaskException ex) {
-//			Logger.getLogger(ProjectSelector.class.getName()).log(Level.SEVERE, null, ex);
-//			return new AccessDeniedComponent();
-//		}
-//	}
-	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
-
-		private final Long taskID;
-		private final ProjectSelector picker;
-		private final MinorTask minortask;
-
-		public ProjectChosenListener(MinorTask minortask, ProjectSelector picker, Long taskID) {
-			this.minortask = minortask;
-			this.picker = picker;
-			this.taskID = taskID;
-		}
-
-		@Override
-		public void valueChanged(HasValue.ValueChangeEvent<Task> event) {
 		}
 	}
 

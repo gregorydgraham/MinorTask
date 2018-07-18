@@ -61,7 +61,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Editor(new Tab("Editor"), TaskEditorLayout.class),
 		Today(new Tab("Today"), TodaysTaskLayout.class),
 		Urgent(new Tab("Urgent"), UrgentTasksPage.class),
-		//		Picker(new Tab(new ProjectPicker(null))),
+		Picker(new Tab(new ProjectSelector(null)), TaskEditorLayout.class),
 		Completed(new Tab("Completed"), CompletedTasksPage.class);
 		private static Tab[] staticTabs = new Tab[]{};
 
