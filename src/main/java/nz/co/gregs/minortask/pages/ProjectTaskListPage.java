@@ -5,14 +5,14 @@
  */
 package nz.co.gregs.minortask.pages;
 
-import nz.co.gregs.minortask.components.ProjectTaskList;
+import nz.co.gregs.minortask.components.tasklists.ProjectTaskList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.AbstractTaskList;
+import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 
 
 @HtmlImport("styles/shared-styles.html")

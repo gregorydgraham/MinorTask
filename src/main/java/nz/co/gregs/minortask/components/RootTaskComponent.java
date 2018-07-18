@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.tasklists.ActiveTaskList;
+import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 

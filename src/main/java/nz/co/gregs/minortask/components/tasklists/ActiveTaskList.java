@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("active-task-list")
@@ -39,7 +40,7 @@ public class ActiveTaskList extends AbstractTaskList {
 		return tasks;
 	}
 
-	void disableNewButton() {
+	public void disableNewButton() {
 		this.getNewTaskButton().setEnabled(false);
 	}
 

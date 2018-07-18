@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Tag;
 import java.sql.SQLException;

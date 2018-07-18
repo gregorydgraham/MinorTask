@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
@@ -11,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.TaskSummary;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**

@@ -11,7 +11,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.TodaysTasksList;
+import nz.co.gregs.minortask.components.tasklists.TodaysTasksList;
 
 /**
  *

@@ -3,12 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -16,17 +13,16 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("completed-task-list")
-public class CompletedTaskList extends AbstractTaskList{
+public class AllCompletedTasksList extends AbstractTaskList{
 
-	public CompletedTaskList(Long taskID) {
+	public AllCompletedTasksList(Long taskID) {
 		super(taskID);
 	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		Task.WithSortColumns example = new Task.WithSortColumns();
+		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(taskID);
 		example.completionDate.excludedValues((Date) null);
 		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
@@ -35,13 +31,13 @@ public class CompletedTaskList extends AbstractTaskList{
 				example.column(example.name),
 				example.column(example.taskID)
 		);
-		List<Task> tasks = dbTable.getAllRows();
+		List<Task> tasks =dbTable.getAllRows();
 		return tasks;
 	}
 
 	@Override
 	protected String getListClassName() {
-		return "completedtasklist";
+		return "allcompletedtaskslist";
 	}
 
 	@Override
