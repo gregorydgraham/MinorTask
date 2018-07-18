@@ -12,18 +12,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("active-task-list")
-public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
+public class TodaysTasksList extends VerticalLayout implements RequiresLogin {
 
-	private final AddTaskButton newTaskButton;
-	private final Long selectedTask;
 
-	public ActiveTaskList(Long selectedTask) {
-		this.selectedTask = selectedTask;
-		newTaskButton = new AddTaskButton(selectedTask);
+	public TodaysTasksList() {
 		buildComponent();
 		this.addClassName("tasklist");
 	}
@@ -36,7 +34,7 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
 		well.addClassName("well");
 		try {
 
-			List<Task.WithSortColumns> tasks = getTasksToList();
+			List<Task.Project> tasks = getTasksToList();
 
 			final String caption = tasks.size() + " Active Tasks";
 			final Label label = new Label(caption);
@@ -53,7 +51,6 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
 
 			HorizontalLayout footer = new HorizontalLayout();
 			footer.setWidth("100%");
-			footer.add(newTaskButton);
 			footer.addClassNames("activelist", "footer");
 			well.add(footer);
 
@@ -63,23 +60,19 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
 		add(well);
 	}
 
-	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
-		Task.WithSortColumns example = new Task.WithSortColumns();
+	protected List<Task.Project> getTasksToList() throws SQLException {
+		Task.Project example = new Task.Project();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(selectedTask);
 		example.completionDate.permittedValues((Date) null);
-		final DBTable<Task.WithSortColumns> dbTable = minortask().getDatabase().getDBTable(example);
-		dbTable.setSortOrder(
-				example.column(example.isOverdue),
-				example.column(example.hasStarted),
+		final Task task = new Task();
+		final DBQuery query = minortask().getDatabase().getDBQuery(example).addOptional(task);
+		query.setSortOrder(
 				example.column(example.finalDate),
 				example.column(example.startDate)
 		);
-		List<Task.WithSortColumns> tasks = dbTable.getAllRows();
+		// add the leaf requirement
+		query.addCondition(task.column(task.taskID).isNull());
+		List<Task.Project> tasks =query.getAllInstancesOf(new Task.Project());
 		return tasks;
-	}
-
-	void disableNewButton() {
-		this.newTaskButton.setEnabled(false);
 	}
 }

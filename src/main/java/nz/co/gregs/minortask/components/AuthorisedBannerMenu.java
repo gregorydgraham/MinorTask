@@ -42,11 +42,12 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 			final DBTable<User> userTable = getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
 			final Label label = new Label("Welcome to MinorTask @" + user.getUsername());
-			label.setSizeFull();
+			label.setSizeUndefined();
+			label.setWidth("100%");
 			add(label);
 			setVerticalComponentAlignment(Alignment.CENTER, label);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			//minortask().sqlerror(ex);
+			minortask().sqlerror(ex);
 		}
 
 		Button logoutButton = new Button("Logout");

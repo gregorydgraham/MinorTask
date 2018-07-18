@@ -21,7 +21,8 @@ public class RootTaskComponent extends VerticalLayout implements RequiresLogin{
 	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 
-		layout.add(new ProjectPathNavigator.WithAddTaskButton(null),
+		layout.add(
+				new ProjectPathNavigator.WithAddTaskButton(null),
 				new ActiveTaskList(null),
 				new CompletedTaskList(null)
 		);

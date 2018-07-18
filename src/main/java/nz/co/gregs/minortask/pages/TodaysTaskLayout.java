@@ -11,7 +11,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.ActiveTaskList;
+import nz.co.gregs.minortask.components.TodaysTasksList;
 
 /**
  *
@@ -26,7 +26,7 @@ public class TodaysTaskLayout extends MinorTaskPage{
 
 	@Override
 	protected Component getInternalComponent(Long parameter) {
-		return new ActiveTaskList(parameter);
+		return new TodaysTasksList();
 	}
 
 	@Override

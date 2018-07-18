@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("task-summary")
 public class TaskSummary extends VerticalLayout implements RequiresLogin, ClickNotifier<Component> {
 
-	public TaskSummary(Long taskID, Task task) {
+	public TaskSummary(Task task) {
 
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());

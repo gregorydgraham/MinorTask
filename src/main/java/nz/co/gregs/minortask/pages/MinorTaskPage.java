@@ -35,7 +35,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	}
 
 	@Override
-	public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
+	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		removeAll();
 		taskID = parameter;
 		add(new MinorTaskTemplate());
@@ -51,7 +51,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	}
 
 	@Override
-	public void beforeEnter(BeforeEnterEvent event) {
+	public final void beforeEnter(BeforeEnterEvent event) {
 		if (minortask().getNotLoggedIn()) {
 			Location location = event.getLocation();
 			minortask().setLoginDestination(location);

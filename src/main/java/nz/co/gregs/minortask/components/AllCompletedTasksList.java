@@ -16,12 +16,9 @@ import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Tag("completed-task-list")
-public class CompletedTaskList extends VerticalLayout implements RequiresLogin{
+public class AllCompletedTasksList extends VerticalLayout implements RequiresLogin{
 
-	private final Long taskID;
-
-	public CompletedTaskList(Long selectedTask) {
-		this.taskID = selectedTask;
+	public AllCompletedTasksList() {
 		add(buildComponent());
 		this.addClassNames("completed", "tasklist");
 	}
@@ -54,7 +51,6 @@ public class CompletedTaskList extends VerticalLayout implements RequiresLogin{
 	protected List<Task.WithSortColumns> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(taskID);
 		example.completionDate.excludedValues((Date) null);
 		final DBTable<Task.WithSortColumns> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
