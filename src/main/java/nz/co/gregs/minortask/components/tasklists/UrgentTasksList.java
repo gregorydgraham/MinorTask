@@ -27,7 +27,7 @@ public class UrgentTasksList extends AbstractTaskList {
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return tasks.size() + " Upcoming Tasks";
+		return tasks.size() + " Overdue and Upcoming Tasks";
 	}
 
 	@Override
@@ -35,12 +35,12 @@ public class UrgentTasksList extends AbstractTaskList {
 		Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
 		final GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		gregorianCalendar.add(GregorianCalendar.DATE, +3);
+		gregorianCalendar.roll(GregorianCalendar.DATE, +3);
 		Date threeDaysHence = gregorianCalendar.getTime();
 		example.finalDate.permittedRange(null, threeDaysHence);
 		example.completionDate.permittedValues((Date) null);
 		final Task task = new Task();
-		final DBQuery query = minortask().getDatabase().getDBQuery(example).add(task);
+		final DBQuery query = minortask().getDatabase().getDBQuery(example).addOptional(task);
 		query.addCondition(task.column(task.taskID).isNull());
 		query.setSortOrder(
 				example.column(example.isOverdue),
@@ -48,6 +48,7 @@ public class UrgentTasksList extends AbstractTaskList {
 				example.column(example.finalDate),
 				example.column(example.startDate)
 		);
+		query.printAllRows();
 		List<Task> tasks = query.getAllInstancesOf(example);
 		return tasks;
 	}
