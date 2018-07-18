@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -25,7 +24,6 @@ public class ActiveTaskList extends VerticalLayout implements RequiresLogin {
 	public ActiveTaskList(Long selectedTask) {
 		this.selectedTask = selectedTask;
 		newTaskButton = new AddTaskButton(selectedTask);
-		newTaskButton.addClassName("addbutton");
 		buildComponent();
 		this.addClassName("tasklist");
 	}

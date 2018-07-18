@@ -5,20 +5,15 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
-import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.CreateTask;
-import nz.co.gregs.minortask.components.TaskTabs;
 
 /**
  *
@@ -27,28 +22,21 @@ import nz.co.gregs.minortask.components.TaskTabs;
 @HtmlImport("styles/shared-styles.html")
 @Route("create")
 @RouteAlias("new")
-public class TaskCreatorLayout extends VerticalLayout implements ChecksLogin {
-
-	public TaskCreatorLayout() {
-	}
+public class TaskCreatorLayout extends MinorTaskPage {
 
 	@Override
-	public void setParameter(BeforeEvent event,  @OptionalParameter Long parameter) {
+	public Component getInternalComponent(Long parameter) {
 		try {
-			buildComponent(parameter);
+			return new CreateTask(parameter);
 		} catch (MinorTask.InaccessibleTaskException ex) {
-			removeAll();
-			add(new AccessDeniedComponent());
+			Logger.getLogger(TaskCreatorLayout.class.getName()).log(Level.SEVERE, null, ex);
+			return new AccessDeniedComponent();
 		}
 	}
 
-	public final void buildComponent(Long parameter) throws MinorTask.InaccessibleTaskException {
-		removeAll();
-		add(new MinorTaskTemplate());
-		add(new AuthorisedBannerMenu(parameter));
-			add(new TaskTabs(TaskTabs.Option.Creator));
-		add(new CreateTask(parameter));
-		add(new FooterMenu());
+	@Override
+	public String getPageTitle() {
+		return "MinorTask: Create";
 	}
 
 }

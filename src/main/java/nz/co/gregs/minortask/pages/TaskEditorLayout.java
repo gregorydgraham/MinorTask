@@ -5,11 +5,9 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
@@ -17,9 +15,6 @@ import com.vaadin.flow.theme.lumo.Lumo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.MinorTaskTemplate;
-import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
-import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.components.TaskTabs;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -32,26 +27,15 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Route("task")
 @RouteAlias("edit")
 @Theme(Lumo.class)
-public class TaskEditorLayout extends VerticalLayout implements ChecksLogin, HasDynamicTitle {
+public class TaskEditorLayout extends MinorTaskPage implements HasDynamicTitle{
 
-	private Long taskID = null;
 
 	public TaskEditorLayout() {
 	}
 
-	@Override
-	public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
-		removeAll();
-		taskID = parameter;
-		add(new MinorTaskTemplate());
-		if (minortask().getNotLoggedIn()) {
-			minortask().showLogin();
-		} else {
-			add(new AuthorisedBannerMenu(parameter));
-			add(new TaskTabs(parameter==null?TaskTabs.Option.Projects:TaskTabs.Option.Editor));
-			add(new EditTask(parameter));
-			add(new FooterMenu());
-		}
+
+	public Component getInternalComponent(Long parameter) {
+		return new EditTask(parameter);
 	}
 
 	@Override

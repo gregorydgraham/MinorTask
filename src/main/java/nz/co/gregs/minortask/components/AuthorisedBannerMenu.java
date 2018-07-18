@@ -24,20 +24,16 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 
 	public AuthorisedBannerMenu(Long taskID) {
 		this.taskID = taskID;
-		Component banner = buildComponent();
+		buildComponent();
 
-		this.add(banner);
 		this.getElement().setAttribute("theme", "success primary");
-		this.setSizeUndefined();
-		this.setWidth("100%");
 		this.addClassName("banner");
 	}
 
-	public final Component buildComponent() {
-		HorizontalLayout banner = new HorizontalLayout();
-		banner.setSizeUndefined();
-		banner.setWidth("100%");
-		banner.setDefaultVerticalComponentAlignment(Alignment.START);
+	public final void buildComponent() {
+		setSizeUndefined();
+		setWidth("100%");
+		setDefaultVerticalComponentAlignment(Alignment.START);
 
 		final long userID = minortask().getUserID();
 		User example = new User();
@@ -47,8 +43,8 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 			User user = userTable.getOnlyRow();
 			final Label label = new Label("Welcome to MinorTask @" + user.getUsername());
 			label.setSizeFull();
-			banner.add(label);
-			banner.setVerticalComponentAlignment(Alignment.CENTER, label);
+			add(label);
+			setVerticalComponentAlignment(Alignment.CENTER, label);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 			//minortask().sqlerror(ex);
 		}
@@ -59,10 +55,8 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 			minortask().logout();
 		});
 
-		banner.add(logoutButton);
-		banner.setVerticalComponentAlignment(Alignment.START, logoutButton);
-
-		return banner;
+		add(logoutButton);
+		setVerticalComponentAlignment(Alignment.START, logoutButton);
 	}
 
 }

@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import nz.co.gregs.minortask.datamodel.User;
@@ -17,28 +16,22 @@ import nz.co.gregs.minortask.datamodel.User;
 public class PublicBannerMenu extends HorizontalLayout implements MinorTaskComponent {
 
 	public PublicBannerMenu() {
-		Component banner = buildComponent();
-
-		this.add(banner);
-		this.setSizeUndefined();
-		this.setWidth("100%");
+		buildComponent();
 		this.addClassName("banner");
 	}
 
-	public final Component buildComponent() {
-		HorizontalLayout banner = new HorizontalLayout();
-		banner.setSizeUndefined();
-		banner.setWidth("100%");
-		banner.setDefaultVerticalComponentAlignment(Alignment.START);
+	public final void buildComponent() {
+//		HorizontalLayout banner = new HorizontalLayout();
+		setSizeUndefined();
+		setWidth("100%");
+		setDefaultVerticalComponentAlignment(Alignment.START);
 
 		final long userID = minortask().getUserID();
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
 		final Label label = new Label("Welcome to " + minortask().getApplicationName());
 		label.setSizeFull();
-		banner.add(label);
-		banner.setVerticalComponentAlignment(Alignment.CENTER, label);
-
-		return banner;
+		add(label);
+		setVerticalComponentAlignment(Alignment.CENTER, label);
 	}
 }
