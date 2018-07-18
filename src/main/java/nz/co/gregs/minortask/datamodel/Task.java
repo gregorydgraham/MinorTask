@@ -105,6 +105,26 @@ public class Task extends DBRow {
 	 * @author gregorygraham
 	 */
 	public static class Project extends Task {
+
+		/**
+		 *
+		 * @author gregorygraham
+		 */
+		public static class WithSortColumns extends Project {
+
+			@DBColumn
+			public DBBoolean hasStarted = new DBBoolean(this.column(this.startDate).isLessThan(DateExpression.currentDate()));
+			@DBColumn
+			public DBBoolean isOverdue = new DBBoolean(this.column(this.finalDate).isLessThan(DateExpression.currentDate()));
+
+			{
+				this.hasStarted.setSortOrderDescending();
+				this.isOverdue.setSortOrderDescending();
+				this.startDate.setSortOrderAscending();
+				this.preferredDate.setSortOrderAscending();
+				this.finalDate.setSortOrderAscending();
+			}
+		}
 	}
 
 	/**

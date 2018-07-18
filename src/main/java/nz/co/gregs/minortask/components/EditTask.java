@@ -161,6 +161,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
+				subtasks.setTaskID(taskID);
 
 				Task.Project taskProject = taskAndProject.getProject();
 				if (taskProject != null) {

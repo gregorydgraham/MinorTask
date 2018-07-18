@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.EditTask;
-import nz.co.gregs.minortask.components.TaskTabs;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -34,6 +33,7 @@ public class TaskEditorLayout extends MinorTaskPage implements HasDynamicTitle{
 	}
 
 
+	@Override
 	public Component getInternalComponent(Long parameter) {
 		return new EditTask(parameter);
 	}
@@ -52,5 +52,4 @@ public class TaskEditorLayout extends MinorTaskPage implements HasDynamicTitle{
 		}
 		return "MinorTask: Access Denied";
 	}
-
 }

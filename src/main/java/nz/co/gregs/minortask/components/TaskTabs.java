@@ -5,11 +5,8 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
@@ -21,19 +18,20 @@ import nz.co.gregs.minortask.pages.*;
  */
 public class TaskTabs extends Tabs implements MinorTaskComponent {
 
-	public TaskTabs(Option opt, Long taskID) {
+	private TaskTabs(Tab tab, Long taskID) {
 		super(Option.getTabs());
-		setSelectedTab(opt.tab);
+		setSelectedTab(tab);
 		addSelectedChangeListener((e) -> {
 			tabClicked(e, taskID);
 		});
 	}
+
+	public TaskTabs(Option opt, Long taskID) {
+		this(opt.tab, taskID);
+	}
+
 	public TaskTabs(MinorTaskPage page, Long taskID) {
-		super(Option.getTabs());
-		setSelectedTab(Option.getTabForPage(page));
-		addSelectedChangeListener((e) -> {
-			tabClicked(e, taskID);
-		});
+		this(Option.getTabForPage(page), taskID);
 	}
 
 	@Override
@@ -51,13 +49,13 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Tab selectedTab = tabs.getSelectedTab();
 		Option[] opts = Option.values();
 		for (Option opt : opts) {
-			if (opt.getTab()==selectedTab){
+			if (opt.getTab() == selectedTab) {
 				opt.moveTo(taskID);
 			}
 		}
 	}
 
-	public static enum  Option implements MinorTaskComponent{
+	public static enum Option implements MinorTaskComponent {
 		Projects(new Tab("Projects"), ProjectsLayout.class),
 		Creator(new Tab("Creator"), TaskCreatorLayout.class),
 		Editor(new Tab("Editor"), TaskEditorLayout.class),
@@ -67,10 +65,9 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Completed(new Tab("Completed"), CompletedTasksPage.class);
 		private static Tab[] staticTabs = new Tab[]{};
 
-
 		private final Tab tab;
 
-		<C extends MinorTaskPage>Option(Tab tab, Class<C> destination) {
+		<C extends MinorTaskPage> Option(Tab tab, Class<C> destination) {
 			this.tab = tab;
 			destinationComponent = destination;
 		}
@@ -91,20 +88,20 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		private Tab getTab() {
 			return tab;
 		}
-		
-		public static Tab getTabForPage(MinorTaskPage page){
+
+		public static Tab getTabForPage(MinorTaskPage page) {
 			Class<? extends MinorTaskPage> pageClass = page.getClass();
 			for (Option value : values()) {
-					if (value.destinationComponent.equals(pageClass)){
-						return value.tab;
-					}
+				if (value.destinationComponent.equals(pageClass)) {
+					return value.tab;
 				}
+			}
 			return Projects.tab;
 		}
 
-		private <C extends Component & HasUrlParameter<Long>>void moveTo(Long taskID) {
+		private <C extends Component & HasUrlParameter<Long>> void moveTo(Long taskID) {
 			@SuppressWarnings("unchecked")
-			Class<C> dest = (Class<C>)destinationComponent;
+			Class<C> dest = (Class<C>) destinationComponent;
 			UI.getCurrent().navigate(dest, taskID);
 		}
 	}

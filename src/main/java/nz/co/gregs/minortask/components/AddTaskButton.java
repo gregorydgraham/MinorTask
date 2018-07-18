@@ -18,14 +18,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 public class AddTaskButton extends HorizontalLayout implements RequiresLogin {
 
 	final Button newTaskButton = new Button("+ Add Subtask");
-	private final Long originatingTaskID;
+	private Long originatingTaskID = null;
 
+	public AddTaskButton() {
+		add(buildComponent());
+	}
 	public AddTaskButton(Long taskID) {
 		this.originatingTaskID = taskID;
 		add(buildComponent());
 	}
 
-	public Component buildComponent() {
+	public final Component buildComponent() {
 
 //		HorizontalLayout panel = new HorizontalLayout();
 		newTaskButton.addClassNames("addtaskbutton");
@@ -36,5 +39,9 @@ public class AddTaskButton extends HorizontalLayout implements RequiresLogin {
 		});
 		setSizeUndefined();
 		return newTaskButton;
+	}
+
+	public void setValue(Long value) {
+		originatingTaskID = value;
 	}
 }
