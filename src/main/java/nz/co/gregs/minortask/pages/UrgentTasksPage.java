@@ -22,7 +22,7 @@ public class UrgentTasksPage extends MinorTaskPage {
 
 	@Override
 	public Component getInternalComponent(Long parameter) {
-		return new UrgentTasksList();
+		return new UrgentTasksList(parameter);
 	}
 
 	@Override

@@ -17,18 +17,16 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class ActiveTaskList extends AbstractTaskList {
 
 	private AddTaskButton newTaskButton = new AddTaskButton();
-	private Long selectedTask;
 
 	public ActiveTaskList(Long selectedTask) {
-		super();
-		this.selectedTask = selectedTask;
+		super(selectedTask);
 	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task.WithSortColumns example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		example.projectID.permittedValues(selectedTask);
+		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
 		final DBTable<Task> dbTable = minortask().getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
@@ -68,11 +66,5 @@ public class ActiveTaskList extends AbstractTaskList {
 			newTaskButton = new AddTaskButton();
 		}
 		return newTaskButton;
-	}
-
-	void setTaskID(Long taskID) {
-		this.selectedTask = taskID;
-		this.removeAll();
-		this.buildComponent();
 	}
 }

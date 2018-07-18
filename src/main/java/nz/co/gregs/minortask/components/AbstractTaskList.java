@@ -19,7 +19,10 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
 
-	public AbstractTaskList() {
+	protected final Long taskID;
+
+	public AbstractTaskList(Long taskID) {
+		this.taskID = taskID;
 		buildComponent();
 		this.addClassName("tasklist");
 	}

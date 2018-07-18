@@ -10,6 +10,7 @@ import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
+import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -50,7 +51,17 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Option[] opts = Option.values();
 		for (Option opt : opts) {
 			if (opt.getTab() == selectedTab) {
-				opt.moveTo(taskID);
+				if (opt.equals(Option.Picker)) {
+					ProjectSelectorTab tab = (ProjectSelectorTab) opt.tab;
+					ProjectSelector selector = tab.getSelector();
+					if (selector.isOpened()) {
+					} else {
+						Task value = selector.getValue();
+						opt.moveTo(value.taskID.getValue());
+					}
+				} else {
+					opt.moveTo(taskID);
+				}
 			}
 		}
 	}
@@ -61,7 +72,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Editor(new Tab("Editor"), TaskEditorLayout.class),
 		Today(new Tab("Today"), TodaysTaskLayout.class),
 		Urgent(new Tab("Urgent"), UrgentTasksPage.class),
-		Picker(new Tab(new ProjectSelector(null)), TaskEditorLayout.class),
+		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
 		Completed(new Tab("Completed"), CompletedTasksPage.class);
 		private static Tab[] staticTabs = new Tab[]{};
 

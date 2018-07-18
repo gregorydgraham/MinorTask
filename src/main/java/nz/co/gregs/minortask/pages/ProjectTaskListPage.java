@@ -5,30 +5,32 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import nz.co.gregs.minortask.components.ProjectTaskList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.AllCompletedTasksList;
+import nz.co.gregs.minortask.components.AbstractTaskList;
 
 
 @HtmlImport("styles/shared-styles.html")
-@Route("complete")
-@RouteAlias("completed")
-@RouteAlias("completedtasks")
+@Route("projecttasks")
+@RouteAlias("projecttasklist")
 @Theme(Lumo.class)
-public class CompletedTasksPage extends MinorTaskPage {
+public class ProjectTaskListPage extends MinorTaskPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new AllCompletedTasksList(parameter);
+	protected Component getInternalComponent(Long parameter) {
+		AbstractTaskList abstractTaskList = new ProjectTaskList(parameter);
+		return abstractTaskList;
 	}
 
 	@Override
 	public String getPageTitle() {
-		return "MinorTask: Completed";
+		return "MinorTask: Project Listing";
 	}
+
 	
 }

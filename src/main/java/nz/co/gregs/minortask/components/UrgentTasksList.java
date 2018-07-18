@@ -16,6 +16,10 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("active-task-list")
 public class UrgentTasksList extends AbstractTaskList {
 
+	public UrgentTasksList(Long taskID) {
+		super(taskID);
+	}
+
 	@Override
 	public String getListClassName() {
 		return "urgenttasklist";

@@ -26,7 +26,7 @@ public class TodaysTaskLayout extends MinorTaskPage{
 
 	@Override
 	protected Component getInternalComponent(Long parameter) {
-		return new TodaysTasksList();
+		return new TodaysTasksList(taskID);
 	}
 
 	@Override

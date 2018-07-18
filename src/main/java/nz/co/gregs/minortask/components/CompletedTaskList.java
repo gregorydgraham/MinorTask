@@ -18,39 +18,9 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("completed-task-list")
 public class CompletedTaskList extends AbstractTaskList{
 
-	private final Long taskID;
-
-	public CompletedTaskList(Long selectedTask) {
-		super();
-		this.taskID = selectedTask;
-//		add(buildComponent());
-//		this.addClassNames("completed", "tasklist");
+	public CompletedTaskList(Long taskID) {
+		super(taskID);
 	}
-
-//	public final Component buildComponent() {
-//
-//		VerticalLayout layout = new VerticalLayout();
-//		layout.setSpacing(false);
-//		layout.addClassName("well");
-//		try {
-//
-//			List<Task.WithSortColumns> tasks = getTasksToList();
-//			
-//			final String caption = tasks.size() + " Completed Tasks";
-//			final Label label = new Label(caption);
-//			label.addClassName("small");
-//			layout.add(label);
-//			
-//			for (Task task : tasks) {
-//				final TaskSummary taskSummary = new TaskSummary(task);
-//				taskSummary.addClassName("completed");
-//				layout.add(taskSummary);
-//			}
-//		} catch (SQLException ex) {
-//			minortask().sqlerror(ex);
-//		}
-//		return layout;
-//	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {

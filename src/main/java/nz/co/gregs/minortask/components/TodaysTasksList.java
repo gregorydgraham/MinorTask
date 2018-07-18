@@ -15,6 +15,10 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("active-task-list")
 public class TodaysTasksList extends AbstractTaskList {
 
+	public TodaysTasksList(Long taskID) {
+		super(taskID);
+	}
+
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task.Project example = new Task.Project();
