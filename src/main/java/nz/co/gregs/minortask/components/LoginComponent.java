@@ -33,6 +33,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	public LoginComponent(String username, String password) {
 		super();
+		setSizeUndefined();
 		add(getComponent());
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);

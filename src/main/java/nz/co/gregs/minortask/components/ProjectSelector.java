@@ -21,17 +21,17 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("project-selector")
 public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 
-	private final Long taskID;
-	private Task.TaskAndProject taskAndProject;
+//	private final Long taskID;
+//	private Task.TaskAndProject taskAndProject;
 
 	public ProjectSelector(Long taskID) {
-		this.taskID = taskID;
+//		this.taskID = taskID;
 		try {
-			taskAndProject = getTaskAndProject(taskID);
+//			taskAndProject = getTaskAndProject(taskID);
 
 			Task.Project example = new Task.Project();
-			example.userID.permittedValues(minortask().getUserID());
-			example.completionDate.permittedValues((Date) null);
+//			example.userID.permittedValues(minortask().getUserID());
+//			example.completionDate.permittedValues((Date) null);
 			example.name.setSortOrderAscending();
 			final Task task = new Task();
 			final DBQuery query = getDatabase()
@@ -39,7 +39,7 @@ public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 			query.setSortOrder(task.column(task.name));
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
 			setDataProvider(new TasksDataProvider(listOfTasks));
-		} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
+		} catch (SQLException ex) {
 			Logger.getLogger(ProjectSelector.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}

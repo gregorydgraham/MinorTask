@@ -6,13 +6,14 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
@@ -24,6 +25,8 @@ import nz.co.gregs.minortask.components.TaskTabs;
  *
  * @author gregorygraham
  */
+@HtmlImport("styles/shared-styles.html")
+@Tag("minortask-page")
 public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskComponent, BeforeEnterObserver, HasUrlParameter<Long>, HasDynamicTitle {
 
 	protected Long taskID = null;
@@ -32,6 +35,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	protected abstract Component getInternalComponent(Long parameter);
 
 	public MinorTaskPage() {
+		addClassName("minortask-page");
 	}
 
 	@Override

@@ -22,15 +22,6 @@ public class ProjectSelectorTab extends Tab {
 	final ProjectSelector selector;
 
 	/**
-	 * Constructs a new object in its default state.
-	 */
-
-	public ProjectSelectorTab() {
-		this("Project: ");
-
-	}
-
-	/**
 	 * Constructs a new object with the given label.
 	 *
 	 * @param label the label to display
@@ -43,6 +34,14 @@ public class ProjectSelectorTab extends Tab {
 			Task value = selector.getValue();
 			UI.getCurrent().navigate(ProjectTaskListPage.class, value.taskID.getValue());
 		});
+	}
+
+	/**
+	 * Constructs a new object in its default state.
+	 */
+
+	public ProjectSelectorTab() {
+		this("Project: ");
 	}
 
 	/**

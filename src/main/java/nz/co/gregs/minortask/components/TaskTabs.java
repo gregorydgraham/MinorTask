@@ -51,18 +51,18 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Option[] opts = Option.values();
 		for (Option opt : opts) {
 			if (opt.getTab() == selectedTab) {
-				if (opt.equals(Option.Picker)) {
-					ProjectSelectorTab tab = (ProjectSelectorTab) opt.tab;
-					ProjectSelector selector = tab.getSelector();
-					if (selector.isOpened()) {
-						// wait for it to close
-					} else {
-						Task value = selector.getValue();
-						opt.moveTo(value==null||value.taskID==null?null:value.taskID.getValue());
-					}
-				} else {
+//				if (opt.equals(Option.Picker)) {
+//					ProjectSelectorTab tab = (ProjectSelectorTab) opt.tab;
+//					ProjectSelector selector = tab.getSelector();
+//					if (selector.isOpened()) {
+//						// wait for it to close
+//					} else {
+//						Task value = selector.getValue();
+//						opt.moveTo(value==null||value.taskID==null?null:value.taskID.getValue());
+//					}
+//				} else {
 					opt.moveTo(taskID);
-				}
+//				}
 			}
 		}
 	}
@@ -74,7 +74,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Today(new Tab("Today"), TodaysTaskLayout.class),
 		Upcoming(new Tab("Upcoming"), UpcomingTasksPage.class),
 		Overdue(new Tab("Overdue"), OverdueTasksPage.class),
-		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
+//		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
 		AllCompleted(new Tab("All Completed"), AllCompletedTasksPage.class);
 		private static Tab[] staticTabs = new Tab[]{};
 
