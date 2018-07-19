@@ -12,7 +12,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("active-task-list")
+@Tag("todays-task-list")
 public class TodaysTasksList extends AbstractTaskList {
 
 	public TodaysTasksList(Long taskID) {

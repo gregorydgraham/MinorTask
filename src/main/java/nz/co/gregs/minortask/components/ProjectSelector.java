@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
@@ -13,9 +14,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
+@Tag("project-selector")
 public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 
 	private final Long taskID;
@@ -26,11 +29,15 @@ public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 		try {
 			taskAndProject = getTaskAndProject(taskID);
 
-			Task example = new Task();
+			Task.Project example = new Task.Project();
 			example.userID.permittedValues(minortask().getUserID());
 			example.completionDate.permittedValues((Date) null);
 			example.name.setSortOrderAscending();
-			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
+			final Task task = new Task();
+			final DBQuery query = getDatabase()
+					.getDBQuery(example,task);
+			query.setSortOrder(task.column(task.name));
+			List<Task> listOfTasks = query.getAllInstancesOf(example);
 			setDataProvider(new TasksDataProvider(listOfTasks));
 		} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
 			Logger.getLogger(ProjectSelector.class.getName()).log(Level.SEVERE, null, ex);

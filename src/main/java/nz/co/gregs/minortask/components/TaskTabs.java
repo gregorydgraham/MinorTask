@@ -55,9 +55,10 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 					ProjectSelectorTab tab = (ProjectSelectorTab) opt.tab;
 					ProjectSelector selector = tab.getSelector();
 					if (selector.isOpened()) {
+						// wait for it to close
 					} else {
 						Task value = selector.getValue();
-						opt.moveTo(value.taskID.getValue());
+						opt.moveTo(value==null||value.taskID==null?null:value.taskID.getValue());
 					}
 				} else {
 					opt.moveTo(taskID);
@@ -71,9 +72,10 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		Creator(new Tab("Creator"), TaskCreatorLayout.class),
 		Editor(new Tab("Editor"), TaskEditorLayout.class),
 		Today(new Tab("Today"), TodaysTaskLayout.class),
-		Urgent(new Tab("Urgent"), UrgentTasksPage.class),
+		Upcoming(new Tab("Upcoming"), UpcomingTasksPage.class),
+		Overdue(new Tab("Overdue"), OverdueTasksPage.class),
 		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
-		Completed(new Tab("Completed"), CompletedTasksPage.class);
+		AllCompleted(new Tab("All Completed"), AllCompletedTasksPage.class);
 		private static Tab[] staticTabs = new Tab[]{};
 
 		private final Tab tab;

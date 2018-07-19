@@ -53,9 +53,10 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
 		if (minortask().getNotLoggedIn()) {
-			Location location = event.getLocation();
-			minortask().setLoginDestination(location);
-			event.rerouteTo(LoginPage.class);
+			minortask().showLogin();
+//			Location location = event.getLocation();
+//			minortask().setLoginDestination(location);
+//			event.rerouteTo(LoginPage.class);
 		}
 	}
 }

@@ -5,10 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -24,12 +21,12 @@ public class CompletedTaskList extends AbstractTaskList{
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		Task.WithSortColumns example = new Task.WithSortColumns();
+		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.excludedValues((Date) null);
-		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
+		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
 				example.column(example.completionDate),
 				example.column(example.name),

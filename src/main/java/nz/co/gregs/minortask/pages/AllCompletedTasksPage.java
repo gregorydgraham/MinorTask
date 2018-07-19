@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.components.tasklists.AllCompletedTasksList;
 @RouteAlias("completed")
 @RouteAlias("completedtasks")
 @Theme(Lumo.class)
-public class CompletedTasksPage extends MinorTaskPage {
+public class AllCompletedTasksPage extends MinorTaskPage {
 
 	@Override
 	public Component getInternalComponent(Long parameter) {

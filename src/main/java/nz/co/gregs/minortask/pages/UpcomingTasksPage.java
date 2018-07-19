@@ -11,23 +11,23 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.tasklists.UrgentTasksList;
+import nz.co.gregs.minortask.components.tasklists.UpcomingTasksList;
 
 
 @HtmlImport("styles/shared-styles.html")
-@Route("urgent")
-@RouteAlias("urgenttasks")
+@Route("upcoming")
+@RouteAlias("upcomingtasks")
 @Theme(Lumo.class)
-public class UrgentTasksPage extends MinorTaskPage {
+public class UpcomingTasksPage extends MinorTaskPage {
 
 	@Override
 	public Component getInternalComponent(Long parameter) {
-		return new UrgentTasksList(parameter);
+		return new UpcomingTasksList(parameter);
 	}
 
 	@Override
 	public String getPageTitle() {
-		return "MinorTask: URGENT";
+		return "MinorTask: Upcoming";
 	}
 	
 }

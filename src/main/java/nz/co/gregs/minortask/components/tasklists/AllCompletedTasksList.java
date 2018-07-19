@@ -12,7 +12,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("completed-task-list")
+@Tag("all-completed-task-list")
 public class AllCompletedTasksList extends AbstractTaskList{
 
 	public AllCompletedTasksList(Long taskID) {
@@ -24,14 +24,14 @@ public class AllCompletedTasksList extends AbstractTaskList{
 		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
 		example.completionDate.excludedValues((Date) null);
-		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		example.completionDate.setSortOrderDescending();
+		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
 				example.column(example.completionDate),
 				example.column(example.name),
 				example.column(example.taskID)
 		);
-		List<Task> tasks =dbTable.getAllRows();
+		List<Task> tasks =dbTable.getRowsByExample(example);
 		return tasks;
 	}
 

@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,6 +23,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
+@Tag("createtask")
 public class CreateTask extends VerticalLayout implements RequiresLogin{
 
 	TextField name = new TextField("Name");
@@ -90,16 +92,18 @@ public class CreateTask extends VerticalLayout implements RequiresLogin{
 		LocalDate startDefault = LocalDate.now().plusDays(1);
 		LocalDate preferredDefault = LocalDate.now().plusWeeks(2);
 		LocalDate deadlineDefault = LocalDate.now().plusMonths(1);
-		final Task.Project projectExample = new Task.Project();
-		projectExample.taskID.permittedValues(projectID);
-		if (projectID != null) {
-			final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
-			project.setValue(fullTaskDetails.name.getValue());
-		}
+//		final Task.Project projectExample = new Task.Project();
+//		projectExample.taskID.permittedValues(projectID);
+//		if (projectID != null) {
+//			final Task fullTaskDetails = getDatabase().getDBTable(projectExample).getOnlyRow();
+//			project.setValue(fullTaskDetails.name.getValue());
+//		}
 
 		Task taskProject = getTask(projectID);
 		if (taskProject != null) {
 			
+			project.setValue(taskProject.name.getValue());
+
 			final LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
 			final LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
 

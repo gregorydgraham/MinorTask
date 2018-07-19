@@ -12,7 +12,6 @@ import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import nz.co.gregs.minortask.components.EditTask;
-import nz.co.gregs.minortask.components.TaskTabs;
 
 /**
  *
@@ -20,7 +19,6 @@ import nz.co.gregs.minortask.components.TaskTabs;
  */
 @HtmlImport("styles/shared-styles.html")
 @Route("projects")
-@RouteAlias("root")
 @Theme(Lumo.class)
 public class ProjectsLayout extends MinorTaskPage{
 

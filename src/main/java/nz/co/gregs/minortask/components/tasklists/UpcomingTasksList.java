@@ -13,21 +13,21 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("active-task-list")
-public class UrgentTasksList extends AbstractTaskList {
+@Tag("upcoming-task-list")
+public class UpcomingTasksList extends AbstractTaskList {
 
-	public UrgentTasksList(Long taskID) {
+	public UpcomingTasksList(Long taskID) {
 		super(taskID);
 	}
 
 	@Override
 	public String getListClassName() {
-		return "urgenttasklist";
+		return "upcomingtasklist";
 	}
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return tasks.size() + " Overdue and Upcoming Tasks";
+		return tasks.size() + " Upcoming Tasks";
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class UrgentTasksList extends AbstractTaskList {
 		final GregorianCalendar gregorianCalendar = new GregorianCalendar();
 		gregorianCalendar.roll(GregorianCalendar.DATE, +3);
 		Date threeDaysHence = gregorianCalendar.getTime();
-		example.finalDate.permittedRange(null, threeDaysHence);
+		example.startDate.permittedRange(new Date(), threeDaysHence);
 		example.completionDate.permittedValues((Date) null);
 		final Task task = new Task();
 		final DBQuery query = minortask().getDatabase().getDBQuery(example).addOptional(task);
@@ -48,7 +48,6 @@ public class UrgentTasksList extends AbstractTaskList {
 				example.column(example.finalDate),
 				example.column(example.startDate)
 		);
-		query.printAllRows();
 		List<Task> tasks = query.getAllInstancesOf(example);
 		return tasks;
 	}
