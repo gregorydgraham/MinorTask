@@ -53,6 +53,22 @@ public interface MinorTaskComponent {
 		return minortask().getProjectPathTasks(taskID, getUserID());
 	}
 
+	default void warning(String topic, String warning) {
+		minortask().warning(topic, warning);
+	}
+
+	default void chat(String topic) {
+		minortask().chat(topic);
+	}
+
+	default void error(String topic, String warning) {
+		minortask().error(topic, warning);
+	}
+
+	default void sqlerror(Exception ex) {
+		minortask().sqlerror(ex);
+	}
+
 	default public Task.TaskAndProject getTaskAndProject(Long taskID) throws MinorTask.InaccessibleTaskException {
 		return minortask().getTaskAndProject(taskID);
 	}

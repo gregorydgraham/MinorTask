@@ -25,6 +25,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
 @HtmlImport("styles/shared-styles.html")
 @Route("")
 @RouteAlias("login")
+@RouteAlias("")
 public class LoginPage extends VerticalLayout implements HasUrlParameter<String> {
 
 	LoginComponent loginComponent = new LoginComponent();

@@ -196,7 +196,7 @@
 							</artifactItems>
 						</configuration>
 					</execution>
-					<execution>
+<!--					<execution>
 						<id>unpack-dependencies</id>
 						<phase>package</phase>
 						<goals>
@@ -205,7 +205,7 @@
 						<configuration>
 							<excludes>META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA</excludes>
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 			<plugin>
@@ -216,23 +216,6 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>  
-<!--			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>shaded</shadedClassifierName>  Any name that makes sense 
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>

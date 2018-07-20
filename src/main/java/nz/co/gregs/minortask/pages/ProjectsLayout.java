@@ -8,10 +8,9 @@ package nz.co.gregs.minortask.pages;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import nz.co.gregs.minortask.components.EditTask;
+import nz.co.gregs.minortask.components.RootTaskComponent;
 
 /**
  *
@@ -29,7 +28,7 @@ public class ProjectsLayout extends MinorTaskPage{
 
 	@Override
 	public Component getInternalComponent(Long parameter) {
-		return new EditTask(null);
+		return new RootTaskComponent(null);
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -36,19 +37,23 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		}
 	}
 
-	private Component getPickerComponent() {
+	private ComboBox<Task> getPickerComponent() {
 		try {
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getUserID());
 			example.completionDate.permittedValues((Date) null);
 			example.name.setSortOrderAscending();
+			final DBQuery query = getDatabase().getDBQuery(example, new Task());
+			query.setSortOrder(example.column(example.name));
 
-			List<Task> listOfTasks = getDatabase().getDBTable(example).getAllRows();
-//
+			List<Task> listOfTasks = query.getAllInstancesOf(example);
+			
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
+			listOfTasks.add(0,taskList.getEmptyValue());
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-
-			taskList.setValue(taskAndProject.getProject());
+			
+			final Task.Project project = taskAndProject.getProject();
+			//taskList.setValue(project==null?taskList.getEmptyValue():project);
 
 			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
 			taskList.addBlurListener((event) -> {
@@ -60,7 +65,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
 			minortask().sqlerror(ex);
-			return new ComboBox("Projects");
+			return new ComboBox<Task>("Projects");
 		}
 	}
 
@@ -81,8 +86,8 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			button.addFocusListener(
 					(event) -> {
 						removeAll();
-//						add(new ComboBox("Projects"));
-						add(getPickerComponent());
+				final ComboBox<Task> pickerComponent = getPickerComponent();
+						add(pickerComponent);
 					}
 			);
 			button.setSizeUndefined();
@@ -162,9 +167,8 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 
 		@Override
 		public Object getId(Task item) {
-			return item.name.getValue();
+			return item==null?-1:item.name.getValue();
 		}
-
 	}
 
 }

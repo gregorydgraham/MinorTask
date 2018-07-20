@@ -40,16 +40,18 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 
 	@Override
 	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
-		removeAll();
 		taskID = parameter;
-		add(new MinorTaskTemplate());
 		if (minortask().getNotLoggedIn()) {
 			minortask().showLogin();
 		} else {
+			removeAll();
+			add(new MinorTaskTemplate());
 			add(new AuthorisedBannerMenu(parameter));
 			taskTabs = new TaskTabs(this, taskID);
 			add(taskTabs);
-			add(getInternalComponent(parameter));
+			final Component internalComponent = getInternalComponent(parameter);
+			internalComponent.setId("minortask-internal");
+			add(internalComponent);
 			add(new FooterMenu());
 		}
 	}

@@ -10,7 +10,6 @@ import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
 import java.util.ArrayList;
-import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -25,6 +24,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		addSelectedChangeListener((e) -> {
 			tabClicked(e, taskID);
 		});
+		addClassName("minortask-tabs");
 	}
 
 	public TaskTabs(Option opt, Long taskID) {

@@ -43,6 +43,7 @@ import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LoggedOutPage;
+import nz.co.gregs.minortask.pages.ProjectsLayout;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -183,11 +184,11 @@ public class MinorTask implements Serializable {
 				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
 				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
 					database = dbDatabaseClusterWithConfigFile;
-					debug("Database created from \""+configFile+ "\" in "+(new File(configFile).getAbsolutePath()));
-				
+					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
+
 				}
 			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
-				warning("Configuration Missing", "We were unable to find the database configuration \""+configFile+ "\" in "+(new File(configFile).getAbsolutePath()));
+				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
@@ -277,11 +278,15 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showTopLevelTasks() {
-		showTask(null);
+		UI.getCurrent().navigate(ProjectsLayout.class, null);
 	}
 
 	public void showTask(Long taskID) {
-		UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
+		if (taskID == null) {
+			showTopLevelTasks();
+		} else {
+			UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
+		}
 	}
 
 	public void showTaskCreation(Long taskID) {
@@ -431,6 +436,14 @@ public class MinorTask implements Serializable {
 
 	public String getApplicationName() {
 		return "MinorTask";
+	}
+
+	public Task.Project getNullProject() {
+		Task.Project project = new Task.Project();
+		project.taskID.setValue(-1);
+		project.userID.setValue(getUserID());
+		project.name.setValue("Projects");
+		return project;
 	}
 
 	public static class InaccessibleTaskException extends Exception {
