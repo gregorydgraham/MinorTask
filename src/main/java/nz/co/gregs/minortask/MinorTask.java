@@ -17,8 +17,6 @@ import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -155,7 +153,7 @@ public class MinorTask implements Serializable {
 		try {
 			return getDatabase().getDBTable(example).getOnlyRow();
 		} catch (UnexpectedNumberOfRowsException ex) {
-			warning("Incorrect Number Of Rows", "" + ex.getActualRows() + " <> " + ex.getExpectedRows());
+//			warning("Incorrect Number Of Rows", "" + ex.getActualRows() + " <> " + ex.getExpectedRows());
 			throw new InaccessibleTaskException(taskID);
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -353,12 +351,18 @@ public class MinorTask implements Serializable {
 		this.userID = 0;
 		this.username = null;
 		notLoggedIn = true;
-		VaadinSession.getCurrent().close();
+//		VaadinSession.getCurrent().close();
 	}
 
 	public boolean getNotLoggedIn() {
+		final VaadinSession currentSession = VaadinSession.getCurrent();
 		return notLoggedIn
-				|| !VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
+				||userID==0
+				|| !currentSession.getState().equals(VaadinSessionState.OPEN);
+	}
+
+	public boolean getLoggedIn() {
+		return !getNotLoggedIn();
 	}
 
 	public void showSignUp(String username, String password) {

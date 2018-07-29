@@ -6,12 +6,7 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
@@ -22,14 +17,12 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-@HtmlImport("styles/shared-styles.html")
 @Route("task")
-@RouteAlias("edit")
-@Theme(Lumo.class)
-public class TaskEditorLayout extends MinorTaskPage implements HasDynamicTitle{
+public class TaskEditorLayout extends MinorTaskPage{
 
 
 	public TaskEditorLayout() {
+		super();
 	}
 
 

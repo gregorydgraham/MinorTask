@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -16,7 +15,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("task-summary")
+//@Tag("task-summary")
 public class TaskSummary extends VerticalLayout implements RequiresLogin, ClickNotifier<Component> {
 
 	public TaskSummary(Task task) {

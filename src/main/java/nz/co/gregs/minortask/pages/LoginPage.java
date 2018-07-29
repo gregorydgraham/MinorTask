@@ -5,13 +5,15 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
+import java.util.ArrayList;
+import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.FooterMenu;
@@ -24,8 +26,6 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
  */
 @HtmlImport("styles/shared-styles.html")
 @Route("")
-@RouteAlias("login")
-@RouteAlias("")
 public class LoginPage extends VerticalLayout implements HasUrlParameter<String> {
 
 	LoginComponent loginComponent = new LoginComponent();
@@ -33,15 +33,21 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 	public LoginPage() {
 		try {
 			MinorTask minorTask = new MinorTask();
-			final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
-			add(minorTaskTemplate);
-			add(new PublicBannerMenu());
-			add(loginComponent);
-			add(new FooterMenu());
+			add(getLoginPageContents());
 			minorTask.chatAboutUsers();
 		} catch (Exception ex) {
 			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): " + ex.getClass().getSimpleName() + " -> " + ex.getMessage());
 		}
+	}
+
+	public final Component[] getLoginPageContents() {
+		List<Component> components = new ArrayList<>();
+		final MinorTaskTemplate minorTaskTemplate = new MinorTaskTemplate();
+		components.add(minorTaskTemplate);
+		components.add(new PublicBannerMenu());
+		components.add(loginComponent);
+		components.add(new FooterMenu());
+		return components.toArray(new Component[]{});
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.PublicBannerMenu;
 import nz.co.gregs.minortask.components.SignupComponent;
@@ -23,7 +22,6 @@ import nz.co.gregs.minortask.components.SignupComponent;
  */
 @HtmlImport("styles/shared-styles.html")
 @Route("signup")
-@RouteAlias("newuser")
 public class SignUpLayout extends VerticalLayout implements HasUrlParameter<String>{
 
 	public SignUpLayout() {

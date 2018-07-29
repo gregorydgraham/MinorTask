@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.tabs.Tab;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -16,7 +15,7 @@ import nz.co.gregs.minortask.pages.ProjectTaskListPage;
  *
  * @author gregorygraham
  */
-@Tag("project-selector-tab")
+//@Tag("project-selector-tab")
 public class ProjectSelectorTab extends Tab {
 
 	final ProjectSelector selector;

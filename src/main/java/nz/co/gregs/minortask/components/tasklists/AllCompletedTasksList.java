@@ -5,14 +5,13 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Tag;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("all-completed-task-list")
+//@Tag("all-completed-task-list")
 public class AllCompletedTasksList extends AbstractTaskList{
 
 	public AllCompletedTasksList(Long taskID) {

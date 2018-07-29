@@ -9,7 +9,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
-import java.util.ArrayList;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -19,7 +18,7 @@ import nz.co.gregs.minortask.pages.*;
 public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 	private TaskTabs(Tab tab, Long taskID) {
-		super(Option.getTabs());
+		super(MinorTaskTab.getTabArray());
 		setSelectedTab(tab);
 		addSelectedChangeListener((e) -> {
 			tabClicked(e, taskID);
@@ -27,17 +26,26 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		addClassName("minortask-tabs");
 	}
 
-	public TaskTabs(Option opt, Long taskID) {
-		this(opt.tab, taskID);
-	}
-
-	public TaskTabs(MinorTaskPage page, Long taskID) {
-		this(Option.getTabForPage(page), taskID);
+	public TaskTabs(Component page, Long taskID) {
+		this(MinorTaskTab.getTabForPage(page), taskID);
 	}
 
 	@Override
 	public final void setSelectedTab(Tab tab) {
-		super.setSelectedTab(tab);
+		try {
+			super.setSelectedTab(tab);
+		} catch (IllegalArgumentException exp) {
+			super.setSelectedIndex(0);
+		}
+	}
+
+	@Override
+	public int indexOf(Component component) {
+		if (component instanceof Tab) {
+			return MinorTaskTab.getIndexOf((Tab) component);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -48,68 +56,70 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 	protected void tabClicked(Tabs.SelectedChangeEvent e, Long taskID) {
 		Tabs tabs = e.getSource();
 		Tab selectedTab = tabs.getSelectedTab();
-		Option[] opts = Option.values();
-		for (Option opt : opts) {
-			if (opt.getTab() == selectedTab) {
-//				if (opt.equals(Option.Picker)) {
-//					ProjectSelectorTab tab = (ProjectSelectorTab) opt.tab;
-//					ProjectSelector selector = tab.getSelector();
-//					if (selector.isOpened()) {
-//						// wait for it to close
-//					} else {
-//						Task value = selector.getValue();
-//						opt.moveTo(value==null||value.taskID==null?null:value.taskID.getValue());
-//					}
-//				} else {
-					opt.moveTo(taskID);
-//				}
-			}
-		}
+		MinorTaskTab[] opts = MinorTaskTab.getTabArray();
+		MinorTaskTab.moveTo(selectedTab, taskID);
 	}
 
-	public static enum Option implements MinorTaskComponent {
-		Projects(new Tab("Projects"), ProjectsLayout.class),
-		Creator(new Tab("Creator"), TaskCreatorLayout.class),
-		Editor(new Tab("Editor"), TaskEditorLayout.class),
-		Today(new Tab("Today"), TodaysTaskLayout.class),
-		Upcoming(new Tab("Upcoming"), UpcomingTasksPage.class),
-		Overdue(new Tab("Overdue"), OverdueTasksPage.class),
-//		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
-		AllCompleted(new Tab("All Completed"), AllCompletedTasksPage.class);
-		private static Tab[] staticTabs = new Tab[]{};
+	public static class MinorTaskTab extends Tab {
 
-		private final Tab tab;
-
-		<C extends MinorTaskPage> Option(Tab tab, Class<C> destination) {
-			this.tab = tab;
-			destinationComponent = destination;
-		}
-		protected final Class<?> destinationComponent;
-
-		public static Tab[] getTabs() {
-			if (staticTabs.length == 0) {
-				Option[] values = values();
-				ArrayList<Tab> tabsList = new ArrayList<Tab>();
-				for (Option value : values) {
-					tabsList.add(value.tab);
+		private static void moveTo(Tab selectedTab, Long taskID) {
+			for (MinorTaskTab opt : getTabArray()) {
+				if (opt.getTab().getLabel().equals(selectedTab.getLabel())) {
+					opt.moveTo(taskID);
+					break;
 				}
-				staticTabs = tabsList.toArray(new Tab[]{});
 			}
-			return staticTabs;
+		}
+
+		public static int getIndexOf(Tab component) {
+			MinorTaskTab[] tabArray = getTabArray();
+			int index = 0;
+			for (MinorTaskTab minorTaskTab : tabArray) {
+				if (minorTaskTab.getLabel().equals(component.getLabel())) {
+					return index;
+				}
+				index++;
+			}
+			return 0;
+		}
+
+		protected final Class<? extends Component> destinationComponent;
+
+		<C extends Component> MinorTaskTab(String label, Class<C> destination) {
+			super(label);
+			this.destinationComponent = destination;
 		}
 
 		private Tab getTab() {
-			return tab;
+			return this;
 		}
 
-		public static Tab getTabForPage(MinorTaskPage page) {
-			Class<? extends MinorTaskPage> pageClass = page.getClass();
-			for (Option value : values()) {
+		public static MinorTaskTab[] getTabArray() {
+			return new MinorTaskTab[]{
+				getFirstTab(),
+				new MinorTaskTab("Creator", TaskCreatorLayout.class),
+				new MinorTaskTab("Editor", TaskEditorLayout.class),
+				new MinorTaskTab("Today", TodaysTaskLayout.class),
+				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
+				new MinorTaskTab("Overdue", OverdueTasksPage.class),
+				//		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
+				new MinorTaskTab("All Completed", AllCompletedTasksPage.class)
+			};
+		}
+
+		public static MinorTaskTab getFirstTab() {
+			return new MinorTaskTab("Projects", ProjectsLayout.class);
+		}
+
+		public static Tab getTabForPage(Component page) {
+			Class<? extends Component> pageClass = page.getClass();
+			final MinorTaskTab[] tabArray = getTabArray();
+			for (MinorTaskTab value : tabArray) {
 				if (value.destinationComponent.equals(pageClass)) {
-					return value.tab;
+					return value;
 				}
 			}
-			return Projects.tab;
+			return getFirstTab();
 		}
 
 		private <C extends Component & HasUrlParameter<Long>> void moveTo(Long taskID) {

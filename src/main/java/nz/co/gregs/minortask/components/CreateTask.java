@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -23,7 +22,7 @@ import nz.co.gregs.minortask.datamodel.*;
  *
  * @author gregorygraham
  */
-@Tag("createtask")
+//@Tag("createtask")
 public class CreateTask extends VerticalLayout implements RequiresLogin{
 
 	TextField name = new TextField("Name");

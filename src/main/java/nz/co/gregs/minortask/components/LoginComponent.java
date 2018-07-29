@@ -21,11 +21,11 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-@Tag("minortask-login")
+//@Tag("minortask-login")
 public class LoginComponent extends VerticalLayout implements MinorTaskComponent, HasComponents, KeyNotifier, HasDefaultButton {
 
-	private final TextField USERNAME_FIELD = new TextField("Your Name");
-	private final PasswordField PASSWORD_FIELD = new PasswordField("Password");
+	private TextField USERNAME_FIELD;
+	private PasswordField PASSWORD_FIELD;
 
 	public LoginComponent() {
 		this("", "");
@@ -33,10 +33,13 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	public LoginComponent(String username, String password) {
 		super();
-		setSizeUndefined();
-		add(getComponent());
+		USERNAME_FIELD = new TextField("Your Name");
+		PASSWORD_FIELD = new PasswordField("Password");
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
+		setSizeUndefined();
+		add(getComponent());
+		addClassName("minortask-login");
 	}
 
 	private Component getComponent() {

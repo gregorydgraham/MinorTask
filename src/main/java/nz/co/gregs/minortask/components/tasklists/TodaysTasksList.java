@@ -5,14 +5,13 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Tag;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("todays-task-list")
+//@Tag("todays-task-list")
 public class TodaysTasksList extends AbstractTaskList {
 
 	public TodaysTasksList(Long taskID) {

@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
@@ -14,7 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
  *
  * @author gregorygraham
  */
-@Tag("add-task-button")
+//@Tag("add-task-button")
 public class AddTaskButton extends HorizontalLayout implements RequiresLogin {
 
 	final Button newTaskButton = new Button("+ Add Subtask");

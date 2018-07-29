@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -18,7 +17,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-@Tag("project-path-navigator")
+//@Tag("project-path-navigator")
 public class ProjectPathNavigator extends HorizontalLayout implements RequiresLogin {
 
 	private final Long taskID;

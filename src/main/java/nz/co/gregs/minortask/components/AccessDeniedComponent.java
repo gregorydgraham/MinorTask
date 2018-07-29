@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.dom.Element;
 
@@ -13,7 +12,7 @@ import com.vaadin.flow.dom.Element;
  *
  * @author gregorygraham
  */
-@Tag("access-denied-component")
+//@Tag("access-denied-component")
 public class AccessDeniedComponent extends Label implements MinorTaskComponent {
 
 	public AccessDeniedComponent() {

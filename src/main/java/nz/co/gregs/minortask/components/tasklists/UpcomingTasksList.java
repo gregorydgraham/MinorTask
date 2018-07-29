@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Tag;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,7 +12,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("upcoming-task-list")
+//@Tag("upcoming-task-list")
 public class UpcomingTasksList extends AbstractTaskList {
 
 	public UpcomingTasksList(Long taskID) {

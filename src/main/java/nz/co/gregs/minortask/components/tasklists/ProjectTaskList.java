@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Tag;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -16,7 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-@Tag("project-task-list")
+//@Tag("project-task-list")
 public class ProjectTaskList extends AbstractTaskList {
 	
 	public ProjectTaskList(Long parameter) {

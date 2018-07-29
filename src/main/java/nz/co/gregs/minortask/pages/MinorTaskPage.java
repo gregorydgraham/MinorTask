@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -26,7 +25,6 @@ import nz.co.gregs.minortask.components.TaskTabs;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Tag("minortask-page")
 public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskComponent, BeforeEnterObserver, HasUrlParameter<Long>, HasDynamicTitle {
 
 	protected Long taskID = null;
@@ -42,7 +40,8 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
 		if (minortask().getNotLoggedIn()) {
-			minortask().showLogin();
+			removeAll();
+			add(new LoginPage().getLoginPageContents());
 		} else {
 			removeAll();
 			add(new MinorTaskTemplate());
@@ -50,8 +49,9 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 			taskTabs = new TaskTabs(this, taskID);
 			add(taskTabs);
 			final Component internalComponent = getInternalComponent(parameter);
-			internalComponent.setId("minortask-internal");
-			add(internalComponent);
+			VerticalLayout internalComponentHolder = new VerticalLayout(internalComponent);
+			internalComponentHolder.addClassName("minortask-internal");
+			add(new VerticalLayout(internalComponentHolder));
 			add(new FooterMenu());
 		}
 	}
@@ -60,9 +60,6 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	public final void beforeEnter(BeforeEnterEvent event) {
 		if (minortask().getNotLoggedIn()) {
 			minortask().showLogin();
-//			Location location = event.getLocation();
-//			minortask().setLoginDestination(location);
-//			event.rerouteTo(LoginPage.class);
 		}
 	}
 }

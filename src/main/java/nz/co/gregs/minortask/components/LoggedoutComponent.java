@@ -25,7 +25,7 @@ public class LoggedoutComponent extends VerticalLayout implements MinorTaskCompo
 		VerticalLayout layout = new VerticalLayout();
 
 		layout.add(
-				new Label("Thank you for using MinorTask"),
+				new Label("Thank you for using "+minortask().getApplicationName()),
 				new Anchor("", "return to the login page")
 		);
 		return layout;

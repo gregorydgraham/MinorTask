@@ -6,11 +6,7 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +14,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@HtmlImport("styles/shared-styles.html")
 @Route("overdue")
-@RouteAlias("overduetasks")
-@Theme(Lumo.class)
 public class OverdueTasksPage extends MinorTaskPage {
 
 	@Override

@@ -5,20 +5,17 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
-@Tag("project-selector")
+//@Tag("project-selector")
 public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 
 //	private final Long taskID;

@@ -28,7 +28,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 	private Task.TaskAndProject taskAndProject;
 
 	public ProjectPicker(Long taskID) {
-			this.taskID = taskID;
+		this.taskID = taskID;
 		try {
 			taskAndProject = getTaskAndProject(taskID);
 			this.add(getCurrentProjectComponent());
@@ -47,11 +47,11 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			query.setSortOrder(example.column(example.name));
 
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
-			
+
 			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
-			listOfTasks.add(0,taskList.getEmptyValue());
+			listOfTasks.add(0, taskList.getEmptyValue());
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
-			
+
 			final Task.Project project = taskAndProject.getProject();
 			//taskList.setValue(project==null?taskList.getEmptyValue():project);
 
@@ -86,7 +86,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			button.addFocusListener(
 					(event) -> {
 						removeAll();
-				final ComboBox<Task> pickerComponent = getPickerComponent();
+						final ComboBox<Task> pickerComponent = getPickerComponent();
 						add(pickerComponent);
 					}
 			);
@@ -152,6 +152,11 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 						picker.add(picker.getCurrentProjectComponent());
 						minortask.showTask(taskID);
 					}
+				} else {
+					task.projectID.setValueToNull();
+					minortask.getDatabase().update(task);
+					picker.add(picker.getCurrentProjectComponent());
+					minortask.showTask(taskID);
 				}
 			} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
 				minortask.sqlerror(ex);
@@ -167,7 +172,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 
 		@Override
 		public Object getId(Task item) {
-			return item==null?-1:item.name.getValue();
+			return item == null ? -1 : item.name.getValue();
 		}
 	}
 
