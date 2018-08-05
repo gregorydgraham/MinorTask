@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import nz.co.gregs.minortask.components.tasklists.ActiveTaskList;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -28,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -42,7 +42,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;
-	ActiveTaskList subtasks;
+	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
 	TextField notes = new TextField("Notes");
 	DatePicker startDate = new DatePicker("Start");
@@ -65,7 +65,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 			taskAndProject = getTaskAndProject(taskID);
 			project = new ProjectPicker(currentTask);
 
-			subtasks = new ActiveTaskList(currentTask);
+			subtasks = new OpenTaskList(currentTask);
 			completedTasks = new CompletedTaskList(currentTask);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(currentTask));
 		} catch (MinorTask.InaccessibleTaskException ex) {

@@ -10,47 +10,44 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@Tag("active-task-list")
-public class ActiveTaskList extends AbstractTaskList {
+
+public class OpenTaskList extends AbstractTaskList {
 
 	private AddTaskButton newTaskButton = new AddTaskButton();
 
-	public ActiveTaskList(Long selectedTask) {
-		super(selectedTask);
+	public OpenTaskList(Long taskID) {
+		super(taskID);
+	}
+
+	@Override
+	protected String getListClassName() {
+		return "opentasks";
+	}
+
+	@Override
+	protected String getListCaption(List<Task> tasks) {
+		return "" + tasks.size() + " Open Tasks";
 	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		Task.WithSortColumns example = new Task.WithSortColumns();
+		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
 		final DBTable<Task> dbTable = minortask().getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
-				example.column(example.isOverdue),
-				example.column(example.hasStarted),
-				example.column(example.finalDate),
-				example.column(example.startDate)
+				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
+				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
+				example.column(example.finalDate).ascending(),
+				example.column(example.startDate).ascending()
 		);
 		List<Task> tasks = dbTable.getAllRows();
 		return tasks;
-	}
-
-	public void disableNewButton() {
-		this.getNewTaskButton().setEnabled(false);
-	}
-
-	@Override
-	protected String getListClassName() {
-		return "activelist";
-	}
-
-	@Override
-	protected String getListCaption(List<Task> tasks) {
-		return "" + tasks.size() + " Tasks";
 	}
 
 	@Override
@@ -67,4 +64,9 @@ public class ActiveTaskList extends AbstractTaskList {
 		}
 		return newTaskButton;
 	}
+
+	public void disableNewButton() {
+		this.getNewTaskButton().setEnabled(false);
+	}
+	
 }
