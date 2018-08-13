@@ -5,19 +5,19 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileData;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import java.io.IOException;
+import com.vaadin.flow.shared.Registration;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.datamodel.Images;
+import nz.co.gregs.minortask.events.ImageAddedEvent;
 
 /**
  *
@@ -49,11 +49,6 @@ public class UploadImage extends HorizontalLayout implements RequiresLogin {
 			image.mediaType.setValue(fileData.getMimeType());
 			image.filename.setValue(fileData.getFileName());
 			final InputStream inputStream = buffer.getInputStream(fileData.getFileName());
-//			try {
-//				System.out.println("AVAILABLE: "+inputStream.available());
-//			} catch (IOException ex) {
-//				Logger.getLogger(UploadImage.class.getName()).log(Level.SEVERE, null, ex);
-//			}
 			image.imageContents.setValue(inputStream);
 			image.taskID.setValue(taskID);
 			image.userID.setValue(minortask().getUserID());
@@ -62,8 +57,14 @@ public class UploadImage extends HorizontalLayout implements RequiresLogin {
 		}
 		try {
 			getDatabase().insert(images);
+			fireEvent(new ImageAddedEvent(new ImageControl(taskID, images.get(0)), true));
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	public Registration addImageAddedListener(
+			ComponentEventListener<ImageAddedEvent> listener) {
+		return addListener(ImageAddedEvent.class, listener);
 	}
 }
