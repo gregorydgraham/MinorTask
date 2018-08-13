@@ -19,17 +19,12 @@ public class AddTaskButton extends HorizontalLayout implements RequiresLogin {
 	final Button newTaskButton = new Button("+ Add Subtask");
 	private Long originatingTaskID = null;
 
-	public AddTaskButton() {
-		add(buildComponent());
-	}
 	public AddTaskButton(Long taskID) {
 		this.originatingTaskID = taskID;
 		add(buildComponent());
 	}
 
 	public final Component buildComponent() {
-
-//		HorizontalLayout panel = new HorizontalLayout();
 		newTaskButton.addClassNames("addtaskbutton");
 		newTaskButton.getElement().setAttribute("theme", "small success primary");
 		newTaskButton.setSizeUndefined();

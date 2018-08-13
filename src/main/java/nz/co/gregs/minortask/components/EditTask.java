@@ -44,6 +44,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	ProjectPicker project;
 	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
+	ImageCollection imageCollection;
 	TextField notes = new TextField("Notes");
 	DatePicker startDate = new DatePicker("Start");
 	DatePicker preferredEndDate = new DatePicker("End");
@@ -67,6 +68,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 
 			subtasks = new OpenTaskList(currentTask);
 			completedTasks = new CompletedTaskList(currentTask);
+			imageCollection = new ImageCollection(currentTask);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(currentTask));
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
@@ -122,6 +124,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		layout.add(details);
 		layout.add(description);
 		layout.add(dates);
+		layout.add(imageCollection);
 		layout.add(subtasks);
 		layout.add(completeButton);
 		layout.add(reopenButton);

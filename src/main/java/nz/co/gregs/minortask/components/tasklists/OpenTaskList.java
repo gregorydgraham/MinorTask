@@ -17,10 +17,11 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class OpenTaskList extends AbstractTaskList {
 
-	private AddTaskButton newTaskButton = new AddTaskButton();
+	private AddTaskButton newTaskButton;
 
 	public OpenTaskList(Long taskID) {
 		super(taskID);
+		 newTaskButton= new AddTaskButton(taskID);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class OpenTaskList extends AbstractTaskList {
 	 */
 	public final AddTaskButton getNewTaskButton() {
 		if (newTaskButton == null) {
-			newTaskButton = new AddTaskButton();
+			newTaskButton = new AddTaskButton(taskID);
 		}
 		return newTaskButton;
 	}
