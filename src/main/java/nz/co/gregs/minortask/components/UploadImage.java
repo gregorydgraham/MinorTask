@@ -41,23 +41,20 @@ public class UploadImage extends HorizontalLayout implements RequiresLogin {
 	}
 
 	private void processSuccessfulUpload(SucceededEvent event) {
-		List<Images> images = new ArrayList<>();
-		for (String fileID : buffer.getFiles()) {
-			System.out.println("fileID: "+fileID);
-			FileData fileData = buffer.getFileData(fileID);
-			Images image = new Images();
-			image.mediaType.setValue(fileData.getMimeType());
-			image.filename.setValue(fileData.getFileName());
-			final InputStream inputStream = buffer.getInputStream(fileData.getFileName());
-			image.imageContents.setValue(inputStream);
-			image.taskID.setValue(taskID);
-			image.userID.setValue(minortask().getUserID());
-			System.out.println("Image: "+image.toString());
-			images.add(image);
-		}
+		String fileName = event.getFileName();
+		String mimeType = event.getMIMEType();
+		System.out.println("fileID: " + fileName);
+		Images image = new Images();
+		image.mediaType.setValue(mimeType);
+		image.filename.setValue(fileName);
+		final InputStream inputStream = buffer.getInputStream(fileName);
+		image.imageContents.setValue(inputStream);
+		image.taskID.setValue(taskID);
+		image.userID.setValue(minortask().getUserID());
+		System.out.println("Image: " + image.toString());
 		try {
-			getDatabase().insert(images);
-			fireEvent(new ImageAddedEvent(new ImageControl(taskID, images.get(0)), true));
+			getDatabase().insert(image);
+			fireEvent(new ImageAddedEvent(this, true));
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
