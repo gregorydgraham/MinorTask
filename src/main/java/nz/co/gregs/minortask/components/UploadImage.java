@@ -6,16 +6,14 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.FileData;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.shared.Registration;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import nz.co.gregs.minortask.datamodel.Images;
 import nz.co.gregs.minortask.events.ImageAddedEvent;
 
@@ -26,18 +24,19 @@ import nz.co.gregs.minortask.events.ImageAddedEvent;
 public class UploadImage extends HorizontalLayout implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
-	Upload uploadButton = new Upload();
+	Upload uploader = new Upload();
 	private final Long taskID;
 
 	public UploadImage(Long taskID) {
 		super();
 		this.taskID = taskID;
-		uploadButton.setReceiver(buffer);
-		uploadButton.setAcceptedFileTypes("image/*");
-		uploadButton.addSucceededListener((event) -> {
+		uploader.setUploadButton(new Button("Add Images..."));
+		uploader.setReceiver(buffer);
+		uploader.setAcceptedFileTypes("image/*");
+		uploader.addSucceededListener((event) -> {
 			processSuccessfulUpload(event);
 		});
-		add(uploadButton);
+		add(uploader);
 	}
 
 	private void processSuccessfulUpload(SucceededEvent event) {
