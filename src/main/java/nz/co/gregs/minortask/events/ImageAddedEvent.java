@@ -6,15 +6,15 @@
 package nz.co.gregs.minortask.events;
 
 import com.vaadin.flow.component.ComponentEvent;
-import nz.co.gregs.minortask.components.ImageControl;
+import nz.co.gregs.minortask.components.UploadImage;
 
 /**
  *
  * @author gregorygraham
  */
-public class ImageAddedEvent extends ComponentEvent<ImageControl> {
+public class ImageAddedEvent extends ComponentEvent<UploadImage> {
 
-	public ImageAddedEvent(ImageControl source, boolean fromClient) {
+	public ImageAddedEvent(UploadImage source, boolean fromClient) {
 		super(source, fromClient);
 	}
 }

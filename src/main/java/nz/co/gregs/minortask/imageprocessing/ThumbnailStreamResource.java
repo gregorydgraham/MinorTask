@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import nz.co.gregs.minortask.components.ImageControl;
 import nz.co.gregs.minortask.datamodel.Images;
 
 /**
@@ -53,7 +52,7 @@ public class ThumbnailStreamResource extends StreamResource {
 				InputStream fis = new ByteArrayInputStream(os.toByteArray());
 				return fis;
 			} catch (IOException ex) {
-				Logger.getLogger(ImageControl.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(ThumbnailStreamResource.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			return new ByteArrayInputStream(new byte[]{});
 		}
@@ -66,7 +65,7 @@ public class ThumbnailStreamResource extends StreamResource {
 		}
 
 		private BufferedImage createThumbnail(BufferedImage original) {
-			final double targetSize = 100d;
+			final double targetSize = 50d;
 			double scale = Math.min(targetSize / original.getWidth(), targetSize / original.getHeight());
 			final int width = (int) ((0d + original.getWidth()) * scale);
 			final int height = (int) ((0d + original.getHeight()) * scale);

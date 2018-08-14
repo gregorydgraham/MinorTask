@@ -13,7 +13,9 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -44,7 +46,6 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	ProjectPicker project;
 	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
-	ImageCollection imageCollection;
 	TextField notes = new TextField("Notes");
 	DatePicker startDate = new DatePicker("Start");
 	DatePicker preferredEndDate = new DatePicker("End");
@@ -68,7 +69,6 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 
 			subtasks = new OpenTaskList(currentTask);
 			completedTasks = new CompletedTaskList(currentTask);
-			imageCollection = new ImageCollection(currentTask);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(currentTask));
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
@@ -76,10 +76,6 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	}
 
 	public final Component getComponent() {
-
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigator.WithAddTaskButton(taskID));
 
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);
@@ -121,20 +117,23 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				completedDate
 		);
 		dates.setSizeUndefined();
-		layout.add(details);
-		layout.add(description);
-		layout.add(dates);
-		layout.add(imageCollection);
-		layout.add(subtasks);
-		layout.add(completeButton);
-		layout.add(reopenButton);
-		layout.add(completedTasks);
+		
+		VerticalLayout detailsLayout = new VerticalLayout();
+		detailsLayout.setSizeUndefined();
+		detailsLayout.add(new ProjectPathNavigator.WithAddTaskButton(taskID));
+		detailsLayout.add(details);
+		detailsLayout.add(description);
+		detailsLayout.add(dates);
+		detailsLayout.add(new ImageGrid(taskID));
+		VerticalLayout tasksLayout = new VerticalLayout(subtasks);
+		tasksLayout.add(completeButton, reopenButton, completedTasks);
+		Div topLayout = new Div(detailsLayout, tasksLayout);
 		try {
 			setFieldValues();
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			minortask().sqlerror(ex);
 		}
-		return layout;
+		return topLayout;
 	}
 
 	protected void addChangeListeners() {
