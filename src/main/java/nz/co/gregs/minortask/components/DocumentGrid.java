@@ -8,27 +8,27 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.datamodel.Images;
-import nz.co.gregs.minortask.streamresources.ImageStreamResource;
-import nz.co.gregs.minortask.streamresources.ThumbnailStreamResource;
+import nz.co.gregs.minortask.datamodel.Document;
+import nz.co.gregs.minortask.streamresources.DocumentStreamResource;
 
 /**
  *
  * @author gregorygraham
  */
-public class ImageGrid extends VerticalLayout implements RequiresLogin {
+public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 
 	private final Long taskID;
-	private Grid<Images> grid = new Grid<Images>();
-	private List<Images> allRows;
-	private UploadImage uploader;
+	private Grid<Document> grid = new Grid<Document>();
+	private List<Document> allRows;
+	private UploadDocument uploader;
 
-	public ImageGrid(Long taskID) {
+	public DocumentGrid(Long taskID) {
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -42,32 +42,32 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 		setItems();
 		getDatabase().print(allRows);
 		grid.addComponentColumn(
-				(Images source) -> getImageComponent(source)
+				(Document source) -> getFileIconComponent(source)
 		);
 		grid.addComponentColumn(
-				(Images source) -> getDescriptionComponent(source)
+				(Document source) -> getDescriptionComponent(source)
 		).setFlexGrow(10);
-		grid.addComponentColumn((Images source) -> getRemoveComponent(source));
-		uploader = new UploadImage(taskID);
-		uploader.addImageAddedListener((event) -> {
+		grid.addComponentColumn((Document source) -> getRemoveComponent(source));
+		uploader = new UploadDocument(taskID);
+		uploader.addDocumentAddedListener((event) -> {
 			setItems();
 		});
 		add(grid);
 		add(uploader);
 	}
 
-	private Button getRemoveComponent(Images source) {
-		return new Button("remove", (event) -> removeImage(source));
+	private Button getRemoveComponent(Document source) {
+		return new Button("remove", (event) -> removeDocument(source));
 	}
 
-	private Anchor getImageComponent(Images source) {
-		Anchor anchor = new Anchor(new ImageStreamResource(source), "");
+	private Anchor getFileIconComponent(Document source) {
+		Anchor anchor = new Anchor(new DocumentStreamResource(source), "");
 		anchor.setTarget("_blank");
-		anchor.add(new Image(new ThumbnailStreamResource(source), source.filename.getValue()));
+		anchor.add(new Icon(VaadinIcon.FILE));
 		return anchor;
 	}
 
-	private TextField getDescriptionComponent(Images source) {
+	private TextField getDescriptionComponent(Document source) {
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue(source.filename.getValueWithDefaultValue("...")),
@@ -80,7 +80,7 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 
 	private void setItems() {
 		try {
-			Images example = new Images();
+			Document example = new Document();
 			example.taskID.permittedValues(this.taskID);
 			example.userID.permittedValues(minortask().getUserID());
 			allRows = getDatabase().getDBTable(example).getAllRows();
@@ -97,7 +97,7 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 		this.setWidth("100%");
 	}
 
-	private void removeImage(Images img) {
+	private void removeDocument(Document img) {
 		try {
 			getDatabase().delete(img);
 		} catch (SQLException ex) {
@@ -106,7 +106,7 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 		setItems();
 	}
 
-	private void updateDescription(Images source, String value) {
+	private void updateDescription(Document source, String value) {
 		source.description.setValue(value);
 		try {
 			getDatabase().update(source);

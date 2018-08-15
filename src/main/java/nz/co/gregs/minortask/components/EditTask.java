@@ -125,6 +125,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		detailsLayout.add(description);
 		detailsLayout.add(dates);
 		detailsLayout.add(new ImageGrid(taskID));
+		detailsLayout.add(new DocumentGrid(taskID));
 		VerticalLayout tasksLayout = new VerticalLayout(subtasks);
 		tasksLayout.add(completeButton, reopenButton, completedTasks);
 		Div topLayout = new Div(detailsLayout, tasksLayout);
