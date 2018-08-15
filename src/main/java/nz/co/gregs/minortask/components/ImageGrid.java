@@ -11,6 +11,8 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.function.ValueProvider;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,6 +31,7 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 	private final Long taskID;
 	private Grid<Images> grid = new Grid<Images>();
 	private List<Images> allRows;
+	private UploadImage uploader;
 
 	public ImageGrid(Long taskID) {
 		this.taskID = taskID;
@@ -38,25 +41,46 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 	@SuppressWarnings("unchecked")
 	private void makeComponent() {
 		removeAll();
+		setMargin(false);
+		setPadding(false);
+		setSpacing(false);
 		setItems();
 		getDatabase().print(allRows);
-		grid.addComponentColumn((Images source) -> {
-			Anchor anchor = new Anchor(new ImageStreamResource(source), "");
-			anchor.setTarget("_blank");
-			anchor.add(new Image(new ThumbnailStreamResource(source), source.filename.getValue()));
-			return anchor;
-		});
-		grid.addColumn((Images source) -> source.filename.getValueWithDefaultValue(""));
-		grid.addColumn((Images source) -> source.description.getValueWithDefaultValue(""));
-		grid.addComponentColumn((Images source) -> new Button("remove", (event) -> {
-			removeImage(source);
-		}));
-		final UploadImage uploader = new UploadImage(taskID);
+		grid.addComponentColumn(
+				(Images source) -> getImageComponent(source)
+		);
+		grid.addComponentColumn(
+				(Images source) -> getDescriptionComponent(source)
+		).setFlexGrow(10);
+		grid.addComponentColumn((Images source) -> getRemoveComponent(source));
+		uploader = new UploadImage(taskID);
 		uploader.addImageAddedListener((event) -> {
 			setItems();
 		});
 		add(grid);
 		add(uploader);
+	}
+
+	private Button getRemoveComponent(Images source) {
+		return new Button("remove", (event) -> removeImage(source));
+	}
+
+	private Anchor getImageComponent(Images source) {
+		Anchor anchor = new Anchor(new ImageStreamResource(source), "");
+		anchor.setTarget("_blank");
+		anchor.add(new Image(new ThumbnailStreamResource(source), source.filename.getValue()));
+		return anchor;
+	}
+
+	private TextField getDescriptionComponent(Images source) {
+		TextField component = new TextField(
+				"",
+				source.description.getValueWithDefaultValue(source.filename.getValueWithDefaultValue("...")),
+				(event) -> {
+					updateDescription(source, event.getValue());
+				});
+		component.setWidth("100%");
+		return component;
 	}
 
 	private void setItems() {
@@ -73,7 +97,7 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 			this.setSizeUndefined();
 			grid.setSizeUndefined();
 		} else {
-			this.setHeight("300px");
+			this.setHeight(""+((allRows.size()*50+100))+"px");
 		}
 		this.setWidth("100%");
 	}
@@ -85,5 +109,14 @@ public class ImageGrid extends VerticalLayout implements RequiresLogin {
 			sqlerror(ex);
 		}
 		setItems();
+	}
+
+	private void updateDescription(Images source, String value) {
+		source.description.setValue(value);
+		try {
+			getDatabase().update(source);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
 	}
 }
