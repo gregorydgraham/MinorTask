@@ -5,9 +5,11 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.datamodel.Document;
+import nz.co.gregs.minortask.streamresources.DocumentIconStreamResource;
 import nz.co.gregs.minortask.streamresources.DocumentStreamResource;
 
 /**
@@ -63,7 +66,13 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	private Anchor getFileIconComponent(Document source) {
 		Anchor anchor = new Anchor(new DocumentStreamResource(source), "");
 		anchor.setTarget("_blank");
-		anchor.add(new Icon(VaadinIcon.FILE));
+		Component icon;
+		if (source.mediaType.getValue().startsWith("image/")) {
+			icon = new Image(new DocumentIconStreamResource(source), source.filename.getValue());
+		} else {
+			icon = new Icon(VaadinIcon.FILE);
+		}
+		anchor.add(icon);
 		return anchor;
 	}
 
@@ -92,7 +101,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 			this.setSizeUndefined();
 			grid.setSizeUndefined();
 		} else {
-			this.setHeight(""+((allRows.size()*50+100))+"px");
+			this.setHeight("" + ((allRows.size() * 50 + 100)) + "px");
 		}
 		this.setWidth("100%");
 	}

@@ -16,49 +16,42 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import nz.co.gregs.minortask.datamodel.Images;
+import nz.co.gregs.minortask.datamodel.Document;
 
 /**
  *
  * @author gregorygraham
  */
-public class ThumbnailStreamResource extends StreamResource {
+public class DocumentIconStreamResource extends StreamResource {
 	
-	private final Images originalImage;
-
-	public ThumbnailStreamResource(Images image) {
-		super(image.filename.getValue(), new ThumbnailInputStreamFactory(image));
-		originalImage = image;
-	}
-
-	public Images getOriginalImageRow() {
-		return originalImage;
+	public DocumentIconStreamResource(Document doc) {
+		super(doc.filename.getValue(), new ThumbnailInputStreamFactory(doc));
 	}
 
 	public static class ThumbnailInputStreamFactory implements InputStreamFactory {
 
-		private final Images image;
+		private final Document doc;
 
-		public ThumbnailInputStreamFactory(Images image) {
-			this.image = image;
+		public ThumbnailInputStreamFactory(Document doc) {
+			this.doc = doc;
 		}
 
 		@Override
 		public InputStream createInputStream() {
 			try {
-				BufferedImage thumbnail = createThumbnailFromOriginalImageRow();
+				BufferedImage thumbnail = createThumbnailFromOriginalRow();
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				ImageIO.write(thumbnail, "png", os);
 				InputStream fis = new ByteArrayInputStream(os.toByteArray());
 				return fis;
 			} catch (IOException ex) {
-				Logger.getLogger(ThumbnailStreamResource.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(DocumentIconStreamResource.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			return new ByteArrayInputStream(new byte[]{});
 		}
 
-		private BufferedImage createThumbnailFromOriginalImageRow() throws IOException {
-			final InputStream inputStream = image.imageContents.getInputStream();
+		private BufferedImage createThumbnailFromOriginalRow() throws IOException {
+			final InputStream inputStream = doc.documentContents.getInputStream();
 			BufferedImage originalImage = ImageIO.read(inputStream);
 			BufferedImage thumbnail = createThumbnail(originalImage);
 			return thumbnail;

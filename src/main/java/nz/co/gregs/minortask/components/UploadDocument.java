@@ -32,7 +32,7 @@ public class UploadDocument extends HorizontalLayout implements RequiresLogin {
 		this.taskID = taskID;
 		uploader.setUploadButton(new Button("Add Documents..."));
 		uploader.setReceiver(buffer);
-		uploader.setAcceptedFileTypes("application/*", "text/*");
+//		uploader.setAcceptedFileTypes("application/*", "text/*");
 		uploader.addSucceededListener((event) -> {
 			processSuccessfulUpload(event);
 		});
