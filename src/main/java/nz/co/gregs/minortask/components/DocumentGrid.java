@@ -118,7 +118,8 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	private void updateDescription(Document source, String value) {
 		source.description.setValue(value);
 		try {
-			getDatabase().update(source);
+			getDatabase().update(source);		
+			minortask().chat("Saved");
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
