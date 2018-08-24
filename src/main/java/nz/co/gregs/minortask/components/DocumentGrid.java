@@ -99,7 +99,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		}
 		if (allRows.isEmpty()) {
 			this.setSizeUndefined();
-			grid.setSizeUndefined();
+			grid.setHeight("2px");
 		} else {
 			this.setHeight("" + ((allRows.size() * 50 + 100)) + "px");
 		}
