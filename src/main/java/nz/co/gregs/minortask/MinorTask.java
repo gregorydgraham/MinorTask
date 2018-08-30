@@ -33,8 +33,10 @@ import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
+import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
+import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
@@ -322,7 +324,14 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public synchronized void loginAs(Long userID) throws UnknownUserException, TooManyUsersException {
+	public synchronized void loginAs(User user, String password) throws UnknownUserException, TooManyUsersException, SQLException, IncorrectPasswordException {
+		Long userID = user.getUserID();
+		DBPasswordHash queryPassword = user.queryPassword();
+		String oldHash = queryPassword.getValue();
+		queryPassword.checkPasswordAndUpdateHash(password);
+		if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
+			database.update(user);
+		}
 		this.notLoggedIn = false;
 		this.setUserID(userID);
 		if (this.loginDestination != null) {
@@ -357,7 +366,7 @@ public class MinorTask implements Serializable {
 	public boolean getNotLoggedIn() {
 		final VaadinSession currentSession = VaadinSession.getCurrent();
 		return notLoggedIn
-				||userID==0
+				|| userID == 0
 				|| !currentSession.getState().equals(VaadinSessionState.OPEN);
 	}
 

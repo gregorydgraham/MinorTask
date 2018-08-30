@@ -13,7 +13,7 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
-import nz.co.gregs.dbvolution.datatypes.DBString;
+import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.datatypes.DBStringTrimmed;
 
 /**
@@ -35,7 +35,7 @@ public class User extends DBRow {
 	private final DBStringTrimmed email = new DBStringTrimmed();
 
 	@DBColumn
-	private final DBString password = new DBString();
+	private final DBPasswordHash password = new DBPasswordHash();
 
 	@DBColumn
 	private final DBDate signupDate = new DBDate();
@@ -67,7 +67,7 @@ public class User extends DBRow {
 	/**
 	 * @return the password
 	 */
-	public DBString queryPassword() {
+	public DBPasswordHash queryPassword() {
 		return password;
 	}
 

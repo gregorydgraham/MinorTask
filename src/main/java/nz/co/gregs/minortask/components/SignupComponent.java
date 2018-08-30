@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -101,10 +102,10 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
 				minortask().chat("Welcome to Minor Task @" + username);
-				minortask().loginAs(newUser.getUserID());
+				minortask().loginAs(newUser, pass);
 			} catch (SQLException ex) {
 				minortask().sqlerror(ex);
-			} catch (MinorTask.UnknownUserException ex) {
+			} catch (MinorTask.UnknownUserException|IncorrectPasswordException ex) {
 				minortask().warning("Login Error", "Name and/or password do not match any known combination");
 			} catch (MinorTask.TooManyUsersException ex) {
 				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");

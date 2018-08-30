@@ -12,8 +12,13 @@ import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
+import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
+import nz.co.gregs.dbvolution.utility.UpdatingBCrypt;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -82,25 +87,27 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		} else {
 			User example = new User();
 			example.queryUsername().permittedValuesIgnoreCase(username);
-			example.queryPassword().permittedValues(password);
+//			example.queryPassword().permittedValues(password);
 			try {
 				final DBDatabase database = minortask().getDatabase();
 				final DBTable<User> query = database.getDBTable(example);
 				List<User> users = query.getAllRows();
 				switch (users.size()) {
 					case 1:
-						minortask().loginAs(users.get(0).getUserID());
+						User user = users.get(0);
+						minortask().loginAs(user, password);
 						break;
 					case 0:
-						minortask().warning("Login Error", "Name and/or password do not match any known combination");
-						break;
+						throw new MinorTask.UnknownUserException();
+						//minortask().warning("Login Error", "Name and/or password do not match any known combination");
+						//break;
 					default:
 						minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;
 				}
 			} catch (SQLException ex) {
 				warningBuffer.append("SQL FAILED: ").append(ex.getLocalizedMessage());
-			} catch (MinorTask.UnknownUserException ex) {
+			} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
 				minortask().warning("Login Error", "Name and/or password do not match any known combination");
 			} catch (MinorTask.TooManyUsersException ex) {
 				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
