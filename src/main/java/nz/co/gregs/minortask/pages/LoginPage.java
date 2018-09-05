@@ -37,6 +37,7 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 			minorTask.chatAboutUsers();
 		} catch (Exception ex) {
 			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): " + ex.getClass().getSimpleName() + " -> " + ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
 

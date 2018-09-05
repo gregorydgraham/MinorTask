@@ -40,6 +40,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
+import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LoggedOutPage;
@@ -209,7 +210,10 @@ public class MinorTask implements Serializable {
 
 	public void chatAboutUsers() {
 		try {
-			chat("Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks");
+			String message = 
+					"Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
+					+"and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
+			chat(message);
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 		}

@@ -8,7 +8,7 @@ package nz.co.gregs.minortask.streamresources;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import java.io.InputStream;
-import nz.co.gregs.minortask.datamodel.Document;
+import nz.co.gregs.minortask.datamodel.TaskDocument;
 
 /**
  *
@@ -16,22 +16,22 @@ import nz.co.gregs.minortask.datamodel.Document;
  */
 public class DocumentStreamResource extends StreamResource {
 	
-	private final Document originalDoc;
+	private final TaskDocument originalDoc;
 
-	public DocumentStreamResource(Document doc) {
+	public DocumentStreamResource(TaskDocument doc) {
 		super(doc.filename.getValue(), new DocumentInputStreamFactory(doc));
 		originalDoc = doc;
 	}
 
-	public Document getOriginalDocumentRow() {
+	public TaskDocument getOriginalDocumentRow() {
 		return originalDoc;
 	}
 
 	public static class DocumentInputStreamFactory implements InputStreamFactory {
 
-		private final Document doc;
+		private final TaskDocument doc;
 
-		public DocumentInputStreamFactory(Document doc) {
+		public DocumentInputStreamFactory(TaskDocument doc) {
 			this.doc = doc;
 		}
 

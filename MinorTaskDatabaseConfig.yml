@@ -1,9 +1,9 @@
 ---
-- dbDatabase: "nz.co.gregs.dbvolution.databases.SQLiteDB"
+- dbdatabase: "nz.co.gregs.dbvolution.databases.SQLiteDB"
   url: "jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask.sqlite"
   username: "admin"
   password: "admin"
-- dbDatabase: "nz.co.gregs.dbvolution.databases.H2MemoryDB"
+- dbdatabase: "nz.co.gregs.dbvolution.databases.H2MemoryDB"
   url: "jdbc:h2:mem:TestDatabase.h2"
   username: "admin"
   password: "admin"

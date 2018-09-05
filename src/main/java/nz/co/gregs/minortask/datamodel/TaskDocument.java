@@ -22,7 +22,7 @@ import nz.co.gregs.dbvolution.datatypes.DBString;
  */
 @DBRequiredTable
 @DBTableName("documents")
-public class Document extends DBRow {
+public class TaskDocument extends DBRow {
 
 	@DBPrimaryKey
 	@DBAutoIncrement

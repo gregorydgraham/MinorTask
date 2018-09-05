@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import nz.co.gregs.minortask.datamodel.Document;
+import nz.co.gregs.minortask.datamodel.TaskDocument;
 
 /**
  *
@@ -24,15 +24,15 @@ import nz.co.gregs.minortask.datamodel.Document;
  */
 public class DocumentIconStreamResource extends StreamResource {
 	
-	public DocumentIconStreamResource(Document doc) {
+	public DocumentIconStreamResource(TaskDocument doc) {
 		super(doc.filename.getValue(), new ThumbnailInputStreamFactory(doc));
 	}
 
 	public static class ThumbnailInputStreamFactory implements InputStreamFactory {
 
-		private final Document doc;
+		private final TaskDocument doc;
 
-		public ThumbnailInputStreamFactory(Document doc) {
+		public ThumbnailInputStreamFactory(TaskDocument doc) {
 			this.doc = doc;
 		}
 

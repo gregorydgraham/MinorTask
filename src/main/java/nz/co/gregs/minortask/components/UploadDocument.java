@@ -14,7 +14,7 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.shared.Registration;
 import java.io.InputStream;
 import java.sql.SQLException;
-import nz.co.gregs.minortask.datamodel.Document;
+import nz.co.gregs.minortask.datamodel.TaskDocument;
 import nz.co.gregs.minortask.events.DocumentAddedEvent;
 
 /**
@@ -43,7 +43,7 @@ public class UploadDocument extends HorizontalLayout implements RequiresLogin {
 		String fileName = event.getFileName();
 		String mimeType = event.getMIMEType();
 		System.out.println("fileID: " + fileName);
-		Document doc = new Document();
+		TaskDocument doc = new TaskDocument();
 		doc.mediaType.setValue(mimeType);
 		doc.filename.setValue(fileName);
 		final InputStream inputStream = buffer.getInputStream(fileName);
