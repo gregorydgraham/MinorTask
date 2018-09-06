@@ -10,8 +10,10 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
@@ -73,7 +75,7 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		 */
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
 			Anchor anchor = new Anchor("https://www.openstreetmap.org"
-					+"/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
+					+ "/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
 					"View");
 			anchor.setTarget("_blank");
 			anchor.add(icon);
@@ -83,15 +85,22 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		}
 	}
 
-	private TextField getDescriptionComponent(Location source) {
+	private Component getDescriptionComponent(Location source) {
+		VerticalLayout layout = new VerticalLayout();
+		Label label = new Label(source.displayName.getValueWithDefaultValue("Location"));
+		label.setWidth("100%");
 		TextField component = new TextField(
 				"",
-				source.description.getValueWithDefaultValue("Location"),
+				source.description.getValueWithDefaultValue("Important Location"),
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
 		component.setWidth("100%");
-		return component;
+		layout.add(label, component);
+		layout.setMargin(false);
+		layout.setPadding(false);
+		layout.setSpacing(false);
+		return layout;
 	}
 
 	private void setItems() {
