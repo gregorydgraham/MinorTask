@@ -13,6 +13,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
@@ -39,9 +40,9 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	@Override
 	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
+		minortask().setLoginDestination(minortask().getCurrentLocation());
 		if (minortask().getNotLoggedIn()) {
-			removeAll();
-			add(new LoginPage().getLoginPageContents());
+			showLoginPanel();
 		} else {
 			removeAll();
 			add(new MinorTaskTemplate());
@@ -55,6 +56,14 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 			add(new FooterMenu());
 		}
 	}
+
+	private void showLoginPanel() {
+		removeAll();
+		Location location = minortask().getCurrentLocation();
+		minortask().setLoginDestination(location);
+		add(new LoginPage().getLoginPageContents());
+	}
+
 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {

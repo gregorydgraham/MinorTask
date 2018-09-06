@@ -12,6 +12,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.NavigationTrigger;
+import com.vaadin.flow.router.RouteData;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
@@ -58,7 +59,7 @@ public class MinorTask implements Serializable {
 	private long userID = 0;
 	boolean notLoggedIn = true;
 	public String username = "";
-	private Location loginDestination;
+	private Location loginDestination = null;
 
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 
@@ -209,9 +210,9 @@ public class MinorTask implements Serializable {
 
 	public void chatAboutUsers() {
 		try {
-			String message = 
-					"Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
-					+"and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
+			String message
+					= "Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
+					+ "and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
 			chat(message);
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -337,15 +338,7 @@ public class MinorTask implements Serializable {
 		}
 		this.notLoggedIn = false;
 		this.setUserID(userID);
-		if (this.getLoginDestination() != null) {
-			UI.getCurrent()
-					.getRouter()
-					.navigate(UI.getCurrent(), getLoginDestination(),
-							NavigationTrigger.PROGRAMMATIC
-					);
-		} else {
-			showTask(null);
-		}
+		showLoginDestination();
 	}
 
 	/**
@@ -356,12 +349,15 @@ public class MinorTask implements Serializable {
 	}
 
 	public void logout() {
-		UI.getCurrent().navigate(LoggedOutPage.class);
 		this.setLoginDestination(null);
 		this.userID = 0;
 		this.username = null;
 		notLoggedIn = true;
-//		VaadinSession.getCurrent().close();
+		UI current = UI.getCurrent();
+		current.getRouter().navigate(
+				current,
+				getCurrentLocation(),
+				NavigationTrigger.PROGRAMMATIC);
 	}
 
 	public boolean getNotLoggedIn() {
@@ -460,6 +456,27 @@ public class MinorTask implements Serializable {
 		return project;
 	}
 
+	public Location getCurrentLocation() {
+		RouteData route = UI.getCurrent().getRouter().getRoutes().get(0);
+		String url = route.getUrl();
+		Location location = new Location(url);
+		return location;
+	}
+
+	private void showLoginDestination() {
+		Location dest = getLoginDestination();
+		if (dest != null) {
+			String pathWithQueryParameters = dest.getPathWithQueryParameters();
+			if (pathWithQueryParameters.isEmpty()) {
+				showTopLevelTasks();
+			} else {
+				UI.getCurrent().navigate(pathWithQueryParameters);
+			}
+		} else {
+			showTopLevelTasks();
+		}
+	}
+
 	public static class InaccessibleTaskException extends Exception {
 
 		public InaccessibleTaskException(Long taskID) {
@@ -482,6 +499,11 @@ public class MinorTask implements Serializable {
 	 * @return the loginDestination
 	 */
 	public Location getLoginDestination() {
+		System.out.println("LOGIN DESTINATION: "
+				+ (loginDestination == null
+						? "NULL"
+						: loginDestination.getPathWithQueryParameters())
+		);
 		return loginDestination;
 	}
 }

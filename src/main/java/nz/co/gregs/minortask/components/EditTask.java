@@ -15,7 +15,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -65,11 +64,11 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		try {
 
 			taskAndProject = getTaskAndProject(taskID);
-			project = new ProjectPicker(currentTask);
+			project = new ProjectPicker(taskID);
 
-			subtasks = new OpenTaskList(currentTask);
-			completedTasks = new CompletedTaskList(currentTask);
-			add(currentTask != null ? getComponent() : new RootTaskComponent(currentTask));
+			subtasks = new OpenTaskList(taskID);
+			completedTasks = new CompletedTaskList(taskID);
+			add(currentTask != null ? getComponent() : new RootTaskComponent(taskID));
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
 		}
