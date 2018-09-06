@@ -18,20 +18,20 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.datamodel.Location;
+import nz.co.gregs.minortask.datamodel.Place;
 
 /**
  *
  * @author gregorygraham
  */
-public class LocationGrid extends VerticalLayout implements RequiresLogin {
+public class PlaceGrid extends VerticalLayout implements RequiresLogin {
 
 	private final Long taskID;
-	private final Grid<Location> grid = new Grid<Location>();
-	private List<Location> allRows;
-	private LocationSearchComponent searcher;
+	private final Grid<Place> grid = new Grid<Place>();
+	private List<Place> allRows;
+	private PlaceSearchComponent searcher;
 
-	public LocationGrid(Long taskID) {
+	public PlaceGrid(Long taskID) {
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -44,14 +44,12 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		setSpacing(false);
 		setItems();
 		getDatabase().print(allRows);
-		grid.addComponentColumn(
-				(Location source) -> getLocationIconComponent(source)
+		grid.addComponentColumn((Place source) -> getPlaceIconComponent(source)
 		);
-		grid.addComponentColumn(
-				(Location source) -> getDescriptionComponent(source)
+		grid.addComponentColumn((Place source) -> getDescriptionComponent(source)
 		).setFlexGrow(20);
-		grid.addComponentColumn((Location source) -> getRemoveComponent(source));
-		searcher = new LocationSearchComponent(taskID);
+		grid.addComponentColumn((Place source) -> getRemoveComponent(source));
+		searcher = new PlaceSearchComponent(taskID);
 		searcher.addLocationAddedListener((event) -> {
 			setItems();
 		});
@@ -59,11 +57,11 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		add(searcher);
 	}
 
-	private Button getRemoveComponent(Location source) {
-		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removeLocation(source));
+	private Button getRemoveComponent(Place source) {
+		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removePlace(source));
 	}
 
-	private Component getLocationIconComponent(Location source) {
+	private Component getPlaceIconComponent(Place source) {
 		Component icon = new Icon(VaadinIcon.MAP_MARKER);
 		String value = source.iconURL.getValue();
 		if (value != null && !value.isEmpty()) {
@@ -74,18 +72,27 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		https://www.openstreetmap.org/search?query=-41.28654%2C174.77598#map=19/-41.28654/174.77598
 		 */
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
+			HorizontalLayout layout = new HorizontalLayout();
 			Anchor anchor = new Anchor("https://www.openstreetmap.org"
 					+ "/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
-					"View");
+					"");
 			anchor.setTarget("_blank");
 			anchor.add(icon);
-			return anchor;
+			Anchor anchor2 = new Anchor("https://www.openstreetmap.org"
+					+ "/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
+					"View");
+			anchor2.setTarget("_blank");
+			layout.add(anchor, anchor2);
+			layout.setMargin(false);
+			layout.setPadding(false);
+			layout.setSpacing(false);
+			return layout;
 		} else {
 			return icon;
 		}
 	}
 
-	private Component getDescriptionComponent(Location source) {
+	private Component getDescriptionComponent(Place source) {
 		VerticalLayout layout = new VerticalLayout();
 		Label label = new Label(source.displayName.getValueWithDefaultValue("Location"));
 		label.setWidth("100%");
@@ -105,7 +112,7 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 
 	private void setItems() {
 		try {
-			Location example = new Location();
+			Place example = new Place();
 			example.taskID.permittedValues(this.taskID);
 //			example.userID.permittedValues(minortask().getUserID());
 			allRows = getDatabase().getDBTable(example).getAllRows();
@@ -122,7 +129,7 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		this.setWidth("100%");
 	}
 
-	private void removeLocation(Location locn) {
+	private void removePlace(Place locn) {
 		try {
 			getDatabase().delete(locn);
 		} catch (SQLException ex) {
@@ -131,7 +138,7 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		setItems();
 	}
 
-	private void updateDescription(Location source, String value) {
+	private void updateDescription(Place source, String value) {
 		source.description.setValue(value);
 		try {
 			getDatabase().update(source);

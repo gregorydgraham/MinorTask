@@ -15,7 +15,8 @@ import nz.co.gregs.dbvolution.annotations.DBTableName;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBNumber;
 import nz.co.gregs.dbvolution.datatypes.DBString;
-import nz.co.gregs.minortask.components.LocationSearchComponent;
+import nz.co.gregs.minortask.components.PlaceSearchComponent;
+import nz.co.gregs.minortask.utilities.OpenStreetMapPlace;
 
 /**
  *
@@ -23,7 +24,7 @@ import nz.co.gregs.minortask.components.LocationSearchComponent;
  */
 @DBRequiredTable
 @DBTableName("locations")
-public class Location extends DBRow {
+public class Place extends DBRow {
 
 	@DBPrimaryKey
 	@DBAutoIncrement
@@ -61,7 +62,7 @@ public class Location extends DBRow {
 	@DBColumn
 	public DBNumber osmImportance = new DBNumber();
 
-	public Location() {
+	public Place() {
 		super();
 	}
 
@@ -80,7 +81,7 @@ public class Location extends DBRow {
 		private String iconURL;
 	 */
 
-	public Location(Long taskID, LocationSearchComponent.Place place) {
+	public Place(Long taskID, OpenStreetMapPlace place) {
 		this.taskID.setValue(taskID);
 		displayName.setValue(place.getDisplayName());
 		iconURL.setValue(place.getIconURL());

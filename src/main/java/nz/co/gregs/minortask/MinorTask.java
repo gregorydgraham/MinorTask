@@ -40,7 +40,6 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
-import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LoggedOutPage;
@@ -338,12 +337,10 @@ public class MinorTask implements Serializable {
 		}
 		this.notLoggedIn = false;
 		this.setUserID(userID);
-		if (this.loginDestination != null) {
+		if (this.getLoginDestination() != null) {
 			UI.getCurrent()
 					.getRouter()
-					.navigate(
-							UI.getCurrent(),
-							loginDestination,
+					.navigate(UI.getCurrent(), getLoginDestination(),
 							NavigationTrigger.PROGRAMMATIC
 					);
 		} else {
@@ -360,7 +357,7 @@ public class MinorTask implements Serializable {
 
 	public void logout() {
 		UI.getCurrent().navigate(LoggedOutPage.class);
-		this.loginDestination = null;
+		this.setLoginDestination(null);
 		this.userID = 0;
 		this.username = null;
 		notLoggedIn = true;
@@ -479,5 +476,12 @@ public class MinorTask implements Serializable {
 
 		public UnknownUserException() {
 		}
+	}
+
+	/**
+	 * @return the loginDestination
+	 */
+	public Location getLoginDestination() {
+		return loginDestination;
 	}
 }

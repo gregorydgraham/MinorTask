@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.utilities.OpenStreetMapPlace;
 import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -30,8 +31,8 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import nz.co.gregs.minortask.datamodel.Location;
-import nz.co.gregs.minortask.events.LocationAddedEvent;
+import nz.co.gregs.minortask.datamodel.Place;
+import nz.co.gregs.minortask.events.PlaceAddedEvent;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,16 +43,16 @@ import org.xml.sax.SAXException;
  *
  * @author gregorygraham
  */
-public class LocationSearchComponent extends HorizontalLayout implements RequiresLogin, HasDefaultButton {
+public class PlaceSearchComponent extends HorizontalLayout implements RequiresLogin, HasDefaultButton {
 
 	private final Long taskID;
-	TextField locationText = new TextField("", "8 Willis", "");
+	TextField locationText = new TextField("", "", "address to search for...");
 	Button searchButton = new Button("Search For Location...");
 	Button addButton = new Button("Add");
 	PlacesBox comboBox = new PlacesBox();
 	private Registration defaultRegistration;
 
-	public LocationSearchComponent(Long taskID) {
+	public PlaceSearchComponent(Long taskID) {
 		super();
 		this.taskID = taskID;
 
@@ -92,8 +93,8 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 	}
 
 	private void addSelectedLocation() {
-		Place place = comboBox.getValue();
-		Location location = new Location(this.taskID, place);
+		OpenStreetMapPlace place = comboBox.getValue();
+		Place location = new Place(this.taskID, place);
 		try {
 			getDatabase().insert(location);
 		} catch (SQLException ex) {
@@ -101,7 +102,7 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 		}
 
 // Ultimately we need to inform our listeners that there is a new location
-		fireEvent(new LocationAddedEvent(this, true));
+		fireEvent(new PlaceAddedEvent(this, true));
 	}
 
 	private void searchForLocation(String searchString) {
@@ -141,7 +142,7 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 					if (placeNodes != null) {
 						System.out.println("PLACENODES: " + placeNodes.getLength());
 						for (int i = 0; i < placeNodes.getLength(); i++) {
-							Place place = new Place((Element) placeNodes.item(i));
+							OpenStreetMapPlace place = new OpenStreetMapPlace((Element) placeNodes.item(i));
 							System.out.println(place.toCompleteString());
 							this.comboBox.addPlace(place);
 						}
@@ -149,9 +150,9 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 				}
 			}
 		} catch (UnsupportedEncodingException | MalformedURLException ex) {
-			Logger.getLogger(LocationSearchComponent.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(PlaceSearchComponent.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (IOException | ParserConfigurationException | SAXException ex) {
-			Logger.getLogger(LocationSearchComponent.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(PlaceSearchComponent.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -164,170 +165,14 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 	}
 
 	public Registration addLocationAddedListener(
-			ComponentEventListener<LocationAddedEvent> listener) {
-		return addListener(LocationAddedEvent.class, listener);
+			ComponentEventListener<PlaceAddedEvent> listener) {
+		return addListener(PlaceAddedEvent.class, listener);
 	}
 
-	public static class Place implements Serializable {
 
-		static public final long serialVersionUID = 1l;
-		
-		private boolean validPlace = false;
-		private String placeID;
-		private String osmType;
-		private String osmID;
-		private String placeRank;
-		private String boundingBox;
-		private String polygonPoints;
-		private String latitude;
-		private String longitude;
-		private String displayName;
-		private String type;
-		private String importance;
-		private String iconURL;
+	private static class PlacesBox extends ComboBox<OpenStreetMapPlace> {
 
-		public Place(Element node) {
-			if (node.getNodeName().equals("place")) {
-				validPlace = true;
-				placeID = node.getAttribute("place_id");
-				osmType = node.getAttribute("osm_type");
-				osmID = node.getAttribute("osm_id");
-				placeRank = node.getAttribute("place_rank");
-				boundingBox = node.getAttribute("boundingbox");
-				polygonPoints = node.getAttribute("polygonpoints");
-				latitude = node.getAttribute("lat");
-				longitude = node.getAttribute("lon");
-				displayName = node.getAttribute("display_name");
-				type = node.getAttribute("type");
-				iconURL = node.getAttribute("icon");
-				importance = node.getAttribute("importance");
-
-			}
-		}
-
-		@Override
-		public String toString() {
-			if (!validPlace) {
-				return "{NOTAPLACE}";
-			} else {
-				return this.displayName;
-			}
-		}
-
-		public String toCompleteString() {
-			if (!validPlace) {
-				return "{NOTAPLACE}";
-			} else {
-				return "{" + this.placeID + "|"
-						+ this.displayName + "|"
-						+ this.osmType + "|"
-						+ this.osmID + "|"
-						+ this.placeRank + "|"
-						+ this.boundingBox + "|"
-						+ this.latitude + "|"
-						+ this.longitude + "|"
-						+ this.type + "|"
-						+ this.iconURL + "|"
-						+ this.importance + "|"
-						+ this.polygonPoints + "}";
-			}
-		}
-
-		/**
-		 * @return the validPlace
-		 */
-		public boolean isValidPlace() {
-			return validPlace;
-		}
-
-		/**
-		 * @return the placeID
-		 */
-		public String getPlaceID() {
-			return placeID;
-		}
-
-		/**
-		 * @return the osmType
-		 */
-		public String getOsmType() {
-			return osmType;
-		}
-
-		/**
-		 * @return the osmID
-		 */
-		public String getOsmID() {
-			return osmID;
-		}
-
-		/**
-		 * @return the placeRank
-		 */
-		public String getPlaceRank() {
-			return placeRank;
-		}
-
-		/**
-		 * @return the boundingBox
-		 */
-		public String getBoundingBox() {
-			return boundingBox;
-		}
-
-		/**
-		 * @return the polygonPoints
-		 */
-		public String getPolygonPoints() {
-			return polygonPoints;
-		}
-
-		/**
-		 * @return the latitude
-		 */
-		public String getLatitude() {
-			return latitude;
-		}
-
-		/**
-		 * @return the longitude
-		 */
-		public String getLongitude() {
-			return longitude;
-		}
-
-		/**
-		 * @return the displayName
-		 */
-		public String getDisplayName() {
-			return displayName;
-		}
-
-		/**
-		 * @return the type
-		 */
-		public String getType() {
-			return type;
-		}
-
-		/**
-		 * @return the importance
-		 */
-		public String getImportance() {
-			return importance;
-		}
-
-		/**
-		 * @return the iconURL
-		 */
-		public String getIconURL() {
-			return iconURL;
-		}
-	}
-
-	private static class PlacesBox extends ComboBox<Place> {
-
-		List<Place> placesList = new ArrayList<>();
+		List<OpenStreetMapPlace> placesList = new ArrayList<>();
 
 		public PlacesBox() {
 			super();
@@ -338,17 +183,17 @@ public class LocationSearchComponent extends HorizontalLayout implements Require
 		}
 
 		@Override
-		public void setItems(Collection<Place> items) {
+		public void setItems(Collection<OpenStreetMapPlace> items) {
 			placesList.addAll(items);
 			refreshList();
 		}
 
-		public void addPlace(Place place) {
+		public void addPlace(OpenStreetMapPlace place) {
 			placesList.add(place);
 			refreshList();
 		}
 
-		public void addPlaces(Collection<Place> places) {
+		public void addPlaces(Collection<OpenStreetMapPlace> places) {
 			this.setItems(places);
 		}
 

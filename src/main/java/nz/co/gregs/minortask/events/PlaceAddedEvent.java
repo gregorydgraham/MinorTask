@@ -6,15 +6,15 @@
 package nz.co.gregs.minortask.events;
 
 import com.vaadin.flow.component.ComponentEvent;
-import nz.co.gregs.minortask.components.LocationSearchComponent;
+import nz.co.gregs.minortask.components.PlaceSearchComponent;
 
 /**
  *
  * @author gregorygraham
  */
-public class LocationAddedEvent extends ComponentEvent<LocationSearchComponent> {
+public class PlaceAddedEvent extends ComponentEvent<PlaceSearchComponent> {
 
-	public LocationAddedEvent(LocationSearchComponent source, boolean fromClient) {
+	public PlaceAddedEvent(PlaceSearchComponent source, boolean fromClient) {
 		super(source, fromClient);
 	}
 }
