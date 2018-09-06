@@ -6,15 +6,15 @@
 package nz.co.gregs.minortask.events;
 
 import com.vaadin.flow.component.ComponentEvent;
-import nz.co.gregs.minortask.components.UploadDocument;
+import nz.co.gregs.minortask.components.DocumentUpload;
 
 /**
  *
  * @author gregorygraham
  */
-public class DocumentAddedEvent extends ComponentEvent<UploadDocument> {
+public class DocumentAddedEvent extends ComponentEvent<DocumentUpload> {
 
-	public DocumentAddedEvent(UploadDocument source, boolean fromClient) {
+	public DocumentAddedEvent(DocumentUpload source, boolean fromClient) {
 		super(source, fromClient);
 	}
 }

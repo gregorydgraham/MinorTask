@@ -21,13 +21,13 @@ import nz.co.gregs.minortask.events.DocumentAddedEvent;
  *
  * @author gregorygraham
  */
-public class UploadDocument extends HorizontalLayout implements RequiresLogin {
+public class DocumentUpload extends HorizontalLayout implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 	Upload uploader = new Upload();
 	private final Long taskID;
 
-	public UploadDocument(Long taskID) {
+	public DocumentUpload(Long taskID) {
 		super();
 		this.taskID = taskID;
 		uploader.setUploadButton(new Button("Add Documents..."));

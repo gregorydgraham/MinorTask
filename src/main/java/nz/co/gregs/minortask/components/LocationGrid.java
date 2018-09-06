@@ -47,7 +47,7 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 		);
 		grid.addComponentColumn(
 				(Location source) -> getDescriptionComponent(source)
-		).setFlexGrow(10);
+		).setFlexGrow(20);
 		grid.addComponentColumn((Location source) -> getRemoveComponent(source));
 		searcher = new LocationSearchComponent(taskID);
 		searcher.addLocationAddedListener((event) -> {
@@ -58,24 +58,23 @@ public class LocationGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Button getRemoveComponent(Location source) {
-		return new Button("remove", (event) -> removeLocation(source));
+		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removeLocation(source));
 	}
 
 	private Component getLocationIconComponent(Location source) {
 		Component icon = new Icon(VaadinIcon.MAP_MARKER);
-		if (source.iconURL.isNotNull()) {
+		String value = source.iconURL.getValue();
+		if (value != null && !value.isEmpty()) {
+			System.out.println("URL VALUE: \"" + source.iconURL.getValue() + "\"");
 			icon = new Image(source.iconURL.getValue(), "");
-//		} else {
-//			icon = new Icon(VaadinIcon.MAP_MARKER);
 		}
 		/*
 		https://www.openstreetmap.org/search?query=-41.28654%2C174.77598#map=19/-41.28654/174.77598
 		 */
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
-			Anchor anchor = new Anchor("https://www.openstreetmap.org/search"
-					+ "?query=" + source.latitude.getValue() + "%2c" + source.longitude.getValue()
-					+ "#map=19/" + source.latitude.getValue() + "/" + source.longitude.getValue(),
-					"Open Street Map");
+			Anchor anchor = new Anchor("https://www.openstreetmap.org"
+					+"/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
+					"View");
 			anchor.setTarget("_blank");
 			anchor.add(icon);
 			return anchor;

@@ -29,7 +29,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	private final Long taskID;
 	private Grid<TaskDocument> grid = new Grid<TaskDocument>();
 	private List<TaskDocument> allRows;
-	private UploadDocument uploader;
+	private DocumentUpload uploader;
 
 	public DocumentGrid(Long taskID) {
 		this.taskID = taskID;
@@ -47,9 +47,9 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		grid.addComponentColumn((TaskDocument source) -> getFileIconComponent(source)
 		);
 		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source)
-		).setFlexGrow(10);
+		).setFlexGrow(20);
 		grid.addComponentColumn((TaskDocument source) -> getRemoveComponent(source));
-		uploader = new UploadDocument(taskID);
+		uploader = new DocumentUpload(taskID);
 		uploader.addDocumentAddedListener((event) -> {
 			setItems();
 		});
@@ -58,7 +58,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Button getRemoveComponent(TaskDocument source) {
-		return new Button("remove", (event) -> removeDocument(source));
+		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removeDocument(source));
 	}
 
 	private Anchor getFileIconComponent(TaskDocument source) {
