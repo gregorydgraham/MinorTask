@@ -192,7 +192,7 @@ public class MinorTask implements Serializable {
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
-				configFile = (String) envCtx.lookup("DatabaseConfigFilename");
+				configFile = (String) envCtx.lookup("MinorTaskDatabaseConfigFilename");
 				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(new File(configFile));
 				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
 					database = dbDatabaseClusterWithConfigFile;
