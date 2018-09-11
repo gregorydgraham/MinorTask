@@ -3,5 +3,5 @@
 	<Environment name="DatabaseConfigFilename" 
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskDatabaseConfig.yml"
 							 type="java.lang.String" 
-							 override="false"/>
+							 override="true"/>
 </Context>
