@@ -7,5 +7,15 @@
 				 id="WebApp_ID" version="3.0">
 
 	<display-name>MinorTask Project Management</display-name>
-	
+	<resource-env-ref>
+		<description>
+			Object factory for MyBean instances.
+		</description>
+		<resource-env-ref-name>
+			bean/DatabaseConnectionSettingsFactory
+		</resource-env-ref-name>
+		<resource-env-ref-type>
+			nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings
+		</resource-env-ref-type>
+	</resource-env-ref>
 </web-app>

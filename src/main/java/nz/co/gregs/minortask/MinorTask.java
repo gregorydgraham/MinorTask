@@ -18,6 +18,7 @@ import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -28,11 +29,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
+import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
@@ -43,7 +51,6 @@ import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
-import nz.co.gregs.minortask.pages.LoggedOutPage;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
@@ -179,10 +186,14 @@ public class MinorTask implements Serializable {
 	}
 
 	public final synchronized void setupDatabase() {
+		
 		if (database == null) {
-			final String configFile = "MinorTaskDatabaseConfig.yml";
+		String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
-				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
+				Context initCtx = new InitialContext();
+				Context envCtx = (Context) initCtx.lookup("java:comp/env");
+				configFile = (String) envCtx.lookup("DatabaseConfigFilename");
+				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(new File(configFile));
 				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
 					database = dbDatabaseClusterWithConfigFile;
 					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
@@ -193,6 +204,8 @@ public class MinorTask implements Serializable {
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 				final String error = "Unable to find database " + configFile;
 				System.err.println("" + error);
+			} catch (NamingException ex) {
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		if (database == null) {
@@ -206,6 +219,67 @@ public class MinorTask implements Serializable {
 				sqlerror(ex1);
 			}
 		}
+//		if (database == null) {
+//			DatabaseConnectionSettings setting = new DatabaseConnectionSettings();
+//			setting.setUrl(username);
+//			setting.setPassword(username);
+//			setting.getUsername();
+//			try {
+//				Context initCtx = new InitialContext();
+//				Context envCtx = (Context) initCtx.lookup("java:comp/env");
+//				setting = (DatabaseConnectionSettings) envCtx.lookup("bean/DatabaseConnectionSettingsFactory");
+//
+//				final DBDatabaseCluster dbdatabaseCluster = new DBDatabaseCluster(setting);
+//				if (dbdatabaseCluster.getReadyDatabase() != null) {
+//					database = dbdatabaseCluster;
+//					debug("Database created from \"" + setting);
+//
+//				}
+//			} catch (NoAvailableDatabaseException | SQLException | InvocationTargetException | IllegalArgumentException | IllegalAccessException | InstantiationException | SecurityException | NoSuchMethodException | ClassNotFoundException ex) {
+//				warning("Configuration Failed", "We were unable to use the database configuration \"" + (setting==null?"NULL":setting));
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+//			} catch (NamingException ex) {
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+//			}
+//		}
+//		if (database == null) {
+//			try {
+//				database = getEmergencyDatabase();
+//				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
+//			} catch (Exception ex1) {
+//				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
+//				System.err.println("" + ex1.getLocalizedMessage());
+//				sqlerror(ex1);
+//			}
+//		}
+//		if (database == null) {
+//		final String configFile = "MinorTaskDatabaseConfig.yml";
+//			try {
+//				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
+//				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
+//					database = dbDatabaseClusterWithConfigFile;
+//					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
+//
+//				}
+//			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
+//				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+//				final String error = "Unable to find database " + configFile;
+//				System.err.println("" + error);
+//			}
+//		}
+//		if (database == null) {
+//			try {
+//				database = getEmergencyDatabase();
+//				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
+//			} catch (Exception ex1) {
+//				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
+//				System.err.println("" + ex1.getLocalizedMessage());
+//				sqlerror(ex1);
+//			}
+//		}
 	}
 
 	public void chatAboutUsers() {
