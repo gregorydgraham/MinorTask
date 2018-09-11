@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/minortask">
-	<Environment name="DatabaseConfigFilename" 
+	<Environment name="MinorTaskDatabaseConfigFilename" 
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskDatabaseConfig.yml"
 							 type="java.lang.String" 
 							 override="true"/>
