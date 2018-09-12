@@ -44,10 +44,10 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		setSpacing(false);
 		setItems();
 		getDatabase().print(allRows);
-		grid.addComponentColumn((TaskDocument source) -> getFileIconComponent(source)
-		);
-		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source)
-		).setFlexGrow(20);
+		grid.setHeightByRows(true);
+		grid.addComponentColumn((TaskDocument source) -> getFileIconComponent(source));
+		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source))
+				.setFlexGrow(20);
 		grid.addComponentColumn((TaskDocument source) -> getRemoveComponent(source));
 		uploader = new DocumentUpload(taskID);
 		uploader.addDocumentAddedListener((event) -> {
@@ -95,12 +95,6 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-		if (allRows.isEmpty()) {
-			this.setSizeUndefined();
-			grid.setHeight("2px");
-		} else {
-			this.setHeight("" + ((allRows.size() * 50 + 100)) + "px");
-		}
 		this.setWidth("100%");
 	}
 
@@ -116,7 +110,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	private void updateDescription(TaskDocument source, String value) {
 		source.description.setValue(value);
 		try {
-			getDatabase().update(source);		
+			getDatabase().update(source);
 			minortask().chat("Saved");
 		} catch (SQLException ex) {
 			sqlerror(ex);

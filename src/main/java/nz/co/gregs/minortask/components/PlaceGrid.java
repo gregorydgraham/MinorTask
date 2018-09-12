@@ -44,6 +44,7 @@ public class PlaceGrid extends VerticalLayout implements RequiresLogin {
 		setSpacing(false);
 		setItems();
 		getDatabase().print(allRows);
+		grid.setHeightByRows(true);
 		grid.addComponentColumn((Place source) -> getPlaceIconComponent(source)
 		);
 		grid.addComponentColumn((Place source) -> getDescriptionComponent(source)
@@ -114,19 +115,11 @@ public class PlaceGrid extends VerticalLayout implements RequiresLogin {
 		try {
 			Place example = new Place();
 			example.taskID.permittedValues(this.taskID);
-//			example.userID.permittedValues(minortask().getUserID());
 			allRows = getDatabase().getDBTable(example).getAllRows();
 			grid.setItems(allRows);
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-		if (allRows.isEmpty()) {
-			this.setSizeUndefined();
-			grid.setHeight("2px");
-		} else {
-			this.setHeight("" + ((allRows.size() * 50 + 100)) + "px");
-		}
-		this.setWidth("100%");
 	}
 
 	private void removePlace(Place locn) {
