@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
@@ -27,6 +28,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	private TextField USERNAME_FIELD;
 	private PasswordField PASSWORD_FIELD;
+	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", false);
 
 	public LoginComponent() {
 		this("", "");
@@ -70,7 +72,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		USERNAME_FIELD.focus();
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
-		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, buttons);
+		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, REMEMBER_ME_FIELD, buttons);
 		return loginPanel;
 	}
 
@@ -78,6 +80,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		StringBuilder warningBuffer = new StringBuilder();
 		final String username = USERNAME_FIELD.getValue();
 		final String password = PASSWORD_FIELD.getValue();
+		final Boolean rememberMeValue = REMEMBER_ME_FIELD.getValue();
 		if (username.isEmpty() || password.isEmpty()) {
 			warningBuffer.append("Name and/or password needs to be entered\n");
 		} else {
@@ -91,12 +94,12 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 				switch (users.size()) {
 					case 1:
 						User user = users.get(0);
-						minortask().loginAs(user, password);
+						minortask().loginAs(user, password, rememberMeValue);
 						break;
 					case 0:
 						throw new MinorTask.UnknownUserException();
-						//minortask().warning("Login Error", "Name and/or password do not match any known combination");
-						//break;
+					//minortask().warning("Login Error", "Name and/or password do not match any known combination");
+					//break;
 					default:
 						minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;

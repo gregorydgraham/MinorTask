@@ -41,7 +41,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
 		minortask().setLoginDestination(minortask().getCurrentLocation());
-		if (minortask().getNotLoggedIn()) {
+		if (!minortask().isLoggedIn()) {
 			showLoginPanel();
 		} else {
 			removeAll();

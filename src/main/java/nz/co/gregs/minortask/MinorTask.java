@@ -13,34 +13,35 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.router.RouteData;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.servlet.http.Cookie;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
-import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
-import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
@@ -55,6 +56,7 @@ import nz.co.gregs.minortask.pages.ProjectsLayout;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
+import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -74,7 +76,7 @@ public class MinorTask implements Serializable {
 		setupDatabase();
 	}
 
-	static DBDatabaseCluster database;
+	static DBDatabaseCluster database = null;
 
 	public static Date asDate(LocalDate localDate) {
 		return localDate == null ? null : Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -186,9 +188,9 @@ public class MinorTask implements Serializable {
 	}
 
 	public final synchronized void setupDatabase() {
-		
+
 		if (database == null) {
-		String configFile = "MinorTaskDatabaseConfig.yml";
+			String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
@@ -219,67 +221,6 @@ public class MinorTask implements Serializable {
 				sqlerror(ex1);
 			}
 		}
-//		if (database == null) {
-//			DatabaseConnectionSettings setting = new DatabaseConnectionSettings();
-//			setting.setUrl(username);
-//			setting.setPassword(username);
-//			setting.getUsername();
-//			try {
-//				Context initCtx = new InitialContext();
-//				Context envCtx = (Context) initCtx.lookup("java:comp/env");
-//				setting = (DatabaseConnectionSettings) envCtx.lookup("bean/DatabaseConnectionSettingsFactory");
-//
-//				final DBDatabaseCluster dbdatabaseCluster = new DBDatabaseCluster(setting);
-//				if (dbdatabaseCluster.getReadyDatabase() != null) {
-//					database = dbdatabaseCluster;
-//					debug("Database created from \"" + setting);
-//
-//				}
-//			} catch (NoAvailableDatabaseException | SQLException | InvocationTargetException | IllegalArgumentException | IllegalAccessException | InstantiationException | SecurityException | NoSuchMethodException | ClassNotFoundException ex) {
-//				warning("Configuration Failed", "We were unable to use the database configuration \"" + (setting==null?"NULL":setting));
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-//			} catch (NamingException ex) {
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-//			}
-//		}
-//		if (database == null) {
-//			try {
-//				database = getEmergencyDatabase();
-//				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
-//			} catch (Exception ex1) {
-//				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
-//				System.err.println("" + ex1.getLocalizedMessage());
-//				sqlerror(ex1);
-//			}
-//		}
-//		if (database == null) {
-//		final String configFile = "MinorTaskDatabaseConfig.yml";
-//			try {
-//				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(configFile);
-//				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
-//					database = dbDatabaseClusterWithConfigFile;
-//					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
-//
-//				}
-//			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
-//				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-//				final String error = "Unable to find database " + configFile;
-//				System.err.println("" + error);
-//			}
-//		}
-//		if (database == null) {
-//			try {
-//				database = getEmergencyDatabase();
-//				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
-//			} catch (Exception ex1) {
-//				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
-//				System.err.println("" + ex1.getLocalizedMessage());
-//				sqlerror(ex1);
-//			}
-//		}
 	}
 
 	public void chatAboutUsers() {
@@ -355,13 +296,22 @@ public class MinorTask implements Serializable {
 		UI.getCurrent().navigate(LoginPage.class, username);
 	}
 
-	public void showTopLevelTasks() {
-		UI.getCurrent().navigate(ProjectsLayout.class, null);
+	public void showOpeningPage() {
+		System.out.println("SHOW OPENING PAGE");
+		showTodaysTasks();
+	}
+
+	public void showProjects() {
+		UI.getCurrent().navigate(ProjectsLayout.class, 0l);
+	}
+
+	public void showTodaysTasks() {
+		UI.getCurrent().navigate(TodaysTaskLayout.class, 0l);
 	}
 
 	public void showTask(Long taskID) {
 		if (taskID == null) {
-			showTopLevelTasks();
+			showOpeningPage();
 		} else {
 			UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
 		}
@@ -402,17 +352,102 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public synchronized void loginAs(User user, String password) throws UnknownUserException, TooManyUsersException, SQLException, IncorrectPasswordException {
-		Long userID = user.getUserID();
+	public synchronized void loginAs(User user, String password, Boolean rememberMe) throws UnknownUserException, TooManyUsersException, SQLException, IncorrectPasswordException {
 		DBPasswordHash queryPassword = user.queryPassword();
 		String oldHash = queryPassword.getValue();
 		queryPassword.checkPasswordAndUpdateHash(password);
 		if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
 			database.update(user);
 		}
+		doLogin(user, rememberMe);
+	}
+
+	private void doLogin(User user, boolean rememberUser) throws TooManyUsersException, UnknownUserException {
 		this.notLoggedIn = false;
-		this.setUserID(userID);
+		this.setUserID(user.getUserID());
+		if (rememberUser) {
+			try {
+				setRememberMeCookie(user);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}
 		showLoginDestination();
+	}
+	private static final String MINORTASK_MEMORY_KEY = "MinorTaskMemoryKey";
+
+	private static String getRandomID() {
+		return new BigInteger(130, new SecureRandom()).toString(32);
+	}
+
+	private void setRememberMeCookie(User user) throws SQLException {
+		String identifier = new BigInteger(130, new SecureRandom()).toString(32);
+		setCookie(MINORTASK_MEMORY_KEY, identifier);
+		user.setRememberedID(identifier);
+		getDatabase().update(user);
+	}
+
+	private void setCookie(String cookieName, String cookieValue) {
+		Cookie cookie = new Cookie(cookieName, cookieValue);
+		cookie.setPath("/");
+		cookie.setMaxAge(60 * 60 * 24 * 30);
+		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue());
+		VaadinService.getCurrentResponse().addCookie(cookie);
+	}
+
+	private void removeRememberMeCookieValue() throws SQLException, UnexpectedNumberOfRowsException {
+		User example = new User();
+		example.queryUserID().setValue(userID);
+		User user = getDatabase().getDBTable(example).getOnlyRow();
+		user.getRememberedID().setValueToNull();
+		getDatabase().update(user);
+		Cookie cookie = new Cookie(MINORTASK_MEMORY_KEY, "");
+		cookie.setPath("/");
+		cookie.setMaxAge(0);
+		VaadinService.getCurrentResponse().addCookie(cookie);
+	}
+
+	private Optional<Cookie> getRememberMeCookieValue() {
+		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+		if (cookies != null) {
+			return Arrays.stream(cookies).filter(c -> c.getName().equals(MINORTASK_MEMORY_KEY)).findFirst();
+		} else {
+			return Optional.empty();
+		}
+	}
+
+	private User getRememberedUser(Optional<Cookie> rememberMeCookieValue) throws UnknownUserException, TooManyUsersException {
+		if (rememberMeCookieValue.isPresent()) {
+			String value = rememberMeCookieValue.get().getValue();
+			if (!value.isEmpty()) {
+				User example = new User();
+				example.getRememberedID().permittedValues(value);
+				try {
+					User onlyRow = getDatabase().getDBTable(example).getOnlyRow();
+					return onlyRow;
+				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+					sqlerror(ex);
+				} catch (UnexpectedNumberOfRowsException ex) {
+					if (ex.getActualRows() == 0) {
+						throw new UnknownUserException();
+					} else {
+						throw new TooManyUsersException();
+					}
+				}
+			}
+		}
+		throw new UnknownUserException();
+	}
+
+	private boolean canLoginRememberedUser() {
+		try {
+			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
+			User user = getRememberedUser(rememberMeCookieValue);
+			doLogin(user, true);
+			return true;
+		} catch (UnknownUserException | TooManyUsersException ex) {
+			return false;
+		}
 	}
 
 	/**
@@ -423,6 +458,11 @@ public class MinorTask implements Serializable {
 	}
 
 	public void logout() {
+		try {
+			removeRememberMeCookieValue();
+		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
+			sqlerror(ex);
+		}
 		this.setLoginDestination(null);
 		this.userID = 0;
 		this.username = null;
@@ -515,7 +555,11 @@ public class MinorTask implements Serializable {
 	}
 
 	public boolean isLoggedIn() {
-		return this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
+		boolean loggedIn = this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
+		if (!loggedIn) {
+			return canLoginRememberedUser();
+		}
+		return loggedIn;
 	}
 
 	public String getApplicationName() {
@@ -542,12 +586,13 @@ public class MinorTask implements Serializable {
 		if (dest != null) {
 			String pathWithQueryParameters = dest.getPathWithQueryParameters();
 			if (pathWithQueryParameters.isEmpty()) {
-				showTopLevelTasks();
+				showOpeningPage();
 			} else {
+				System.out.println("NAVIGATE WITH PATH");
 				UI.getCurrent().navigate(pathWithQueryParameters);
 			}
 		} else {
-			showTopLevelTasks();
+			showOpeningPage();
 		}
 	}
 

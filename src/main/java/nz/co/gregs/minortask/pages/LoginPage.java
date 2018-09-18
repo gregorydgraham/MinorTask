@@ -6,8 +6,10 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
@@ -35,9 +37,11 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 			MinorTask minorTask = new MinorTask();
 			add(getLoginPageContents());
 			minorTask.chatAboutUsers();
-			if (minorTask.isLoggedIn()){
-				minorTask.showTopLevelTasks();
-			}
+//			if (minorTask.isLoggedIn()) {
+//				System.out.println("SWITCHING TO OPENING PAGE");
+//				minorTask.showOpeningPage();
+//			} else {
+//			}
 		} catch (Exception ex) {
 			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): " + ex.getClass().getSimpleName() + " -> " + ex.getMessage());
 			ex.printStackTrace();
@@ -57,6 +61,12 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		loginComponent.setUsername(parameter);
+		MinorTask minorTask = new MinorTask();
+		if (minorTask.isLoggedIn()) {
+			System.out.println("SWITCHING TO OPENING PAGE");
+			minorTask.showOpeningPage();
+		} else {
+		}
 	}
 
 }

@@ -5,10 +5,10 @@
  */
 package nz.co.gregs.minortask.components;
 
-import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
+import nz.co.gregs.minortask.components.tasklists.CompletedProjectsList;
+import nz.co.gregs.minortask.components.tasklists.OpenProjectsList;
 
 /**
  *
@@ -25,8 +25,8 @@ public class RootTaskComponent extends VerticalLayout implements RequiresLogin{
 
 		layout.add(
 				new ProjectPathNavigator.WithAddTaskButton(null),
-				new OpenTaskList(null),
-				new CompletedTaskList(null)
+				new OpenProjectsList(),
+				new CompletedProjectsList()
 		);
 		return layout;
 	}

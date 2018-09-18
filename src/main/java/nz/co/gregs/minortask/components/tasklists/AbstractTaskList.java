@@ -14,11 +14,13 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -108,7 +110,9 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
-		Anchor anchor = new Anchor("task/"+task.taskID.getValue(), "");
+		
+		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class, task.taskID.getValue());
+		Anchor anchor = new Anchor(url, "");
 		anchor.add(summary);
 		
 		return anchor;

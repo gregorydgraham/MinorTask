@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -30,6 +31,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	public final PasswordField REPEAT_PASSWORD_FIELD = new PasswordField("Repeat Password");
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
+	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", false);
 
 	public SignupComponent() {
 		this("", "");
@@ -102,10 +104,10 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 				newUser.setSignupDate(new Date());
 				getDatabase().insert(newUser);
 				minortask().chat("Welcome to Minor Task @" + username);
-				minortask().loginAs(newUser, pass);
+				minortask().loginAs(newUser, pass, REMEMBER_ME_FIELD.getValue());
 			} catch (SQLException ex) {
 				minortask().sqlerror(ex);
-			} catch (MinorTask.UnknownUserException|IncorrectPasswordException ex) {
+			} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
 				minortask().warning("Login Error", "Name and/or password do not match any known combination");
 			} catch (MinorTask.TooManyUsersException ex) {
 				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
