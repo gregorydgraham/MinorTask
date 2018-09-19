@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.Context;
@@ -40,6 +41,7 @@ import javax.servlet.http.Cookie;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
@@ -73,10 +75,10 @@ public class MinorTask implements Serializable {
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 
 	public MinorTask() {
-		setupDatabase();
+		setDatabase(setupDatabase());
 	}
 
-	static DBDatabaseCluster database = null;
+	private static DBDatabase database = null;
 
 	public static Date asDate(LocalDate localDate) {
 		return localDate == null ? null : Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -187,7 +189,7 @@ public class MinorTask implements Serializable {
 		return arrayList;
 	}
 
-	public final synchronized void setupDatabase() {
+	public final synchronized DBDatabase setupDatabase() {
 
 		if (database == null) {
 			String configFile = "MinorTaskDatabaseConfig.yml";
@@ -221,13 +223,14 @@ public class MinorTask implements Serializable {
 				sqlerror(ex1);
 			}
 		}
+		return database;
 	}
 
 	public void chatAboutUsers() {
 		try {
 			String message
-					= "Currently serving " + database.getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
-					+ "and " + database.getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
+					= "Currently serving " + getDatabase().getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
+					+ "and " + getDatabase().getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
 			chat(message);
 		} catch (SQLException ex) {
 			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -239,9 +242,21 @@ public class MinorTask implements Serializable {
 		return new DBDatabaseCluster(new SQLiteDB(new File("MinorTask-default.sqlite"), "admin", "admin"));
 	}
 
-	public synchronized DBDatabaseCluster getDatabase() {
-		if (database == null) {
-			setupDatabase();
+	private void setDatabase(DBDatabase db) {
+		VaadinSession sess = VaadinSession.getCurrent();
+		Lock lockInstance = sess.getLockInstance();
+		try {
+			lockInstance.lock();
+			sess.setAttribute("minortask_database", db);
+		} finally {
+			lockInstance.unlock();
+		}
+	}
+
+	public synchronized DBDatabase getDatabase() {
+		DBDatabase db = (DBDatabase) UI.getCurrent().getSession().getAttribute("minortask_database");
+		if (db == null) {
+			setDatabase(setupDatabase());
 		}
 		return database;
 	}
@@ -357,7 +372,7 @@ public class MinorTask implements Serializable {
 		String oldHash = queryPassword.getValue();
 		queryPassword.checkPasswordAndUpdateHash(password);
 		if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
-			database.update(user);
+			getDatabase().update(user);
 		}
 		doLogin(user, rememberMe);
 	}
@@ -381,7 +396,7 @@ public class MinorTask implements Serializable {
 	}
 
 	private void setRememberMeCookie(User user) throws SQLException {
-		String identifier = new BigInteger(130, new SecureRandom()).toString(32);
+		String identifier = getRandomID();
 		setCookie(MINORTASK_MEMORY_KEY, identifier);
 		user.setRememberedID(identifier);
 		getDatabase().update(user);

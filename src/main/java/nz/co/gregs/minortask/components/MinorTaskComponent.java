@@ -9,7 +9,7 @@ import com.vaadin.flow.server.VaadinSession;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -29,7 +29,7 @@ public interface MinorTaskComponent {
 		return minortask;
 	}
 
-	default DBDatabaseCluster getDatabase() {
+	default DBDatabase getDatabase() {
 		return minortask().getDatabase();
 	}
 
