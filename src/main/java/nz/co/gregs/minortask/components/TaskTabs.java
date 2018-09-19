@@ -9,6 +9,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
+import nz.co.gregs.minortask.components.tasklists.AllOpenTasksList;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -100,9 +101,9 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
-				//		Picker(new ProjectSelectorTab(), ProjectTaskListPage.class),
 				new MinorTaskTab("Editor", TaskEditorLayout.class),
 				new MinorTaskTab("Creator", TaskCreatorLayout.class),
+				new MinorTaskTab("All Open", AllOpenTasksPage.class),
 				new MinorTaskTab("All Completed", AllCompletedTasksPage.class)
 			};
 		}
