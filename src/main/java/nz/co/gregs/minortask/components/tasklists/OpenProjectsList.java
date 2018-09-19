@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class OpenProjectsList extends AbstractTaskList {
 
-	private final AddTaskButton newTaskButton = new AddTaskButton(null);
+	private AddTaskButton newTaskButton = new AddTaskButton(null);
 
 	public OpenProjectsList() {
 		super(null);
@@ -62,6 +62,9 @@ public class OpenProjectsList extends AbstractTaskList {
 	 * @return the newTaskButton
 	 */
 	public final AddTaskButton getNewTaskButton() {
+		if (newTaskButton == null) {
+			newTaskButton = new AddTaskButton(null);
+		}
 		return newTaskButton;
 	}
 
