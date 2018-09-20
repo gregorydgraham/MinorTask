@@ -58,7 +58,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	private TextField getSearchField() {
 		if (searchField == null) {
 			searchField = new TextField();
-			searchField.setPlaceholder("search terms: use +/- to improve results");
+			searchField.setPlaceholder("use +/- to improve results");
 			searchField.setValueChangeMode(ValueChangeMode.ON_CHANGE);
 			searchField.addValueChangeListener((event) -> {
 				refreshList();
@@ -80,12 +80,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		try {
-			System.out.println("SEARCHING NOW...");
 			String[] terms = getSearchTerms();
-			for (String term : terms) {
-				System.out.print(" ? " + term);
-			}
-			System.out.println("");
 			if (terms.length > 0) {
 				Task example = minortask().getSafeTaskExample(this);
 				DBQuery query = getDatabase().getDBQuery(example);
@@ -143,7 +138,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		});
 		return new Component[]{layout};
 	}
-	
+
 	private static class NothingToSearchFor extends Exception {
 
 		public NothingToSearchFor() {
