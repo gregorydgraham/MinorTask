@@ -14,8 +14,6 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
@@ -65,8 +63,8 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	}
 
 	public void handleDefaultButton() {
-		final String username = USERNAME_FIELD.getValue();
-		final String email = EMAIL_FIELD.getValue();
+		final String username = USERNAME_FIELD.getValue().trim();
+		final String email = EMAIL_FIELD.getValue().trim();
 		final String pass = PASSWORD_FIELD.getValue();
 		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 		final StringBuffer warningBuffer = new StringBuffer();
