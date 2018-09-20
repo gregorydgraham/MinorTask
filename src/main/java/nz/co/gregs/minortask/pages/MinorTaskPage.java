@@ -46,9 +46,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 		} else {
 			removeAll();
 			add(new MinorTaskTemplate());
-//			add();
 			taskTabs = new TaskTabs(this, taskID);
-//			add(taskTabs);
 			final Component internalComponent = getInternalComponent(parameter);
 			VerticalLayout internalComponentHolder
 					= new VerticalLayout(
@@ -57,7 +55,8 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 							internalComponent
 					);
 			internalComponentHolder.addClassName("minortask-internal");
-			add(new VerticalLayout(internalComponentHolder));
+			VerticalLayout verticalLayout = new VerticalLayout(internalComponentHolder);
+			add(verticalLayout);
 			add(new FooterMenu());
 		}
 	}
