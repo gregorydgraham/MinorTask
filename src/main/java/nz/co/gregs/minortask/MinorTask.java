@@ -52,6 +52,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
+import nz.co.gregs.minortask.components.tasklists.SearchedTasksList;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
@@ -609,6 +610,12 @@ public class MinorTask implements Serializable {
 		} else {
 			showOpeningPage();
 		}
+	}
+
+	public Task getSafeTaskExample(SearchedTasksList searchedTasksList) {
+		Task example = new Task();
+		example.userID.permittedValues(searchedTasksList.getUserID());
+		return example;
 	}
 
 	public static class InaccessibleTaskException extends Exception {

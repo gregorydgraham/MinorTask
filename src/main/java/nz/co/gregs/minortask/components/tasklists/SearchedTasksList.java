@@ -24,6 +24,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 
 	TextField searchField;
 	Checkbox includeDescriptionOption;
+	Checkbox includeCompletedTasksOption;
 
 	public SearchedTasksList(Long taskID) {
 		super(taskID);
@@ -40,6 +41,18 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			});
 		}
 		return includeDescriptionOption;
+	}
+
+	private Checkbox getIncludeCompletedTasksOption() {
+		if (includeCompletedTasksOption == null) {
+			includeCompletedTasksOption = new Checkbox();
+			includeCompletedTasksOption.setValue(false);
+			includeCompletedTasksOption.setLabel("Include Completed Tasks");
+			includeCompletedTasksOption.addValueChangeListener((event) -> {
+				refreshList();
+			});
+		}
+		return includeCompletedTasksOption;
 	}
 
 	private TextField getSearchField() {
@@ -74,8 +87,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			}
 			System.out.println("");
 			if (terms.length > 0) {
-				Task example = new Task();
-				example.userID.permittedValues(getUserID());
+				Task example = minortask().getSafeTaskExample(this);
 				DBQuery query = getDatabase().getDBQuery(example);
 				StringExpression column = example.column(example.name);
 				BooleanExpression boolExpr = null;
@@ -83,6 +95,9 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 
 				if (getIncludeDescriptionOption().getValue()) {
 					column = column.append(" ").append(example.column(example.description));
+				}
+				if (getIncludeCompletedTasksOption().getValue() == false) {
+					query.addCondition(example.column(example.completionDate).isNull());
 				}
 				query.addCondition(column.searchFor(terms));
 				query.setSortOrder(column.searchForRanking(terms).descending());
@@ -123,11 +138,12 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		HorizontalLayout layout = new HorizontalLayout(new Component[]{
 			searchButton,
 			getSearchField(),
-			getIncludeDescriptionOption()
+			getIncludeDescriptionOption(),
+			getIncludeCompletedTasksOption()
 		});
 		return new Component[]{layout};
 	}
-
+	
 	private static class NothingToSearchFor extends Exception {
 
 		public NothingToSearchFor() {
