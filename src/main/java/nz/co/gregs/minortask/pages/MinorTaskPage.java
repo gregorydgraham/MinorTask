@@ -46,11 +46,16 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 		} else {
 			removeAll();
 			add(new MinorTaskTemplate());
-			add(new AuthorisedBannerMenu(parameter));
+//			add();
 			taskTabs = new TaskTabs(this, taskID);
-			add(taskTabs);
+//			add(taskTabs);
 			final Component internalComponent = getInternalComponent(parameter);
-			VerticalLayout internalComponentHolder = new VerticalLayout(internalComponent);
+			VerticalLayout internalComponentHolder
+					= new VerticalLayout(
+							new AuthorisedBannerMenu(parameter),
+							taskTabs,
+							internalComponent
+					);
 			internalComponentHolder.addClassName("minortask-internal");
 			add(new VerticalLayout(internalComponentHolder));
 			add(new FooterMenu());
@@ -63,7 +68,6 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 		minortask().setLoginDestination(location);
 		add(new LoginPage().getLoginPageContents());
 	}
-
 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
