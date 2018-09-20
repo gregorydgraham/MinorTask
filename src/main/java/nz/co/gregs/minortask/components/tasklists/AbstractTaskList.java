@@ -27,26 +27,27 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  * @author gregorygraham
  */
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
-	
+
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
+	private final Label label = new Label();
 	private List<Task> allRows = new ArrayList<>(0);
-	
+
 	public AbstractTaskList(Long taskID) {
 		this.taskID = taskID;
 		buildComponent();
 		this.addClassName("tasklist");
 	}
-	
+
 	public final void buildComponent() {
 		VerticalLayout well = new VerticalLayout();
 		well.addClassName(getListClassName());
 		well.setSpacing(false);
 		well.addClassName("well");
 		try {
+			add(getControlsAbove());
 			allRows = getTasksToList();
-			final String caption = getListCaption(allRows);
-			final Label label = new Label(caption);
+			setLabel(allRows);
 			label.setWidth("100%");
 			HorizontalLayout header = new HorizontalLayout();
 			header.add(label);
@@ -56,11 +57,11 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			}
 			header.setWidth("100%");
 			well.add(header);
-			
-			setGridItems();
+
+			setGridItems(allRows);
 			setGridColumns();
 			well.add(grid);
-			
+
 			HorizontalLayout footer = new HorizontalLayout();
 			footer.setWidth("100%");
 			final Component[] footerExtras = getFooterExtras();
@@ -74,50 +75,55 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		}
 		add(well);
 	}
-	
+
 	protected abstract String getListClassName();
-	
+
 	protected abstract String getListCaption(List<Task> tasks);
-	
+
 	protected abstract List<Task> getTasksToList() throws SQLException;
-	
+
 	protected Component[] getFooterExtras() {
 		return new Component[]{};
 	}
-	
-	private Component[] getHeaderExtras() {
+
+	protected Component[] getHeaderExtras() {
 		return new Component[]{};
 	}
-	
-	private void setGridItems() {
+
+	private void setGridItems(List<Task> allRows) {
 		grid.setItems(allRows);
 	}
-	
+
+	private void setLabel(List<Task> allRows) {
+		final String caption = getListCaption(allRows);
+		label.setText(caption);
+	}
+
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)
 		).setFlexGrow(20);
 		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source));
 	}
-	
+
 	private Component getDescriptionComponent(Task task) {
 		Label name = new Label(task.name.getValue());
 		Label desc = new Label(task.description.getValue());
-		
+
 		name.setSizeFull();
 		desc.setSizeFull();
 		desc.addClassName("tiny");
-		
+
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
-		
+
 		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class, task.taskID.getValue());
 		Anchor anchor = new Anchor(url, "");
 		anchor.add(summary);
-		
+
 		return anchor;
 	}
-	
+
 	private Component getSubTaskNumberComponent(Task task) {
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
 		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
@@ -127,5 +133,19 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		});
 		return arrow;
 	}
-	
+
+	protected void refreshList() {
+		try {
+			allRows = getTasksToList();
+			setLabel(allRows);
+			setGridItems(allRows);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+	}
+
+	protected Component[] getControlsAbove() {
+		return new Component[]{};
+	}
+
 }

@@ -53,11 +53,6 @@ public class OpenProjectsList extends AbstractTaskList {
 		return "openprojectslist";
 	}
 
-	@Override
-	protected Component[] getFooterExtras() {
-		return new Component[]{getNewTaskButton()};
-	}
-
 	/**
 	 * @return the newTaskButton
 	 */

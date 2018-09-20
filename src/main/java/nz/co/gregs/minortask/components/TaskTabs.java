@@ -104,7 +104,8 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Editor", TaskEditorLayout.class),
 				new MinorTaskTab("Creator", TaskCreatorLayout.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
-				new MinorTaskTab("All Completed", AllCompletedTasksPage.class)
+				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
+				new MinorTaskTab("Search", SearchForTaskPage.class)
 			};
 		}
 
