@@ -78,7 +78,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	public void handleDefaultButton() {
 		StringBuilder warningBuffer = new StringBuilder();
-		final String username = USERNAME_FIELD.getValue();
+		final String username = USERNAME_FIELD.getValue().trim();
 		final String password = PASSWORD_FIELD.getValue();
 		final Boolean rememberMeValue = REMEMBER_ME_FIELD.getValue();
 		if (username.isEmpty() || password.isEmpty()) {
