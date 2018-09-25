@@ -5,12 +5,19 @@
 			padding: 20px;
 		}
 
-		body {
-			background-image: url(images/sunrise-wide.png);
+		body>vaadin-vertical-layout {
+			background-image: url(images/remarkables.jpg);
 			background-attachment: fixed;
 			background-size: cover;
 			background-position-x: center;
 			background-color: transparent;
+			padding-left: 8%;
+			padding-right: 8%;
+		}
+
+		body>vaadin-vertical-layout>vaadin-vertical-layout {
+			background-color: whitesmoke;
+			border-radius: 4px;
 		}
 
 /*		body vaadin-vertical-layout{
@@ -39,16 +46,6 @@
 			background-image: none;
 			border-radius: 4px;
 		}
-
-/*		minortask-page {
-			background-color: whitesmoke;
-			border-radius: 4px;
-		}*/
-
-/*		#minortask-page {
-			background-color: whitesmoke;
-			border-radius: 4px;
-		}*/
 		
 		#minortask-login {
 			background-color: whitesmoke;

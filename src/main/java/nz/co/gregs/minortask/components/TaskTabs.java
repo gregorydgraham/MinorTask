@@ -9,7 +9,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
-import nz.co.gregs.minortask.components.tasklists.AllOpenTasksList;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -36,7 +35,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		try {
 			super.setSelectedTab(tab);
 		} catch (IllegalArgumentException exp) {
-			super.setSelectedIndex(0);
+//			super.setSelectedIndex(0);
 		}
 	}
 
@@ -57,7 +56,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 	protected void tabClicked(Tabs.SelectedChangeEvent e, Long taskID) {
 		Tabs tabs = e.getSource();
 		Tab selectedTab = tabs.getSelectedTab();
-		MinorTaskTab[] opts = MinorTaskTab.getTabArray();
+//		MinorTaskTab[] opts = MinorTaskTab.getTabArray();
 		MinorTaskTab.moveTo(selectedTab, taskID);
 	}
 
@@ -101,8 +100,8 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
-				new MinorTaskTab("Editor", TaskEditorLayout.class),
-				new MinorTaskTab("Creator", TaskCreatorLayout.class),
+//				new MinorTaskTab("Editor", TaskEditorLayout.class),
+//				new MinorTaskTab("Creator", TaskCreatorLayout.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
 				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
 				new MinorTaskTab("Search", SearchForTaskPage.class)
@@ -121,7 +120,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 					return value;
 				}
 			}
-			return getFirstTab();
+			return null;//getFirstTab();
 		}
 
 		private <C extends Component & HasUrlParameter<Long>> void moveTo(Long taskID) {
