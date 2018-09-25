@@ -14,6 +14,10 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
@@ -63,53 +67,52 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	}
 
 	public void handleDefaultButton() {
-		final String username = USERNAME_FIELD.getValue().trim();
-		final String email = EMAIL_FIELD.getValue().trim();
-		final String pass = PASSWORD_FIELD.getValue();
-		final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
-		final StringBuffer warningBuffer = new StringBuffer();
-		minortask().chat(username);
-		if (username.isEmpty() || pass.isEmpty()) {
-			warningBuffer.append("Blank names and passwords are not allowed\n");
-		}
-		if (username.contains(" ")) {
-			warningBuffer.append("Usernames may not contain spaces\n");
-		}
-		if (!pass.equals(pass2)) {
-			warningBuffer.append("The passwords do not match, try typing them again\n");
-		}
-		if (!(pass.length() > 10
-				|| !(pass.matches("[a-z]") && pass.matches("[A-Z]") && pass.matches("[0-9]") && pass.matches("[ _+-=!@#$%^&*(),./;'<>?:{}|]")))) {
-			warningBuffer.append("Passwords must be greater than 10 characters or contain at least one each of lowercase letters, upper case letters, number, and symbols(_+-=!@#$%^&*,./;'<>?:{}|)\n");
-		}
-		User example = new User();
-		example.queryUsername().permittedValuesIgnoreCase(username);
 		try {
+			final String username = USERNAME_FIELD.getValue().trim();
+			final String email = EMAIL_FIELD.getValue().trim();
+			final String pass = PASSWORD_FIELD.getValue();
+			final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
+			final StringBuffer warningBuffer = new StringBuffer();
+			minortask().chat(username);
+			if (username.isEmpty() || pass.isEmpty()) {
+				warningBuffer.append("Blank names and passwords are not allowed\n");
+			}
+			if (username.contains(" ")) {
+				warningBuffer.append("Usernames may not contain spaces\n");
+			}
+			if (!pass.equals(pass2)) {
+				warningBuffer.append("The passwords do not match, try typing them again\n");
+			}
+			if (!(pass.length() > 10
+					|| !(pass.matches("[a-z]") && pass.matches("[A-Z]") && pass.matches("[0-9]") && pass.matches("[ _+-=!@#$%^&*(),./;'<>?:{}|]")))) {
+				warningBuffer.append("Passwords must be greater than 10 characters or contain at least one each of lowercase letters, upper case letters, number, and symbols(_+-=!@#$%^&*,./;'<>?:{}|)\n");
+			}
+			User example = new User();
+			example.queryUsername().permittedValuesIgnoreCase(username);
 			Long count = getDatabase().getDBTable(example).count();
 			if (count > 0) {
 				minortask().error("You're unique", "Sorry, that username is already taken, please try another one");
+			} else {
+				if (warningBuffer.length() > 0) {
+					minortask().error("Secure password required", warningBuffer.toString());
+				} else {
+					try {
+						newUser.setUsername(username);
+						newUser.setPassword(pass);
+						newUser.setEmail(email);
+						newUser.setSignupDate(new Date());
+						getDatabase().insert(newUser);
+						minortask().chat("Welcome to Minor Task @" + username);
+						minortask().loginAs(newUser, pass, REMEMBER_ME_FIELD.getValue());
+					} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
+						minortask().warning("Login Error", "Name and/or password do not match any known combination");
+					} catch (MinorTask.TooManyUsersException ex) {
+						minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+					}
+				}
 			}
 		} catch (SQLException ex) {
-			minortask().sqlerror(ex);
-		}
-		if (warningBuffer.length() > 0) {
-			minortask().error("Secure password required", warningBuffer.toString());
-		} else {
-			try {
-				newUser.setUsername(username);
-				newUser.setPassword(pass);
-				newUser.setEmail(email);
-				newUser.setSignupDate(new Date());
-				getDatabase().insert(newUser);
-				minortask().chat("Welcome to Minor Task @" + username);
-				minortask().loginAs(newUser, pass, REMEMBER_ME_FIELD.getValue());
-			} catch (SQLException ex) {
-				minortask().sqlerror(ex);
-			} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
-				minortask().warning("Login Error", "Name and/or password do not match any known combination");
-			} catch (MinorTask.TooManyUsersException ex) {
-				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
-			}
+			sqlerror(ex);
 		}
 	}
 
