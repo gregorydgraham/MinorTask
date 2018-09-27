@@ -4,4 +4,16 @@
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskDatabaseConfig.yml"
 							 type="java.lang.String" 
 							 override="true"/>
+	<Environment name="MinorTaskEmailConfigFilename" 
+							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskEmailConfig.yml"
+							 type="java.lang.String" 
+							 override="true"/>
+	<Environment name="MinorTaskURL" 
+							 value="http://localhost:8080/minortask"
+							 type="java.lang.String" 
+							 override="true"/>
+	<Environment name="MinorTaskApplicationName" 
+							 value="MinorTask"
+							 type="java.lang.String" 
+							 override="true"/>
 </Context>

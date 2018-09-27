@@ -28,7 +28,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	private TextField USERNAME_FIELD;
 	private PasswordField PASSWORD_FIELD;
-	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", false);
+	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", true);
 
 	public LoginComponent() {
 		this("", "");
@@ -65,14 +65,20 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 			minortask().showSignUp(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
 		});
 
-		HorizontalLayout buttons = new HorizontalLayout(signupButton, loginButton);
-		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, loginButton);
+		Button lostPasswordButton = new Button("Lost Password?");
+		lostPasswordButton.addClickListener((event) -> {
+			minortask().showLostPassword(USERNAME_FIELD.getValue());
+		});
+		
+		HorizontalLayout buttons = new HorizontalLayout(lostPasswordButton, signupButton);
+		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, lostPasswordButton);
+		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, signupButton);
 
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
 		USERNAME_FIELD.focus();
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
-		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, REMEMBER_ME_FIELD, buttons);
+		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, REMEMBER_ME_FIELD, loginButton, buttons);
 		return loginPanel;
 	}
 

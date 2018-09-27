@@ -1,0 +1,7 @@
+auth: "true"
+host: "smtp.gmail.com"
+port: 587
+starttls: "true"
+username: "minortask.alert@gmail.com"
+password: "secure email account"
+ssltrust: "smtp.gmail.com"

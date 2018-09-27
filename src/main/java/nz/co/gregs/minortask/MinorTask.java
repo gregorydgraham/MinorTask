@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -60,6 +61,11 @@ import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
 import nz.co.gregs.minortask.pages.TodaysTaskLayout;
+import javax.mail.Session;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -227,14 +233,53 @@ public class MinorTask implements Serializable {
 		return database;
 	}
 
+	public final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
+
+	public final synchronized Session setupEmailSession() {
+		Session emailSession = null;
+		if (emailSession == null) {
+			String configFilename = "MinorTaskEmailConfig.yml";
+			try {
+				Context initCtx = new InitialContext();
+				Context envCtx = (Context) initCtx.lookup("java:comp/env");
+				configFilename = (String) envCtx.lookup(EMAIL_CONFIG_CONTEXT_VAR);
+				File configFile = new File(configFilename);
+				final Session emailSessionFromConfigFile = new EmailSessionFromConfigFile(configFile).getSession();
+				emailSession = emailSessionFromConfigFile;
+				debug("Email session created from \"" + configFilename + "\" in " + (configFile.getAbsolutePath()));
+			} catch (IOException ex) {
+				error("IO Exception", "We were unable to read the email configuration in " + (new File(configFilename).getAbsolutePath()));
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+				final String error = "Unable to read email " + configFilename;
+				System.err.println("" + error);
+			} catch (NamingException ex) {
+				error("Configuration Missing", "No such value \"" + configFilename + "\" in " + (new File(configFilename).getAbsolutePath()));
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+				final String error = "Unable to find email " + configFilename;
+				System.err.println("" + error);
+			} catch (EmailSessionFromConfigFile.NoEmailConfigurationFound ex) {
+				error("Configuration Missing", "We were unable to find the email configuration \"" + configFilename + "\" in " + (new File(configFilename).getAbsolutePath()));
+				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+				final String error = "Unable to find email " + configFilename;
+				System.err.println("" + error);
+			}
+		}
+		if (emailSession == null) {
+			error("No Email Server", "We were unable to create an email session.");
+		}
+		return emailSession;
+	}
+
 	public void chatAboutUsers() {
 		try {
 			String message
 					= "Currently serving " + getDatabase().getDBTable(new User()).setBlankQueryAllowed(true).count() + " users "
 					+ "and " + getDatabase().getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
 			chat(message);
+
 		} catch (SQLException ex) {
-			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(MinorTask.class
+					.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -244,18 +289,25 @@ public class MinorTask implements Serializable {
 	}
 
 	private void setDatabase(DBDatabase db) {
+		setSessionAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME, db);
+	}
+	private static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
+
+	private static final String MINORTASK_EMAILSESSION = "minortask_emailsession";
+
+	private void setSessionAttribute(String sessionAttributeName, Object obj) {
 		VaadinSession sess = VaadinSession.getCurrent();
 		Lock lockInstance = sess.getLockInstance();
 		try {
 			lockInstance.lock();
-			sess.setAttribute("minortask_database", db);
+			sess.setAttribute(sessionAttributeName, obj);
 		} finally {
 			lockInstance.unlock();
 		}
 	}
 
 	public synchronized DBDatabase getDatabase() {
-		DBDatabase db = (DBDatabase) UI.getCurrent().getSession().getAttribute("minortask_database");
+		DBDatabase db = (DBDatabase) UI.getCurrent().getSession().getAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME);
 		if (db == null) {
 			setDatabase(setupDatabase());
 		}
@@ -305,11 +357,13 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showLogin() {
-		UI.getCurrent().navigate(LoginPage.class);
+		UI.getCurrent().navigate(LoginPage.class
+		);
 	}
 
 	public void showLogin(String username, String password) {
-		UI.getCurrent().navigate(LoginPage.class, username);
+		UI.getCurrent().navigate(LoginPage.class,
+				username);
 	}
 
 	public void showOpeningPage() {
@@ -318,23 +372,28 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showProjects() {
-		UI.getCurrent().navigate(ProjectsLayout.class, 0l);
+		UI.getCurrent().navigate(ProjectsLayout.class,
+				0l);
 	}
 
 	public void showTodaysTasks() {
-		UI.getCurrent().navigate(TodaysTaskLayout.class, 0l);
+		UI.getCurrent().navigate(TodaysTaskLayout.class,
+				0l);
 	}
 
 	public void showTask(Long taskID) {
 		if (taskID == null) {
 			showOpeningPage();
+
 		} else {
-			UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
+			UI.getCurrent().navigate(TaskEditorLayout.class,
+					taskID);
 		}
 	}
 
 	public void showTaskCreation(Long taskID) {
-		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
+		UI.getCurrent().navigate(TaskCreatorLayout.class,
+				taskID);
 	}
 
 	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
@@ -561,8 +620,10 @@ public class MinorTask implements Serializable {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
 				return new Task.TaskAndProject(onlyRow.get(example), onlyRow.get(projectExample));
+
 			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException ex) {
-				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(MinorTask.class
+						.getName()).log(Level.SEVERE, null, ex);
 			} catch (UnexpectedNumberOfRowsException ex) {
 				throw new InaccessibleTaskException(taskID);
 			}
@@ -579,7 +640,18 @@ public class MinorTask implements Serializable {
 	}
 
 	public String getApplicationName() {
-		return "MinorTask";
+		String name = "MinorTask";
+		try {
+			//"http://101.100.138.79/minortask"
+			Context initCtx = new InitialContext();
+			Context envCtx = (Context) initCtx.lookup("java:comp/env");
+			name = (String) envCtx.lookup("MinorTaskApplicationName");
+			if (name==null||name.isEmpty()){
+			}
+		} catch (NamingException ex) {
+			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return name;
 	}
 
 	public Task.Project getNullProject() {
@@ -616,6 +688,39 @@ public class MinorTask implements Serializable {
 		Task example = new Task();
 		example.userID.permittedValues(searchedTasksList.getUserID());
 		return example;
+	}
+
+	public MimeMessage getEmailMessageToSend() throws MessagingException {
+		MimeMessage mimeMessage = new MimeMessage(setupEmailSession());
+		mimeMessage.setFrom(
+				new InternetAddress(
+						getApplicationName()
+						+ "minortask.alerts@gmail.com"
+				)
+		);
+		return mimeMessage;
+	}
+
+	public void showLostPassword(String username) {
+		UI.getCurrent().navigate(
+				LostPasswordLayout.class,
+				username
+		);
+	}
+
+	public String getApplicationURL() {
+		String url = "http://localhost:8080/minortask";
+		try {
+			//"http://101.100.138.79/minortask"
+			Context initCtx = new InitialContext();
+			Context envCtx = (Context) initCtx.lookup("java:comp/env");
+			url = (String) envCtx.lookup("MinorTaskURL");
+			if (url==null||url.isEmpty()){
+			}
+		} catch (NamingException ex) {
+			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return url;
 	}
 
 	public static class InaccessibleTaskException extends Exception {
