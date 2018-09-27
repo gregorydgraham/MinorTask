@@ -25,6 +25,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.PasswordResetRequests;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -102,9 +103,7 @@ public class LostPasswordComponent extends VerticalLayout implements MinorTaskCo
 	}
 
 	private PasswordResetRequests makeResetRequest(User user) throws SQLException {
-		SecureRandom random = new SecureRandom();
-		byte[] generateSeed = random.generateSeed(20);
-		String resetCode = String.valueOf(generateSeed);
+		String resetCode = MinorTask.getRandomID();
 
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.add(GregorianCalendar.HOUR_OF_DAY, 24);
