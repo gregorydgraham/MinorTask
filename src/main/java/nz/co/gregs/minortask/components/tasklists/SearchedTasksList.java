@@ -14,7 +14,11 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.StringExpression;
 import nz.co.gregs.minortask.components.HasDefaultButton;
@@ -25,6 +29,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	TextField searchField;
 	Checkbox includeDescriptionOption;
 	Checkbox includeCompletedTasksOption;
+	private String searchFor = "";
 
 	public SearchedTasksList(Long taskID) {
 		super(taskID);
@@ -59,8 +64,9 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		if (searchField == null) {
 			searchField = new TextField();
 			searchField.setPlaceholder("use +/- to improve results");
-			searchField.setValueChangeMode(ValueChangeMode.ON_CHANGE);
+			searchField.setValueChangeMode(ValueChangeMode.EAGER);
 			searchField.addValueChangeListener((event) -> {
+				searchFor = event.getValue();
 				refreshList();
 			});
 		}
@@ -74,7 +80,26 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return "Found " + tasks.size() + " Tasks";
+		if (tasks.isEmpty()) {
+			return "Search above";
+		} else {
+			return "Found " + tasks.size() + " Tasks for \"" + searchFor + "\"";
+		}
+	}
+
+	@Override
+	protected boolean thereAreRowsToShow() {
+		if (searchFor == null || searchFor.isEmpty()) {
+			return false;
+		} else {
+			try {
+				Task example = minortask().getSafeTaskExample(this);
+				DBQuery query = getQuery(example, getSearchTerms(searchFor));
+				return query.count() > 0;
+			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException | NothingToSearchFor ex) {
+				return false;
+			}
+		}
 	}
 
 	@Override
@@ -83,20 +108,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			String[] terms = getSearchTerms();
 			if (terms.length > 0) {
 				Task example = minortask().getSafeTaskExample(this);
-				DBQuery query = getDatabase().getDBQuery(example);
-				StringExpression column = example.column(example.name);
-				BooleanExpression boolExpr = null;
-				boolExpr = column.searchFor(terms);
-
-				if (getIncludeDescriptionOption().getValue()) {
-					column = column.append(" ").append(example.column(example.description));
-				}
-				if (getIncludeCompletedTasksOption().getValue() == false) {
-					query.addCondition(example.column(example.completionDate).isNull());
-				}
-				query.addCondition(column.searchFor(terms));
-				query.setSortOrder(column.searchForRanking(terms).descending());
-
+				DBQuery query = getQuery(example, terms);
 				return query.getAllInstancesOf(example);
 			} else {
 				return new ArrayList<Task>();
@@ -106,8 +118,28 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		}
 	}
 
+	private DBQuery getQuery(Task example, String[] terms) {
+		DBQuery query = getDatabase().getDBQuery(example);
+		StringExpression column = example.column(example.name);
+		BooleanExpression boolExpr = null;
+		boolExpr = column.searchFor(terms);
+		if (getIncludeDescriptionOption().getValue()) {
+			column = column.append(" ").append(example.column(example.description));
+		}
+		if (getIncludeCompletedTasksOption().getValue() == false) {
+			query.addCondition(example.column(example.completionDate).isNull());
+		}
+		query.addCondition(column.searchFor(terms));
+		query.setSortOrder(column.searchForRanking(terms).descending());
+		return query;
+	}
+
 	private String[] getSearchTerms() throws NothingToSearchFor {
 		String value = getSearchField().getValue();
+		return getSearchTerms(value);
+	}
+
+	private String[] getSearchTerms(String value) throws NothingToSearchFor {
 		if (value != null) {
 			String[] split = value.split(" ");
 			List<String> results = new ArrayList<>(0);

@@ -65,6 +65,8 @@ import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import org.slf4j.LoggerFactory;
 
@@ -372,28 +374,23 @@ public class MinorTask implements Serializable {
 	}
 
 	public void showProjects() {
-		UI.getCurrent().navigate(ProjectsLayout.class,
-				0l);
+		UI.getCurrent().navigate(ProjectsLayout.class);
 	}
 
 	public void showTodaysTasks() {
-		UI.getCurrent().navigate(TodaysTaskLayout.class,
-				0l);
+		UI.getCurrent().navigate(TodaysTaskLayout.class);
 	}
 
 	public void showTask(Long taskID) {
 		if (taskID == null) {
-			showOpeningPage();
-
+			showProjects();
 		} else {
-			UI.getCurrent().navigate(TaskEditorLayout.class,
-					taskID);
+			UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
 		}
 	}
 
 	public void showTaskCreation(Long taskID) {
-		UI.getCurrent().navigate(TaskCreatorLayout.class,
-				taskID);
+		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
 	}
 
 	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
@@ -451,7 +448,7 @@ public class MinorTask implements Serializable {
 	}
 	private static final String MINORTASK_MEMORY_KEY = "MinorTaskMemoryKey";
 
-	private static String getRandomID() {
+	public static String getRandomID() {
 		return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 
@@ -646,7 +643,7 @@ public class MinorTask implements Serializable {
 			Context initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
 			name = (String) envCtx.lookup("MinorTaskApplicationName");
-			if (name==null||name.isEmpty()){
+			if (name == null || name.isEmpty()) {
 			}
 		} catch (NamingException ex) {
 			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -684,9 +681,9 @@ public class MinorTask implements Serializable {
 		}
 	}
 
-	public Task getSafeTaskExample(SearchedTasksList searchedTasksList) {
+	public Task getSafeTaskExample(MinorTaskComponent component) {
 		Task example = new Task();
-		example.userID.permittedValues(searchedTasksList.getUserID());
+		example.userID.permittedValues(component.getUserID());
 		return example;
 	}
 
@@ -711,11 +708,10 @@ public class MinorTask implements Serializable {
 	public String getApplicationURL() {
 		String url = "http://localhost:8080/minortask";
 		try {
-			//"http://101.100.138.79/minortask"
 			Context initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
 			url = (String) envCtx.lookup("MinorTaskURL");
-			if (url==null||url.isEmpty()){
+			if (url == null || url.isEmpty()) {
 			}
 		} catch (NamingException ex) {
 			Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
