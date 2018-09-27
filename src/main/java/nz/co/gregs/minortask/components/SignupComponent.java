@@ -14,10 +14,6 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
-import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
@@ -51,6 +47,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 		REPEAT_PASSWORD_FIELD.clear();
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
 		USERNAME_FIELD.focus();
+		EMAIL_FIELD.setRequiredIndicatorVisible(true);
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
@@ -79,6 +76,11 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 			}
 			if (username.contains(" ")) {
 				warningBuffer.append("Usernames may not contain spaces\n");
+			}
+			if (email.equals("")) {
+				warningBuffer.append("An e-mail address helps you when you need a password reset\n");
+			} else if (!email.matches(".*@.*\\..*")) {
+				warningBuffer.append("That email address doesn't look right, could you check it?\n");
 			}
 			if (!pass.equals(pass2)) {
 				warningBuffer.append("The passwords do not match, try typing them again\n");
