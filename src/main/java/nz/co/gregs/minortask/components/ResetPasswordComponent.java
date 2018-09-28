@@ -134,9 +134,7 @@ public class ResetPasswordComponent extends VerticalLayout implements MinorTaskC
 				example.resetCode.permittedValues(resetCode);
 				example.expiryTime.permittedRange(new Date(),null);
 				DBDatabase database = getDatabase();
-				database.setPrintSQLBeforeExecuting(true);
 				List<DBQueryRow> requestsFound = database.get(example, new User());
-				database.setPrintSQLBeforeExecuting(false);
 				if (requestsFound.size() == 1) {
 					PasswordResetRequests actualRequest = requestsFound.get(0).get(example);
 					User user = requestsFound.get(0).get(new User());
