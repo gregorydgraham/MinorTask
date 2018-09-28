@@ -463,6 +463,7 @@ public class MinorTask implements Serializable {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
 		cookie.setPath("/");
 		cookie.setMaxAge(60 * 60 * 24 * 30);
+		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue());
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
