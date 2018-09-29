@@ -7,13 +7,13 @@
 	<Environment name="MinorTaskEmailConfigFilename" 
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskEmailConfig.yml"
 							 type="java.lang.String" 
-							 override="true"/>
+							 override="false"/>
 	<Environment name="MinorTaskURL" 
 							 value="http://localhost:8080/minortask"
 							 type="java.lang.String" 
-							 override="true"/>
+							 override="false"/>
 	<Environment name="MinorTaskApplicationName" 
 							 value="MinorTask"
 							 type="java.lang.String" 
-							 override="true"/>
+							 override="false"/>
 </Context>

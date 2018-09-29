@@ -264,9 +264,9 @@ public class MinorTask implements Serializable {
 				System.err.println("" + error);
 			}
 		}
-		if (emailSession == null) {
-			error("No Email Server", "We were unable to create an email session.");
-		}
+//		if (emailSession == null) {
+//			error("No Email Server", "We were unable to create an email session.");
+//		}
 		return emailSession;
 	}
 
@@ -488,9 +488,9 @@ public class MinorTask implements Serializable {
 
 	private void removeRememberMeCookieValue() {
 		Optional<Cookie> existingCookie = getRememberMeCookieValue();
-		if(existingCookie.isPresent()){
+		if (existingCookie.isPresent()) {
 			String cookieValue = existingCookie.get().getValue();
-			if (cookieValue!=null){
+			if (cookieValue != null) {
 				RememberedLogin mem = new RememberedLogin();
 				mem.userid.permittedValues(getUserID());
 				mem.rememberCode.permittedValues(cookieValue);
@@ -544,7 +544,7 @@ public class MinorTask implements Serializable {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
 			User user = getRememberedUser(rememberMeCookieValue);
-			doLogin(user, true, rememberMeCookieValue.isPresent()?rememberMeCookieValue.get().getValue():null);
+			doLogin(user, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
 			return false;
@@ -713,14 +713,19 @@ public class MinorTask implements Serializable {
 	}
 
 	public MimeMessage getEmailMessageToSend() throws MessagingException {
-		MimeMessage mimeMessage = new MimeMessage(setupEmailSession());
-		mimeMessage.setFrom(
-				new InternetAddress(
-						getApplicationName()
-						+ "minortask.alerts@gmail.com"
-				)
-		);
-		return mimeMessage;
+		Session session = setupEmailSession();
+		if (session != null) {
+			MimeMessage mimeMessage = new MimeMessage(session);
+			mimeMessage.setFrom(
+					new InternetAddress(
+							getApplicationName()
+							+ "minortask.alerts@gmail.com"
+					)
+			);
+			return mimeMessage;
+		} else {
+			return null;
+		}
 	}
 
 	public void showLostPassword(String username) {

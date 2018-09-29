@@ -120,32 +120,33 @@ public class LostPasswordComponent extends VerticalLayout implements MinorTaskCo
 	private void sendResetRequestMessage(User user, PasswordResetRequests request) throws MessagingException {
 		try {
 			Message message = minortask().getEmailMessageToSend();
+			if (message != null) {
+				message.setRecipients(
+						Message.RecipientType.TO,
+						InternetAddress.parse(user.getEmail())
+				);
+				message.setSubject("Resert Password To " + minortask().getApplicationName());
 
-			message.setRecipients(
-					Message.RecipientType.TO,
-					InternetAddress.parse(user.getEmail())
-			);
-			message.setSubject("Resert Password To " + minortask().getApplicationName());
+				String msg = "Hi " + user.getUsername() + "\n\n"
+						+ "A password reset has been requested, follow the link below to change your password.\n\n"
+						+ minortask().getApplicationURL() + "/resetpassword/" + request.resetCode.getValue() + "\n\n"
+						+ "Your password has not been changed, you can continue to use it.  Follow the instructions at the website to change your password.";
 
-			String msg = "Hi " + user.getUsername() + "\n\n"
-					+ "A password reset has been requested, follow the link below to change your password.\n\n"
-					+ minortask().getApplicationURL() + "/resetpassword/" + request.resetCode.getValue() + "\n\n"
-					+ "Your password has not been changed, you can continue to use it.  Follow the instructions at the website to change your password.";
+				message.setText(msg);
 
-			message.setText(msg);
+				MimeBodyPart mimeBodyPart = new MimeBodyPart();
+				mimeBodyPart.setContent(msg.replaceAll("\n\n", "<p>"), "text/html");
 
-			MimeBodyPart mimeBodyPart = new MimeBodyPart();
-			mimeBodyPart.setContent(msg.replaceAll("\n\n", "<p>"), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(mimeBodyPart);
 
-			Multipart multipart = new MimeMultipart();
-			multipart.addBodyPart(mimeBodyPart);
+				message.setContent(multipart);
 
-			message.setContent(multipart);
+				chat("Sending \"" + message.getSubject() + "\" to " + user.getEmail());
 
-			chat("Sending \"" + message.getSubject() + "\" to " + user.getEmail());
-
-			Transport.send(message);
-		} catch (Exception ex) {
+				Transport.send(message);
+			}
+		} catch (MessagingException ex) {
 			error("Email Issue", ex.getLocalizedMessage());
 		}
 	}
