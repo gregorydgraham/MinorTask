@@ -47,7 +47,7 @@
 		.minortask-tabs {
 			background-color: whitesmoke;
 		}
-		
+
 		.banner{
 			background-color: whitesmoke;
 			border-radius: 4px;
@@ -92,5 +92,60 @@
 		.red{background-color: red;}
 		.green{background-color: greenyellow;}
 		.blue{background-color: lightskyblue;}
+
+		@media all and (max-width: 600px) {
+			.main-layout {
+				padding: 0px;
+				margin:  0px;
+			}
+
+			/*body>vaadin-vertical-layout {*/
+			html{
+				background-image:none ;
+				background-attachment: fixed;
+				background-size: cover;
+				background-position-x: center;
+				background-color: whitesmoke;
+			}
+
+			body>vaadin-vertical-layout {
+				padding: 0px;
+				margin:  0px;
+				border-radius: 0px;
+			}
+
+			body>vaadin-vertical-layout>vaadin-vertical-layout {
+				padding: 0px;
+				margin:  0px;
+				border-radius: 0px;
+			}
+
+			.well{
+				padding: 0px;
+				margin:  0px;
+				border-radius: 0px;
+			}
+
+			.tasklist{
+				padding-left: 0px;
+				padding-right: 0px;
+				padding-bottom: 0px;
+				margin:  0px;
+				border-radius: 0px;
+			}
+
+			.minortask-internal{
+				padding: 0px;
+				margin:  0px;
+			}
+			
+			.authorised-banner{
+				padding-top: 6px;
+			}
+			
+			label{
+				padding-left: 6px;
+			}
+		}
 	</style>
 </custom-style>
