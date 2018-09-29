@@ -10,6 +10,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ import nz.co.gregs.minortask.datamodel.*;
 public class CreateTask extends VerticalLayout implements RequiresLogin{
 
 	TextField name = new TextField("Name");
-	TextField description = new TextField("Description");
+	TextArea description = new TextArea("Description");
 	TextField project = new TextField("Project");
 	TextField notes = new TextField("Notes");
 	DatePicker startDate = new DatePicker("Start");
