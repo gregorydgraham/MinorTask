@@ -125,7 +125,7 @@ public class LostPasswordComponent extends VerticalLayout implements MinorTaskCo
 						Message.RecipientType.TO,
 						InternetAddress.parse(user.getEmail())
 				);
-				message.setSubject("Resert Password To " + minortask().getApplicationName());
+				message.setSubject("Reset Password To " + minortask().getApplicationName());
 
 				String msg = "Hi " + user.getUsername() + "\n\n"
 						+ "A password reset has been requested, follow the link below to change your password.\n\n"
