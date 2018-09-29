@@ -54,7 +54,6 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
-import nz.co.gregs.minortask.components.tasklists.SearchedTasksList;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
@@ -63,11 +62,9 @@ import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
 import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 import javax.mail.Session;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
-import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import org.slf4j.LoggerFactory;
 
@@ -226,7 +223,7 @@ public class MinorTask implements Serializable {
 			try {
 				database = getEmergencyDatabase();
 				warning("Emergency Database", "We were unable to find the database and are now running on an empty database");
-			} catch (Exception ex1) {
+			} catch (IOException | SQLException ex1) {
 				error("No Database", "We were unable to find the database nor create an empty database, everything is cack.");
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex1);
 				System.err.println("" + ex1.getLocalizedMessage());
@@ -470,9 +467,9 @@ public class MinorTask implements Serializable {
 		cal.add(GregorianCalendar.SECOND, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 		Date expiryDate = cal.getTime();
 		if (rows.size() > 0) {
-			for (RememberedLogin row : rows) {
+			rows.forEach((row) -> {
 				row.expires.setValue(expiryDate);
-			}
+			});
 			getDatabase().update(rows);
 		} else {
 			RememberedLogin mem = new RememberedLogin(user.getUserID(), identifier, expiryDate);
@@ -601,9 +598,9 @@ public class MinorTask implements Serializable {
 
 	public void enforceDateConstraintsOnTaskTree(Task task) {
 		List<TreeNode<Task>> projectTreeTasks = this.getProjectTreeTasks(task.taskID.getValue(), task.userID.getValue());
-		for (TreeNode<Task> projectTreeTaskNode : projectTreeTasks) {
+		projectTreeTasks.forEach((projectTreeTaskNode) -> {
 			enforceDateConstraintsOnTaskTree(task, projectTreeTaskNode);
-		}
+		});
 	}
 
 	private void enforceDateConstraintsOnTaskTree(Task task, TreeNode<Task> node) {
