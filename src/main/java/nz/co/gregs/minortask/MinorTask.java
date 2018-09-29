@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
@@ -431,15 +432,15 @@ public class MinorTask implements Serializable {
 		if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
 			getDatabase().update(user);
 		}
-		doLogin(user, rememberMe);
+		doLogin(user, rememberMe, null);
 	}
 
-	private void doLogin(User user, boolean rememberUser) throws TooManyUsersException, UnknownUserException {
+	private void doLogin(User user, boolean rememberUser, String cookieValue) throws TooManyUsersException, UnknownUserException {
 		this.notLoggedIn = false;
 		this.setUserID(user.getUserID());
 		if (rememberUser) {
 			try {
-				setRememberMeCookie(user);
+				setRememberMeCookie(user, cookieValue);
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}
@@ -452,30 +453,59 @@ public class MinorTask implements Serializable {
 		return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 
-	private void setRememberMeCookie(User user) throws SQLException {
-		String identifier = getRandomID();
+	private void setRememberMeCookie(User user, String cookieValue) throws SQLException {
+		RememberedLogin.cleanUpTable(getDatabase());
+		String identifier = cookieValue;
+		if (identifier == null) {
+			identifier = getRandomID();
+		}
 		setCookie(MINORTASK_MEMORY_KEY, identifier);
-		user.setRememberedID(identifier);
-		getDatabase().update(user);
+
+		RememberedLogin example = new RememberedLogin();
+		example.expires.permittedRange(new Date(), null);
+		example.userid.permittedValues(user.getUserID());
+		example.rememberCode.permittedValues(identifier);
+		List<RememberedLogin> rows = getDatabase().get(example);
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.add(GregorianCalendar.SECOND, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
+		Date expiryDate = cal.getTime();
+		if (rows.size() > 0) {
+			for (RememberedLogin row : rows) {
+				row.expires.setValue(expiryDate);
+			}
+			getDatabase().update(rows);
+		} else {
+			RememberedLogin mem = new RememberedLogin(user.getUserID(), identifier, expiryDate);
+			getDatabase().insert(mem);
+		}
 	}
 
 	private void setCookie(String cookieName, String cookieValue) {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
-		cookie.setPath("/");
-		cookie.setMaxAge(60 * 60 * 24 * 30);
+		cookie.setMaxAge(REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue());
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
+	private static final int REMEMBER_ME_COOKIE_SECONDS_OFFSET = 60 * 60 * 24 * 30;
 
-	private void removeRememberMeCookieValue() throws SQLException, UnexpectedNumberOfRowsException {
-		User example = new User();
-		example.queryUserID().setValue(userID);
-		User user = getDatabase().getDBTable(example).getOnlyRow();
-		user.getRememberedID().setValueToNull();
-		getDatabase().update(user);
+	private void removeRememberMeCookieValue() {
+		Optional<Cookie> existingCookie = getRememberMeCookieValue();
+		if(existingCookie.isPresent()){
+			String cookieValue = existingCookie.get().getValue();
+			if (cookieValue!=null){
+				RememberedLogin mem = new RememberedLogin();
+				mem.userid.permittedValues(getUserID());
+				mem.rememberCode.permittedValues(cookieValue);
+				try {
+					getDatabase().delete(mem);
+				} catch (SQLException ex) {
+					sqlerror(ex);
+				}
+			}
+		}
 		Cookie cookie = new Cookie(MINORTASK_MEMORY_KEY, "");
-		cookie.setPath("/");
+		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		cookie.setMaxAge(0);
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
@@ -493,10 +523,11 @@ public class MinorTask implements Serializable {
 		if (rememberMeCookieValue.isPresent()) {
 			String value = rememberMeCookieValue.get().getValue();
 			if (!value.isEmpty()) {
-				User example = new User();
-				example.getRememberedID().permittedValues(value);
+				RememberedLogin example = new RememberedLogin();
+				example.rememberCode.permittedValues(value);
+				example.expires.permittedRange(new Date(), null);
 				try {
-					User onlyRow = getDatabase().getDBTable(example).getOnlyRow();
+					User onlyRow = getDatabase().getDBQuery(example, new User()).getOnlyInstanceOf(new User());
 					return onlyRow;
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
@@ -516,7 +547,7 @@ public class MinorTask implements Serializable {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
 			User user = getRememberedUser(rememberMeCookieValue);
-			doLogin(user, true);
+			doLogin(user, true, rememberMeCookieValue.isPresent()?rememberMeCookieValue.get().getValue():null);
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
 			return false;
@@ -531,11 +562,7 @@ public class MinorTask implements Serializable {
 	}
 
 	public void logout() {
-		try {
-			removeRememberMeCookieValue();
-		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			sqlerror(ex);
-		}
+		removeRememberMeCookieValue();
 		this.setLoginDestination(null);
 		this.userID = 0;
 		this.username = null;

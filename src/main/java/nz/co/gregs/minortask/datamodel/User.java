@@ -44,8 +44,8 @@ public class User extends DBRow {
 	@DBColumn
 	private final DBDate lastLoginDate = new DBDate();
 
-	@DBColumn
-	private final DBString rememberedID = new DBString();
+//	@DBColumn
+//	private final DBString rememberedID = new DBString();
 
 	/**
 	 * @return the userID
@@ -183,14 +183,14 @@ public class User extends DBRow {
 	/**
 	 * @return the rememberedID
 	 */
-	public DBString getRememberedID() {
-		return rememberedID;
-	}
+//	public DBString getRememberedID() {
+//		return rememberedID;
+//	}
 
 	/**
 	 * @param newValue
 	 */
-	public void setRememberedID(String newValue) {
-		rememberedID.setValue(newValue);
-	}
+//	public void setRememberedID(String newValue) {
+//		rememberedID.setValue(newValue);
+//	}
 }
