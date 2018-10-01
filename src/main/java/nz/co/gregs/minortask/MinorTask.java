@@ -46,7 +46,6 @@ import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
-import nz.co.gregs.dbvolution.databases.DBDatabaseClusterWithConfigFile;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
@@ -201,7 +200,6 @@ public class MinorTask implements Serializable {
 	public final synchronized DBDatabase setupDatabase() {
 
 		if (database == null) {
-//			String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
@@ -212,7 +210,6 @@ public class MinorTask implements Serializable {
 				try {
 					readyDatabase = cluster.getReadyDatabase();
 				} catch (NoAvailableDatabaseException ex) {
-					ex.printStackTrace();
 				}
 				if (readyDatabase == null) {
 					String dcsFactory = "bean/DatabaseConnectionSettings";
@@ -223,16 +220,7 @@ public class MinorTask implements Serializable {
 					try {
 						do {
 							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
-							System.out.println("DATABASECONNECTIONSETTINGS: " + thisFactory);
-							System.out.println("DATABASECONNECTIONSETTINGS: " + settings.getDatabaseName() + ";"
-									+ settings.getDbdatabase() + ";"
-									+ settings.getHost() + ";"
-									+ settings.getInstance() + ";"
-									+ settings.getPort() + ";"
-									+ settings.getSchema() + ";"
-									+ settings.getUrl() + ";"
-									+ settings.getUsername() + ";"
-							);
+							System.out.println(thisFactory+": " +settings);
 							try {
 								cluster.addDatabase(settings.createDBDatabase());
 							} catch (SQLException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -250,21 +238,8 @@ public class MinorTask implements Serializable {
 
 					}
 				}
-//				configFile = (String) envCtx.lookup("MinorTaskDatabaseConfigFilename");
-//				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(new File(configFile));
-//				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
-//					database = dbDatabaseClusterWithConfigFile;
-//					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
-//
-//				}
-//			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
-//				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
-//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-//				final String error = "Unable to find database " + configFile;
-//				System.err.println("" + error);
 			} catch (NoAvailableDatabaseException|NullPointerException ex) {
 				warning("No Database", "Unavailable to access the database");
-				ex.printStackTrace();
 			} catch (NamingException ex) {
 				error("Naming Error", ex.getExplanation());
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -317,9 +292,6 @@ public class MinorTask implements Serializable {
 				System.err.println("" + error);
 			}
 		}
-//		if (emailSession == null) {
-//			error("No Email Server", "We were unable to create an email session.");
-//		}
 		return emailSession;
 	}
 
