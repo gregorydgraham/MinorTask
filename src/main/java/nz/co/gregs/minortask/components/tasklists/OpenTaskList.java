@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
-import com.vaadin.flow.component.Component;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +30,7 @@ public class OpenTaskList extends AbstractTaskList {
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return "" + tasks.size() + " Open Tasks";
+		return "" + tasks.size() + " Open Subtasks";
 	}
 
 	@Override

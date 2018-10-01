@@ -117,17 +117,19 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		);
 		dates.setSizeUndefined();
 		
-		VerticalLayout detailsLayout = new VerticalLayout();
-		detailsLayout.setSizeUndefined();
-		detailsLayout.add(new ProjectPathNavigator.WithAddTaskButton(taskID));
-		detailsLayout.add(details);
-		detailsLayout.add(description);
-		detailsLayout.add(dates);
-		detailsLayout.add(new PlaceGrid(taskID));
-		detailsLayout.add(new DocumentGrid(taskID));
-		VerticalLayout tasksLayout = new VerticalLayout(subtasks);
-		tasksLayout.add(completeButton, reopenButton, completedTasks);
-		Div topLayout = new Div(detailsLayout, tasksLayout);
+		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
+		VerticalLayout extrasLayout = new VerticalLayout();
+		extrasLayout.add(details);
+		extrasLayout.add(description);
+		extrasLayout.add(dates);
+		extrasLayout.add(new PlaceGrid(taskID));
+		extrasLayout.add(new DocumentGrid(taskID));
+		Div topLayout = new Div(
+				projectPath, 
+				subtasks, 
+				extrasLayout,
+				completeButton, reopenButton, 
+				completedTasks);
 		try {
 			setFieldValues();
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
