@@ -7,4 +7,28 @@
 				 id="WebApp_ID" version="3.0">
 
 	<display-name>MinorTask Project Management</display-name>
+
+	<resource-env-ref>
+		<description>
+			Object factory for DatabaseConnectionSettings
+		</description>
+		<resource-env-ref-name>
+			bean/DatabaseConnectionSettings
+		</resource-env-ref-name>
+		<resource-env-ref-type>
+			nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings
+		</resource-env-ref-type>
+	</resource-env-ref>
+	
+	<resource-env-ref>
+		<description>
+			Object factory for DBDatabaseCluster
+		</description>
+		<resource-env-ref-name>
+			DBDatabaseCluster
+		</resource-env-ref-name>
+		<resource-env-ref-type>
+			nz.co.gregs.dbvolution.databases.DBDatabaseCluster
+		</resource-env-ref-type>
+	</resource-env-ref>
 </web-app>

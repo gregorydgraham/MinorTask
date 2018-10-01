@@ -19,6 +19,7 @@ import com.vaadin.flow.server.VaadinSessionState;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -64,6 +65,7 @@ import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import org.slf4j.LoggerFactory;
@@ -199,25 +201,76 @@ public class MinorTask implements Serializable {
 	public final synchronized DBDatabase setupDatabase() {
 
 		if (database == null) {
-			String configFile = "MinorTaskDatabaseConfig.yml";
+//			String configFile = "MinorTaskDatabaseConfig.yml";
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
-				configFile = (String) envCtx.lookup("MinorTaskDatabaseConfigFilename");
-				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(new File(configFile));
-				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
-					database = dbDatabaseClusterWithConfigFile;
-					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
 
+				DBDatabaseCluster cluster = (DBDatabaseCluster) envCtx.lookup("DBDatabaseCluster");
+				System.out.println("CLUSTER: " + cluster);
+				DBDatabase readyDatabase = null;
+				try {
+					readyDatabase = cluster.getReadyDatabase();
+				} catch (NoAvailableDatabaseException ex) {
+					ex.printStackTrace();
 				}
-			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
-				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
-				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
-				final String error = "Unable to find database " + configFile;
-				System.err.println("" + error);
+				if (readyDatabase == null) {
+					String dcsFactory = "bean/DatabaseConnectionSettings";
+					int index = 0;
+					String thisFactory = dcsFactory;
+
+					DatabaseConnectionSettings settings = null;
+					try {
+						do {
+							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
+							System.out.println("DATABASECONNECTIONSETTINGS: " + thisFactory);
+							System.out.println("DATABASECONNECTIONSETTINGS: " + settings.getDatabaseName() + ";"
+									+ settings.getDbdatabase() + ";"
+									+ settings.getHost() + ";"
+									+ settings.getInstance() + ";"
+									+ settings.getPort() + ";"
+									+ settings.getSchema() + ";"
+									+ settings.getUrl() + ";"
+									+ settings.getUsername() + ";"
+							);
+							try {
+								cluster.addDatabase(settings.createDBDatabase());
+							} catch (SQLException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+								error("Unable to create database: " + settings.toString(), ex.getMessage());
+							}
+							index++;
+							thisFactory = dcsFactory+index;
+						} while (settings != null);
+					} catch (NullPointerException|javax.naming.NameNotFoundException ex) {
+					}
+
+					if (cluster.getReadyDatabase() != null) {
+						database = cluster;
+						debug("Database created from context based configuration");
+
+					}
+				}
+//				configFile = (String) envCtx.lookup("MinorTaskDatabaseConfigFilename");
+//				final DBDatabaseClusterWithConfigFile dbDatabaseClusterWithConfigFile = new DBDatabaseClusterWithConfigFile(new File(configFile));
+//				if (dbDatabaseClusterWithConfigFile.getReadyDatabase() != null) {
+//					database = dbDatabaseClusterWithConfigFile;
+//					debug("Database created from \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
+//
+//				}
+//			} catch (DBDatabaseClusterWithConfigFile.NoDatabaseConfigurationFound | DBDatabaseClusterWithConfigFile.UnableToCreateDatabaseCluster | NoAvailableDatabaseException ex) {
+//				warning("Configuration Missing", "We were unable to find the database configuration \"" + configFile + "\" in " + (new File(configFile).getAbsolutePath()));
+//				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
+//				final String error = "Unable to find database " + configFile;
+//				System.err.println("" + error);
+			} catch (NoAvailableDatabaseException|NullPointerException ex) {
+				warning("No Database", "Unavailable to access the database");
+				ex.printStackTrace();
 			} catch (NamingException ex) {
+				error("Naming Error", ex.getExplanation());
 				Logger.getLogger(MinorTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
+		} else {
+			debug("Using existing database");
 		}
 		if (database == null) {
 			try {

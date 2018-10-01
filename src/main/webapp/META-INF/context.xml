@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/minortask">
-	<Environment name="MinorTaskDatabaseConfigFilename" 
+<!--	<Environment name="MinorTaskDatabaseConfigFilename" 
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskDatabaseConfig.yml"
 							 type="java.lang.String" 
-							 override="true"/>
+							 override="true"/>-->
 	<Environment name="MinorTaskEmailConfigFilename" 
 							 value="/Users/gregorygraham/Projects/MinorTask/MinorTaskEmailConfig.yml"
 							 type="java.lang.String" 
@@ -16,4 +16,36 @@
 							 value="MinorTask"
 							 type="java.lang.String" 
 							 override="true"/>
+	
+	<ResourceLink 
+		name="DBDatabaseCluster"
+		global="MinorTaskCluster"
+		type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"
+	/>
+
+	<Resource name="bean/DatabaseConnectionSettings" 
+						auth="Container"
+						type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings"
+						factory="org.apache.naming.factory.BeanFactory"
+						dbdatabase="nz.co.gregs.dbvolution.databases.SQLiteDB"
+						url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask.sqlite"
+						username="admin"
+						password="admin"
+	/>
+	
+	<Resource name="bean/DatabaseConnectionSettings1" 
+						auth="Container"
+						type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings"
+						factory="org.apache.naming.factory.BeanFactory"
+						dbdatabase="nz.co.gregs.dbvolution.databases.H2MemoryDB"
+						url="jdbc:h2:mem:TestDatabase.h2"
+						username="admin"
+						password="admin"
+	/>	
+	
+	<!--	<Resource name="bean/DBDatabaseClusterFactory" 
+						auth="Container"
+						type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"
+						factory="org.apache.naming.factory.BeanFactory"
+	/>-->
 </Context>
