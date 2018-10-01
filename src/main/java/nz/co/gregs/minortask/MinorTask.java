@@ -220,16 +220,16 @@ public class MinorTask implements Serializable {
 					try {
 						do {
 							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
-							System.out.println(thisFactory+": " +settings);
+							System.out.println(thisFactory + ": " + settings);
 							try {
 								cluster.addDatabase(settings.createDBDatabase());
 							} catch (SQLException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 								error("Unable to create database: " + settings.toString(), ex.getMessage());
 							}
 							index++;
-							thisFactory = dcsFactory+index;
+							thisFactory = dcsFactory + index;
 						} while (settings != null);
-					} catch (NullPointerException|javax.naming.NameNotFoundException ex) {
+					} catch (NullPointerException | javax.naming.NameNotFoundException ex) {
 					}
 
 					if (cluster.getReadyDatabase() != null) {
@@ -238,7 +238,7 @@ public class MinorTask implements Serializable {
 
 					}
 				}
-			} catch (NoAvailableDatabaseException|NullPointerException ex) {
+			} catch (NoAvailableDatabaseException | NullPointerException ex) {
 				warning("No Database", "Unavailable to access the database");
 			} catch (NamingException ex) {
 				error("Naming Error", ex.getExplanation());
@@ -317,8 +317,6 @@ public class MinorTask implements Serializable {
 		setSessionAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME, db);
 	}
 	private static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
-
-	private static final String MINORTASK_EMAILSESSION = "minortask_emailsession";
 
 	private void setSessionAttribute(String sessionAttributeName, Object obj) {
 		VaadinSession sess = VaadinSession.getCurrent();

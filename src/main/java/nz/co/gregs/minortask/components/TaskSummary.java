@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("task-summary")
+@Deprecated
 public class TaskSummary extends VerticalLayout implements RequiresLogin, ClickNotifier<Component> {
 
 	public TaskSummary(Task task) {

@@ -17,10 +17,10 @@
 							 type="java.lang.String" 
 							 override="true"/>
 	
-	<ResourceLink 
-		name="DBDatabaseCluster"
-		global="MinorTaskCluster"
-		type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"
+	<Resource name="DBDatabaseCluster" 
+						auth="Container"
+						type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"
+						factory="org.apache.naming.factory.BeanFactory"
 	/>
 
 	<Resource name="bean/DatabaseConnectionSettings" 
