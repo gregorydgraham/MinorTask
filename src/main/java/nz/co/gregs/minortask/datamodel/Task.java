@@ -73,10 +73,12 @@ public class Task extends DBRow {
 			if (this.getDefined() && otherTask.getDefined()) {
 				final Long taskIDValue = this.taskID.longValue();
 				final Long otherTaskIDValue = otherTask.taskID.longValue();
-				if ((taskIDValue == null && taskIDValue != otherTaskIDValue)) {
-					return false;
-				} else if ((taskIDValue == null && taskIDValue == otherTaskIDValue)) {
-					return true;
+				if (taskIDValue == null) {
+					if (otherTaskIDValue == null) {
+						return true;
+					} else {
+						return false;
+					}
 				} else {
 					return taskIDValue.equals(otherTaskIDValue);
 				}
