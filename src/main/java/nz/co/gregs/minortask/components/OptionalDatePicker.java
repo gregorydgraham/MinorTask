@@ -7,12 +7,10 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.AbstractCompositeField;
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.shared.Registration;
 import java.time.LocalDate;
 
 /**
@@ -58,11 +56,11 @@ public class OptionalDatePicker extends AbstractCompositeField<VerticalLayout, O
 		input.setValue(newPresentationValue);
 	}
 
-	void setMin(LocalDate date) {
+	public void setMin(LocalDate date) {
 		input.setMin(date);
 	}
 
-	void setMax(LocalDate date) {
+	public void setMax(LocalDate date) {
 		input.setMax(date);
 	}
 
