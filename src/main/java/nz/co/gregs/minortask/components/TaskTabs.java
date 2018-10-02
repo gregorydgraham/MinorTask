@@ -56,7 +56,6 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 	protected void tabClicked(Tabs.SelectedChangeEvent e, Long taskID) {
 		Tabs tabs = e.getSource();
 		Tab selectedTab = tabs.getSelectedTab();
-//		MinorTaskTab[] opts = MinorTaskTab.getTabArray();
 		MinorTaskTab.moveTo(selectedTab, taskID);
 	}
 
@@ -101,8 +100,6 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
-//				new MinorTaskTab("Editor", TaskEditorLayout.class),
-//				new MinorTaskTab("Creator", TaskCreatorLayout.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
 				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
 				new MinorTaskTab("Search", SearchForTaskPage.class)
@@ -110,7 +107,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		}
 
 		public static MinorTaskTab getFirstTab() {
-			return new MinorTaskTab("", ProjectsLayout.class);
+			return new MinorTaskTab("", TaskEditorLayout.class);
 		}
 
 		public static Tab getTabForPage(Component page) {
