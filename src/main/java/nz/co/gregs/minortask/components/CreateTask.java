@@ -99,10 +99,16 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 			final LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
 			final LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
 
-			startDefault = startDefault.isAfter(projectStart) ? startDefault : projectStart;
-			preferredDefault = preferredDefault.isAfter(projectStart) ? preferredDefault : projectStart;
-			preferredDefault = preferredDefault.isBefore(projectEnd) ? preferredDefault : projectEnd;
-			deadlineDefault = deadlineDefault.isBefore(projectEnd) ? deadlineDefault : projectEnd;
+			if (startDefault != null) {
+				startDefault = startDefault.isAfter(projectStart) ? startDefault : projectStart;
+			}
+			if (preferredDefault != null) {
+				preferredDefault = preferredDefault.isAfter(projectStart) ? preferredDefault : projectStart;
+				preferredDefault = preferredDefault.isBefore(projectEnd) ? preferredDefault : projectEnd;
+			}
+			if (deadlineDefault != null) {
+				deadlineDefault = deadlineDefault.isBefore(projectEnd) ? deadlineDefault : projectEnd;
+			}
 
 			startDate.setDefaultValue(startDefault);
 			preferredEndDate.setDefaultValue(preferredDefault);
