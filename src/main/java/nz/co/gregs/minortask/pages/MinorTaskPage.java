@@ -25,7 +25,7 @@ import nz.co.gregs.minortask.components.TaskTabs;
  *
  * @author gregorygraham
  */
-@HtmlImport("styles/shared-styles.html")
+@HtmlImport("frontend://styles/shared-styles.html")
 public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskComponent, BeforeEnterObserver, HasUrlParameter<Long>, HasDynamicTitle {
 
 	protected Long taskID = null;
