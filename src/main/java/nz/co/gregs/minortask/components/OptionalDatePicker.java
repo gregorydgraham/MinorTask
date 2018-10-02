@@ -50,9 +50,6 @@ public class OptionalDatePicker extends AbstractCompositeField<VerticalLayout, O
 		final VerticalLayout content = getContent();
 		content.add(enabler, input);
 		content.addClassName("optional-date-picker");
-		content.setSizeFull();
-		content.setHeight("100%");
-		content.setWidth("100%");
 		content.setAlignItems(FlexComponent.Alignment.START);
 	}
 
@@ -97,5 +94,9 @@ public class OptionalDatePicker extends AbstractCompositeField<VerticalLayout, O
 			enabler.setValue(Boolean.TRUE);
 		}
 		super.setValue(value);
+	}
+
+	public void setDefaultValue(LocalDate suggestion) {
+		this.previousValue = suggestion;
 	}
 }
