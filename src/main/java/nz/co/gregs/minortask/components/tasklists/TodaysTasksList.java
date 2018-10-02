@@ -22,7 +22,8 @@ public class TodaysTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task.Project example = new Task.Project();
 		example.userID.permittedValues(minortask().getUserID());
-		example.completionDate.permittedValues((Date) null);
+		example.startDate.permittedRangeInclusive(null, new Date());
+		example.completionDate.permitOnlyNull();
 		final Task task = new Task();
 		final DBQuery query = minortask().getDatabase().getDBQuery(example).addOptional(task);
 		query.setSortOrder(
