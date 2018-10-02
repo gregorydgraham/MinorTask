@@ -47,7 +47,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	CompletedTaskList completedTasks;
 	TextField notes = new TextField("Notes");
 	DatePicker startDate = new DatePicker("Start");
-	DatePicker preferredEndDate = new DatePicker("End");
+	DatePicker preferredEndDate = new DatePicker("Reminder");
 	DatePicker deadlineDate = new DatePicker("Deadline");
 	DatePicker completedDate = new DatePicker("Completed");
 	Label activeIndicator = new Label("Active");
