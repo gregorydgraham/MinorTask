@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -46,13 +46,14 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
 	TextField notes = new TextField("Notes");
-	DatePicker startDate = new DatePicker("Start");
-	DatePicker preferredEndDate = new DatePicker("Reminder");
-	DatePicker deadlineDate = new DatePicker("Deadline");
+	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
+	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
+	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
 	DatePicker completedDate = new DatePicker("Completed");
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
 	Label overdueIndicator = new Label("Overdue");
+	Label oneDayMaybeIndicator = new Label("One Day Maybe");
 	Label completedIndicator = new Label("COMPLETED");
 	Button createButton = new Button("Create");
 	Button cancelButton = new Button("Cancel");
@@ -69,7 +70,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 			subtasks = new OpenTaskList(taskID);
 			completedTasks = new CompletedTaskList(taskID);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(taskID));
-		} catch (MinorTask.InaccessibleTaskException ex) {
+		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
 		}
 	}
@@ -85,14 +86,18 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		activeIndicator.setWidth("100%");
 		startedIndicator.setWidth("100%");
 		overdueIndicator.setWidth("100%");
+		oneDayMaybeIndicator.setWidth("100%");
 		completedIndicator.setWidth("100%");
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
 		overdueIndicator.setVisible(false);
 		completedIndicator.setVisible(false);
+		oneDayMaybeIndicator.setVisible(false);
 		startedIndicator.addClassName("friendly");
 		overdueIndicator.addClassName("danger");
 		completedIndicator.addClassName("neutral");
+		oneDayMaybeIndicator.addClassName("neutral");
+		
 		completedDate.setVisible(false);
 		completedDate.setReadOnly(true);
 
@@ -116,7 +121,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				completedDate
 		);
 		dates.setSizeUndefined();
-		
+
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		VerticalLayout extrasLayout = new VerticalLayout();
 		extrasLayout.add(details);
@@ -125,15 +130,15 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		extrasLayout.add(new PlaceGrid(taskID));
 		extrasLayout.add(new DocumentGrid(taskID));
 		Div topLayout = new Div(
-				projectPath, 
-				subtasks, 
+				projectPath,
+				subtasks,
 				extrasLayout,
-				completeButton, reopenButton, 
+				completeButton, reopenButton,
 				completedTasks);
 		try {
 			setFieldValues();
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			minortask().sqlerror(ex);
+			Globals.sqlerror(ex);
 		}
 		return topLayout;
 	}
@@ -141,7 +146,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	protected void addChangeListeners() {
 		name.addValueChangeListener((event) -> {
 			saveTask();
-			minortask().showTask(taskID);
+			Globals.showTask(taskID);
 		});
 		description.addValueChangeListener((event) -> {
 			saveTask();
@@ -149,13 +154,14 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 
 		name.setValueChangeMode(ValueChangeMode.ON_BLUR);
 		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
-		final HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<DatePicker, LocalDate>> dateChange = (event) -> {
+		
+		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
 			saveTask();
 		};
 
-		startDate.addValueChangeListener(dateChange);
-		preferredEndDate.addValueChangeListener(dateChange);
-		deadlineDate.addValueChangeListener(dateChange);
+		startDate.addValueChangeListener(changer);
+		preferredEndDate.addValueChangeListener(changer);
+		deadlineDate.addValueChangeListener(changer);
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
@@ -167,7 +173,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
-				
+
 				Task.Project taskProject = taskAndProject.getProject();
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
@@ -203,9 +209,11 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				} else {
 					completeButton.setVisible(true);
 					final Date now = new Date();
-					if (task.finalDate.dateValue().before(now)) {
+					if (task.startDate.dateValue() == null && task.finalDate.dateValue() == null) {
+						oneDayMaybeIndicator.setVisible(true);
+					} else if (task.finalDate.dateValue() != null && task.finalDate.dateValue().before(now)) {
 						overdueIndicator.setVisible(true);
-					} else if (task.startDate.dateValue().before(now)) {
+					} else if (task.startDate.dateValue() != null && task.startDate.dateValue().before(now)) {
 						startedIndicator.setVisible(true);
 					} else {
 						activeIndicator.setVisible(true);
@@ -232,16 +240,16 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				getDatabase().update(task);
 			} catch (SQLException ex) {
 				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
-				minortask().sqlerror(ex);
+				Globals.sqlerror(ex);
 			}
-			minortask().chat("Saved.");
-		} catch (MinorTask.InaccessibleTaskException ex) {
+			Globals.chat("Saved.");
+		} catch (Globals.InaccessibleTaskException ex) {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
 	public void handleEscapeButton() {
-		minortask().showTask(taskID);
+		Globals.showTask(taskID);
 	}
 
 	public final void setAsDefaultButton(Button button) {
@@ -259,10 +267,8 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
 
 		private final Long taskID;
-		private final MinorTask minortask;
 
 		public ReopenTaskListener(MinorTask minortask, Long taskID) {
-			this.minortask = minortask;
 			this.taskID = taskID;
 		}
 
@@ -270,26 +276,25 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		public void onComponentEvent(ClickEvent<Button> event) {
 			List<Task> projectPathTasks = getProjectPathTasks(taskID);
 			for (Task projectPathTask : projectPathTasks) {
-				projectPathTask.completionDate.setValue((Date) null);
-				try {
-					minortask().getDatabase().update(projectPathTask);
-				} catch (SQLException ex) {
-					minortask().sqlerror(ex);
-				}
+				setCompletionDateToNull(projectPathTask);
 			}
 			Task task;
 			try {
 				task = getTask(taskID);
-				task.completionDate.setValue((Date) null);
-				try {
-					minortask().getDatabase().update(task);
-				} catch (SQLException ex) {
-					minortask().sqlerror(ex);
-				}
-			} catch (MinorTask.InaccessibleTaskException ex) {
+				setCompletionDateToNull(task);
+			} catch (Globals.InaccessibleTaskException ex) {
 				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			minortask().showTask(taskID);
+			Globals.showTask(taskID);
+		}
+
+		private void setCompletionDateToNull(Task projectPathTask) {
+			projectPathTask.completionDate.setValue((Date) null);
+			try {
+				Globals.getDatabase().update(projectPathTask);
+			} catch (SQLException ex) {
+				Globals.sqlerror(ex);
+			}
 		}
 	}
 
@@ -306,27 +311,27 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 			try {
 				Task task = completeTask(taskID);
 				if (task == null) {
-					minortask().showTask(null);
+					Globals.showTask(null);
 				} else {
-					minortask().showTask(task.projectID.getValue());
+					Globals.showTask(task.projectID.getValue());
 				}
-			} catch (MinorTask.InaccessibleTaskException ex) {
+			} catch (Globals.InaccessibleTaskException ex) {
 				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 
-		private Task completeTask(Long taskID) throws MinorTask.InaccessibleTaskException {
+		private Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
 			if (taskID != null) {
-				List<Task> subtasks = minortask().getActiveSubtasks(taskID, minortask().getUserID());
+				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask().getUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}
 				Task task = getTask(taskID);
 				task.completionDate.setValue(new Date());
 				try {
-					minortask().getDatabase().update(task);
+					Globals.getDatabase().update(task);
 				} catch (SQLException ex) {
-					minortask().sqlerror(ex);
+					Globals.sqlerror(ex);
 				}
 				return task;
 			}

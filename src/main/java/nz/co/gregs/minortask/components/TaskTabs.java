@@ -35,7 +35,6 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		try {
 			super.setSelectedTab(tab);
 		} catch (IllegalArgumentException exp) {
-//			super.setSelectedIndex(0);
 		}
 	}
 
@@ -100,6 +99,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
+				new MinorTaskTab("Ideas", IdeasPage.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
 				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
 				new MinorTaskTab("Search", SearchForTaskPage.class)
