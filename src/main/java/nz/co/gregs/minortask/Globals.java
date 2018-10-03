@@ -418,6 +418,7 @@ public class Globals {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) envCtx.lookup("DBDatabaseCluster");
+				cluster.setPrintSQLBeforeExecuting(true);
 				System.out.println("CLUSTER: " + cluster);
 				DBDatabase readyDatabase = null;
 				try {
