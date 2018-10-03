@@ -14,11 +14,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
-import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.StringExpression;
 import nz.co.gregs.minortask.components.HasDefaultButton;
@@ -69,6 +65,8 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 				searchFor = event.getValue();
 				refreshList();
 			});
+			searchField.setWidth("100%");
+			searchField.setAutofocus(true);
 		}
 		return searchField;
 	}
@@ -81,7 +79,11 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	@Override
 	protected String getListCaption(List<Task> tasks) {
 		if (tasks.isEmpty()) {
-			return "Search above";
+			if (searchFor==null || searchFor.isEmpty()) {
+				return "Search above";
+			} else {
+				return "No Results Found";
+			}
 		} else {
 			return "Found " + tasks.size() + " Tasks for \"" + searchFor + "\"";
 		}
@@ -89,17 +91,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 
 	@Override
 	protected boolean thereAreRowsToShow() {
-		if (searchFor == null || searchFor.isEmpty()) {
-			return false;
-		} else {
-			try {
-				Task example = minortask().getSafeTaskExample(this);
-				DBQuery query = getQuery(example, getSearchTerms(searchFor));
-				return query.count() > 0;
-			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException | NothingToSearchFor ex) {
-				return false;
-			}
-		}
+		return true;
 	}
 
 	@Override
@@ -162,13 +154,12 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 				(event) -> refreshList(),
 				(event) -> refreshList()
 		);
-		HorizontalLayout layout = new HorizontalLayout(new Component[]{
-			searchButton,
-			getSearchField(),
+		HorizontalLayout controls = new HorizontalLayout(new Component[]{
 			getIncludeDescriptionOption(),
-			getIncludeCompletedTasksOption()
+			getIncludeCompletedTasksOption(), searchButton
 		});
-		return new Component[]{layout};
+		controls.setSpacing(false);
+		return new Component[]{getSearchField(), controls};
 	}
 
 	private static class NothingToSearchFor extends Exception {
