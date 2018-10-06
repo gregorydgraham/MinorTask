@@ -249,4 +249,8 @@ public class MinorTask extends Globals implements Serializable {
 		);
 		return loginDestination;
 	}
+
+	public void showProfile() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

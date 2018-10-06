@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.actions.DBActionList;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
@@ -108,10 +110,16 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		reopenButton.addClassName("friendly");
 		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
 		reopenButton.setVisible(false);
+		
+		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
+		reopenButton.getStyle().set("margin", "0").set("padding", "0");
+		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
+		completedLayout.setDefaultHorizontalComponentAlignment(Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
 				name, project,
-				activeIndicator, startedIndicator, overdueIndicator, completedIndicator);
+				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
+		details.setDefaultVerticalComponentAlignment(Alignment.END);
 		details.setSizeUndefined();
 
 		HorizontalLayout dates = new HorizontalLayout(
@@ -133,7 +141,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				projectPath,
 				subtasks,
 				extrasLayout,
-				completeButton, reopenButton,
+				completeButton,
 				completedTasks);
 		try {
 			setFieldValues();
@@ -329,7 +337,9 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				Task task = getTask(taskID);
 				task.completionDate.setValue(new Date());
 				try {
-					Globals.getDatabase().update(task);
+					final DBDatabase database = Globals.getDatabase();
+					DBActionList update = database.update(task);
+					System.out.println(update.getSQL(database));
 				} catch (SQLException ex) {
 					Globals.sqlerror(ex);
 				}

@@ -348,8 +348,8 @@ public class Globals {
 	}
 
 	protected static DBDatabaseCluster getEmergencyDatabase() throws IOException, SQLException {
-		warning("No Database Configured", "No database configuration was found, "+getApplicationName()+" is now running on the temporary database.");
-		return new DBDatabaseCluster(new SQLiteDB(new File(getApplicationName()+"-default.sqlite"), "admin", "admin"));
+		warning("No Database Configured", "No database configuration was found, " + getApplicationName() + " is now running on the temporary database.");
+		return new DBDatabaseCluster(getApplicationName(), new SQLiteDB(new File(getApplicationName() + "-default.sqlite"), "admin", "admin"));
 	}
 
 	protected static void setDatabase(DBDatabase db) {
@@ -418,6 +418,7 @@ public class Globals {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) envCtx.lookup("DBDatabaseCluster");
+//				cluster.setDatabaseName(getApplicationName());
 				cluster.setPrintSQLBeforeExecuting(true);
 				System.out.println("CLUSTER: " + cluster);
 				DBDatabase readyDatabase = null;
@@ -442,11 +443,19 @@ public class Globals {
 							index++;
 							thisFactory = dcsFactory + index;
 						} while (settings != null);
-					} catch (NullPointerException | NameNotFoundException ex) {
+					} catch (NameNotFoundException ex) {
+						debug("Stopped at index " + index);
+					} catch (Exception ex) {
+						System.out.println("" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+						ex.printStackTrace();
+						debug("Stopped at index " + index);
 					}
+					debug(cluster.getClusterStatus());
 					if (cluster.getReadyDatabase() != null) {
 						Globals.database = cluster;
 						debug("Database created from context based configuration");
+					} else {
+						debug("Configuration failed to create database");
 					}
 				}
 			} catch (NoAvailableDatabaseException | NullPointerException ex) {
@@ -473,12 +482,11 @@ public class Globals {
 	}
 
 	public static final void debug(String string) {
-		Notification note = new Notification(string, 3000);
-		note.setPosition(Notification.Position.BOTTOM_END);
-		note.open();
+		System.out.println("DEBUG: " + string);
 	}
 
 	public static final void error(final String topic, final String error) {
+		System.out.println("ERROR: " + topic + " - " + error);
 		Button closeButton = new Button("Oops");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error), closeButton);
 		Notification note = new Notification(layout);
@@ -529,6 +537,7 @@ public class Globals {
 	}
 
 	public static final void warning(final String topic, final String warning) {
+		System.out.println("WARNING: " + topic + " - " + warning);
 		Button closeButton = new Button("Nevermind");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(warning), closeButton);
 		Notification note = new Notification(layout);
@@ -562,7 +571,6 @@ public class Globals {
 	}
 
 	public Globals() {
-		setupDatabase();
 	}
-	
+
 }

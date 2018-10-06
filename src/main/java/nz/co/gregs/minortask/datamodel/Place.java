@@ -13,6 +13,7 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.annotations.DBTableName;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBLargeText;
 import nz.co.gregs.dbvolution.datatypes.DBNumber;
 import nz.co.gregs.dbvolution.datatypes.DBString;
 import nz.co.gregs.minortask.components.PlaceSearchComponent;
@@ -53,8 +54,8 @@ public class Place extends DBRow {
 	public DBInteger placeRank = new DBInteger();
 	@DBColumn
 	public DBString boundingBox = new DBString();
-	@DBColumn
-	public DBString polygonPoints = new DBString();
+	@DBColumn("polygon_pts")
+	public DBLargeText polygonPoints = new DBLargeText();
 	@DBColumn
 	public DBNumber latitude = new DBNumber();
 	@DBColumn
