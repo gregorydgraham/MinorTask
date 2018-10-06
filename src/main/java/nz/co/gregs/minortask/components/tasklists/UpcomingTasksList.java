@@ -10,10 +10,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("upcoming-task-list")
 public class UpcomingTasksList extends AbstractTaskList {
+	
+	private static final int DAYS_AHEAD = +3;
 
 	public UpcomingTasksList(Long taskID) {
 		super(taskID);
@@ -26,7 +29,7 @@ public class UpcomingTasksList extends AbstractTaskList {
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return tasks.size() + " Upcoming Tasks";
+		return tasks.size() + " Tasks will start within "+DAYS_AHEAD+" days";
 	}
 
 	@Override
@@ -34,12 +37,12 @@ public class UpcomingTasksList extends AbstractTaskList {
 		Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
 		final GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		gregorianCalendar.roll(GregorianCalendar.DATE, +3);
+		gregorianCalendar.roll(GregorianCalendar.DATE, DAYS_AHEAD);
 		Date threeDaysHence = gregorianCalendar.getTime();
 		example.startDate.permittedRange(new Date(), threeDaysHence);
-		example.completionDate.permittedValues((Date) null);
+		example.completionDate.permitOnlyNull();
 		final Task task = new Task();
-		final DBQuery query = minortask().getDatabase().getDBQuery(example).addOptional(task);
+		final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
 		query.addCondition(task.column(task.taskID).isNull());
 		query.setSortOrder(
 				example.column(example.isOverdue),
