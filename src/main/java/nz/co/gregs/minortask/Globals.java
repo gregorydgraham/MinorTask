@@ -465,7 +465,7 @@ public class Globals {
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		} else {
-			debug("Using existing database");
+//			debug("Using existing database");
 		}
 		if (Globals.database == null) {
 			try {
