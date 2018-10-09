@@ -11,6 +11,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.util.Collections;
 import java.util.List;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -29,18 +30,17 @@ public class ProjectPathNavigator extends HorizontalLayout implements RequiresLo
 
 	protected void buildComponent() {
 		add(getButtonForTaskID(null));
-		List<Task> ancestors = minortask().getProjectPathTasks(getTaskID(), minortask().getUserID());
+		List<Task> ancestors = MinorTask.getProjectPathTasks(getTaskID(), minortask().getUserID());
 		Collections.reverse(ancestors);
 		for (Task ancestor : ancestors) {
-			final Button taskButton = getButtonForTaskID(ancestor);
-			add(taskButton);
+			add(getButtonForTaskID(ancestor));
 		}
 	}
 
 	public Button getButtonForTaskID(Task task) {
 		final Button button = new Button((task == null ? "Projects" : task.name.getValue()), (ClickEvent<Button> event) -> {
 			final Long foundID = task == null ? null : task.taskID.getValue();
-			minortask().showTask(foundID);
+			MinorTask.showTask(foundID);
 		});
 		formatButton(button);
 		return button;
