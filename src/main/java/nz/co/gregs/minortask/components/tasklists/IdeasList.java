@@ -45,7 +45,7 @@ public class IdeasList extends AbstractTaskList {
 		Task task = new Task();
 		final DBQuery query = Globals.getDatabase().getDBQuery(example).addOptional(task);
 		// add the leaf requirement
-		query.addCondition(task.column(task.taskID).isNull());
+		query.addCondition(example.column(example.taskID).isNull());
 		query.setSortOrder(example.column(example.name));
 		query.printAllRows();
 		List<Task> tasks = query.getAllInstancesOf(example);
