@@ -18,6 +18,7 @@ import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -126,10 +127,10 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private Component getSubTaskNumberComponent(Task task) {
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
+		Button arrow = new Button("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
 		arrow.setIconAfterText(true);
 		arrow.addClickListener((event) -> {
-			minortask().showTask(task.taskID.longValue());
+			MinorTask.showTask(task.taskID.longValue());
 		});
 		return arrow;
 	}
