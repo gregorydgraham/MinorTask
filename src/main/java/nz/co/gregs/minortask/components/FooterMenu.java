@@ -5,14 +5,14 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 /**
  *
  * @author gregorygraham
  */
-public class FooterMenu extends VerticalLayout implements MinorTaskComponent {
+public class FooterMenu extends Footer implements MinorTaskComponent {
 
 //	private final MinorTaskUI ui;
 //	private final Long taskID;
