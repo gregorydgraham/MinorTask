@@ -6,8 +6,12 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.BeforeEvent;
@@ -15,6 +19,7 @@ import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.OptionalParameter;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
@@ -40,18 +45,21 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 	@Override
 	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
-		minortask().setLoginDestination(minortask().getCurrentLocation());
+		minortask().setLoginDestination(MinorTask.getCurrentLocation());
 		if (!minortask().isLoggedIn()) {
 			showLoginPanel();
 		} else {
 			removeAll();
 			add(new MinorTaskTemplate());
 			taskTabs = new TaskTabs(this, taskID);
+			taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 			final Component internalComponent = getInternalComponent(parameter);
+			final VerticalLayout layout = new VerticalLayout(taskTabs);
+			layout.setSizeUndefined();
 			VerticalLayout internalComponentHolder
 					= new VerticalLayout(
-							new AuthorisedBannerMenu(parameter),
-							taskTabs,
+							new AuthorisedBannerMenu(parameter), 
+							layout,
 							internalComponent
 					);
 			internalComponentHolder.addClassName("minortask-internal");
