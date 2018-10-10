@@ -27,6 +27,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -172,6 +173,24 @@ public class MinorTask extends Globals implements Serializable {
 	 */
 	public long getUserID() {
 		return userID;
+	}	
+	
+	public User getUser() {
+		if(getLoggedIn()){
+			User user = new User();
+			user.queryUserID().permittedValues(getUserID());
+			try {
+				List<User> got = getDatabase().get(user);
+				if(got.size()!=1){
+					warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
+				}else{
+					return got.get(0);
+				}
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}
+		return null;
 	}
 
 	public void setLoginDestination(Location location) {
@@ -251,6 +270,6 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public void showProfile() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		UI.getCurrent().navigate(UserProfilePage.class);
 	}
 }
