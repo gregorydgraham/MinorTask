@@ -35,7 +35,8 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 
 	protected Long taskID = null;
 	TaskTabs taskTabs;
-
+	private final AuthorisedBannerMenu banner= new AuthorisedBannerMenu();
+	
 	protected abstract Component getInternalComponent(Long parameter);
 
 	public MinorTaskPage() {
@@ -58,7 +59,7 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 			layout.setSizeUndefined();
 			VerticalLayout internalComponentHolder
 					= new VerticalLayout(
-							new AuthorisedBannerMenu(parameter), 
+							banner,
 							layout,
 							internalComponent
 					);
@@ -68,18 +69,25 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 			add(new FooterMenu());
 		}
 	}
+	
+	protected void setWelcomeMessage(String message){
+		banner.setText(message);
+	}
 
 	private void showLoginPanel() {
 		removeAll();
-		Location location = minortask().getCurrentLocation();
+		Location location = MinorTask.getCurrentLocation();
 		minortask().setLoginDestination(location);
 		add(new LoginPage().getLoginPageContents());
 	}
 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
+		System.out.println("BEFORE ENTER MINORTASKPAGE");
 		if (minortask().getNotLoggedIn()) {
-			minortask().showLogin();
+			Location location = MinorTask.getCurrentLocation();
+			minortask().setLoginDestination(location);
+			MinorTask.showLogin();
 		}
 	}
 }
