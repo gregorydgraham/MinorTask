@@ -20,12 +20,6 @@ public class UserProfileComponent extends VerticalLayout implements RequiresLogi
 	public UserProfileComponent() {
 		User user = minortask().getUser();
 		add(new Label("Still working on this bit..."));
-//		final DBRowForm<User> form = new DBRowForm<>(user); 
-//		add(form);
-//
-//		form.addValueChangeListener((event) -> {
-//			saveRow(event.getValue());
-//		});
 	}
 
 	private void saveRow(User user) {
