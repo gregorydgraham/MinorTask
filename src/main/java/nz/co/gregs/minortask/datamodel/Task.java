@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.datamodel;
 import java.io.Serializable;
 import java.util.Objects;
 import nz.co.gregs.dbvolution.DBRow;
+import nz.co.gregs.dbvolution.annotations.AutoFillDuringQueryIfPossible;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.annotations.DBForeignKey;
@@ -54,13 +55,9 @@ public class Task extends DBRow {
 	@DBColumn
 	public final DBDate finalDate = new DBDate();
 
-//	@DBColumn
-//	public final DBStringEnum<Task.Status> status = new DBStringEnum<Task.Status>();
 	@DBColumn
 	public final DBDate completionDate = new DBDate();
-
-//	@DBColumn
-//	public DBLargeText notes = new DBLargeText();
+	
 	@Override
 	public String toString() {
 		return name.getValue();
@@ -74,11 +71,7 @@ public class Task extends DBRow {
 				final Long taskIDValue = this.taskID.longValue();
 				final Long otherTaskIDValue = otherTask.taskID.longValue();
 				if (taskIDValue == null) {
-					if (otherTaskIDValue == null) {
-						return true;
-					} else {
-						return false;
-					}
+					return otherTaskIDValue == null;
 				} else {
 					return taskIDValue.equals(otherTaskIDValue);
 				}
