@@ -30,7 +30,7 @@ public interface MinorTaskComponent {
 	}
 
 	default DBDatabase getDatabase() {
-		return minortask().getDatabase();
+		return MinorTask.getDatabase();
 	}
 
 	default Task getTask(Long taskID) throws MinorTask.InaccessibleTaskException {
@@ -50,23 +50,23 @@ public interface MinorTaskComponent {
 	}
 
 	default List<Task> getProjectPathTasks(Long taskID) {
-		return minortask().getProjectPathTasks(taskID, getUserID());
+		return MinorTask.getProjectPathTasks(taskID, getUserID());
 	}
 
 	default void warning(String topic, String warning) {
-		minortask().warning(topic, warning);
+		MinorTask.warning(topic, warning);
 	}
 
 	default void chat(String topic) {
-		minortask().chat(topic);
+		MinorTask.chat(topic);
 	}
 
 	default void error(String topic, String warning) {
-		minortask().error(topic, warning);
+		MinorTask.error(topic, warning);
 	}
 
 	default void sqlerror(Exception ex) {
-		minortask().sqlerror(ex);
+		MinorTask.sqlerror(ex);
 	}
 
 	default public Task.TaskAndProject getTaskAndProject(Long taskID) throws MinorTask.InaccessibleTaskException {
