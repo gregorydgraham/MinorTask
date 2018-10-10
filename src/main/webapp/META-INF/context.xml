@@ -5,8 +5,8 @@
 							 type="java.lang.String" 
 							 override="true"/>-->
   <Environment name="MinorTaskEmailConfigFilename" override="true" type="java.lang.String" value="/Users/gregorygraham/Projects/MinorTask/MinorTaskEmailConfig.yml"/>
-  <Environment name="MinorTaskURL" override="true" type="java.lang.String" value="http://localhost:8080/minortask"/>
-  <Environment name="MinorTaskApplicationName" override="true" type="java.lang.String" value="MinorTask"/>
+  <Environment name="MinorTaskURL" override="true" type="java.lang.String" value="http://localhost:8080/"/>
+  <Environment name="MinorTaskApplicationName" override="true" type="java.lang.String" value="MinorTask TEST"/>
   <Resource auth="Container" factory="org.apache.naming.factory.BeanFactory" name="DBDatabaseCluster" type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster" databaseName="MinortaskCluster" autoRebuild="true" />
   <Resource auth="Container" dbdatabase="nz.co.gregs.dbvolution.databases.SQLiteDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask.sqlite" username="admin"/>
   <Resource auth="Container" dbdatabase="nz.co.gregs.dbvolution.databases.H2MemoryDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings1" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:h2:mem:TestDatabase.h2" username="admin"/>

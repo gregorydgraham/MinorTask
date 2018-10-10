@@ -132,11 +132,12 @@ public class Globals {
 	public static String getApplicationName() {
 		String name = "MinorTask";
 		try {
-			//"http://101.100.138.79/minortask"
 			Context initCtx = new InitialContext();
 			Context envCtx = (Context) initCtx.lookup("java:comp/env");
-			name = (String) envCtx.lookup("MinorTaskApplicationName");
-			if (name == null || name.isEmpty()) {
+			String found = (String) envCtx.lookup("MinorTaskApplicationName");
+			if (found == null || found.isEmpty()) {
+			} else {
+				name = found;
 			}
 		} catch (NamingException ex) {
 			Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
