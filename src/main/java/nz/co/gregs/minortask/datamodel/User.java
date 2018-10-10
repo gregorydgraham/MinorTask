@@ -14,7 +14,6 @@ import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
-import nz.co.gregs.dbvolution.datatypes.DBString;
 import nz.co.gregs.dbvolution.datatypes.DBStringTrimmed;
 
 /**
@@ -43,9 +42,6 @@ public class User extends DBRow {
 
 	@DBColumn
 	private final DBDate lastLoginDate = new DBDate();
-
-//	@DBColumn
-//	private final DBString rememberedID = new DBString();
 
 	/**
 	 * @return the userID
