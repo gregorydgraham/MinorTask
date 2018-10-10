@@ -99,7 +99,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		overdueIndicator.addClassName("danger");
 		completedIndicator.addClassName("neutral");
 		oneDayMaybeIndicator.addClassName("neutral");
-		
+
 		completedDate.setVisible(false);
 		completedDate.setReadOnly(true);
 
@@ -110,7 +110,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		reopenButton.addClassName("friendly");
 		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
 		reopenButton.setVisible(false);
-		
+
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
 		reopenButton.getStyle().set("margin", "0").set("padding", "0");
 		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
@@ -162,7 +162,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 
 		name.setValueChangeMode(ValueChangeMode.ON_BLUR);
 		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
-		
+
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
 			saveTask();
 		};
@@ -175,14 +175,14 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		if (taskID != null) {
 			Task task = taskAndProject.getTask();
+			Task.Project taskProject = taskAndProject.getProject();
 			if (task != null) {
 				name.setValue(task.name.stringValue());
 				description.setValue(task.description.toString());
-				startDate.setValue(asLocalDate(task.startDate.dateValue())); 
+				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
 
-				Task.Project taskProject = taskAndProject.getProject();
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
 					LocalDate projectEnd = asLocalDate(taskProject.finalDate.getValue());
