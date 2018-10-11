@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.events;
+package nz.co.gregs.minortask.documentupload;
 
 import com.vaadin.flow.component.ComponentEvent;
-import nz.co.gregs.minortask.components.DocumentUpload;
+import nz.co.gregs.minortask.documentupload.DocumentUpload;
 
 /**
  *

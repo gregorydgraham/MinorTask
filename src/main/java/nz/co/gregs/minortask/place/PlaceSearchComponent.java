@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.place;
 
-import nz.co.gregs.minortask.utilities.OpenStreetMapPlace;
 import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -30,8 +29,8 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import nz.co.gregs.minortask.datamodel.Place;
-import nz.co.gregs.minortask.events.PlaceAddedEvent;
+import nz.co.gregs.minortask.components.HasDefaultButton;
+import nz.co.gregs.minortask.components.RequiresLogin;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

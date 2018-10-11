@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.utilities;
+package nz.co.gregs.minortask.place;
 
 import java.io.Serializable;
 import org.w3c.dom.Element;

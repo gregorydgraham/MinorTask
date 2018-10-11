@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.place.PlaceGrid;
+import nz.co.gregs.minortask.documentupload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.ClickEvent;

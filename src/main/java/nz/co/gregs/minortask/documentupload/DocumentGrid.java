@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.documentupload;
 
+import nz.co.gregs.minortask.documentupload.DocumentUpload;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,9 +17,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.datamodel.TaskDocument;
-import nz.co.gregs.minortask.streamresources.DocumentIconStreamResource;
-import nz.co.gregs.minortask.streamresources.DocumentStreamResource;
+import nz.co.gregs.minortask.components.RequiresLogin;
 
 /**
  *

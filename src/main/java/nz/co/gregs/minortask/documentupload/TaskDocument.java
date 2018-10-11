@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.datamodel;
+package nz.co.gregs.minortask.documentupload;
 
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
@@ -15,6 +15,8 @@ import nz.co.gregs.dbvolution.annotations.DBTableName;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBLargeBinary;
 import nz.co.gregs.dbvolution.datatypes.DBString;
+import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
