@@ -79,7 +79,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	@Override
 	protected String getListCaption(List<Task> tasks) {
 		if (tasks.isEmpty()) {
-			if (searchFor==null || searchFor.isEmpty()) {
+			if (searchFor == null || searchFor.isEmpty()) {
 				return "Search above";
 			} else {
 				return "No Results Found";
@@ -149,9 +149,11 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	@Override
 	protected Component[] getControlsAbove() {
 		Button searchButton = new Button("Search");
+		searchButton.addClickListener((event) -> {
+			refreshList();
+		});
 		setAsDefaultButton(
 				searchButton,
-				(event) -> refreshList(),
 				(event) -> refreshList()
 		);
 		HorizontalLayout controls = new HorizontalLayout(new Component[]{

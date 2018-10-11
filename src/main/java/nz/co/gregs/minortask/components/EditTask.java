@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
@@ -137,6 +138,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		extrasLayout.add(dates);
 		extrasLayout.add(new PlaceGrid(taskID));
 		extrasLayout.add(new DocumentGrid(taskID));
+		extrasLayout.add(new WeblinkGrid(taskID));
 		Div topLayout = new Div(
 				projectPath,
 				subtasks,

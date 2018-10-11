@@ -498,7 +498,7 @@ public class Globals {
 		note.open();
 	}
 
-	protected static Task getTask(Long taskID, final Long userID) throws InaccessibleTaskException {
+	protected static Task getTask(final Long taskID, final Long userID) throws InaccessibleTaskException {
 		System.out.println("nz.co.gregs.minortask.Globals.getTask() TASKID:" + taskID);
 		System.out.println("nz.co.gregs.minortask.Globals.getTask() USERID:" + userID);
 		Task returnTask = null;

@@ -94,7 +94,14 @@
 					<artifactId>jsr305</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>    
+		</dependency>   
+		<!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.6</version>
+		</dependency>
+ 
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>

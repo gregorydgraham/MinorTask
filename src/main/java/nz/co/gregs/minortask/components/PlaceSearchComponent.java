@@ -15,7 +15,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -61,6 +60,14 @@ public class PlaceSearchComponent extends HorizontalLayout implements RequiresLo
 		add(comboBox);
 		add(addButton);
 
+		searchButton.addClickListener((event) -> {
+				searchForLocation(locationText.getValue());
+				comboBox.setOpened(true);
+				comboBox.focus();
+		});
+		addButton.addClickListener((event) -> {
+				addSelectedLocation();
+		});
 		locationText.addValueChangeListener((event) -> {
 			searchForLocation(event.getSource().getValue());
 		});
@@ -69,8 +76,6 @@ public class PlaceSearchComponent extends HorizontalLayout implements RequiresLo
 				searchForLocation(locationText.getValue());
 				comboBox.setOpened(true);
 				comboBox.focus();
-			}, (clickEvent) -> {
-				searchForLocation(locationText.getValue());
 			});
 		});
 		Registration addBlurListener = locationText.addBlurListener((BlurNotifier.BlurEvent<TextField> event) -> {
@@ -80,8 +85,6 @@ public class PlaceSearchComponent extends HorizontalLayout implements RequiresLo
 		});
 		comboBox.addValueChangeListener((event) -> {
 			defaultRegistration = setAsDefaultButton(addButton, (keyEvent) -> {
-				addSelectedLocation();
-			}, (clickEvent) -> {
 				addSelectedLocation();
 			});
 		});

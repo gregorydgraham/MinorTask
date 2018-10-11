@@ -24,33 +24,41 @@ public interface HasDefaultButton extends KeyNotifier {
 	static final String ESCAPEBUTTON_CLASSNAME = "escapebutton";
 
 	default Registration setAsDefaultButton(
-			Button button,
-			ComponentEventListener<KeyPressEvent> keyPressHandler,
-			ComponentEventListener<ClickEvent<Button>> clickHandler) {
+			Button button) {
 		final Key enter = Key.ENTER;
 
 		button.addClassName(DEFAULTBUTTON_CLASSNAME);
-		button.addClickListener(clickHandler);
+		return this.addKeyPressListener(enter, (event) -> {
+			button.click();
+		});
+	}
+
+	default Registration setAsDefaultButton(
+			Button button,
+			ComponentEventListener<KeyPressEvent> keyPressHandler) {
+		final Key enter = Key.ENTER;
+
+		button.addClassName(DEFAULTBUTTON_CLASSNAME);
 		return this.addKeyPressListener(enter, keyPressHandler);
 	}
 
 	default void removeAsDefaultButton(
 			Button button, Registration defaultButtonRegistration) {
 		try {
-			defaultButtonRegistration.remove();
+			if (defaultButtonRegistration != null) {
+				defaultButtonRegistration.remove();
+			}
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex.getMessage());
 		}
 		button.removeClassName(DEFAULTBUTTON_CLASSNAME);
 	}
 
-	default void setEscapeButton(Button button,
-			ComponentEventListener<KeyPressEvent> keyPressHandler,
-			ComponentEventListener<ClickEvent<Button>> clickHandler) {
+	default Registration setEscapeButton(Button button,
+			ComponentEventListener<KeyPressEvent> keyPressHandler) {
 		final Key enter = Key.ESCAPE;
-		this.addKeyPressListener(enter, keyPressHandler);
 		button.addClassName(ESCAPEBUTTON_CLASSNAME);
-		button.addClickListener(clickHandler);
+		return this.addKeyPressListener(enter, keyPressHandler);
 	}
 
 	default void removeAsEscapeButton(

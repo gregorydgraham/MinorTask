@@ -56,7 +56,8 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		Button loginButton = new Button("Login");
 		setAsDefaultButton(loginButton, (event) -> {
 			handleDefaultButton();
-		}, (event) -> {
+		});
+		loginButton.addClickListener((event) -> {
 			handleDefaultButton();
 		});
 
@@ -69,7 +70,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		lostPasswordButton.addClickListener((event) -> {
 			minortask().showLostPassword(USERNAME_FIELD.getValue());
 		});
-		
+
 		HorizontalLayout buttons = new HorizontalLayout(lostPasswordButton, signupButton);
 		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, lostPasswordButton);
 		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, signupButton);

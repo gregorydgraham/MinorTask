@@ -60,7 +60,7 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 			final String welcomeUser = "Welcome to MinorTask @" + user.getUsername();
 			setText(welcomeUser);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-			Globals.sqlerror(ex);
+//			Globals.sqlerror(ex);
 		}
 
 		Button profileButton = new Button("Profile");

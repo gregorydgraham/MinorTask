@@ -41,7 +41,7 @@ public class TaskEditorLayout extends MinorTaskPage{
 				return "MinorTask: " + task.name.stringValue();
 			}
 		} catch (MinorTask.InaccessibleTaskException ex) {
-			Logger.getLogger(TaskEditorLayout.class.getName()).log(Level.INFO, null, ex);
+//			Logger.getLogger(TaskEditorLayout.class.getName()).log(Level.INFO, null, ex);
 		}
 		return "MinorTask: Access Denied";
 	}
