@@ -8,31 +8,29 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import nz.co.gregs.minortask.MinorTask;
 
 /**
  *
  * @author gregorygraham
  */
 //@Tag("add-task-button")
-public class AddTaskButton extends HorizontalLayout implements RequiresLogin {
+public class AddTaskButton extends Button implements RequiresLogin {
 
 	final Button newTaskButton = new Button("+ Add Subtask");
 	private Long originatingTaskID = null;
 
 	public AddTaskButton(Long taskID) {
+		super("+Add Subtask");
 		this.originatingTaskID = taskID;
-		add(buildComponent());
+		buildComponent();
 	}
 
-	public final Component buildComponent() {
-		newTaskButton.addClassNames("addtaskbutton");
-		newTaskButton.getElement().setAttribute("theme", "small success primary");
-		newTaskButton.setSizeUndefined();
-		newTaskButton.addClickListener((event) -> {
-			minortask().showTaskCreation(originatingTaskID);
+	public final void buildComponent() {
+		addClassNames("addtaskbutton");
+		addClickListener((event) -> {
+			MinorTask.showTaskCreation(originatingTaskID);
 		});
-		setSizeUndefined();
-		return newTaskButton;
 	}
 
 	public void setValue(Long value) {
