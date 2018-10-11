@@ -80,32 +80,25 @@ public class WeblinkEditorComponent extends HorizontalLayout implements Requires
 	}
 
 	private void addWeblink() {
+		Weblink weblink = new Weblink();
+		weblink.taskID.setValue(taskID);
+		weblink.webURL.setValue(locationText.getValue());
+		weblink.description.setValue(descriptionText.getValue());
+		String iconURL = "";
+		String[] bits = locationText.getValue().split("/");
+		for (String bit : bits) {
+			System.out.println("BIT: " + bit);
+		}
+		iconURL = bits[0] + "//" + bits[2] + "/favicon.ico";
+		weblink.iconURL.setValue(iconURL);
 		try {
-			Weblink weblink = new Weblink();
-			weblink.taskID.setValue(taskID);
-			weblink.webURL.setValue(locationText.getValue());
-			weblink.description.setValue(descriptionText.getValue());
-			String iconURL = "";
-			String html = Jsoup.connect(locationText.getValue()).get().head().select("link[rel=shortcut icon]").val();
-			System.out.println("HTML: " + html);
-			String[] bits = locationText.getValue().split("/");
-			for (String bit : bits) {
-				System.out.println("BIT: " + bit);
-			}
-			iconURL = bits[0] + "//" + bits[2] + "/favicon.ico";
-			weblink.iconURL.setValue(iconURL);
-			try {
-				getDatabase().insert(weblink);
-			} catch (SQLException ex) {
-				sqlerror(ex);
-			}
+			getDatabase().insert(weblink);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
 
 // Ultimately we need to inform our listeners that there is a new location
-			fireEvent(new WeblinkAddedEvent(this, true));
-		} catch (IOException ex) {
-			error("Adding Weblink", ex.getMessage());
-			Logger.getLogger(WeblinkEditorComponent.class.getName()).log(Level.SEVERE, null, ex);
-		}
+		fireEvent(new WeblinkAddedEvent(this, true));
 	}
 
 	public Registration addWeblinkAddedListener(
