@@ -46,7 +46,7 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 		getDatabase().print(allRows);
 		grid.setHeightByRows(true);
 		grid.addComponentColumn((source) -> getAnchorComponent(source)
-		);
+		).setFlexGrow(20);
 		grid.addComponentColumn((source) -> getDescriptionComponent(source)
 		).setFlexGrow(20);
 		grid.addComponentColumn((source) -> getRemoveComponent(source));
@@ -74,7 +74,7 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 		Anchor iconAnchor = new Anchor(source.webURL.getValue(),				"");
 		iconAnchor.setTarget("_blank");
 		iconAnchor.add(icon);
-		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue());
+		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue().replaceAll("http[s]*://", ""));
 		urlAnchor.setTarget("_blank");
 		layout.add(iconAnchor, urlAnchor);
 		layout.setMargin(false);

@@ -6,10 +6,7 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;

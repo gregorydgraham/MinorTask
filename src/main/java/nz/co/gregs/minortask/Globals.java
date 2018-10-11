@@ -48,12 +48,14 @@ import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
+import nz.co.gregs.dbvolution.databases.H2DB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
+import nz.co.gregs.dbvolution.utility.RegularProcess;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
@@ -453,11 +455,14 @@ public class Globals {
 					}
 					debug(cluster.getClusterStatus());
 					if (cluster.getReadyDatabase() != null) {
+						cluster.addRegularProcess(new DatabaseBackupProcess(cluster));
 						Globals.database = cluster;
 						debug("Database created from context based configuration");
 					} else {
 						debug("Configuration failed to create database");
 					}
+				} else {
+					System.out.println("Database already configured");
 				}
 			} catch (NoAvailableDatabaseException | NullPointerException ex) {
 				warning("No Database", "Unavailable to access the database");
@@ -466,7 +471,7 @@ public class Globals {
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		} else {
-//			debug("Using existing database");
+			System.out.println("Using existing database");
 		}
 		if (Globals.database == null) {
 			try {
@@ -572,6 +577,34 @@ public class Globals {
 	}
 
 	public Globals() {
+	}
+
+	private static class DatabaseBackupProcess extends RegularProcess {
+
+		private final DBDatabaseCluster cluster;
+
+		public DatabaseBackupProcess(DBDatabaseCluster cluster) {
+			this.cluster = cluster;
+			this.setTimeOffset(GregorianCalendar.SECOND, 1);
+		}
+
+		@Override
+		public synchronized void process() {
+			System.out.println("PREPARING TO BACKUP...");
+
+			try {
+				Context initCtx = new InitialContext();
+				Context envCtx = (Context) initCtx.lookup("java:comp/env");
+				String dcsFactory = "bean/BackupDatabase";
+				DatabaseConnectionSettings settings = (DatabaseConnectionSettings) envCtx.lookup(dcsFactory);
+				cluster.backupToDBDatabase(settings.createDBDatabase());
+			} catch (SQLException | NamingException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+				System.out.println("nz.co.gregs.minortask.Globals.DatabaseBackupProcess.process(): " + ex.getMessage());
+				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+			System.out.println("FINISHED BACKUP.");
+		}
 	}
 
 }

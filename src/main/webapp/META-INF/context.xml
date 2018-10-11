@@ -10,6 +10,7 @@
   <Resource auth="Container" autoRebuild="true" databaseName="MinortaskCluster" factory="org.apache.naming.factory.BeanFactory" name="DBDatabaseCluster" type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"/>
   <Resource auth="Container" dbdatabase="nz.co.gregs.dbvolution.databases.SQLiteDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask.sqlite" username="admin"/>
   <Resource auth="Container" dbdatabase="nz.co.gregs.dbvolution.databases.H2MemoryDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings1" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:h2:mem:TestDatabase.h2" username="admin"/>
+  <Resource auth="Container" dbdatabase="nz.co.gregs.dbvolution.databases.H2DB" factory="org.apache.naming.factory.BeanFactory" name="bean/BackupDatabase" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:h2:/Users/gregorygraham/Projects/MinorTask/MinorTaskBackup.h2" username="admin"/>
   <!--	<Resource name="bean/DBDatabaseClusterFactory" 
 						auth="Container"
 						type="nz.co.gregs.dbvolution.databases.DBDatabaseCluster"

@@ -238,6 +238,8 @@ public class MinorTask extends Globals implements Serializable {
 
 	private void showLoginDestination() {
 		Location dest = getLoginDestination();
+		System.out.println("LOGIN DESTINATION: "+dest);
+//		UI.getCurrent().getRouter().navigate(UI.getCurrent(), dest, NavigationTrigger.PROGRAMMATIC);
 		if (dest != null) {
 			String pathWithQueryParameters = dest.getPathWithQueryParameters();
 			if (pathWithQueryParameters.isEmpty()) {
