@@ -52,12 +52,12 @@ public abstract class MinorTaskPage extends VerticalLayout implements MinorTaskC
 			taskTabs = new TaskTabs(this, taskID);
 			taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 			final Component internalComponent = getInternalComponent(parameter);
-			final VerticalLayout layout = new VerticalLayout(taskTabs);
-			layout.setSizeUndefined();
+//			final VerticalLayout layout = new VerticalLayout(taskTabs);
+//			layout.setSizeUndefined();
 			VerticalLayout internalComponentHolder
 					= new VerticalLayout(
 							banner,
-							layout,
+							taskTabs,
 							internalComponent
 					);
 			internalComponentHolder.addClassName("minortask-internal");

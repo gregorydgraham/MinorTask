@@ -10,6 +10,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 
+@Deprecated
 @Route("projecttasks")
 public class ProjectTaskListPage extends MinorTaskPage {
 

@@ -84,6 +84,10 @@
 		.authorised-banner {
 			/*background-color: whitesmoke;*/
 		}
+		
+		.edit-task-component{
+			width:100%;
+		}
 
 		.tiny{font-size: smaller;}
 
@@ -127,10 +131,11 @@
 		.green{background-color: greenyellow;}
 		.blue{background-color: lightskyblue;}
 
-		@media all and (max-width: 600px) {
+		@media all and (max-width: 900px) {
 			.main-layout {
-				padding: 0px;
-				margin:  0px;
+				padding: 0;
+				margin:  0;
+				border:  0;
 			}
 
 			/*body>vaadin-vertical-layout {*/
@@ -143,19 +148,25 @@
 			}
 
 			body>vaadin-vertical-layout {
-				padding-left: 0px;
-				margin-left:  0px;
-				padding-right: 0px;
-				margin-right:  0px;
-				border-radius: 0px;
+				padding-top: 0;
+				padding-left: 0;
+				margin-left:  0;
+				padding-right: 0;
+				margin-right:  0;
+				border-radius: 0;
 			}
 
 			body>vaadin-vertical-layout>vaadin-vertical-layout {
-				padding-left: 0px;
-				margin-left:  0px;
-				padding-right: 0px;
-				margin-right:  0px;
-				border-radius: 0px;
+				padding-left: 0;
+				margin-left:  0;
+				padding-right: 0;
+				margin-right:  0;
+				margin-top: 0;
+				padding-top: 0;
+				border-radius: 0;
+			}
+			
+			vaadin-tabs{
 			}
 
 			.well{
@@ -180,17 +191,27 @@
 				padding-right: 0px;
 				margin-right:  0px;
 			}
+			
+			.edit-task-component{
+				padding:0;
+				margin:0;
+			}
+			
+			.edit-task-contents{
+				padding:0;
+				margin:0;
+			}
 
 			.authorised-banner{
-				padding-top: 6px;
+				padding-top: 0;
 			}
 
 			label{
-				padding-left: 6px;
+				padding-left: 3px;
 			}
 
 			vaadin-tab{
-				padding: 2px;
+				padding-bottom: 0;
 				padding-right: 2px;
 				font-size: smaller;
 			}

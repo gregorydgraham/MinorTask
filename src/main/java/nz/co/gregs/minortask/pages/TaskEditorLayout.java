@@ -7,8 +7,6 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.datamodel.Task;

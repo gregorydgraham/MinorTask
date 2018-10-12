@@ -27,6 +27,7 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	public ProjectPathNavigator(Long taskID) {
 		this.taskID = taskID;
 		buildComponent();
+		addClassName("project-path-navigator");
 	}
 
 	protected void buildComponent() {

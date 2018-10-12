@@ -107,7 +107,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		}
 
 		public static MinorTaskTab getFirstTab() {
-			return new MinorTaskTab("", TaskEditorLayout.class);
+			return new MinorTaskTab("Task", TaskEditorLayout.class);
 		}
 
 		public static Tab getTabForPage(Component page) {

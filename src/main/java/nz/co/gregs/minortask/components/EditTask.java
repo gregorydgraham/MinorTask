@@ -17,6 +17,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -40,7 +41,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class EditTask extends VerticalLayout implements RequiresLogin {
+public class EditTask extends Div implements RequiresLogin {
 
 	TextField name = new TextField("Name");
 	TextField user = new TextField("User");
@@ -78,6 +79,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
 		}
+		addClassName("edit-task-component");
 	}
 
 	public final Component getComponent() {
@@ -117,12 +119,12 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
 		reopenButton.getStyle().set("margin", "0").set("padding", "0");
 		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
-		completedLayout.setDefaultHorizontalComponentAlignment(Alignment.END);
+		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
 				name, project,
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
-		details.setDefaultVerticalComponentAlignment(Alignment.END);
+		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
 
 		HorizontalLayout dates = new HorizontalLayout(
@@ -147,6 +149,7 @@ public class EditTask extends VerticalLayout implements RequiresLogin {
 				extrasLayout,
 				completeButton,
 				completedTasks);
+		topLayout.addClassName("edit-task-contents");
 		try {
 			setFieldValues();
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {

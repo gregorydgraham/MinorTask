@@ -46,6 +46,7 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 		right.setDefaultVerticalComponentAlignment(Alignment.END);
 		right.setAlignItems(Alignment.END);
 		right.setWidth("100%");
+		right.getStyle().set("float", "right");
 		
 		left.add(welcomeMessage);
 		setVerticalComponentAlignment(Alignment.CENTER, welcomeMessage);

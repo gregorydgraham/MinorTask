@@ -15,6 +15,7 @@ import nz.co.gregs.minortask.pages.ProjectTaskListPage;
  *
  * @author gregorygraham
  */
+@Deprecated
 //@Tag("project-selector-tab")
 public class ProjectSelectorTab extends Tab {
 
