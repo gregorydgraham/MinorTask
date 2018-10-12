@@ -585,7 +585,7 @@ public class Globals {
 
 		public DatabaseBackupProcess(DBDatabaseCluster cluster) {
 			this.cluster = cluster;
-			this.setTimeOffset(GregorianCalendar.SECOND, 1);
+			this.setTimeOffset(GregorianCalendar.MINUTE, 30);
 		}
 
 		@Override
