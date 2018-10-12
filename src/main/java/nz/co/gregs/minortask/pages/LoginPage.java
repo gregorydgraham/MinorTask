@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.pages;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -27,7 +28,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
  */
 @HtmlImport("styles/shared-styles.html")
 @Route("")
-public class LoginPage extends VerticalLayout implements HasUrlParameter<String> {
+public class LoginPage extends Div implements HasUrlParameter<String> {
 
 	LoginComponent loginComponent = new LoginComponent();
 
@@ -35,16 +36,12 @@ public class LoginPage extends VerticalLayout implements HasUrlParameter<String>
 		try {
 			MinorTask minorTask = new MinorTask();
 			add(getLoginPageContents());
-			minorTask.chatAboutUsers();
-//			if (minorTask.isLoggedIn()) {
-//				System.out.println("SWITCHING TO OPENING PAGE");
-//				minorTask.showOpeningPage();
-//			} else {
-//			}
+			MinorTask.chatAboutUsers();
 		} catch (Exception ex) {
 			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): " + ex.getClass().getSimpleName() + " -> " + ex.getMessage());
 			ex.printStackTrace();
 		}
+		addClassName("login-page");
 	}
 
 	public final Component[] getLoginPageContents() {

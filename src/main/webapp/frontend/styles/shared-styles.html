@@ -11,11 +11,11 @@
 			background-attachment: fixed;
 			background-size: cover;
 			background-position-x: center;
-			background-color: transparent;
+			background-color: azure;
 		}
 
 		html{
-			background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);
+			/*background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);*/
 		}
 
 		.background-1{background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);}
@@ -40,8 +40,11 @@
 
 		footer {
 			background-color: whitesmoke;
-			border-radius: 4px;
+			/*border-radius: 4px;*/
 			opacity: 0.97;
+			padding:1em;
+			color: #eeeeee;
+			background-color: blueviolet;
 		}
 
 		vaadin-vertical-layout{
@@ -61,18 +64,29 @@
 
 		.minortask-internal{
 			background-color: whitesmoke;
-			border-radius: 4px;
+			/*border-radius: 4px;*/
 		}
 
 		#minortask-internal{
 			background-color: whitesmoke;
 			background-image: none;
-			border-radius: 4px;
+			/*border-radius: 4px;*/
 		}
 
-		#minortask-login {
+		.minortask-login {
 			background-color: whitesmoke;
-			border-radius: 4px;
+			width:100%;
+			align-items: flex-start;
+		}
+
+		.login-panel {
+			background-color: whitesmoke;
+			width:50%;
+			min-width: 30em;
+		}
+		
+		.login-panel{
+			align-self: flex-end;
 		}
 
 		.minortask-tabs {
@@ -81,9 +95,10 @@
 		}
 
 		.public-banner{
-			background-color: whitesmoke;
-			border-radius: 4px;
-			padding: 10px;
+			background-color: cadetblue;
+			margin: 0;
+			padding: 5px;
+			color: white;
 		}
 
 		.authorised-banner {

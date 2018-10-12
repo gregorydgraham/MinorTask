@@ -47,33 +47,32 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	private Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
+		loginPanel.addClassName("login-panel");
 		final Label welcomeLabel = new Label("Welcome To MinorTask");
 		welcomeLabel.setSizeUndefined();
 		welcomeLabel.addClassName("huge");
 		loginPanel.add(welcomeLabel);
-		loginPanel.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
 
 		Button loginButton = new Button("Login");
-		setAsDefaultButton(loginButton, (event) -> {
+		loginButton.addClassName("login-button");
+		loginButton.addClickListener((event) -> {
 			handleDefaultButton();
 		});
-		loginButton.addClickListener((event) -> {
+		setAsDefaultButton(loginButton, (event) -> {
 			handleDefaultButton();
 		});
 
 		Button signupButton = new Button("Sign Up");
 		signupButton.addClickListener((event) -> {
-			minortask().showSignUp(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
+			MinorTask.showSignUp(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
 		});
 
 		Button lostPasswordButton = new Button("Lost Password?");
 		lostPasswordButton.addClickListener((event) -> {
-			minortask().showLostPassword(USERNAME_FIELD.getValue());
+			MinorTask.showLostPassword(USERNAME_FIELD.getValue());
 		});
 
 		HorizontalLayout buttons = new HorizontalLayout(lostPasswordButton, signupButton);
-		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, lostPasswordButton);
-		buttons.setVerticalComponentAlignment(FlexComponent.Alignment.START, signupButton);
 
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
 		USERNAME_FIELD.focus();
