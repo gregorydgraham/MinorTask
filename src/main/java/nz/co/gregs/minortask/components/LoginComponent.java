@@ -48,11 +48,10 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	private Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
 		loginPanel.addClassName("login-panel");
+		
 		final Label welcomeLabel = new Label("Welcome To MinorTask");
-		welcomeLabel.setSizeUndefined();
 		welcomeLabel.addClassName("huge");
-		loginPanel.add(welcomeLabel);
-
+		
 		Button loginButton = new Button("Login");
 		loginButton.addClassName("login-button");
 		loginButton.addClickListener((event) -> {
@@ -75,10 +74,11 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		HorizontalLayout buttons = new HorizontalLayout(lostPasswordButton, signupButton);
 
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		USERNAME_FIELD.focus();
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
-		loginPanel.add(USERNAME_FIELD, PASSWORD_FIELD, REMEMBER_ME_FIELD, loginButton, buttons);
+		loginPanel.add(welcomeLabel, USERNAME_FIELD, PASSWORD_FIELD, REMEMBER_ME_FIELD, loginButton, buttons);
+		USERNAME_FIELD.focus();
+		
 		return loginPanel;
 	}
 
