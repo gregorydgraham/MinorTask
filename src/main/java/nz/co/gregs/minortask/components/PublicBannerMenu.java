@@ -17,7 +17,7 @@ public class PublicBannerMenu extends HorizontalLayout implements MinorTaskCompo
 
 	public PublicBannerMenu() {
 		buildComponent();
-		this.addClassName("banner");
+		this.addClassName("public-banner");
 	}
 
 	public final void buildComponent() {
