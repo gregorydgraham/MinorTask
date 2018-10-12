@@ -48,6 +48,10 @@
 			opacity: 1;
 		}
 
+		vaadin-tabs{
+			clear:both;
+		}
+
 		upcoming-task-list{
 			/*vaadin-vertical-layout*/
 		}
@@ -73,6 +77,7 @@
 
 		.minortask-tabs {
 			background-color: whitesmoke;
+			width:100%;
 		}
 
 		.banner{
@@ -84,7 +89,21 @@
 		.authorised-banner {
 			/*background-color: whitesmoke;*/
 		}
-		
+
+		.authorised-banner-left {
+			float:left;
+			width:50%;
+		}
+
+		.authorised-banner-right {
+			float:right;
+			width:50%
+		}
+
+		.authorised-banner-right vaadin-button {
+			float:right;
+		}
+
 		.edit-task-component{
 			width:100%;
 		}
@@ -121,7 +140,7 @@
 		.image_description{
 			font-size: smaller;
 		}
-		
+
 		.addtaskbutton{
 			background-color: limegreen;
 			color: white;
@@ -165,9 +184,6 @@
 				padding-top: 0;
 				border-radius: 0;
 			}
-			
-			vaadin-tabs{
-			}
 
 			.well{
 				padding-left: 0px;
@@ -191,12 +207,12 @@
 				padding-right: 0px;
 				margin-right:  0px;
 			}
-			
+
 			.edit-task-component{
 				padding:0;
 				margin:0;
 			}
-			
+
 			.edit-task-contents{
 				padding:0;
 				margin:0;
@@ -204,6 +220,13 @@
 
 			.authorised-banner{
 				padding-top: 0;
+				font-size: small;
+			}
+
+			.authorised-banner vaadin-button{
+				padding: 0;
+				margin:0;
+				font-size: small;
 			}
 
 			label{

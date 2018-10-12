@@ -7,8 +7,12 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
@@ -20,7 +24,7 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLogin, HasText {
+public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
 
 	final Label welcomeMessage = new Label();
 
@@ -34,23 +38,15 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 	public final void buildComponent() {
 		setSizeUndefined();
 		setWidth("100%");
-		setHeight("2px");
-		setDefaultVerticalComponentAlignment(Alignment.CENTER);
 
-		HorizontalLayout left = new HorizontalLayout();
-		left.setDefaultVerticalComponentAlignment(Alignment.START);
-		left.setAlignItems(Alignment.START);
-		left.setWidth("100%");
+		Div left = new Div();
+		left.addClassName("authorised-banner-left");
 
-		HorizontalLayout right = new HorizontalLayout();
-		right.setDefaultVerticalComponentAlignment(Alignment.END);
-		right.setAlignItems(Alignment.END);
-		right.setWidth("100%");
-		right.getStyle().set("float", "right");
-		
+		Div right = new Div();
+		right.addClassName("authorised-banner-right");
+
 		left.add(welcomeMessage);
-		setVerticalComponentAlignment(Alignment.CENTER, welcomeMessage);
-		setText("Welcome to "+Globals.getApplicationName());
+		setText("Welcome to " + Globals.getApplicationName());
 
 		final long userID = minortask().getUserID();
 		User example = new User();
@@ -61,23 +57,26 @@ public class AuthorisedBannerMenu extends HorizontalLayout implements RequiresLo
 			final String welcomeUser = "Welcome to MinorTask @" + user.getUsername();
 			setText(welcomeUser);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-//			Globals.sqlerror(ex);
 		}
 
-		Button profileButton = new Button("Profile");
+		Icon userIcon = new Icon(VaadinIcon.USER);
+		Icon unlock = new Icon(VaadinIcon.UNLOCK);
+		Icon lock = new Icon(VaadinIcon.LOCK);
+		
+		Button profileButton = new Button(userIcon);
 		profileButton.addClickListener((event) -> {
 			minortask().showProfile();
 		});
-		right.add(profileButton);
+		right.add();
 
-		Button logoutButton = new Button("Logout");
+		Button logoutButton = new Button(unlock);
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
 
-		right.add(logoutButton);
-		setVerticalComponentAlignment(Alignment.END, logoutButton);
-		setAlignItems(FlexComponent.Alignment.END);
+		right.add(logoutButton, profileButton);
+		final Div clearBreak = new Div();
+		clearBreak.getStyle().set("clear", "both");
 		add(left, right);
 	}
 
