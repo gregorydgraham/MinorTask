@@ -29,6 +29,12 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  */
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
 
+	public static Component getSpacer() {
+		Label spacer = new Label("");
+		spacer.setHeight("1em");
+		return spacer;
+	}
+
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
 	private final Label label = new Label();
