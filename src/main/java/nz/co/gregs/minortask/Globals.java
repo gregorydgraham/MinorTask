@@ -151,7 +151,7 @@ public class Globals {
 		Task subtask = node.getData();
 		final Date taskStart = task.startDate.getValue();
 		final Date taskDeadline = task.finalDate.getValue();
-		if (taskDeadline.before(subtask.finalDate.getValue())) {
+		if (taskDeadline != null && subtask.finalDate != null && taskDeadline.before(subtask.finalDate.getValue())) {
 			subtask.finalDate.setValue(taskDeadline);
 			try {
 				getDatabase().update(subtask);
@@ -160,7 +160,7 @@ public class Globals {
 			}
 		}
 		final Date subtaskStart = subtask.startDate.getValue();
-		if (subtaskStart.before(taskStart)) {
+		if (subtaskStart != null && taskStart != null && subtaskStart.before(taskStart)) {
 			task.startDate.setValue(subtaskStart);
 			try {
 				getDatabase().update(task);
