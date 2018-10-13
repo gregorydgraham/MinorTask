@@ -55,6 +55,7 @@ public class RememberedLogin extends DBRow {
 	public static DBActionList cleanUpTable(DBDatabase db) throws SQLException{
 		RememberedLogin example = new RememberedLogin();
 		example.expires.excludedRange(new Date(), null);
+		db.print(db.getByExample(example));
 		return db.delete(example);
 	}
 	
