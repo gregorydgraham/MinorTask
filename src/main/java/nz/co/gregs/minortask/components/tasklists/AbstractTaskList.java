@@ -38,10 +38,15 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
 	private final Label label = new Label();
-	private List<Task> allRows = new ArrayList<>(0);
+	private List<Task> list = new ArrayList<>(0);
 
 	public AbstractTaskList(Long taskID) {
+		this(taskID, new ArrayList<Task>(0));
+	}
+	
+	protected AbstractTaskList(Long taskID, List<Task> list) {
 		this.taskID = taskID;
+		this.list = list;
 		buildComponent();
 		this.addClassName("tasklist");
 	}
@@ -53,7 +58,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		well.addClassName("well");
 		try {
 			add(getControlsAbove());
-			allRows = getTasksToList();
+			List<Task> allRows = getTasksToList();
 			setLabel(allRows);
 			label.setWidth("100%");
 			HorizontalLayout header = new HorizontalLayout();
@@ -144,7 +149,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	protected void refreshList() {
 		try {
 			if (thereAreRowsToShow()) {
-				allRows = getTasksToList();
+				List<Task> allRows = getTasksToList();
 				setLabel(allRows);
 				setGridItems(allRows);
 			}
@@ -159,6 +164,19 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	protected boolean thereAreRowsToShow() {
 		return true;
+	}
+
+	public static abstract class PreQueried extends AbstractTaskList {
+
+		public PreQueried(Long taskID, List<Task> list) {
+			super(taskID, list);
+		}
+
+		@Override
+		protected List<Task> getTasksToList() throws SQLException {
+			return super.list;
+		}
+
 	}
 
 }

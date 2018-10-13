@@ -7,14 +7,14 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
-import nz.co.gregs.minortask.components.tasklists.AllCompletedTasksList;
+import nz.co.gregs.minortask.components.AllCompletedTasksComponent;
 
 @Route("complete")
 public class AllCompletedTasksPage extends MinorTaskPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new AllCompletedTasksList(parameter);
+	public Component getInternalComponent(Long parameter) { 
+		return new AllCompletedTasksComponent(parameter);
 	}
 
 	@Override
