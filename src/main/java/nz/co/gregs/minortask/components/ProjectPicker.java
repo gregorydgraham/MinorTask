@@ -132,14 +132,14 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 								projectPathTask.projectID.setValue(taskProjectID);
 							}
 							// force the starting date upwards
-							if (taskStartDate!=null && projectPathTask.startDate != null) {
+							if (taskStartDate!=null && projectPathTask.startDate.dateValue() != null) {
 								if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
 									projectPathTask.startDate.setValue(taskStartDate);
 								}
 							}
 							// force the deadline downwards
-							if (taskDeadlineDate!=null && projectPathTask.finalDate != null) {
-								final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
+							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
+							if (taskDeadlineDate!=null && taskDeadlineDate != null) {
 								if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
 									task.finalDate.setValue(projectPathTaskDeadlineDate);
 								}
