@@ -24,7 +24,7 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
 
-	final Anchor welcomeMessage = new Anchor("http://minortask.com", "Welcome");
+	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 
 	public AuthorisedBannerMenu() {
 		buildComponent();
