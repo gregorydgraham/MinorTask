@@ -59,7 +59,7 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Button getRemoveComponent(Weblink source) {
-		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removePlace(source));
+		return new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source));
 	}
 
 	private Component getAnchorComponent(Weblink source) {
