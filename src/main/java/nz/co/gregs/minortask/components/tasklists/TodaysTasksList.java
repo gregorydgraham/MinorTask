@@ -15,8 +15,8 @@ import nz.co.gregs.minortask.datamodel.Task;
 //@Tag("todays-task-list")
 public class TodaysTasksList extends AbstractTaskList {
 
-	public TodaysTasksList(Long taskID) {
-		super(taskID);
+	public TodaysTasksList() {
+		super();
 	}
 
 	@Override

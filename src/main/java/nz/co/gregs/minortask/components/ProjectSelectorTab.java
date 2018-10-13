@@ -32,7 +32,7 @@ public class ProjectSelectorTab extends Tab {
 		add(selector);
 		selector.addValueChangeListener((event) -> {
 			Task value = selector.getValue();
-			UI.getCurrent().navigate(ProjectTaskListPage.class, value.taskID.getValue());
+			UI.getCurrent().navigate(ProjectTaskListPage.class);
 		});
 	}
 

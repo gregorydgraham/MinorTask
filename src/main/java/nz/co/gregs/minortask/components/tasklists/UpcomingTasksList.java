@@ -18,8 +18,8 @@ public class UpcomingTasksList extends AbstractTaskList {
 	
 	private static final int DAYS_AHEAD = +3;
 
-	public UpcomingTasksList(Long taskID) {
-		super(taskID);
+	public UpcomingTasksList() {
+		super();
 	}
 
 	@Override

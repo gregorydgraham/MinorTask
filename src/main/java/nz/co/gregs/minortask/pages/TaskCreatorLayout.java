@@ -18,7 +18,7 @@ import nz.co.gregs.minortask.components.CreateTask;
  * @author gregorygraham
  */
 @Route("create")
-public class TaskCreatorLayout extends MinorTaskPage {
+public class TaskCreatorLayout extends AuthorisedTaskPage {
 
 	@Override
 	public Component getInternalComponent(Long parameter) {

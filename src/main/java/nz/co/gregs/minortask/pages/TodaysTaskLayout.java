@@ -14,11 +14,11 @@ import nz.co.gregs.minortask.components.tasklists.TodaysTasksList;
  * @author gregorygraham
  */
 @Route("today")
-public class TodaysTaskLayout extends MinorTaskPage{
+public class TodaysTaskLayout extends AuthorisedPage{
 
 	@Override
-	protected Component getInternalComponent(Long parameter) {
-		return new TodaysTasksList(taskID);
+	protected Component getInternalComponent() {
+		return new TodaysTasksList();
 	}
 
 	@Override

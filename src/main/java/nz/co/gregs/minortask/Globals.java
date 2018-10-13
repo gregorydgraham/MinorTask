@@ -48,7 +48,6 @@ import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
-import nz.co.gregs.dbvolution.databases.H2DB;
 import nz.co.gregs.dbvolution.databases.SQLiteDB;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
@@ -59,6 +58,8 @@ import nz.co.gregs.dbvolution.utility.RegularProcess;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.pages.AuthorisedPage;
+import nz.co.gregs.minortask.pages.AuthorisedTaskPage;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
@@ -282,7 +283,25 @@ public class Globals {
 	}
 
 	public static void showTodaysTasks() {
-		UI.getCurrent().navigate(TodaysTaskLayout.class);
+		showPage(TodaysTaskLayout.class);
+//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
+//		UI.getCurrent().navigate(TodaysTaskLayout.class);
+	}
+	
+	public static void showPage(Class<? extends AuthorisedPage> page) {
+		UI.getCurrent().navigate(page);
+//		final UI ui = UI.getCurrent();
+//		final Router router = ui.getRouter();
+//		String url = router.getUrl(page);
+//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
+	}
+	
+	public static void showPage(Class<? extends AuthorisedTaskPage> page, Long taskID) {
+		UI.getCurrent().navigate(page, taskID);
+//		final UI ui = UI.getCurrent();
+//		final Router router = ui.getRouter();
+//		String url = router.getUrl(page, taskID);
+//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
 	}
 
 	public static Task getProjectExample(Long taskID, long userID) {
@@ -577,6 +596,7 @@ public class Globals {
 	}
 
 	public Globals() {
+		setDatabase(setupDatabase());
 	}
 
 	private static class DatabaseBackupProcess extends RegularProcess {

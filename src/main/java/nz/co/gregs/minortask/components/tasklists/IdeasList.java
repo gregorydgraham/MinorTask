@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components.tasklists;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -19,9 +18,8 @@ public class IdeasList extends AbstractTaskList {
 	
 //	private final IdeasPage list;
 
-	public IdeasList(Long taskID) {
-		super(taskID);
-//		this.list = list;
+	public IdeasList() {
+		super();
 	}
 
 	@Override
@@ -36,16 +34,16 @@ public class IdeasList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		Task example = new Task.Project();
-		example.userID.permittedValues(minortask().getUserID());
+		Task.Project example = new Task.Project();
+		example.userID.permittedValues(getUserID());
 		example.startDate.permitOnlyNull();
 		example.preferredDate.permitOnlyNull();
 		example.preferredDate.permitOnlyNull();
 		example.completionDate.permitOnlyNull();
 		Task task = new Task();
-		final DBQuery query = Globals.getDatabase().getDBQuery(example).addOptional(task);
+		final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
 		// add the leaf requirement
-		query.addCondition(example.column(example.taskID).isNull());
+		query.addCondition(task.column(task.taskID).isNull());
 		query.setSortOrder(example.column(example.name));
 		query.printAllRows();
 		List<Task> tasks = query.getAllInstancesOf(example);

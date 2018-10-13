@@ -15,7 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class CompletedProjectsList extends AbstractTaskList{
 
 	public CompletedProjectsList() {
-		super(null);
+		super();
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class CompletedProjectsList extends AbstractTaskList{
 		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
-		example.completionDate.excludedValues((Date) null);
+		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
 		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(

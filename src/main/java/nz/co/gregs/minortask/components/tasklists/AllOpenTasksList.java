@@ -13,8 +13,8 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class AllOpenTasksList extends AbstractTaskList {
 
-	public AllOpenTasksList(Long taskID) {
-		super(taskID);
+	public AllOpenTasksList() {
+		super();
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class AllOpenTasksList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task.WithSortColumns();
-		example.completionDate.permittedValues((Date) null);
+		example.completionDate.permitOnlyNull();
 		example.userID.permittedValues(minortask().getUserID());
 		List<Task> list = getDatabase().getByExample(example);
 		return list;

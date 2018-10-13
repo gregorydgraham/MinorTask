@@ -10,11 +10,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 
 @Route("ideas")
-public class IdeasPage extends MinorTaskPage {
+public class IdeasPage extends AuthorisedPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new IdeasList(parameter);
+	public Component getInternalComponent() {
+		return new IdeasList();
 	}
 
 	@Override

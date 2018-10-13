@@ -137,13 +137,14 @@ public class EditTask extends Div implements RequiresLogin {
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		VerticalLayout extrasLayout = new VerticalLayout();
-		extrasLayout.add(details);
+//		extrasLayout.add(details);
 		extrasLayout.add(description);
 		extrasLayout.add(dates);
 		extrasLayout.add(new PlaceGrid(taskID));
 		extrasLayout.add(new DocumentGrid(taskID));
 		extrasLayout.add(new WeblinkGrid(taskID));
 		Div topLayout = new Div(
+				details,
 				projectPath,
 				subtasks,
 				extrasLayout,

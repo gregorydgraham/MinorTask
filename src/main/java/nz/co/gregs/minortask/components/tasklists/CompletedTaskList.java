@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -23,7 +22,7 @@ public class CompletedTaskList extends AbstractTaskList{
 		Task example = new Task();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
-		example.completionDate.excludedValues((Date) null);
+		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
 		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(

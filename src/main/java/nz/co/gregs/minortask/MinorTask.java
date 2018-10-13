@@ -44,7 +44,7 @@ public class MinorTask extends Globals implements Serializable {
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 
 	public MinorTask() {
-		setDatabase(setupDatabase());
+		super();
 	}
 
 	public Task getTask(Long taskID) throws InaccessibleTaskException {
@@ -104,7 +104,7 @@ public class MinorTask extends Globals implements Serializable {
 		}
 		showLoginDestination();
 	}
-	
+
 	private void removeRememberMeCookieValue() {
 		Optional<Cookie> existingCookie = getRememberMeCookieValue();
 		if (existingCookie.isPresent()) {
@@ -126,13 +126,18 @@ public class MinorTask extends Globals implements Serializable {
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
-	private boolean canLoginRememberedUser() {
+	public boolean loginAsRememberedUser() {
 		try {
+			System.out.println("nz.co.gregs.minortask.MinorTask.loginAsRememberedUser()");
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
+			System.out.println("COOKIE: "+rememberMeCookieValue);
 			User user = getRememberedUser(rememberMeCookieValue);
+			System.out.println("USER: "+user.getUsername());
 			doLogin(user, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
+			System.out.println("RETURN: true");
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
+			System.out.println("RETURN: false");
 			return false;
 		}
 	}
@@ -157,15 +162,31 @@ public class MinorTask extends Globals implements Serializable {
 				NavigationTrigger.PROGRAMMATIC);
 	}
 
+	@Deprecated
 	public boolean getNotLoggedIn() {
 		final VaadinSession currentSession = VaadinSession.getCurrent();
 		return notLoggedIn
 				|| userID == 0
-				|| !currentSession.getState().equals(VaadinSessionState.OPEN);
+				|| !currentSession.getState().equals(VaadinSessionState.OPEN)
+				|| !loginAsRememberedUser();
 	}
 
+	@Deprecated
 	public boolean getLoggedIn() {
 		return !getNotLoggedIn();
+	}
+
+	public boolean isLoggedIn() {
+		System.out.println("nz.co.gregs.minortask.MinorTask.isLoggedIn()");
+		System.out.println("USERID: "+this.userID);
+		System.out.println("SESSIONSTATE: "+VaadinSession.getCurrent().getState());
+		boolean loggedIn = this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
+		System.out.println("LOGGEDIN: "+loggedIn);
+		if (!loggedIn) {
+			return loginAsRememberedUser();
+		} else {
+			return loggedIn;
+		}
 	}
 
 	/**
@@ -173,17 +194,17 @@ public class MinorTask extends Globals implements Serializable {
 	 */
 	public long getUserID() {
 		return userID;
-	}	
-	
+	}
+
 	public User getUser() {
-		if(getLoggedIn()){
+		if (isLoggedIn()) {
 			User user = new User();
 			user.queryUserID().permittedValues(getUserID());
 			try {
 				List<User> got = getDatabase().get(user);
-				if(got.size()!=1){
+				if (got.size() != 1) {
 					warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
-				}else{
+				} else {
 					return got.get(0);
 				}
 			} catch (SQLException ex) {
@@ -220,14 +241,6 @@ public class MinorTask extends Globals implements Serializable {
 		return new Task.TaskAndProject(null, null);
 	}
 
-	public boolean isLoggedIn() {
-		boolean loggedIn = this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
-		if (!loggedIn) {
-			return canLoginRememberedUser();
-		}
-		return loggedIn;
-	}
-
 	public Task.Project getNullProject() {
 		Task.Project project = new Task.Project();
 		project.taskID.setValue(-1);
@@ -238,7 +251,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	private void showLoginDestination() {
 		Location dest = getLoginDestination();
-		System.out.println("LOGIN DESTINATION: "+dest);
+		System.out.println("LOGIN DESTINATION: " + dest);
 //		UI.getCurrent().getRouter().navigate(UI.getCurrent(), dest, NavigationTrigger.PROGRAMMATIC);
 		if (dest != null) {
 			String pathWithQueryParameters = dest.getPathWithQueryParameters();

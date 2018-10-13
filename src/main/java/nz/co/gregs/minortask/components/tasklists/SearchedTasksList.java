@@ -27,8 +27,8 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	Checkbox includeCompletedTasksOption;
 	private String searchFor = "";
 
-	public SearchedTasksList(Long taskID) {
-		super(taskID);
+	public SearchedTasksList() {
+		super();
 		getSearchField();
 	}
 

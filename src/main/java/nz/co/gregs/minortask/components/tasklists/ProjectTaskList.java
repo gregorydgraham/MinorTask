@@ -18,8 +18,8 @@ import nz.co.gregs.minortask.datamodel.Task;
 //@Tag("project-task-list")
 public class ProjectTaskList extends AbstractTaskList {
 	
-	public ProjectTaskList(Long parameter) {
-		super(parameter);
+	public ProjectTaskList() {
+		super();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ProjectTaskList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		final Task task = new Task();
-		task.projectID.permittedValues(taskID);
+		task.projectID.permitOnlyNull();
 		DBQuery dbQuery = getDatabase().getDBQuery(task);
 		DBRecursiveQuery<Task> rquery = new DBRecursiveQuery<>(dbQuery, task.column(task.projectID));
 		return rquery.getDescendants();

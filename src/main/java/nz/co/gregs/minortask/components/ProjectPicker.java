@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -48,12 +47,14 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
 
-			ComboBox<Task> taskList = new ComboBox<Task>("Project", listOfTasks);
+			Task emptyTask = new Task();
+
+			ComboBox<Task> taskList = new ProjectComboBox("Project", listOfTasks, emptyTask);
 			listOfTasks.add(0, taskList.getEmptyValue());
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
 			final Task.Project project = taskAndProject.getProject();
-			taskList.setValue(project==null?taskList.getEmptyValue():project);
+			taskList.setValue(project == null ? taskList.getEmptyValue() : project);
 
 			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
 
@@ -66,7 +67,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 	}
 
 	private Component getCurrentProjectComponent() {
-		 return getPickerComponent();
+		return getPickerComponent();
 	}
 
 	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
@@ -103,14 +104,14 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 								projectPathTask.projectID.setValue(taskProjectID);
 							}
 							// force the starting date upwards
-							if (taskStartDate!=null && projectPathTask.startDate.dateValue() != null) {
+							if (taskStartDate != null && projectPathTask.startDate.dateValue() != null) {
 								if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
 									projectPathTask.startDate.setValue(taskStartDate);
 								}
 							}
 							// force the deadline downwards
 							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
-							if (taskDeadlineDate!=null && taskDeadlineDate != null) {
+							if (taskDeadlineDate != null && taskDeadlineDate != null) {
 								if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
 									task.finalDate.setValue(projectPathTaskDeadlineDate);
 								}
@@ -148,6 +149,28 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		@Override
 		public Object getId(Task item) {
 			return item == null ? -1 : item.name.getValue();
+		}
+	}
+
+	private static class ProjectComboBox extends ComboBox<Task> {
+
+		private final Task emptyTask;
+
+		public ProjectComboBox(String label, Collection<Task> items, Task emptyTask) {
+			super(label, items);
+			this.emptyTask = emptyTask;
+			setItemLabelGenerator((item) -> {
+				if (item == null || item.equals(emptyTask)) {
+					return "Projects";
+				} else {
+					return item.name.stringValue();
+				}
+			});
+		}
+
+		@Override
+		public Task getEmptyValue() {
+			return emptyTask;
 		}
 	}
 

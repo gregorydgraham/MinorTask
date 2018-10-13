@@ -15,11 +15,11 @@ import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @Route("overdue")
-public class OverdueTasksPage extends MinorTaskPage {
+public class OverdueTasksPage extends AuthorisedPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new AbstractTaskList(parameter) {
+	public Component getInternalComponent() {
+		return new AbstractTaskList() {
 			@Override
 			protected String getListClassName() {
 				return "overduetaskslist";

@@ -39,7 +39,7 @@ public class OpenTaskList extends AbstractTaskList {
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
-		final DBTable<Task> dbTable = minortask().getDatabase().getDBTable(example);
+		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),

@@ -15,14 +15,14 @@ import nz.co.gregs.minortask.components.UserProfileComponent;
  * @author gregorygraham
  */
 @Route("profile")
-public class UserProfilePage extends MinorTaskPage {
+public class UserProfilePage extends AuthorisedPage {
 
 	public UserProfilePage() {
 		super();
 	}
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
+	public Component getInternalComponent() {
 		return new UserProfileComponent();
 	}
 

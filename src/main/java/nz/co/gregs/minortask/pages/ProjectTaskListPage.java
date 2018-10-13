@@ -12,11 +12,11 @@ import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 
 @Deprecated
 @Route("projecttasks")
-public class ProjectTaskListPage extends MinorTaskPage {
+public class ProjectTaskListPage extends AuthorisedPage {
 
 	@Override
-	protected Component getInternalComponent(Long parameter) {
-		AbstractTaskList abstractTaskList = new ProjectTaskList(parameter);
+	protected Component getInternalComponent() {
+		ProjectTaskList abstractTaskList = new ProjectTaskList();
 		return abstractTaskList;
 	}
 

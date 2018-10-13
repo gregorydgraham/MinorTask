@@ -40,12 +40,30 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	private final Label label = new Label();
 	private List<Task> list = new ArrayList<>(0);
 
-	public AbstractTaskList(Long taskID) {
-		this(taskID, new ArrayList<Task>(0));
+	public AbstractTaskList() {
+		this.taskID = null;
+		try {
+			this.list = getTasksToList();
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		buildComponent();
+		this.addClassName("tasklist");
 	}
 	
-	protected AbstractTaskList(Long taskID, List<Task> list) {
+	public AbstractTaskList(Long taskID) {
 		this.taskID = taskID;
+		try {
+			this.list = getTasksToList();
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		buildComponent();
+		this.addClassName("tasklist");
+	}
+	
+	protected AbstractTaskList(List<Task> list) {
+		this.taskID = null;
 		this.list = list;
 		buildComponent();
 		this.addClassName("tasklist");
@@ -168,8 +186,8 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	public static abstract class PreQueried extends AbstractTaskList {
 
-		public PreQueried(Long taskID, List<Task> list) {
-			super(taskID, list);
+		public PreQueried(List<Task> list) {
+			super(list);
 		}
 
 		@Override

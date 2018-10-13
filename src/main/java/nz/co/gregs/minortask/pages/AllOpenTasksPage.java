@@ -10,11 +10,11 @@ import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.AllOpenTasksList;
 
 @Route("open")
-public class AllOpenTasksPage extends MinorTaskPage {
+public class AllOpenTasksPage extends AuthorisedPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new AllOpenTasksList(parameter);
+	public Component getInternalComponent() {
+		return new AllOpenTasksList();
 	}
 
 	@Override

@@ -10,11 +10,11 @@ import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.SearchedTasksList;
 
 @Route("search")
-public class SearchForTaskPage extends MinorTaskPage {
+public class SearchForTaskPage extends AuthorisedPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
-		return new SearchedTasksList(parameter);
+	public Component getInternalComponent() {
+		return new SearchedTasksList();
 	}
 
 	@Override

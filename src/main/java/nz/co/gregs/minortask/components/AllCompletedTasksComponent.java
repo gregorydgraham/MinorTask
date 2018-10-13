@@ -24,18 +24,18 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	private ArrayList<Task> month;
 	private ArrayList<Task> others;
 
-	public AllCompletedTasksComponent(Long parameter) {
+	public AllCompletedTasksComponent() {
 		try {
 			addClassName("all-completed-tasks-component");
 			this.allTasks = getTasksToList();
 
 			splitTasks(allTasks);
 
-			add(new WeeksTaskList(parameter, week));
+			add(new WeeksTaskList(week));
 			add(AbstractTaskList.getSpacer());
-			add(new ThisMonthsCompletedTasksList(parameter, month));
+			add(new ThisMonthsCompletedTasksList(month));
 			add(AbstractTaskList.getSpacer());
-			add(new TooManyCompletedTasksList(parameter, others));
+			add(new TooManyCompletedTasksList(others));
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -99,8 +99,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 	public static class WeeksTaskList extends AbstractTaskList.PreQueried {
 
-		public WeeksTaskList(Long taskID, List<Task> list) {
-			super(taskID, list);
+		public WeeksTaskList(List<Task> list) {
+			super(list);
 		}
 
 		@Override
@@ -117,8 +117,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 	public static class ThisMonthsCompletedTasksList extends AbstractTaskList.PreQueried {
 
-		public ThisMonthsCompletedTasksList(Long taskID, List<Task> list) {
-			super(taskID, list);
+		public ThisMonthsCompletedTasksList(List<Task> list) {
+			super(list);
 		}
 
 		@Override
@@ -135,8 +135,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 	public static class TooManyCompletedTasksList extends AbstractTaskList.PreQueried {
 
-		public TooManyCompletedTasksList(Long taskID, List<Task> list) {
-			super(taskID, list);
+		public TooManyCompletedTasksList(List<Task> list) {
+			super(list);
 		}
 
 		@Override
