@@ -26,6 +26,7 @@ public class TodaysTasksList extends AbstractTaskList {
 		example.startDate.permittedRangeInclusive(null, new Date());
 		example.completionDate.permitOnlyNull();
 		final Task task = new Task();
+		task.completionDate.permitOnlyNull();
 		final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
 		// add the leaf requirement
 		query.addCondition(task.column(task.taskID).isNull());
