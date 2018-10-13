@@ -7,13 +7,11 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
@@ -26,12 +24,12 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
 
-	final Label welcomeMessage = new Label();
+	final Anchor welcomeMessage = new Anchor("http://minortask.com", "Welcome");
 
 	public AuthorisedBannerMenu() {
 		buildComponent();
 
-		this.getElement().setAttribute("theme", "success primary");
+//		this.getElement().setAttribute("theme", "success primary");
 		this.addClassName("authorised-banner");
 	}
 
@@ -44,6 +42,8 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 
 		Div right = new Div();
 		right.addClassName("authorised-banner-right");
+		
+		welcomeMessage.addClassName("welcome-message");
 
 		left.add(welcomeMessage);
 		setText("Welcome to " + Globals.getApplicationName());
