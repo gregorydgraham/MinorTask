@@ -49,7 +49,8 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 		System.out.println("BEFORE ENTER MINORTASKPAGE");
 		MinorTask minortask = new MinorTask();
 		if (minortask.isLoggedIn()) {
-			MinorTask.showOpeningPage();
+			event.rerouteTo(TodaysTaskLayout.class);
+//			MinorTask.showOpeningPage();
 		}
 	}
 

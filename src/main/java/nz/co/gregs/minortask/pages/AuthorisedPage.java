@@ -45,7 +45,8 @@ public abstract class AuthorisedPage extends VerticalLayout implements MinorTask
 		if (!minortask().isLoggedIn()) {
 			Location location = MinorTask.getCurrentLocation();
 			minortask().setLoginDestination(location);
-			MinorTask.showLogin();
+			event.rerouteTo(LoginPage.class); 
+//			MinorTask.showLogin();
 		} else {
 			setComponents();
 		}
