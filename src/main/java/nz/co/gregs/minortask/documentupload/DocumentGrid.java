@@ -57,7 +57,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Button getRemoveComponent(TaskDocument source) {
-		return new Button(new Icon(VaadinIcon.RECYCLE), (event) -> removeDocument(source));
+		return new Button(new Icon(VaadinIcon.TRASH), (event) -> removeDocument(source));
 	}
 
 	private Anchor getFileIconComponent(TaskDocument source) {
