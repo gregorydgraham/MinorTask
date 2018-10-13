@@ -2,7 +2,7 @@
 	<!-- This is where your App's styling should go. You can use .css files too. -->
 	<style>
 		.main-layout {
-			padding: 20px;
+			padding: 0;
 		}
 
 		/*body>vaadin-vertical-layout {*/
@@ -34,13 +34,13 @@
 		body>vaadin-vertical-layout>vaadin-vertical-layout {
 			background-color: white;
 			border-radius: 4px;
-			opacity: 0.97;
+			/*opacity: 0.97;*/
 		}
 
 		footer {
 			background-color: lightskyblue;
 			/*border-radius: 4px;*/
-			opacity: 0.97;
+			/*opacity: 0.97;*/
 			padding:1em;
 			color: #eeeeee;
 		}
@@ -231,6 +231,10 @@
 				margin:0;
 			}
 
+			label{
+				padding-left: 3px;
+			}
+
 			.authorised-banner{
 				padding-top: 0;
 				font-size: small;
@@ -240,10 +244,6 @@
 				padding: 0;
 				margin:0;
 				font-size: small;
-			}
-
-			label{
-				padding-left: 3px;
 			}
 
 			vaadin-tab{
