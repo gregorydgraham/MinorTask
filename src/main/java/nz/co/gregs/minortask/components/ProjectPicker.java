@@ -119,47 +119,51 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 					// prevent self-projects
 					final Long newProjectID = selectedProject.taskID.getValue();
 					if (newProjectID != null && taskID.equals(newProjectID)) {
-						minortask.chat("No self-contained projects please");
+						MinorTask.chat("No self-referential projects please");
 					} else {
 						final Long taskProjectID = task.projectID.getValue();
 						final Date taskStartDate = task.startDate.getValue();
 						final Date taskDeadlineDate = task.finalDate.getValue();
 						// ensure the tree integrity by promoting any separated tasks
-						List<Task> projectPathTasks = minortask.getProjectPathTasks(newProjectID, minortask.getUserID());
+						List<Task> projectPathTasks = MinorTask.getProjectPathTasks(newProjectID, minortask.getUserID());
 						for (Task projectPathTask : projectPathTasks) {
 							final DBInteger projectID = projectPathTask.projectID;
 							if (taskID.equals(projectID.longValue())) {
 								projectPathTask.projectID.setValue(taskProjectID);
 							}
 							// force the starting date upwards
-							if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
-								projectPathTask.startDate.setValue(taskStartDate);
+							if (projectPathTask.startDate != null) {
+								if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
+									projectPathTask.startDate.setValue(taskStartDate);
+								}
 							}
 							// force the deadline downwards
-							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
-							if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
-								task.finalDate.setValue(projectPathTaskDeadlineDate);
+							if (projectPathTask.finalDate != null) {
+								final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
+								if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
+									task.finalDate.setValue(projectPathTaskDeadlineDate);
+								}
 							}
 							// save the project task if necessary
 							if (projectPathTask.hasChangedSimpleTypes()) {
-								minortask.getDatabase().update(projectPathTask);
+								MinorTask.getDatabase().update(projectPathTask);
 							}
 						}
 						task.projectID.setValue(newProjectID);
-						minortask.getDatabase().update(task);
+						MinorTask.getDatabase().update(task);
 						// enforce date constraints on tree
-						minortask.enforceDateConstraintsOnTaskTree(task);
+						MinorTask.enforceDateConstraintsOnTaskTree(task);
 						picker.add(picker.getCurrentProjectComponent());
-						minortask.showTask(taskID);
+						MinorTask.showTask(taskID);
 					}
 				} else {
 					task.projectID.setValueToNull();
-					minortask.getDatabase().update(task);
+					MinorTask.getDatabase().update(task);
 					picker.add(picker.getCurrentProjectComponent());
-					minortask.showTask(taskID);
+					MinorTask.showTask(taskID);
 				}
 			} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
-				minortask.sqlerror(ex);
+				MinorTask.sqlerror(ex);
 			}
 		}
 	}
