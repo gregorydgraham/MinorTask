@@ -53,13 +53,9 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
 			final Task.Project project = taskAndProject.getProject();
-			//taskList.setValue(project==null?taskList.getEmptyValue():project);
+			taskList.setValue(project==null?taskList.getEmptyValue():project);
 
 			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
-			taskList.addBlurListener((event) -> {
-				this.removeAll();
-				this.add(getCurrentProjectComponent());
-			});
 
 			return taskList;
 		} catch (SQLException ex) {
@@ -70,32 +66,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 	}
 
 	private Component getCurrentProjectComponent() {
-		try {
-			TextField button = new TextField("Project");
-			taskAndProject = getTaskAndProject(taskID);
-			Task.Project projectFound = taskAndProject.getProject();
-			if (projectFound == null) {
-				button.setValue("Projects");
-			} else {
-				final String projectName = projectFound.name.stringValue();
-				if (!projectName.isEmpty()) {
-					button.setValue(projectName);
-				}
-			}
-
-			button.addFocusListener(
-					(event) -> {
-						removeAll();
-						final ComboBox<Task> pickerComponent = getPickerComponent();
-						add(pickerComponent);
-					}
-			);
-			button.setSizeUndefined();
-			return button;
-		} catch (MinorTask.InaccessibleTaskException ex) {
-			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
-			return new AccessDeniedComponent();
-		}
+		 return getPickerComponent();
 	}
 
 	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
