@@ -219,7 +219,9 @@ public class Globals {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
 		cookie.setMaxAge(REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
-		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue());
+		cookie.setHttpOnly(true);
+		cookie.setDomain(getApplicationURL().replaceAll("http[s]*://", "").replaceAll(":[0-9]*/*.*", ""));
+		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue()+" - "+cookie.getDomain());
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
@@ -271,14 +273,14 @@ public class Globals {
 	}
 
 	public static void showProjects() {
-		UI.getCurrent().navigate(ProjectsLayout.class);
+		showPage(ProjectsLayout.class);
 	}
 
 	public static void showTask(Long taskID) {
 		if (taskID == null) {
 			showProjects();
 		} else {
-			UI.getCurrent().navigate(TaskEditorLayout.class, taskID);
+			showPage(TaskEditorLayout.class, taskID);
 		}
 	}
 
@@ -290,18 +292,10 @@ public class Globals {
 	
 	public static void showPage(Class<? extends AuthorisedPage> page) {
 		UI.getCurrent().navigate(page);
-//		final UI ui = UI.getCurrent();
-//		final Router router = ui.getRouter();
-//		String url = router.getUrl(page);
-//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
 	}
 	
 	public static void showPage(Class<? extends AuthorisedTaskPage> page, Long taskID) {
 		UI.getCurrent().navigate(page, taskID);
-//		final UI ui = UI.getCurrent();
-//		final Router router = ui.getRouter();
-//		String url = router.getUrl(page, taskID);
-//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
 	}
 
 	public static Task getProjectExample(Long taskID, long userID) {
