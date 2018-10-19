@@ -9,7 +9,6 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
@@ -35,7 +34,7 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 
 	public final void buildComponent() {
 		setSizeUndefined();
-		setWidth("100%");
+//		setWidth("100%");
 
 		Div left = new Div();
 		left.addClassName("authorised-banner-left");
