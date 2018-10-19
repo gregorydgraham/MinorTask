@@ -5,11 +5,11 @@
  */
 package nz.co.gregs.minortask.place;
 
-import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -25,7 +25,7 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  *
  * @author gregorygraham
  */
-public class PlaceGrid extends VerticalLayout implements RequiresLogin {
+public class PlaceGrid extends Div implements RequiresLogin {
 
 	private final Long taskID;
 	private final Grid<Place> grid = new Grid<Place>();
@@ -40,9 +40,7 @@ public class PlaceGrid extends VerticalLayout implements RequiresLogin {
 	@SuppressWarnings("unchecked")
 	private void makeComponent() {
 		removeAll();
-		setMargin(false);
-		setPadding(false);
-		setSpacing(false);
+		addClassName("place-grid");
 		setItems();
 		getDatabase().print(allRows);
 		grid.setHeightByRows(true);

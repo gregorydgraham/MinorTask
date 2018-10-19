@@ -611,7 +611,9 @@ public class Globals {
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				String dcsFactory = "bean/BackupDatabase";
 				DatabaseConnectionSettings settings = (DatabaseConnectionSettings) envCtx.lookup(dcsFactory);
-				cluster.backupToDBDatabase(settings.createDBDatabase());
+				final DBDatabase backupDB = settings.createDBDatabase();
+				cluster.backupToDBDatabase(backupDB);
+				backupDB.terminate();
 			} catch (SQLException | NamingException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				System.out.println("nz.co.gregs.minortask.Globals.DatabaseBackupProcess.process(): " + ex.getMessage());
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);

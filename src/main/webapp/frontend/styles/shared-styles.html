@@ -4,6 +4,9 @@
 		.main-layout {
 			padding: 0;
 			margin: 0;
+			margin-left:  5px;
+			margin-right: 2px;
+			border:  0;
 		}
 
 		/*body>vaadin-vertical-layout {*/
@@ -33,6 +36,8 @@
 		}
 
 		body>vaadin-vertical-layout>vaadin-vertical-layout {
+			margin: 0;
+			padding:0;
 			background-color: white;
 			/*border-radius: 4px;*/
 			/*opacity: 0.97;*/
@@ -41,7 +46,7 @@
 		footer {
 			background-color: #0099cc;
 			color: white;
-			padding:1em;
+			/*padding:1em;*/
 			width:100%;
 		}
 
@@ -57,15 +62,27 @@
 			/*vaadin-vertical-layout*/
 		}
 
-		minortask-page{
+		.minortask-page{
+			padding-top: 0;
+			padding-left: 0;
+			margin-left:  0;
+			padding-right: 0;
+			margin-right:  0;
+			border-radius: 0;
 		}
 
 		.minortask-internal{
+			padding-left: 0;
+			padding-right:0;
 			background-color: white;
 			/*border-radius: 4px;*/
 		}
 
 		#minortask-internal{
+				padding-left: 0px;
+				margin-left:  0px;
+				padding-right: 0px;
+				margin-right:  0px;
 			background-color: white;
 			background-image: none; 
 			/*border-radius: 4px;*/
@@ -89,6 +106,18 @@
 			width:100%;
 		}
 
+		.dates-component{
+			display: flex;
+			/*padding-top: 5px;*/
+		}
+		
+		.optional-date-picker{
+			padding-left: 2px;
+			padding-top: 7px;
+			padding-right: 5px;
+			padding-bottom: 0;
+		}
+
 		.public-banner{
 			background-color: cadetblue;
 			margin: 0;
@@ -100,9 +129,9 @@
 			background-color: cadetblue;
 			color:white;
 			margin:0;
-			padding: 5px;
+			/*padding: 5px;*/
 		}
-		
+
 		.authorised-banner a{color: white;}
 		.authorised-banner a:hover{color: white;font-weight: bold;}
 		.authorised-banner a:active{color: white;font-style: oblique;}
@@ -164,7 +193,7 @@
 			background-color: limegreen;
 			color: white;
 		}
-		
+
 		.all-completed-tasks-component{
 			width:100%;
 		}
@@ -176,7 +205,9 @@
 		@media all and (max-width: 900px) {
 			.main-layout {
 				padding: 0;
-				margin:  0;
+				margin: 0;
+				margin-left:  5px;
+				margin-right: 2px;
 				border:  0;
 			}
 

@@ -127,16 +127,17 @@ public class EditTask extends Div implements RequiresLogin {
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
 
-		HorizontalLayout dates = new HorizontalLayout(
+		Div dates = new Div(
 				startDate,
 				preferredEndDate,
 				deadlineDate,
 				completedDate
 		);
+		dates.addClassName("dates-component");
 		dates.setSizeUndefined();
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
-		VerticalLayout extrasLayout = new VerticalLayout();
+		Div extrasLayout = new Div();
 //		extrasLayout.add(details);
 		extrasLayout.add(description);
 		extrasLayout.add(dates);

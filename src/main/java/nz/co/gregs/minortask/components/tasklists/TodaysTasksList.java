@@ -31,8 +31,8 @@ public class TodaysTasksList extends AbstractTaskList {
 		// add the leaf requirement
 		query.addCondition(task.column(task.taskID).isNull());
 		query.setSortOrder(
-				example.column(example.finalDate),
-				example.column(example.startDate)
+				example.column(example.finalDate).ascending().nullsLast(),
+				example.column(example.startDate).ascending().nullsLast()
 		);
 		List<Task> tasks =query.getAllInstancesOf(new Task.Project());
 		return tasks;
