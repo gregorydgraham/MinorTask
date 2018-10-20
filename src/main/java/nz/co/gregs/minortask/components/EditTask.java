@@ -43,7 +43,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class EditTask extends Div implements RequiresLogin {
 
-	TextField name = new TextField("Name");
+	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	TextArea description = new TextArea("Description");
 	Button completeButton = new Button("Complete This Task");
@@ -87,7 +87,6 @@ public class EditTask extends Div implements RequiresLogin {
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);
 
-		name.setSizeUndefined();
 		description.setWidth("100%");
 		description.setHeight("3cm");
 		activeIndicator.setWidth("100%");
@@ -122,7 +121,7 @@ public class EditTask extends Div implements RequiresLogin {
 		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
-				name, project,
+				project,
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
@@ -138,13 +137,15 @@ public class EditTask extends Div implements RequiresLogin {
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div extrasLayout = new Div();
-//		extrasLayout.add(details);
 		extrasLayout.add(description);
+//		final RangeDatePicker rangeDatePicker = new RangeDatePicker();
+//		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
 		extrasLayout.add(new PlaceGrid(taskID));
 		extrasLayout.add(new DocumentGrid(taskID));
 		extrasLayout.add(new WeblinkGrid(taskID));
 		Div topLayout = new Div(
+				name, 
 				details,
 				projectPath,
 				subtasks,
@@ -161,7 +162,7 @@ public class EditTask extends Div implements RequiresLogin {
 	}
 
 	protected void addChangeListeners() {
-		name.addValueChangeListener((event) -> {
+		name.addBlurListener((event) -> {
 			saveTask();
 			Globals.showTask(taskID);
 		});
@@ -169,7 +170,6 @@ public class EditTask extends Div implements RequiresLogin {
 			saveTask();
 		});
 
-		name.setValueChangeMode(ValueChangeMode.ON_BLUR);
 		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
 
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
@@ -259,7 +259,7 @@ public class EditTask extends Div implements RequiresLogin {
 				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 				Globals.sqlerror(ex);
 			}
-			Globals.chat("Saved.");
+			Globals.notice("Saved.");
 		} catch (Globals.InaccessibleTaskException ex) {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}

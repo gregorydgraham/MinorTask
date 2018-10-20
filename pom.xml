@@ -137,6 +137,16 @@
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.webjars.bowergithub.roxus</groupId>
+			<artifactId>range-datepicker</artifactId>
+			<version>0.0.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bowergithub.polymerelements</groupId>
+			<artifactId>paper-input</artifactId>
+			<version>2.2.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>

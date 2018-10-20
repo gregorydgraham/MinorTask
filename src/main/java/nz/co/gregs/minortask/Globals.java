@@ -354,6 +354,12 @@ public class Globals {
 		note.open();
 	}
 
+	public static final void notice(String string) {
+		Notification note = new Notification(string, 3000);
+		note.setPosition(Notification.Position.TOP_CENTER);
+		note.open();
+	}
+
 	public static void chatAboutUsers() {
 		try {
 			String message = "Currently serving " + getDatabase().getDBTable(new User()).setBlankQueryAllowed(true).count() + " users " + "and " + getDatabase().getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";
