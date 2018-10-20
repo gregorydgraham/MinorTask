@@ -10,7 +10,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -26,12 +25,15 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  */
 public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 
-	private final Long taskID;
+	private Long taskID;
 	private final Grid<Weblink> grid = new Grid<Weblink>();
 	private List<Weblink> allRows;
 	private WeblinkEditorComponent searcher;
 
-	 public WeblinkGrid(Long taskID) {
+	public WeblinkGrid() {
+	}
+
+	public final void setTaskID(Long taskID) {
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -59,7 +61,9 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Button getRemoveComponent(Weblink source) {
-		return new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source));
+		final Button button = new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source));
+		button.setEnabled(this.isEnabled()&&!this.isReadOnly());
+		return button;
 	}
 
 	private Component getAnchorComponent(Weblink source) {
@@ -71,7 +75,7 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 		}
 
 		HorizontalLayout layout = new HorizontalLayout();
-		Anchor iconAnchor = new Anchor(source.webURL.getValue(),				"");
+		Anchor iconAnchor = new Anchor(source.webURL.getValue(), "");
 		iconAnchor.setTarget("_blank");
 		iconAnchor.add(icon);
 		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue().replaceAll("http[s]*://", ""));
@@ -85,8 +89,6 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 
 	private Component getDescriptionComponent(Weblink source) {
 		VerticalLayout layout = new VerticalLayout();
-//		Label label = new Label(source.description.getValueWithDefaultValue("Weblink"));
-//		label.setWidth("100%");
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue("Important Location"),
@@ -129,5 +131,20 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	public boolean isReadOnly() {
+		return searcher.isReadOnly(); 
+	}
+
+	public void setReadOnly(boolean readonly) {
+		searcher.setEnabled(!readonly);
+		grid.setEnabled(!readonly);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		getElement().setEnabled(enabled);
+		searcher.setEnabled(enabled);
 	}
 }

@@ -38,16 +38,12 @@ public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDate
 			toggleDateField(event);
 			setModelValue(getValue(), true);
 		});
-		
-//		enabler.getStyle().set("padding", "0").set("margin", "0").set("border", "0");
 
 		input.setEnabled(enabler.getValue());
-//		input.getStyle().set("padding", "0").set("margin", "0").set("border", "0");
 
 		final Div content = getContent();
 		content.add(enabler, input);
 		content.addClassName("optional-date-picker");
-//		content.setAlignItems(FlexComponent.Alignment.START);
 	}
 
 	@Override
@@ -95,5 +91,19 @@ public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDate
 
 	public void setDefaultValue(LocalDate suggestion) {
 		this.previousValue = suggestion;
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		enabler.setReadOnly(readOnly);
+		input.setReadOnly(readOnly);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		enabler.setEnabled(enabled);
+		input.setEnabled(enabled);
 	}
 }

@@ -55,6 +55,10 @@ public class EditTask extends Div implements RequiresLogin {
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
+	WeblinkGrid weblinkGrid = new WeblinkGrid();
+	DocumentGrid documentGrid = new DocumentGrid();
+	PlaceGrid placeGrid = new PlaceGrid();
+	RangeDatePicker rangeDatePicker = new RangeDatePicker();
 	DatePicker completedDate = new DatePicker("Completed");
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
@@ -86,14 +90,16 @@ public class EditTask extends Div implements RequiresLogin {
 
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);
+		
+		description.addClassName("edit-task-description");
 
-		description.setWidth("100%");
-		description.setHeight("3cm");
-		activeIndicator.setWidth("100%");
-		startedIndicator.setWidth("100%");
-		overdueIndicator.setWidth("100%");
-		oneDayMaybeIndicator.setWidth("100%");
-		completedIndicator.setWidth("100%");
+//		description.setWidth("100%");
+//		description.setHeight("3cm");
+//		activeIndicator.setWidth("100%");
+//		startedIndicator.setWidth("100%");
+//		overdueIndicator.setWidth("100%");
+//		oneDayMaybeIndicator.setWidth("100%");
+//		completedIndicator.setWidth("100%");
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
 		overdueIndicator.setVisible(false);
@@ -111,17 +117,17 @@ public class EditTask extends Div implements RequiresLogin {
 		completeButton.addClickListener(new CompleteTaskListener(minortask(), taskID));
 		completeButton.setVisible(false);
 
-		reopenButton.addClassName("friendly");
+		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
 		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
 		reopenButton.setVisible(false);
 
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
-		reopenButton.getStyle().set("margin", "0").set("padding", "0");
+//		reopenButton.getStyle().set("margin", "0").set("padding", "0");
 		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
 		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
-//				project,
+				//				project,
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
@@ -138,21 +144,20 @@ public class EditTask extends Div implements RequiresLogin {
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div extrasLayout = new Div();
 		extrasLayout.add(description);
-		final RangeDatePicker rangeDatePicker = new RangeDatePicker();
 //		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
-		extrasLayout.add(new PlaceGrid(taskID));
-		extrasLayout.add(new DocumentGrid(taskID));
-		extrasLayout.add(new WeblinkGrid(taskID));
+		extrasLayout.add(placeGrid);
+		extrasLayout.add(documentGrid);
+		extrasLayout.add(weblinkGrid);
 		final Div nameDiv = new Div(name, project);
 		nameDiv.addClassName("edit-task-name");
 		Div topLayout = new Div(
-				projectPath, 
-				nameDiv, 
-//				details,
+				projectPath,
+				nameDiv,
 				subtasks,
 				extrasLayout,
 				completeButton,
+				reopenButton,
 				completedTasks);
 		topLayout.addClassName("edit-task-contents");
 		try {
@@ -193,6 +198,9 @@ public class EditTask extends Div implements RequiresLogin {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
+				placeGrid.setTaskID(taskID);
+				weblinkGrid.setTaskID(taskID);
+				documentGrid.setTaskID(taskID);
 
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
@@ -225,6 +233,11 @@ public class EditTask extends Div implements RequiresLogin {
 					preferredEndDate.setReadOnly(true);
 					deadlineDate.setReadOnly(true);
 					subtasks.disableNewButton();
+
+					placeGrid.setReadOnly(true); 
+					weblinkGrid.setReadOnly(true);
+					documentGrid.setReadOnly(true);
+
 				} else {
 					completeButton.setVisible(true);
 					final Date now = new Date();

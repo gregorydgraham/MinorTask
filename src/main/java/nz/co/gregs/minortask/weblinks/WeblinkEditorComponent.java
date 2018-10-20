@@ -98,4 +98,21 @@ public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDef
 			ComponentEventListener<WeblinkAddedEvent> listener) {
 		return addListener(WeblinkAddedEvent.class, listener);
 	}
+
+	public boolean isReadOnly() {
+		return locationText.isReadOnly();
+	}
+
+	public void setReadOnly(boolean enabled) {
+		locationText.setReadOnly(enabled);
+		descriptionText.setReadOnly(enabled);
+		addButton.setEnabled(false);
+		removeAsDefaultButton(addButton, defaultRegistration);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		getElement().setEnabled(enabled);
+		removeAsDefaultButton(addButton, defaultRegistration);
+	}
 }

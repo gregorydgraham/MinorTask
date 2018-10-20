@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -17,7 +16,7 @@ import java.util.Date;
  */
 @Tag("range-datepicker")
 @HtmlImport("bower_components/range-datepicker/range-datepicker.html")
-public class RangeDatePicker extends Component implements BlurNotifier<RangeDatePicker>{
+public class RangeDatePicker extends Component{
 
 	public void setNoRange(boolean value) {
 		getElement().setProperty("noRange", value);
@@ -60,8 +59,8 @@ public class RangeDatePicker extends Component implements BlurNotifier<RangeDate
 		getElement().setProperty("dateFrom", unixTime);
 	}
 	
-	public double getDateFrom(){
-		double value = getElement().getProperty("dateFrom", new Date().getTime());
+	public long getDateFrom(){
+		long value = Double.valueOf(getElement().getProperty("dateFrom", new Date().getTime())).longValue();
 		return value;
 	}
 	
@@ -73,8 +72,8 @@ public class RangeDatePicker extends Component implements BlurNotifier<RangeDate
 		getElement().setProperty("dateTo", unixTime);
 	}
 	
-	public double getDateTo(){
-		double value = getElement().getProperty("dateTo", new Date().getTime());
+	public long getDateTo(){
+		long value = Double.valueOf(getElement().getProperty("dateTo", new Date().getTime())).longValue();
 		return value;
 	}
 

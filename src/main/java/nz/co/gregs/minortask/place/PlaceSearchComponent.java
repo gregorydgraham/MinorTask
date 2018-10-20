@@ -62,22 +62,24 @@ public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefau
 		add(addButton);
 
 		searchButton.addClickListener((event) -> {
-				searchForLocation(locationText.getValue());
-				comboBox.setOpened(true);
-				comboBox.focus();
+			searchForLocation(locationText.getValue());
+			comboBox.setOpened(true);
+			comboBox.focus();
 		});
 		addButton.addClickListener((event) -> {
-				addSelectedLocation();
+			addSelectedLocation();
 		});
 		locationText.addValueChangeListener((event) -> {
 			searchForLocation(event.getSource().getValue());
 		});
 		locationText.addFocusListener((event) -> {
-			defaultRegistration = setAsDefaultButton(searchButton, (keyEvent) -> {
-				searchForLocation(locationText.getValue());
-				comboBox.setOpened(true);
-				comboBox.focus();
-			});
+			if (locationText.isEnabled() && !locationText.isReadOnly()) {
+				defaultRegistration = setAsDefaultButton(searchButton, (keyEvent) -> {
+					searchForLocation(locationText.getValue());
+					comboBox.setOpened(true);
+					comboBox.focus();
+				});
+			}
 		});
 		Registration addBlurListener = locationText.addBlurListener((BlurNotifier.BlurEvent<TextField> event) -> {
 			if (defaultRegistration != null) {
@@ -173,6 +175,13 @@ public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefau
 		return addListener(PlaceAddedEvent.class, listener);
 	}
 
+	public void setReadOnly(boolean b) {
+		locationText.setReadOnly(b);
+		comboBox.setReadOnly(b);
+
+		addButton.setEnabled(!b);
+		searchButton.setEnabled(!b);
+	}
 
 	private static class PlacesBox extends ComboBox<OpenStreetMapPlace> {
 

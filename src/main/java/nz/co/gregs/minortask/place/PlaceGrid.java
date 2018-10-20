@@ -27,12 +27,15 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  */
 public class PlaceGrid extends Div implements RequiresLogin {
 
-	private final Long taskID;
+	private Long taskID;
 	private final Grid<Place> grid = new Grid<Place>();
 	private List<Place> allRows;
 	private PlaceSearchComponent searcher;
 
-	public PlaceGrid(Long taskID) {
+	public PlaceGrid() { 
+	}
+	
+	public void setTaskID(Long taskID){
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -138,5 +141,9 @@ public class PlaceGrid extends Div implements RequiresLogin {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	public void setReadOnly(boolean b) {
+		searcher.setReadOnly(b); 
 	}
 }

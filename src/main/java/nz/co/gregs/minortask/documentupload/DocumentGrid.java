@@ -25,12 +25,15 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  */
 public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 
-	private final Long taskID;
+	private Long taskID = null;
 	private Grid<TaskDocument> grid = new Grid<TaskDocument>();
 	private List<TaskDocument> allRows;
 	private DocumentUpload uploader;
 
-	public DocumentGrid(Long taskID) {
+	public DocumentGrid() {
+	}
+	
+	public final void setTaskID(Long taskID){
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -114,5 +117,9 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	public void setReadOnly(boolean b) {
+		uploader.setEnabled(!b);
 	}
 }
