@@ -5,28 +5,21 @@
  */
 package nz.co.gregs.minortask.weblinks;
 
-import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.jsoup.Jsoup;
 
 /**
  *
  * @author gregorygraham
  */
-public class WeblinkEditorComponent extends HorizontalLayout implements RequiresLogin, HasDefaultButton {
+public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDefaultButton {
 
 	private final Long taskID;
 	TextField locationText = new TextField("Web", "http://example.com/...");
@@ -37,14 +30,14 @@ public class WeblinkEditorComponent extends HorizontalLayout implements Requires
 	public WeblinkEditorComponent(Long taskID) {
 		super();
 		this.taskID = taskID;
+		addClassName("weblink-editor-component");
 
 		add(locationText);
 		add(descriptionText);
 		add(addButton);
-		this.setDefaultVerticalComponentAlignment(Alignment.END);
 
-		locationText.setWidth("45%");
-		descriptionText.setWidth("45%");
+//		locationText.setWidth("45%");
+//		descriptionText.setWidth("45%");
 		addButton.setEnabled(false);
 		addButton.addClassName(DEFAULTBUTTON_CLASSNAME);
 

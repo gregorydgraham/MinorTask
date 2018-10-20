@@ -46,12 +46,11 @@
 		footer {
 			background-color: #0099cc;
 			color: white;
-			/*padding:1em;*/
-			width:100%;
+			padding:1em;
+			width: calc(100%-2em);
 		}
 
 		vaadin-vertical-layout{
-			opacity: 1;
 		}
 
 		vaadin-tabs{
@@ -75,7 +74,6 @@
 			padding-left: 0;
 			padding-right:0;
 			background-color: white;
-			/*border-radius: 4px;*/
 		}
 
 		#minortask-internal{
@@ -85,7 +83,6 @@
 			margin-right:  0px;
 			background-color: white;
 			background-image: none; 
-			/*border-radius: 4px;*/
 		}
 
 		.minortask-login {
@@ -118,8 +115,13 @@
 		}
 
 		.dates-component{
+			clear: both;
 			display: flex;
-			/*padding-top: 5px;*/
+			padding-top: 5px;
+		}
+		
+		.edit-task-name{
+			display: flex;
 		}
 
 		.optional-date-picker{
@@ -127,6 +129,7 @@
 			padding-top: 7px;
 			padding-right: 5px;
 			padding-bottom: 0;
+			display: block;
 		}
 
 		.public-banner{
@@ -152,6 +155,7 @@
 		.authorised-banner-left {
 			float:left;
 			width:30%; 
+			padding-left: 1em;
 		}
 
 		.authorised-banner-right{	
@@ -164,11 +168,41 @@
 		}
 
 		.edit-task-component{
-			width:99%;
+			width:calc(100%-16px);
 			margin:0;
 			padding:0;
 			padding-left: 8px;
 			padding-right: 8px;
+		}
+		
+		.place-search-component{
+			display: block;
+		}
+		
+		.place-search-component vaadin-text-field{
+			margin-right: 0.5em;
+			width: 30em;
+			max-width: 40%;
+		}
+		
+		.place-search-component vaadin-button{
+			margin-right: 0.5em;
+		}
+		
+		.place-search-component vaadin-combo-box{
+			margin-right: 0.5em;
+			width: 20em;
+			max-width: 25%;
+		}
+		
+		.weblink-editor-component{
+			display: block;
+		}
+		
+		.weblink-editor-component vaadin-text-field{
+			margin-right: 0.5em;
+			width: 30em;
+			max-width: 40%;
 		}
 
 		.tiny{font-size: smaller;}
@@ -228,7 +262,7 @@
 		.green{background-color: greenyellow;}
 		.blue{background-color: lightskyblue;}
 
-		@media all and (max-width: 900px) {
+/*		@media all and (max-width: 900px) {
 			.main-layout {
 				padding: 0;
 				margin: 0;
@@ -237,9 +271,9 @@
 				border:  0;
 			}
 
-			/*body>vaadin-vertical-layout {*/
+			body>vaadin-vertical-layout {
 			html{
-				/*background-image:none ;*/
+				background-image:none ;
 				background-attachment: fixed;
 				background-size: cover;
 				background-position-x: center;
@@ -301,12 +335,12 @@
 			}
 
 			.authorised-banner{
-				/*padding-top: 0;*/
+				padding-top: 0;
 				font-size: small;
 			}
 
 			.authorised-banner vaadin-button{
-				/*padding: 0;*/
+				padding: 0;
 				margin:0;
 				font-size: small;
 
@@ -317,6 +351,6 @@
 				padding-right: 2px;
 				font-size: smaller;
 			}
-		}
+		}*/
 	</style>
 </custom-style>

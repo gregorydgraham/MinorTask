@@ -9,7 +9,6 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.util.Collections;
 import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
@@ -31,8 +30,6 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	}
 
 	protected void buildComponent() {
-		getStyle().set("overflow", "auto");
-//		add(getButtonForTaskID(null));
 		List<Task> ancestors = MinorTask.getProjectPathTasks(getTaskID(), minortask().getUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
@@ -68,7 +65,7 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	}
 
 	public static class WithAddTaskButton extends ProjectPathNavigator {
-
+ 
 		public WithAddTaskButton(Long taskID) {
 			super(taskID);
 		}

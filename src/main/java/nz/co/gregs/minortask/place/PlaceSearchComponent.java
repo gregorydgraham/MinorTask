@@ -9,6 +9,7 @@ import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -41,7 +42,7 @@ import org.xml.sax.SAXException;
  *
  * @author gregorygraham
  */
-public class PlaceSearchComponent extends HorizontalLayout implements RequiresLogin, HasDefaultButton {
+public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefaultButton {
 
 	private final Long taskID;
 	TextField locationText = new TextField("", "", "address to search for...");
@@ -53,6 +54,7 @@ public class PlaceSearchComponent extends HorizontalLayout implements RequiresLo
 	public PlaceSearchComponent(Long taskID) {
 		super();
 		this.taskID = taskID;
+		addClassName("place-search-component");
 
 		add(locationText);
 		add(searchButton);

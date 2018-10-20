@@ -121,7 +121,7 @@ public class EditTask extends Div implements RequiresLogin {
 		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
-				project,
+//				project,
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
@@ -144,10 +144,12 @@ public class EditTask extends Div implements RequiresLogin {
 		extrasLayout.add(new PlaceGrid(taskID));
 		extrasLayout.add(new DocumentGrid(taskID));
 		extrasLayout.add(new WeblinkGrid(taskID));
+		final Div nameDiv = new Div(name, project);
+		nameDiv.addClassName("edit-task-name");
 		Div topLayout = new Div(
-				name, 
-				details,
-				projectPath,
+				projectPath, 
+				nameDiv, 
+//				details,
 				subtasks,
 				extrasLayout,
 				completeButton,
