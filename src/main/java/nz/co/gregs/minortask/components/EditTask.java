@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.actions.DBActionList;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
@@ -90,16 +92,9 @@ public class EditTask extends Div implements RequiresLogin {
 
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);
-		
+
 		description.addClassName("edit-task-description");
 
-//		description.setWidth("100%");
-//		description.setHeight("3cm");
-//		activeIndicator.setWidth("100%");
-//		startedIndicator.setWidth("100%");
-//		overdueIndicator.setWidth("100%");
-//		oneDayMaybeIndicator.setWidth("100%");
-//		completedIndicator.setWidth("100%");
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
 		overdueIndicator.setVisible(false);
@@ -122,12 +117,10 @@ public class EditTask extends Div implements RequiresLogin {
 		reopenButton.setVisible(false);
 
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
-//		reopenButton.getStyle().set("margin", "0").set("padding", "0");
 		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
 		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		HorizontalLayout details = new HorizontalLayout(
-				//				project,
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
@@ -234,7 +227,7 @@ public class EditTask extends Div implements RequiresLogin {
 					deadlineDate.setReadOnly(true);
 					subtasks.disableNewButton();
 
-					placeGrid.setReadOnly(true); 
+					placeGrid.setReadOnly(true);
 					weblinkGrid.setReadOnly(true);
 					documentGrid.setReadOnly(true);
 
@@ -345,7 +338,23 @@ public class EditTask extends Div implements RequiresLogin {
 				if (task == null) {
 					Globals.showTask(null);
 				} else {
-					Globals.showTask(task.projectID.getValue());
+					Long projectID = task.projectID.getValue();
+					Task completedTasks = new Task();
+					completedTasks.projectID.setValue(projectID);
+					completedTasks.completionDate.excludeNull();
+					try {
+						if (getDatabase().getDBQuery(completedTasks).count() > 0) {
+							Task openTasks = new Task();
+							openTasks.projectID.setValue(projectID);
+							openTasks.completionDate.permitOnlyNull();
+							if (getDatabase().getDBQuery(openTasks).count() == 0){ 
+								Globals.notice("All the subtasks are completed!");
+							}
+						}
+					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+						sqlerror(ex);
+					}
+					Globals.showTask(projectID);
 				}
 			} catch (Globals.InaccessibleTaskException ex) {
 				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
