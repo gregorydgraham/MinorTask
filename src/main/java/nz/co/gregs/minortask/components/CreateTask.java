@@ -39,6 +39,7 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 
 	public CreateTask(Long projectID) throws Globals.InaccessibleTaskException {
 		this.projectID = projectID;
+		addClassName("create-task-component");
 		this.add(getComponent());
 	}
 
@@ -54,10 +55,12 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 				saveAndEdit();
 			});
 
+			name.addClassName("create-task-name");
 			name.setSizeUndefined();
 			name.focus();
-			description.setWidth("100%");
-			description.setHeight("3cm");
+			description.addClassName("create-task-description");
+//			description.setWidth("100%");
+//			description.setHeight("3cm");
 			project.setReadOnly(true);
 
 			setFieldValues();
