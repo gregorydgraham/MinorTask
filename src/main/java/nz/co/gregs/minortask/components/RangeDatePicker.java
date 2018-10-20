@@ -5,12 +5,11 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.server.VaadinService;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  *
@@ -18,7 +17,7 @@ import java.util.Locale;
  */
 @Tag("range-datepicker")
 @HtmlImport("bower_components/range-datepicker/range-datepicker.html")
-public class RangeDatePicker extends Component {
+public class RangeDatePicker extends Component implements BlurNotifier<RangeDatePicker>{
 
 	public void setNoRange(boolean value) {
 		getElement().setProperty("noRange", value);

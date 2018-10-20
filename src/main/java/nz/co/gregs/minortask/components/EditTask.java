@@ -138,7 +138,7 @@ public class EditTask extends Div implements RequiresLogin {
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div extrasLayout = new Div();
 		extrasLayout.add(description);
-//		final RangeDatePicker rangeDatePicker = new RangeDatePicker();
+		final RangeDatePicker rangeDatePicker = new RangeDatePicker();
 //		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
 		extrasLayout.add(new PlaceGrid(taskID));
