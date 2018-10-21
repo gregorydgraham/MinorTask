@@ -24,6 +24,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	private ArrayList<Task> week;
 	private ArrayList<Task> month;
 	private ArrayList<Task> others;
+	private ArrayList<Task> year;
 
 	public AllCompletedTasksComponent() {
 		try {
@@ -35,6 +36,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			add(new WeeksTaskList(week));
 			add(Globals.getSpacer());
 			add(new ThisMonthsCompletedTasksList(month));
+			add(Globals.getSpacer());
+			add(new ThisYearsCompletedTasksList(year));
 			add(Globals.getSpacer());
 			add(new TooManyCompletedTasksList(others));
 		} catch (SQLException ex) {
@@ -65,6 +68,20 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		return startOfMonth;
 	}
 
+	public static Date getStartOfThisYear() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+		cal.clear(Calendar.MINUTE);
+		cal.clear(Calendar.SECOND);
+		cal.clear(Calendar.MILLISECOND);
+
+// get start of the month
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		Date startOfYear = cal.getTime();
+		return startOfYear;
+	}
+
 	protected final List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.userID.permittedValues(getUserID());
@@ -83,14 +100,18 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	private void splitTasks(List<Task> allTasks) throws SQLException {
 		week = new ArrayList<Task>();
 		month = new ArrayList<Task>();
+		year = new ArrayList<Task>();
 		others = new ArrayList<Task>();
 		List<Task> tasksToList = allTasks;
 		Date startOfWeek = getStartOfThisWeek();
 		Date startOfMonth = getStartOfThisMonth();
+		Date startOfYear = getStartOfThisYear();
 		for (Task task : tasksToList) {
 			if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfWeek)) {
 				week.add(task);
 			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfMonth)) {
+				month.add(task);
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfYear)) {
 				month.add(task);
 			} else {
 				others.add(task);
@@ -129,7 +150,25 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + tasks.size() + " Tasks Completed This Month";
+			return "" + tasks.size() + " Other Tasks Completed This Month";
+		}
+
+	}
+
+	public static class ThisYearsCompletedTasksList extends AbstractTaskList.PreQueried {
+
+		public ThisYearsCompletedTasksList(List<Task> list) {
+			super(list);
+		}
+
+		@Override
+		protected String getListClassName() {
+			return "years-completedtaskslist";
+		}
+
+		@Override
+		protected String getListCaption(List<Task> tasks) {
+			return "" + tasks.size() + " Other Tasks Completed This Year";
 		}
 
 	}
