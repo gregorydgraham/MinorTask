@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
@@ -572,6 +573,14 @@ public class Globals {
 		note.setPosition(Notification.Position.MIDDLE);
 		note.setDuration(5000);
 		note.open();
+	}
+
+	public static Component getSpacer() {
+		Label spacer = new Label("");
+		spacer.setHeight("1em");
+		spacer.addClassName("minortask-spacer");
+		spacer.getStyle().set("display", "block");
+		return spacer;
 	}
 
 	public static class InaccessibleTaskException extends Exception {
