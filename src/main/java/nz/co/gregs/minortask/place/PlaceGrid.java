@@ -71,9 +71,7 @@ public class PlaceGrid extends Div implements RequiresLogin {
 			System.out.println("URL VALUE: \"" + source.iconURL.getValue() + "\"");
 			icon = new Image(source.iconURL.getValue(), "");
 		}
-		/*
-		https://www.openstreetmap.org/search?query=-41.28654%2C174.77598#map=19/-41.28654/174.77598
-		 */
+		
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
 			HorizontalLayout layout = new HorizontalLayout();
 			Anchor anchor = new Anchor("https://www.openstreetmap.org"
@@ -98,14 +96,12 @@ public class PlaceGrid extends Div implements RequiresLogin {
 	private Component getDescriptionComponent(Place source) {
 		VerticalLayout layout = new VerticalLayout();
 		Label label = new Label(source.displayName.getValueWithDefaultValue("Location"));
-		label.setWidth("100%");
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue("Important Location"),
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
-		component.setWidth("100%");
 		layout.add(label, component);
 		layout.setMargin(false);
 		layout.setPadding(false);

@@ -65,7 +65,6 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 				searchFor = event.getValue();
 				refreshList();
 			});
-			searchField.setWidth("100%");
 			searchField.setAutofocus(true);
 		}
 		return searchField;

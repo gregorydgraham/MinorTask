@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.documentupload;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  *
  * @author gregorygraham
  */
-public class DocumentUpload extends HorizontalLayout implements RequiresLogin {
+public class DocumentUpload extends Div implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 	Upload uploader = new Upload();

@@ -125,15 +125,18 @@
 		}
 
 		.edit-task-name{
-			display: flex;
+			display: -webkit-flex; /* Safari */
+			-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+			display: flex;   
+			flex-wrap: wrap;
 		}
 
 		.edit-task-name-input{
-			font-size: x-large;
+			width:100%;
+			max-width:30em;
 		}
 
 		.edit-task-description{
-			display: flex;
 			width:100%;
 		}
 
@@ -197,13 +200,23 @@
 		}
 
 		.weblink-editor-component{
-			display: block;
+			display: -webkit-flex; /* Safari */
+			-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+			display: flex;   
+			flex-wrap: wrap;
+			position: relative;
 		}
 
 		.weblink-editor-component vaadin-text-field{
 			margin-right: 0.5em;
 			width: 30em;
 			max-width: 40%;
+		}
+
+		.weblink-editor-component vaadin-button{
+			position: absolute;
+			bottom: 0;
+			right:0;
 		}
 
 		.tiny{font-size: smaller;}

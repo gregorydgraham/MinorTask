@@ -21,9 +21,7 @@ public class PublicBannerMenu extends HorizontalLayout implements MinorTaskCompo
 	}
 
 	public final void buildComponent() {
-//		HorizontalLayout banner = new HorizontalLayout();
 		setSizeUndefined();
-		setWidth("100%");
 		setDefaultVerticalComponentAlignment(Alignment.START);
 
 		final long userID = minortask().getUserID();

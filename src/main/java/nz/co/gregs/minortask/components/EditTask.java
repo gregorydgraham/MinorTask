@@ -36,6 +36,7 @@ import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -137,7 +138,6 @@ public class EditTask extends Div implements RequiresLogin {
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div extrasLayout = new Div();
-//		extrasLayout.add(description);
 //		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
 		extrasLayout.add(placeGrid);
@@ -150,9 +150,11 @@ public class EditTask extends Div implements RequiresLogin {
 				nameDiv,
 				description,
 				subtasks,
-				extrasLayout,
+				extrasLayout, 
+				Globals.getSpacer(), 
 				completeButton,
 				reopenButton,
+				Globals.getSpacer(),
 				completedTasks);
 		topLayout.addClassName("edit-task-contents");
 		try {

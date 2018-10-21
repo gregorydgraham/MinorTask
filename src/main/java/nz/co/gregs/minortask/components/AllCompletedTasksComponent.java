@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -32,9 +33,9 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			splitTasks(allTasks);
 
 			add(new WeeksTaskList(week));
-			add(AbstractTaskList.getSpacer());
+			add(Globals.getSpacer());
 			add(new ThisMonthsCompletedTasksList(month));
-			add(AbstractTaskList.getSpacer());
+			add(Globals.getSpacer());
 			add(new TooManyCompletedTasksList(others));
 		} catch (SQLException ex) {
 			sqlerror(ex);

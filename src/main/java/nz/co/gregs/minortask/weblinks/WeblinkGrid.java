@@ -9,6 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -23,7 +24,7 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  *
  * @author gregorygraham
  */
-public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
+public class WeblinkGrid extends Div implements RequiresLogin {
 
 	private Long taskID;
 	private final Grid<Weblink> grid = new Grid<Weblink>();
@@ -36,16 +37,18 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 	public final void setTaskID(Long taskID) {
 		this.taskID = taskID;
 		makeComponent();
+		addClassName("weblink-component");
 	}
 
 	@SuppressWarnings("unchecked")
 	private void makeComponent() {
 		removeAll();
-		setMargin(false);
-		setPadding(false);
-		setSpacing(false);
+//		setMargin(false);
+//		setPadding(false);
+//		setSpacing(false);
+		setSizeUndefined();
 		setItems();
-		getDatabase().print(allRows);
+		grid.addClassName("weblink-grid");
 		grid.setHeightByRows(true);
 		grid.addComponentColumn((source) -> getAnchorComponent(source)
 		).setFlexGrow(20);
@@ -56,7 +59,7 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 		searcher.addWeblinkAddedListener((event) -> {
 			setItems();
 		});
-		add(grid);
+//		add(grid);
 		add(searcher);
 	}
 
@@ -95,7 +98,6 @@ public class WeblinkGrid extends VerticalLayout implements RequiresLogin {
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
-		component.setWidth("100%");
 		layout.add(component);
 		layout.setMargin(false);
 		layout.setPadding(false);

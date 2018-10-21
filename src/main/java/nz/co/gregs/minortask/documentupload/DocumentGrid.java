@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.documentupload;
 
-import nz.co.gregs.minortask.documentupload.DocumentUpload;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -83,7 +82,6 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
-		component.setWidth("100%");
 		return component;
 	}
 
@@ -97,7 +95,6 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-		this.setWidth("100%");
 	}
 
 	private void removeDocument(TaskDocument img) {
