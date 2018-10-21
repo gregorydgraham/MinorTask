@@ -36,7 +36,6 @@ import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -48,13 +47,13 @@ public class EditTask extends Div implements RequiresLogin {
 
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
-	TextArea description = new TextArea("");
+	TextArea description = new TextArea();
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;
 	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
-	TextField notes = new TextField("Notes");
+	TextArea notes = new TextArea("Notes");
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
@@ -96,6 +95,7 @@ public class EditTask extends Div implements RequiresLogin {
 
 		name.addClassName("edit-task-name-input");
 		description.addClassName("edit-task-description");
+		notes.addClassName("edit-task-notes");
 
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
@@ -140,6 +140,7 @@ public class EditTask extends Div implements RequiresLogin {
 		Div extrasLayout = new Div();
 //		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
+		extrasLayout.add(notes);
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
@@ -170,11 +171,14 @@ public class EditTask extends Div implements RequiresLogin {
 			saveTask();
 			Globals.showTask(taskID);
 		});
-		description.addValueChangeListener((event) -> {
+		description.addBlurListener((event) -> {
+			saveTask();
+		});
+		notes.addValueChangeListener((event) -> {
 			saveTask();
 		});
 
-		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
+//		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
 
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
 			saveTask();
@@ -192,6 +196,7 @@ public class EditTask extends Div implements RequiresLogin {
 			if (task != null) {
 				name.setValue(task.name.stringValue());
 				description.setValue(task.description.toString());
+				notes.setValue(task.notes.stringValue());
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
@@ -226,6 +231,7 @@ public class EditTask extends Div implements RequiresLogin {
 					name.setReadOnly(true);
 					project.setEnabled(false);
 					description.setReadOnly(true);
+					notes.setReadOnly(true);
 					startDate.setReadOnly(true);
 					preferredEndDate.setReadOnly(true);
 					deadlineDate.setReadOnly(true);
@@ -261,6 +267,7 @@ public class EditTask extends Div implements RequiresLogin {
 
 			task.name.setValue(name.getValue());
 			task.description.setValue(description.getValue());
+			task.notes.setValue(notes.getValue());
 			task.startDate.setValue(asDate(startDate.getValue()));
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
 			task.finalDate.setValue(asDate(deadlineDate.getValue()));

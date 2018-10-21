@@ -17,6 +17,7 @@ import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBBoolean;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBLargeText;
 import nz.co.gregs.dbvolution.datatypes.DBString;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 
@@ -57,6 +58,9 @@ public class Task extends DBRow {
 
 	@DBColumn
 	public final DBDate completionDate = new DBDate();
+	
+	@DBColumn
+	public final DBLargeText notes = new DBLargeText(); 
 	
 	@Override
 	public String toString() {
