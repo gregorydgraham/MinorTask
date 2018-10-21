@@ -48,6 +48,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			sqlerror(ex);
 		}
 		buildComponent();
+		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
 	
@@ -78,14 +79,12 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			add(getControlsAbove());
 			List<Task> allRows = getTasksToList();
 			setLabel(allRows);
-			label.setWidth("100%");
 			HorizontalLayout header = new HorizontalLayout();
 			header.add(label);
 			final Component[] headerExtras = getHeaderExtras();
 			if (headerExtras.length > 0) {
 				header.add(headerExtras);
 			}
-			header.setWidth("100%");
 			well.add(header);
 
 			setGridItems(allRows);
@@ -93,7 +92,6 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			well.add(grid);
 
 			HorizontalLayout footer = new HorizontalLayout();
-			footer.setWidth("100%");
 			final Component[] footerExtras = getFooterExtras();
 			if (footerExtras.length > 0) {
 				footer.add(footerExtras);
@@ -142,7 +140,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 		name.setSizeFull();
 		desc.setSizeFull();
-		desc.addClassName("tiny");
+		desc.addClassNames("tiny", "tasklist-description");
 
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);

@@ -47,7 +47,7 @@ public class EditTask extends Div implements RequiresLogin {
 
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
-	TextArea description = new TextArea("Description");
+	TextArea description = new TextArea("");
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;
@@ -93,6 +93,7 @@ public class EditTask extends Div implements RequiresLogin {
 		setEscapeButton(cancelButton);
 		setAsDefaultButton(createButton);
 
+		name.addClassName("edit-task-name-input");
 		description.addClassName("edit-task-description");
 
 		activeIndicator.setVisible(false);
@@ -136,7 +137,7 @@ public class EditTask extends Div implements RequiresLogin {
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div extrasLayout = new Div();
-		extrasLayout.add(description);
+//		extrasLayout.add(description);
 //		extrasLayout.add(rangeDatePicker);
 		extrasLayout.add(dates);
 		extrasLayout.add(placeGrid);
@@ -147,6 +148,7 @@ public class EditTask extends Div implements RequiresLogin {
 		Div topLayout = new Div(
 				projectPath,
 				nameDiv,
+				description,
 				subtasks,
 				extrasLayout,
 				completeButton,

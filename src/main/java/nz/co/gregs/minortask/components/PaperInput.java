@@ -35,4 +35,8 @@ public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> 
 //		String value = VALUE_PROPERTY.get(getElement());
 //		return value;
 //	}
+
+	public void addClassName(String className) {
+		this.getElement().getClassList().add(className);
+	}
 }
