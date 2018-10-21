@@ -59,7 +59,7 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 		searcher.addWeblinkAddedListener((event) -> {
 			setItems();
 		});
-//		add(grid);
+		add(grid);
 		add(searcher);
 	}
 
