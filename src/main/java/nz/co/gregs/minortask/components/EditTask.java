@@ -22,7 +22,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -177,8 +176,6 @@ public class EditTask extends Div implements RequiresLogin {
 		notes.addValueChangeListener((event) -> {
 			saveTask();
 		});
-
-//		description.setValueChangeMode(ValueChangeMode.ON_BLUR);
 
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
 			saveTask();
