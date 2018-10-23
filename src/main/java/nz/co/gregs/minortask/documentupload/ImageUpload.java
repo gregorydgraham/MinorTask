@@ -23,10 +23,5 @@ public class ImageUpload extends DocumentUpload implements RequiresLogin {
 		super();
 		uploader.setUploadButton(new Button("Add Images..."));
 		uploader.setAcceptedFileTypes("image/*");
-//		uploader.setReceiver(buffer);
-//		uploader.addSucceededListener((event) -> {
-//			processSuccessfulUpload(event);
-//		});
-//		add(uploader);
 	}
 }
