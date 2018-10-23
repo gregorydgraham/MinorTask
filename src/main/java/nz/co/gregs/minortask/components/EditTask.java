@@ -38,6 +38,7 @@ import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.documentupload.DocumentUpload;
+import nz.co.gregs.minortask.documentupload.ImageUpload;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 
@@ -76,6 +77,7 @@ public class EditTask extends Div implements RequiresLogin {
 	WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
 	DocumentGrid documentGrid = new DocumentGrid();
 	DocumentUpload documentUpload = new DocumentUpload();
+	ImageUpload imageUpload = new ImageUpload();
 	PlaceGrid placeGrid = new PlaceGrid();
 	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
 	RangeDatePicker rangeDatePicker = new RangeDatePicker();
@@ -175,6 +177,7 @@ public class EditTask extends Div implements RequiresLogin {
 				placeSearcher,
 				weblinkEditor,
 				documentUpload,
+				imageUpload,
 				dates,
 				subtasks,
 				extrasLayout,
@@ -218,10 +221,14 @@ public class EditTask extends Div implements RequiresLogin {
 		addDocument.addClickListener((event) -> {
 			showEditor(documentUpload);
 		});
-		addImage.addClickListener((event) -> {
-			showEditor(documentUpload);
-		});
 		documentUpload.addDocumentAddedListener((event) -> {
+			documentGrid.refresh();
+			showEditor(null);
+		});
+		addImage.addClickListener((event) -> {
+			showEditor(imageUpload);
+		});
+		imageUpload.addDocumentAddedListener((event) -> {
 			documentGrid.refresh();
 			showEditor(null);
 		});
@@ -260,6 +267,7 @@ public class EditTask extends Div implements RequiresLogin {
 				}
 				addSubTask.setTaskID(taskID);
 				documentUpload.setTaskID(taskID);
+				imageUpload.setTaskID(taskID);
 				placeGrid.setTaskID(taskID);
 				placeSearcher.setTaskID(taskID);
 				weblinkGrid.setTaskID(taskID);
@@ -369,6 +377,7 @@ public class EditTask extends Div implements RequiresLogin {
 			dates.setVisible(false);
 		}
 		documentUpload.setVisible(false);
+		imageUpload.setVisible(false);
 		placeSearcher.setVisible(false);
 		weblinkEditor.setVisible(false);
 		if (editor != null) {

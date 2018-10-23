@@ -24,7 +24,7 @@ public class DocumentUpload extends Div implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 	Upload uploader = new Upload();
-	private Long taskID;
+	protected Long taskID;
 
 	public DocumentUpload(Long taskID) {
 		this();
@@ -40,11 +40,11 @@ public class DocumentUpload extends Div implements RequiresLogin {
 		add(uploader);
 	}
 	
-	public void setTaskID(Long id){
+	public final void setTaskID(Long id){
 		this.taskID = id;
 	}
 
-	private void processSuccessfulUpload(SucceededEvent event) {
+	protected final void processSuccessfulUpload(SucceededEvent event) {
 		String fileName = event.getFileName();
 		String mimeType = event.getMIMEType();
 		System.out.println("fileID: " + fileName);
