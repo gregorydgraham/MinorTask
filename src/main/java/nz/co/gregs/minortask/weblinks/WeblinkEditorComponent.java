@@ -10,7 +10,13 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -87,7 +93,9 @@ public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDef
 			System.out.println("BIT: " + bit);
 		}
 		iconURL = bits[0] + "//" + bits[2] + "/favicon.ico";
-		weblink.iconURL.setValue(iconURL);
+		if (urlExists(iconURL)) {
+			weblink.iconURL.setValue(iconURL);
+		}
 		try {
 			getDatabase().insert(weblink);
 		} catch (SQLException ex) {
@@ -118,5 +126,16 @@ public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDef
 	public void setEnabled(boolean enabled) {
 		getElement().setEnabled(enabled);
 		removeAsDefaultButton(addButton, defaultRegistration);
+	}
+
+	private boolean urlExists(String urlString) {
+		try {
+			URL u = new URL(urlString);
+			HttpURLConnection huc = (HttpURLConnection) u.openConnection();
+			huc.setRequestMethod("HEAD");
+			return (huc.getResponseCode() == HttpURLConnection.HTTP_OK);
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 }
