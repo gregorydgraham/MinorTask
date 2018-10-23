@@ -44,16 +44,15 @@ import org.xml.sax.SAXException;
  */
 public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefaultButton {
 
-	private final Long taskID;
+	private Long taskID;
 	TextField locationText = new TextField("", "", "address to search for...");
 	Button searchButton = new Button("Search For Location...");
 	Button addButton = new Button("Add");
 	PlacesBox comboBox = new PlacesBox();
 	private Registration defaultRegistration;
 
-	public PlaceSearchComponent(Long taskID) {
+	public PlaceSearchComponent() {
 		super();
-		this.taskID = taskID;
 		addClassName("place-search-component");
 
 		add(locationText);
@@ -96,6 +95,10 @@ public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefau
 				removeAsDefaultButton(addButton, defaultRegistration);
 			}
 		});
+	}
+
+	public void setTaskID(Long taskID) {
+		this.taskID = taskID;
 	}
 
 	private void addSelectedLocation() {

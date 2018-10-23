@@ -29,7 +29,7 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 	private Long taskID;
 	private final Grid<Weblink> grid = new Grid<Weblink>();
 	private List<Weblink> allRows;
-	private WeblinkEditorComponent searcher;
+//	private WeblinkEditorComponent searcher;
 
 	public WeblinkGrid() {
 	}
@@ -55,12 +55,12 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 		grid.addComponentColumn((source) -> getDescriptionComponent(source)
 		).setFlexGrow(20);
 		grid.addComponentColumn((source) -> getRemoveComponent(source));
-		searcher = new WeblinkEditorComponent(taskID);
-		searcher.addWeblinkAddedListener((event) -> {
-			setItems();
-		});
+//		searcher = new WeblinkEditorComponent(taskID);
+//		searcher.addWeblinkAddedListener((event) -> {
+//			setItems();
+//		});
 		add(grid);
-		add(searcher);
+//		add(searcher);
 	}
 
 	private Button getRemoveComponent(Weblink source) {
@@ -136,17 +136,22 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 	}
 
 	public boolean isReadOnly() {
-		return searcher.isReadOnly(); 
+		return !isEnabled();
+//		return searcher.isReadOnly(); 
 	}
 
 	public void setReadOnly(boolean readonly) {
-		searcher.setEnabled(!readonly);
+//		searcher.setEnabled(!readonly);
 		grid.setEnabled(!readonly);
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
 		getElement().setEnabled(enabled);
-		searcher.setEnabled(enabled);
+//		searcher.setEnabled(enabled);
+	}
+
+	public void refresh() {
+		setItems();
 	}
 }

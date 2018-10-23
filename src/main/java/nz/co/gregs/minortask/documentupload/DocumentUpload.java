@@ -24,18 +24,24 @@ public class DocumentUpload extends Div implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
 	Upload uploader = new Upload();
-	private final Long taskID;
+	private Long taskID;
 
 	public DocumentUpload(Long taskID) {
-		super();
+		this();
 		this.taskID = taskID;
+	}
+
+	public DocumentUpload() {
 		uploader.setUploadButton(new Button("Add Documents..."));
 		uploader.setReceiver(buffer);
-//		uploader.setAcceptedFileTypes("application/*", "text/*");
 		uploader.addSucceededListener((event) -> {
 			processSuccessfulUpload(event);
 		});
 		add(uploader);
+	}
+	
+	public void setTaskID(Long id){
+		this.taskID = id;
 	}
 
 	private void processSuccessfulUpload(SucceededEvent event) {

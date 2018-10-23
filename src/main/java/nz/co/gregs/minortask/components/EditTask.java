@@ -37,6 +37,9 @@ import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.documentupload.DocumentUpload;
+import nz.co.gregs.minortask.place.PlaceSearchComponent;
+import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 
 /**
  *
@@ -47,6 +50,12 @@ public class EditTask extends Div implements RequiresLogin {
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	PaperInput description = new PaperInput();
+	AddTaskButton addSubTask = new AddTaskButton();
+	Button addDates = new Button("Dates");
+	Button addPlace = new Button("Place");
+	Button addImage = new Button("Image");
+	Button addDocument = new Button("Document");
+	Button addWebLink = new Button("Bookmark");
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;
@@ -56,18 +65,27 @@ public class EditTask extends Div implements RequiresLogin {
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
-	WeblinkGrid weblinkGrid = new WeblinkGrid();
-	DocumentGrid documentGrid = new DocumentGrid();
-	PlaceGrid placeGrid = new PlaceGrid();
-	RangeDatePicker rangeDatePicker = new RangeDatePicker();
 	DatePicker completedDate = new DatePicker("Completed");
+	private Div dates = new Div(
+			startDate,
+			preferredEndDate,
+			deadlineDate,
+			completedDate
+	);
+	WeblinkGrid weblinkGrid = new WeblinkGrid();
+	WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
+	DocumentGrid documentGrid = new DocumentGrid();
+	DocumentUpload documentUpload = new DocumentUpload();
+	PlaceGrid placeGrid = new PlaceGrid();
+	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
+	RangeDatePicker rangeDatePicker = new RangeDatePicker();
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
 	Label overdueIndicator = new Label("Overdue");
 	Label oneDayMaybeIndicator = new Label("One Day Maybe");
 	Label completedIndicator = new Label("COMPLETED");
-	Button createButton = new Button("Create");
-	Button cancelButton = new Button("Cancel");
+//	Button createButton = new Button("Create");
+//	Button cancelButton = new Button("Cancel");
 	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
 
@@ -89,9 +107,8 @@ public class EditTask extends Div implements RequiresLogin {
 
 	public final Component getComponent() {
 
-		setEscapeButton(cancelButton);
-		setAsDefaultButton(createButton);
-
+//		setEscapeButton(cancelButton);
+//		setAsDefaultButton(createButton);
 		name.addClassName("edit-task-name-input");
 		description.addClassName("edit-task-description");
 		notes.addClassName("edit-task-notes");
@@ -126,19 +143,24 @@ public class EditTask extends Div implements RequiresLogin {
 		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
 
-		Div dates = new Div(
-				startDate,
-				preferredEndDate,
-				deadlineDate,
-				completedDate
-		);
 		dates.addClassName("dates-component");
 		dates.setSizeUndefined();
 
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
+
+		addSubTask.addClassName("friendly");
+		addDates.addClassName("friendly");
+		addDocument.addClassName("friendly");
+		addImage.addClassName("friendly");
+		addPlace.addClassName("friendly");
+		addWebLink.addClassName("friendly");
+		final Div addButtons = new Div();
+		addButtons.add(addSubTask, addDates, addDocument, addImage, addPlace, addWebLink);
+		addButtons.addClassName("edit-task-addbuttons");
+
 		Div extrasLayout = new Div();
 //		extrasLayout.add(rangeDatePicker);
-		extrasLayout.add(dates);
+//		extrasLayout.add(dates);
 		extrasLayout.add(notes);
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
@@ -149,9 +171,14 @@ public class EditTask extends Div implements RequiresLogin {
 				projectPath,
 				nameDiv,
 				description,
+				addButtons,
+				placeSearcher,
+				weblinkEditor,
+				documentUpload,
+				dates,
 				subtasks,
-				extrasLayout, 
-				Globals.getSpacer(), 
+				extrasLayout,
+				Globals.getSpacer(),
 				completeButton,
 				reopenButton,
 				Globals.getSpacer(),
@@ -184,6 +211,34 @@ public class EditTask extends Div implements RequiresLogin {
 		startDate.addValueChangeListener(changer);
 		preferredEndDate.addValueChangeListener(changer);
 		deadlineDate.addValueChangeListener(changer);
+
+		addDates.addClickListener((event) -> {
+			showEditor(dates);
+		});
+		addDocument.addClickListener((event) -> {
+			showEditor(documentUpload);
+		});
+		addImage.addClickListener((event) -> {
+			showEditor(documentUpload);
+		});
+		documentUpload.addDocumentAddedListener((event) -> {
+			documentGrid.refresh();
+			showEditor(null);
+		});
+		addPlace.addClickListener((event) -> {
+			showEditor(placeSearcher);
+		});
+		placeSearcher.addLocationAddedListener((event) -> {
+			placeGrid.refresh();
+			showEditor(null);
+		});
+		addWebLink.addClickListener((event) -> {
+			showEditor(weblinkEditor);
+		});
+		weblinkEditor.addWeblinkAddedListener((event) -> {
+			weblinkGrid.refresh();
+			showEditor(null);
+		});
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
@@ -197,9 +252,21 @@ public class EditTask extends Div implements RequiresLogin {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
+
+				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
+					dates.setVisible(false);
+				} else {
+					addDates.setVisible(false);
+				}
+				addSubTask.setTaskID(taskID);
+				documentUpload.setTaskID(taskID);
 				placeGrid.setTaskID(taskID);
+				placeSearcher.setTaskID(taskID);
 				weblinkGrid.setTaskID(taskID);
+				weblinkEditor.setTaskID(taskID);
 				documentGrid.setTaskID(taskID);
+
+				showEditor(null);
 
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
@@ -251,7 +318,7 @@ public class EditTask extends Div implements RequiresLogin {
 						activeIndicator.setVisible(true);
 					}
 				}
-				createButton.setText("Save");
+//				createButton.setText("Save");
 
 				addChangeListeners();
 			}
@@ -295,6 +362,18 @@ public class EditTask extends Div implements RequiresLogin {
 		button.addClickListener((event) -> {
 			handleEscapeButton();
 		});
+	}
+
+	private void showEditor(Component editor) {
+		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
+			dates.setVisible(false);
+		}
+		documentUpload.setVisible(false);
+		placeSearcher.setVisible(false);
+		weblinkEditor.setVisible(false);
+		if (editor != null) {
+			editor.setVisible(true);
+		}
 	}
 
 	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
@@ -355,7 +434,7 @@ public class EditTask extends Div implements RequiresLogin {
 							Task openTasks = new Task();
 							openTasks.projectID.setValue(projectID);
 							openTasks.completionDate.permitOnlyNull();
-							if (getDatabase().getDBQuery(openTasks).count() == 0){ 
+							if (getDatabase().getDBQuery(openTasks).count() == 0) {
 								Globals.notice("All the subtasks are completed!");
 							}
 						}

@@ -19,9 +19,17 @@ public class AddTaskButton extends Button implements RequiresLogin {
 	private Long originatingTaskID = null;
 
 	public AddTaskButton(Long taskID) {
-		super("+Add Subtask");
+		this();
 		this.originatingTaskID = taskID;
+	}
+
+	public AddTaskButton() {
+		super("+Add Subtask");
 		buildComponent();
+	}
+	
+	public void setTaskID(Long id){
+		setValue(id);
 	}
 
 	public final void buildComponent() {

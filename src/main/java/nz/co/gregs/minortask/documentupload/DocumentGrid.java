@@ -25,9 +25,9 @@ import nz.co.gregs.minortask.components.RequiresLogin;
 public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 
 	private Long taskID = null;
-	private Grid<TaskDocument> grid = new Grid<TaskDocument>();
+	private final Grid<TaskDocument> grid = new Grid<TaskDocument>();
 	private List<TaskDocument> allRows;
-	private DocumentUpload uploader;
+//	private DocumentUpload uploader;
 
 	public DocumentGrid() {
 	}
@@ -50,12 +50,12 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source))
 				.setFlexGrow(20);
 		grid.addComponentColumn((TaskDocument source) -> getRemoveComponent(source));
-		uploader = new DocumentUpload(taskID);
-		uploader.addDocumentAddedListener((event) -> {
-			setItems();
-		});
+//		uploader = new DocumentUpload(taskID);
+//		uploader.addDocumentAddedListener((event) -> {
+//			setItems();
+//		});
 		add(grid);
-		add(uploader);
+//		add(uploader);
 	}
 
 	private Button getRemoveComponent(TaskDocument source) {
@@ -117,6 +117,10 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	}
 
 	public void setReadOnly(boolean b) {
-		uploader.setEnabled(!b);
+//		uploader.setEnabled(!b);
+	}
+
+	public void refresh() {
+		setItems();
 	}
 }

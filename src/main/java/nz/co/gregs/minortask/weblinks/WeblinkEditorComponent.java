@@ -21,15 +21,15 @@ import org.apache.commons.validator.routines.UrlValidator;
  */
 public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDefaultButton {
 
-	private final Long taskID;
+	private Long taskID;
 	TextField locationText = new TextField("Web", "http://example.com/...");
 	TextField descriptionText = new TextField("Description", "a useful website with many...");
 	Button addButton = new Button("Add");
 	private Registration defaultRegistration;
 
-	public WeblinkEditorComponent(Long taskID) {
+	public WeblinkEditorComponent() {
 		super();
-		this.taskID = taskID;
+//		this.taskID = taskID;
 		addClassName("weblink-editor-component");
 
 		add(locationText);
@@ -62,6 +62,10 @@ public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDef
 		locationText.addFocusListener((event) -> {
 			addButton.isEnabled();
 		});
+	}
+
+	public void setTaskID(Long id) {
+		this.taskID = id;
 	}
 
 	private void saveWeblink() {

@@ -30,7 +30,7 @@ public class PlaceGrid extends Div implements RequiresLogin {
 	private Long taskID;
 	private final Grid<Place> grid = new Grid<Place>();
 	private List<Place> allRows;
-	private PlaceSearchComponent searcher;
+//	private PlaceSearchComponent searcher;
 
 	public PlaceGrid() { 
 	}
@@ -52,12 +52,12 @@ public class PlaceGrid extends Div implements RequiresLogin {
 		grid.addComponentColumn((Place source) -> getDescriptionComponent(source)
 		).setFlexGrow(20);
 		grid.addComponentColumn((Place source) -> getRemoveComponent(source));
-		searcher = new PlaceSearchComponent(taskID);
-		searcher.addLocationAddedListener((event) -> {
-			setItems();
-		});
+//		searcher = new PlaceSearchComponent(taskID);
+//		searcher.addLocationAddedListener((event) -> {
+//			setItems();
+//		});
 		add(grid);
-		add(searcher);
+//		add(searcher);
 	}
 
 	private Button getRemoveComponent(Place source) {
@@ -109,6 +109,10 @@ public class PlaceGrid extends Div implements RequiresLogin {
 		return layout;
 	}
 
+	public void refresh() {
+		setItems();
+	}
+
 	private void setItems() {
 		try {
 			Place example = new Place();
@@ -140,6 +144,6 @@ public class PlaceGrid extends Div implements RequiresLogin {
 	}
 
 	public void setReadOnly(boolean b) {
-		searcher.setReadOnly(b); 
+//		searcher.setReadOnly(b); 
 	}
 }
