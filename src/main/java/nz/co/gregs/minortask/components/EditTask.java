@@ -46,7 +46,7 @@ public class EditTask extends Div implements RequiresLogin {
 
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
-	TextArea description = new TextArea();
+	PaperInput description = new PaperInput();
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;

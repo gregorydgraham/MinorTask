@@ -379,7 +379,7 @@ public class Globals {
 		setSessionAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME, db);
 	}
 
-	protected static void setSessionAttribute(String sessionAttributeName, Object obj) {
+	protected static void setSessionAttribute(String sessionAttributeName, DBDatabase obj) {
 		VaadinSession sess = VaadinSession.getCurrent();
 		Lock lockInstance = sess.getLockInstance();
 		try {
