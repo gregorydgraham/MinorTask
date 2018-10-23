@@ -8,15 +8,12 @@ package nz.co.gregs.minortask.weblinks;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -28,24 +25,21 @@ import org.apache.commons.validator.routines.UrlValidator;
 public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDefaultButton {
 
 	private Long taskID;
-	TextField locationText = new TextField("Web", "http://example.com/...");
+	TextField locationText = new TextField("Bookmark", "http://example.com/...");
 	TextField descriptionText = new TextField("Description", "a useful website with many...");
 	Button addButton = new Button("Add");
 	private Registration defaultRegistration;
 
 	public WeblinkEditorComponent() {
 		super();
-//		this.taskID = taskID;
 		addClassName("weblink-editor-component");
 
 		add(locationText);
 		add(descriptionText);
-		add(addButton);
+		add(new Span(addButton));
 
-//		locationText.setWidth("45%");
-//		descriptionText.setWidth("45%");
 		addButton.setEnabled(false);
-		addButton.addClassName(DEFAULTBUTTON_CLASSNAME);
+		addButton.addClassName("weblink-editor-addbutton");
 
 		addButton.addClickListener((event) -> {
 			saveWeblink();
@@ -58,10 +52,12 @@ public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDef
 				System.out.println(event.getValue() + " URL is valid");
 				locationText.setInvalid(false);
 				addButton.setEnabled(true);
+				addButton.addClassName(DEFAULTBUTTON_CLASSNAME);
 			} else {
 				System.out.println(event.getValue() + " URL IS INVALID");
 				locationText.setInvalid(true);
 				addButton.setEnabled(false);
+				addButton.removeClassName(DEFAULTBUTTON_CLASSNAME);
 			}
 		});
 

@@ -88,8 +88,6 @@ public class EditTask extends Div implements RequiresLogin {
 	Label overdueIndicator = new Label("Overdue");
 	Label oneDayMaybeIndicator = new Label("One Day Maybe");
 	Label completedIndicator = new Label("COMPLETED");
-//	Button createButton = new Button("Create");
-//	Button cancelButton = new Button("Cancel");
 	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
 
@@ -111,8 +109,6 @@ public class EditTask extends Div implements RequiresLogin {
 
 	public final Component getComponent() {
 
-//		setEscapeButton(cancelButton);
-//		setAsDefaultButton(createButton);
 		name.addClassName("edit-task-name-input");
 		description.addClassName("edit-task-description");
 		notes.addClassName("edit-task-notes");
@@ -163,8 +159,6 @@ public class EditTask extends Div implements RequiresLogin {
 		addButtons.addClassName("edit-task-addbuttons");
 
 		Div extrasLayout = new Div();
-//		extrasLayout.add(rangeDatePicker);
-//		extrasLayout.add(dates);
 		extrasLayout.add(notes);
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
@@ -328,7 +322,6 @@ public class EditTask extends Div implements RequiresLogin {
 						activeIndicator.setVisible(true);
 					}
 				}
-//				createButton.setText("Save");
 
 				addChangeListeners();
 			}
@@ -378,12 +371,13 @@ public class EditTask extends Div implements RequiresLogin {
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
+		boolean editorAlreadyShowing = editor==null?false:editor.isVisible();
 		documentUpload.setVisible(false);
 		imageUpload.setVisible(false);
 		placeSearcher.setVisible(false);
 		weblinkEditor.setVisible(false);
 		if (editor != null) {
-			editor.setVisible(true);
+			editor.setVisible(!editorAlreadyShowing);
 		}
 	}
 
