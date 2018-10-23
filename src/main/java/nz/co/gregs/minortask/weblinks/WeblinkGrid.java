@@ -61,7 +61,7 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 	}
 
 	private Component getAnchorComponent(Weblink source) {
-		Component icon = new Icon(VaadinIcon.MAP_MARKER);
+		Component icon = new Div(new Icon(VaadinIcon.BOOKMARK_O));
 		String iconURL = source.iconURL.getValue();
 		if (iconURL != null && !iconURL.isEmpty()) {
 			System.out.println("URL VALUE: \"" + iconURL + "\"");
