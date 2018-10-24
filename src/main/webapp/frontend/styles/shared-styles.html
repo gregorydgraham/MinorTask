@@ -144,7 +144,7 @@
 		.edit-task-notes{
 			width:100%;
 		}
-		
+
 		.edit-task-addbuttons{
 			display: -webkit-flex; /* Safari */
 			-webkit-flex-wrap: wrap; /* Safari 6.1+ */
@@ -217,7 +217,7 @@
 		.weblink-editor-component vaadin-text-field{
 			margin-right: 0.5em;
 		}
-		
+
 		weblink-editor-addbutton{
 		}
 
@@ -311,6 +311,41 @@
 		.red{background-color: red;}
 		.green{background-color: greenyellow;}
 		.blue{background-color: lightskyblue;}
+
+		.notice-label{
+			position:relative;
+		}
+		
+		.celebration-spin{
+			opacity: 0;
+			transform: scale(0.01, 0.01);
+			position: absolute;
+			left: -50%;
+			top: 0;
+			animation: celebration 2s, fadeout 1s 2s;
+		}
+
+		@keyframes celebration {
+			from {
+				transform: rotate(-720deg) scale(0.01, 0.01);
+				opacity: 0;
+			}
+			to {
+				transform: rotate(720deg) scale(0.9, 0.9);
+				opacity:1;
+			}
+		}
+
+		@keyframes fadeout {
+			from {
+				transform: scale(0.9, 0.9);
+				opacity: 1;
+			}
+			to {
+				transform: scale(1, 1);
+				opacity: 0;
+			}
+		}
 
 	</style>
 </custom-style>

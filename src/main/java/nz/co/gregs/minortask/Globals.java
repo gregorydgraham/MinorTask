@@ -7,9 +7,13 @@ package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Location;
@@ -222,7 +226,7 @@ public class Globals {
 		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		cookie.setHttpOnly(true);
 		cookie.setDomain(getApplicationURL().replaceAll("http[s]*://", "").replaceAll(":[0-9]*/*.*", ""));
-		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue()+" - "+cookie.getDomain());
+		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue() + " - " + cookie.getDomain());
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
@@ -290,11 +294,11 @@ public class Globals {
 //		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
 //		UI.getCurrent().navigate(TodaysTaskLayout.class);
 	}
-	
+
 	public static void showPage(Class<? extends AuthorisedPage> page) {
 		UI.getCurrent().navigate(page);
 	}
-	
+
 	public static void showPage(Class<? extends AuthorisedTaskPage> page, Long taskID) {
 		UI.getCurrent().navigate(page, taskID);
 	}
@@ -350,15 +354,34 @@ public class Globals {
 	}
 
 	public static final void chat(String string) {
-		Notification note = new Notification(string, 3000);
+		Notification note = new Notification(new Label(string));
+		note.setDuration(3000);
 		note.setPosition(Notification.Position.BOTTOM_END);
 		note.open();
 	}
 
 	public static final void notice(String string) {
-		Notification note = new Notification(string, 3000);
+		Icon image = new Icon(VaadinIcon.ALARM);
+		notice(image, string);
+	}
+
+	public static final void notice(Component image, String string) {
+		if (image instanceof HasStyle) {
+			((HasStyle)image).addClassName("celebration-spin");
+		}
+		final Label label = new Label(string);
+		label.add(image);
+		label.addClassName("notice-label");
+
+		Notification note = new Notification(label);
+		note.setDuration(3000);
 		note.setPosition(Notification.Position.TOP_CENTER);
 		note.open();
+	}
+
+	public static final void congratulate(String string) {
+		Image image = new Image("images/star-small.png", "STAR");
+		notice(image, string);
 	}
 
 	public static void chatAboutUsers() {

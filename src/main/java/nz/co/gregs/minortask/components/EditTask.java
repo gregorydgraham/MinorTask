@@ -345,7 +345,7 @@ public class EditTask extends Div implements RequiresLogin {
 				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 				Globals.sqlerror(ex);
 			}
-			Globals.notice("Saved.");
+			Globals.notice(new Icon(VaadinIcon.SAFE),"Saved.");
 		} catch (Globals.InaccessibleTaskException ex) {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -440,7 +440,7 @@ public class EditTask extends Div implements RequiresLogin {
 							openTasks.projectID.setValue(projectID);
 							openTasks.completionDate.permitOnlyNull();
 							if (getDatabase().getDBQuery(openTasks).count() == 0) {
-								Globals.notice("All the subtasks are completed!");
+								Globals.congratulate("All the subtasks are completed!");
 							}
 						}
 					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {

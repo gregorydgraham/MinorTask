@@ -162,20 +162,6 @@ public class MinorTask extends Globals implements Serializable {
 				NavigationTrigger.PROGRAMMATIC);
 	}
 
-	@Deprecated
-	public boolean getNotLoggedIn() {
-		final VaadinSession currentSession = VaadinSession.getCurrent();
-		return notLoggedIn
-				|| userID == 0
-				|| !currentSession.getState().equals(VaadinSessionState.OPEN)
-				|| !loginAsRememberedUser();
-	}
-
-	@Deprecated
-	public boolean getLoggedIn() {
-		return !getNotLoggedIn();
-	}
-
 	public boolean isLoggedIn() {
 		System.out.println("nz.co.gregs.minortask.MinorTask.isLoggedIn()");
 		System.out.println("USERID: "+this.userID);
