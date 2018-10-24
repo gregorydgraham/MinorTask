@@ -118,6 +118,7 @@ public class PlaceGrid extends Div implements RequiresLogin {
 			Place example = new Place();
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
+			this.setVisible(!allRows.isEmpty()); 
 			grid.setItems(allRows);
 		} catch (SQLException ex) {
 			sqlerror(ex);

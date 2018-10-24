@@ -43,9 +43,11 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 	private void makeComponent() {
 		removeAll();
 		setSizeUndefined();
-		setItems();
 		grid.addClassName("weblink-grid");
 		grid.setHeightByRows(true);
+		
+		setItems();
+		
 		grid.addComponentColumn((source) -> getAnchorComponent(source)
 		).setFlexGrow(20);
 		grid.addComponentColumn((source) -> getDescriptionComponent(source)
@@ -102,6 +104,7 @@ public class WeblinkGrid extends Div implements RequiresLogin {
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
 			grid.setItems(allRows);
+			this.setVisible(!allRows.isEmpty()); 
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}

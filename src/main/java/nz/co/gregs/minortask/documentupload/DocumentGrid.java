@@ -50,12 +50,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source))
 				.setFlexGrow(20);
 		grid.addComponentColumn((TaskDocument source) -> getRemoveComponent(source));
-//		uploader = new DocumentUpload(taskID);
-//		uploader.addDocumentAddedListener((event) -> {
-//			setItems();
-//		});
 		add(grid);
-//		add(uploader);
 	}
 
 	private Button getRemoveComponent(TaskDocument source) {
@@ -91,6 +86,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 			example.taskID.permittedValues(this.taskID);
 			example.userID.permittedValues(minortask().getUserID());
 			allRows = getDatabase().getDBTable(example).getAllRows();
+			this.setVisible(!allRows.isEmpty()); 
 			grid.setItems(allRows);
 		} catch (SQLException ex) {
 			sqlerror(ex);
