@@ -368,10 +368,10 @@ public class EditTask extends Div implements RequiresLogin {
 	}
 
 	private void showEditor(Component editor) {
+		boolean editorAlreadyShowing = editor==null?false:editor.isVisible();
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
-		boolean editorAlreadyShowing = editor==null?false:editor.isVisible();
 		documentUpload.setVisible(false);
 		imageUpload.setVisible(false);
 		placeSearcher.setVisible(false);
