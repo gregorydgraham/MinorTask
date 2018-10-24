@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
@@ -58,30 +58,31 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 			name.setSizeUndefined();
 			name.focus();
 			description.addClassName("create-task-description");
-//			description.setWidth("100%");
-//			description.setHeight("3cm");
 			project.setReadOnly(true);
 
 			setFieldValues();
 
-			HorizontalLayout details = new HorizontalLayout(
+			Div details = new Div(
 					name);
 			details.setSizeUndefined();
 
 			layout.add(details);
 			layout.add(description);
 
-			HorizontalLayout dates = new HorizontalLayout(
+			Div dates = new Div(
 					startDate,
 					preferredEndDate,
 					deadlineDate
 			);
 			dates.setSizeUndefined();
 			layout.add(dates);
-			layout.add(new HorizontalLayout(
-					cancelButton,
-					createAndShowTaskButton,
-					createAndShowProjectButton));
+			layout.add(
+					new Div(
+							cancelButton,
+							createAndShowTaskButton,
+							createAndShowProjectButton
+					)
+			);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			MinorTask.sqlerror(ex);
 		}
@@ -112,7 +113,7 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 					preferredDefault = preferredDefault.isBefore(projectEnd) ? preferredDefault : projectEnd;
 				}
 			}
-			if (deadlineDefault != null&& projectEnd!=null) {
+			if (deadlineDefault != null && projectEnd != null) {
 				deadlineDefault = deadlineDefault.isBefore(projectEnd) ? deadlineDefault : projectEnd;
 			}
 
