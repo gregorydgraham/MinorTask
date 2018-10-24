@@ -191,13 +191,17 @@ public class EditTask extends Div implements RequiresLogin {
 		return topLayout;
 	}
 
-	protected void addChangeListeners() {
+	protected void addChangeListeners(Task task) {
 		name.addBlurListener((event) -> {
-			saveTask();
-			Globals.showTask(taskID);
+			if (!event.getSource().getValue().equals(task.name.getValue())) {
+				saveTask();
+				Globals.showTask(taskID);
+			}
 		});
 		description.addBlurListener((event) -> {
-			saveTask();
+			if (!event.getSource().getValue().equals(task.description.getValue())) {
+				saveTask();
+			}
 		});
 		notes.addValueChangeListener((event) -> {
 			saveTask();
@@ -323,7 +327,7 @@ public class EditTask extends Div implements RequiresLogin {
 					}
 				}
 
-				addChangeListeners();
+				addChangeListeners(task);
 			}
 		}
 	}
@@ -345,7 +349,7 @@ public class EditTask extends Div implements RequiresLogin {
 				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 				Globals.sqlerror(ex);
 			}
-			Globals.notice(new Icon(VaadinIcon.SAFE),"Saved.");
+			Globals.notice(new Icon(VaadinIcon.SAFE), "Saved.");
 		} catch (Globals.InaccessibleTaskException ex) {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -368,7 +372,7 @@ public class EditTask extends Div implements RequiresLogin {
 	}
 
 	private void showEditor(Component editor) {
-		boolean editorAlreadyShowing = editor==null?false:editor.isVisible();
+		boolean editorAlreadyShowing = editor == null ? false : editor.isVisible();
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
