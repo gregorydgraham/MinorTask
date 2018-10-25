@@ -140,9 +140,9 @@ public class MinorTask extends Globals implements Serializable {
 			System.out.println("RETURN: true");
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
-				System.out.println("nz.co.gregs.minortask.MinorTask.doLogin()");
-				System.out.println(""+ex.getLocalizedMessage());
-				ex.printStackTrace();
+//				System.out.println("nz.co.gregs.minortask.MinorTask.doLogin()");
+//				System.out.println(""+ex.getLocalizedMessage());
+//				ex.printStackTrace();
 			System.out.println("RETURN: false");
 			return false;
 		}
