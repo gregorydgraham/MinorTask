@@ -201,8 +201,6 @@ public class Globals {
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				} catch (UnexpectedNumberOfRowsException ex) {
-					System.out.println("nz.co.gregs.minortask.Globals.getRememberedUser()");
-					System.out.println("" + ex.getMessage());
 					if (ex.getActualRows() == 0) {
 						throw new UnknownUserException();
 					} else {
