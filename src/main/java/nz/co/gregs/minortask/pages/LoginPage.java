@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -32,6 +33,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
 public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnterObserver {
 
 	LoginComponent loginComponent = new LoginComponent();
+	private MinorTask minortask = new MinorTask();
 
 	public LoginPage() {
 		try {
@@ -47,10 +49,10 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
 		System.out.println("BEFORE ENTER MINORTASKPAGE");
-		MinorTask minortask = new MinorTask();
+		String url = UI.getCurrent().getRouter().getUrl(TodaysTaskLayout.class);
+		Location location = new Location(url);
+		minortask.setLoginDestination(location);
 		if (minortask.isLoggedIn()) {
-//			event.rerouteTo(TodaysTaskLayout.class);
-//			MinorTask.showOpeningPage();
 		}
 	}
 
@@ -67,12 +69,6 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
 		loginComponent.setUsername(parameter);
-//		MinorTask minorTask = new MinorTask();
-//		if (minorTask.isLoggedIn()) {
-//			System.out.println("SWITCHING TO OPENING PAGE");
-//			minorTask.showOpeningPage();
-//		} else {
-//		}
 	}
 
 }
