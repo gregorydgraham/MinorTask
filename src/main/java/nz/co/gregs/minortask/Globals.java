@@ -83,7 +83,7 @@ public class Globals {
 	protected static final String MINORTASK_MEMORY_KEY = "MinorTaskMemoryKey";
 	protected static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
 	public static final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
-	protected static DBDatabase database = null;
+	private static DBDatabase database = null;
 
 	public static Date asDate(LocalDate localDate) {
 		return localDate == null ? null : Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
@@ -191,6 +191,7 @@ public class Globals {
 		if (rememberMeCookieValue.isPresent()) {
 			String value = rememberMeCookieValue.get().getValue();
 			if (!value.isEmpty()) {
+				System.out.println("REMEMBERED COOKIE VALUE: " + value);
 				RememberedLogin example = new RememberedLogin();
 				example.rememberCode.permittedValues(value);
 				example.expires.permittedRange(new Date(), null);
@@ -200,6 +201,8 @@ public class Globals {
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				} catch (UnexpectedNumberOfRowsException ex) {
+					System.out.println("nz.co.gregs.minortask.Globals.getRememberedUser()");
+					System.out.println("" + ex.getMessage());
 					if (ex.getActualRows() == 0) {
 						throw new UnknownUserException();
 					} else {
@@ -346,8 +349,7 @@ public class Globals {
 	}
 
 	public static synchronized DBDatabase getDatabase() {
-		DBDatabase db = (DBDatabase) UI.getCurrent().getSession().getAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME);
-		if (db == null) {
+		if (database == null) {
 			setDatabase(setupDatabase());
 		}
 		return database;
@@ -367,7 +369,7 @@ public class Globals {
 
 	public static final void notice(Component image, String string) {
 		if (image instanceof HasStyle) {
-			((HasStyle)image).addClassName("celebration-spin");
+			((HasStyle) image).addClassName("celebration-spin");
 		}
 		final Label label = new Label(string);
 		label.add(image);
@@ -398,7 +400,7 @@ public class Globals {
 		return new DBDatabaseCluster(getApplicationName(), new SQLiteDB(new File(getApplicationName() + "-default.sqlite"), "admin", "admin"));
 	}
 
-	protected static void setDatabase(DBDatabase db) {
+	private static void setDatabase(DBDatabase db) {
 		setSessionAttribute(MINORTASK_DATABASE_ATTRIBUTE_NAME, db);
 	}
 
@@ -458,13 +460,12 @@ public class Globals {
 		return arrayList;
 	}
 
-	public static final synchronized DBDatabase setupDatabase() {
+	private static synchronized DBDatabase setupDatabase() {
 		if (Globals.database == null) {
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) envCtx.lookup("DBDatabaseCluster");
-//				cluster.setDatabaseName(getApplicationName());
 				cluster.setPrintSQLBeforeExecuting(true);
 				System.out.println("CLUSTER: " + cluster);
 				DBDatabase readyDatabase = null;
@@ -493,7 +494,7 @@ public class Globals {
 						debug("Stopped at index " + index);
 					} catch (Exception ex) {
 						System.out.println("" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
-						ex.printStackTrace();
+//						ex.printStackTrace();
 						debug("Stopped at index " + index);
 					}
 					debug(cluster.getClusterStatus());
