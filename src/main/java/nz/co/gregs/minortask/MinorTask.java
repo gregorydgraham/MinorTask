@@ -99,8 +99,6 @@ public class MinorTask extends Globals implements Serializable {
 			try {
 				setRememberMeCookie(user, cookieValue);
 			} catch (SQLException ex) {
-				System.out.println("nz.co.gregs.minortask.MinorTask.doLogin()");
-				System.out.println(""+ex.getLocalizedMessage());
 				ex.printStackTrace();
 				sqlerror(ex);
 			}
@@ -129,20 +127,20 @@ public class MinorTask extends Globals implements Serializable {
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
+//	private void removeLastUsernameCookieValue() {
+//		Cookie cookie = new Cookie(MINORTASK_LASTUSERNAME_COOKIE_KEY, "");
+//		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
+//		cookie.setMaxAge(0);
+//		VaadinService.getCurrentResponse().addCookie(cookie);
+//	}
+
 	public boolean loginAsRememberedUser() {
 		try {
-			System.out.println("nz.co.gregs.minortask.MinorTask.loginAsRememberedUser()");
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
-			System.out.println("COOKIE: "+rememberMeCookieValue);
 			User user = getRememberedUser(rememberMeCookieValue);
-			System.out.println("USER: "+user.getUsername());
 			doLogin(user, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
-			System.out.println("RETURN: true");
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
-//				System.out.println("nz.co.gregs.minortask.MinorTask.doLogin()");
-//				System.out.println(""+ex.getLocalizedMessage());
-//				ex.printStackTrace();
 			System.out.println("RETURN: false");
 			return false;
 		}
@@ -169,11 +167,7 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public boolean isLoggedIn() {
-		System.out.println("nz.co.gregs.minortask.MinorTask.isLoggedIn()");
-		System.out.println("USERID: "+this.userID);
-		System.out.println("SESSIONSTATE: "+VaadinSession.getCurrent().getState());
 		boolean loggedIn = this.userID > 0 && VaadinSession.getCurrent().getState().equals(VaadinSessionState.OPEN);
-		System.out.println("LOGGEDIN: "+loggedIn);
 		if (!loggedIn) {
 			return loginAsRememberedUser();
 		} else {
@@ -218,7 +212,6 @@ public class MinorTask extends Globals implements Serializable {
 			final Task.Project projectExample = new Task.Project();
 			DBQuery dbQuery = getDatabase().getDBQuery(example).addOptional(projectExample);
 			try {
-				System.out.println(dbQuery.getSQLForQuery());
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
 				return new Task.TaskAndProject(onlyRow.get(example), onlyRow.get(projectExample));
@@ -243,14 +236,11 @@ public class MinorTask extends Globals implements Serializable {
 
 	private void showLoginDestination() {
 		Location dest = getLoginDestination();
-		System.out.println("LOGIN DESTINATION: " + dest);
-//		UI.getCurrent().getRouter().navigate(UI.getCurrent(), dest, NavigationTrigger.PROGRAMMATIC);
 		if (dest != null) {
 			String pathWithQueryParameters = dest.getPathWithQueryParameters();
 			if (pathWithQueryParameters.isEmpty()) {
 				showOpeningPage();
 			} else {
-				System.out.println("NAVIGATE WITH PATH");
 				UI.getCurrent().navigate(pathWithQueryParameters);
 			}
 		} else {
@@ -268,11 +258,6 @@ public class MinorTask extends Globals implements Serializable {
 	 * @return the loginDestination
 	 */
 	public Location getLoginDestination() {
-		System.out.println("LOGIN DESTINATION: "
-				+ (loginDestination == null
-						? "NULL"
-						: loginDestination.getPathWithQueryParameters())
-		);
 		return loginDestination;
 	}
 

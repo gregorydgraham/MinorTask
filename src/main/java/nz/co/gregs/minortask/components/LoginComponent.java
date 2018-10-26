@@ -13,9 +13,12 @@ import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
+import javax.servlet.http.Cookie;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -48,10 +51,10 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	private Component getComponent() {
 		VerticalLayout loginPanel = new VerticalLayout();
 		loginPanel.addClassName("login-panel");
-		
-		final Label welcomeLabel = new Label("Welcome To "+minortask().getApplicationName());
+
+		final Label welcomeLabel = new Label("Welcome To " + MinorTask.getApplicationName());
 		welcomeLabel.addClassName("login-welcome-message");
-		
+
 		Button loginButton = new Button("Login");
 		loginButton.addClassName("login-button");
 		loginButton.addClickListener((event) -> {
@@ -79,13 +82,22 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.add(
-				welcomeLabel, 
-				USERNAME_FIELD, 
-				PASSWORD_FIELD, 
-				LoginButtons/*REMEMBER_ME_FIELD, loginButton*/, 
+				welcomeLabel,
+				USERNAME_FIELD,
+				PASSWORD_FIELD,
+				LoginButtons/*REMEMBER_ME_FIELD, loginButton*/,
 				buttons);
 		USERNAME_FIELD.focus();
-		
+
+		Optional<Cookie> cookie = Globals.getLastUsernameCookieValue();
+		if (cookie.isPresent()) {
+			System.out.println("nz.co.gregs.minortask.components.LoginComponent.getComponent(): " + cookie.get().getValue());
+			USERNAME_FIELD.setValue(cookie.get().getValue());
+			PASSWORD_FIELD.focus();
+		}else{
+			System.out.println("NO LAST USER FOUND");
+		}
+
 		return loginPanel;
 	}
 
@@ -99,7 +111,6 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		} else {
 			User example = new User();
 			example.queryUsername().permittedValuesIgnoreCase(username);
-//			example.queryPassword().permittedValues(password);
 			try {
 				final DBDatabase database = MinorTask.getDatabase();
 				final DBTable<User> query = database.getDBTable(example);
@@ -111,22 +122,20 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 						break;
 					case 0:
 						throw new MinorTask.UnknownUserException();
-					//minortask().warning("Login Error", "Name and/or password do not match any known combination");
-					//break;
 					default:
-						minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+						MinorTask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 						break;
 				}
 			} catch (SQLException ex) {
 				warningBuffer.append("SQL FAILED: ").append(ex.getLocalizedMessage());
 			} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
-				minortask().warning("Login Error", "Name and/or password do not match any known combination");
+				MinorTask.warning("Login Error", "Name and/or password do not match any known combination");
 			} catch (MinorTask.TooManyUsersException ex) {
-				minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+				MinorTask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 			}
 		}
 		if (warningBuffer.length() > 0) {
-			minortask().warning("Login error", warningBuffer.toString());
+			MinorTask.warning("Login error", warningBuffer.toString());
 		}
 	}
 

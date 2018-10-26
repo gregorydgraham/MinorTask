@@ -42,11 +42,10 @@ public abstract class AuthorisedPage extends VerticalLayout implements MinorTask
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
 		System.out.println("BEFORE ENTER MINORTASKPAGE");
+		Location location = MinorTask.getCurrentLocation();
+		minortask().setLoginDestination(location);
 		if (!minortask().isLoggedIn()) {
-			Location location = MinorTask.getCurrentLocation();
-			minortask().setLoginDestination(location);
 			event.rerouteTo(LoginPage.class); 
-//			MinorTask.showLogin();
 		} else {
 			setComponents();
 		}

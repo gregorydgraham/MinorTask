@@ -80,6 +80,7 @@ import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 public class Globals {
 
 	protected static final int REMEMBER_ME_COOKIE_SECONDS_OFFSET = 60 * 60 * 24 * 30;
+	protected static final String MINORTASK_LASTUSERNAME_COOKIE_KEY ="MinorTaskLastUser";
 	protected static final String MINORTASK_MEMORY_KEY = "MinorTaskMemoryKey";
 	protected static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
 	public static final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
@@ -196,7 +197,9 @@ public class Globals {
 				example.rememberCode.permittedValues(value);
 				example.expires.permittedRange(new Date(), null);
 				try {
-					User onlyRow = getDatabase().getDBQuery(example, new User()).getOnlyInstanceOf(new User());
+					final DBDatabase db = getDatabase();
+					db.setPrintSQLBeforeExecuting(true);
+					User onlyRow = db.getDBQuery(example, new User()).getOnlyInstanceOf(new User());
 					return onlyRow;
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
@@ -221,9 +224,20 @@ public class Globals {
 		}
 	}
 
-	protected static void setCookie(String cookieName, String cookieValue) {
+	public static Optional<Cookie> getLastUsernameCookieValue() {
+		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+		if (cookies != null) {
+			return Arrays.stream(cookies).filter((Cookie c) -> c.getName().equals(MINORTASK_LASTUSERNAME_COOKIE_KEY)).findFirst();
+		} else {
+			return Optional.empty();
+		}
+	}
+
+	protected static void setCookie(String cookieName, String cookieValue, int secondsOffset) {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
-		cookie.setMaxAge(REMEMBER_ME_COOKIE_SECONDS_OFFSET);
+		if (secondsOffset > 0) {
+			cookie.setMaxAge(secondsOffset);
+		} 
 		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		cookie.setHttpOnly(true);
 		cookie.setDomain(getApplicationURL().replaceAll("http[s]*://", "").replaceAll(":[0-9]*/*.*", ""));
@@ -232,28 +246,32 @@ public class Globals {
 	}
 
 	protected static void setRememberMeCookie(User user, String cookieValue) throws SQLException {
-		RememberedLogin.cleanUpTable(getDatabase());
-		String identifier = cookieValue;
-		if (identifier == null) {
-			identifier = getRandomID();
-		}
-		setCookie(MINORTASK_MEMORY_KEY, identifier);
-		RememberedLogin example = new RememberedLogin();
-		example.expires.permittedRange(new Date(), null);
-		example.userid.permittedValues(user.getUserID());
-		example.rememberCode.permittedValues(identifier);
-		List<RememberedLogin> rows = getDatabase().get(example);
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.add(GregorianCalendar.SECOND, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
-		Date expiryDate = cal.getTime();
-		if (rows.size() > 0) {
-			rows.forEach((RememberedLogin row) -> {
-				row.expires.setValue(expiryDate);
-			});
-			getDatabase().update(rows);
+		setCookie(MINORTASK_LASTUSERNAME_COOKIE_KEY, user.getUsername(), -1);
+		Optional<Cookie> cookie = getRememberMeCookieValue();
+		if (cookie.isPresent()) {
 		} else {
-			RememberedLogin mem = new RememberedLogin(user.getUserID(), identifier, expiryDate);
-			getDatabase().insert(mem);
+			String identifier = cookieValue;
+			if (identifier == null) {
+				identifier = getRandomID();
+			}
+			setCookie(MINORTASK_MEMORY_KEY, identifier, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
+			RememberedLogin example = new RememberedLogin();
+			example.expires.permittedRange(new Date(), null);
+			example.userid.permittedValues(user.getUserID());
+			example.rememberCode.permittedValues(identifier);
+			List<RememberedLogin> rows = getDatabase().get(example);
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.add(GregorianCalendar.SECOND, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
+			Date expiryDate = cal.getTime();
+			if (rows.size() > 0) {
+				rows.forEach((RememberedLogin row) -> {
+					row.expires.setValue(expiryDate);
+				});
+				getDatabase().update(rows);
+			} else {
+				RememberedLogin mem = new RememberedLogin(user.getUserID(), identifier, expiryDate);
+				getDatabase().insert(mem);
+			}
 		}
 	}
 
@@ -274,7 +292,6 @@ public class Globals {
 	}
 
 	public static void showOpeningPage() {
-		System.out.println("SHOW OPENING PAGE");
 		showTodaysTasks();
 	}
 
@@ -546,8 +563,6 @@ public class Globals {
 	}
 
 	protected static Task getTask(final Long taskID, final Long userID) throws InaccessibleTaskException {
-		System.out.println("nz.co.gregs.minortask.Globals.getTask() TASKID:" + taskID);
-		System.out.println("nz.co.gregs.minortask.Globals.getTask() USERID:" + userID);
 		Task returnTask = null;
 		if (taskID == null) {
 			return returnTask;
@@ -558,7 +573,6 @@ public class Globals {
 		try {
 			return getDatabase().getDBTable(example).getOnlyRow();
 		} catch (UnexpectedNumberOfRowsException ex) {
-			//			warning("Incorrect Number Of Rows", "" + ex.getActualRows() + " <> " + ex.getExpectedRows());
 			throw new InaccessibleTaskException(taskID);
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -641,6 +655,13 @@ public class Globals {
 
 		@Override
 		public synchronized void process() {
+			System.out.println("CLEANING UP THE REMEMBERED LOGINS");
+			try {
+				RememberedLogin.cleanUpTable(cluster);
+			} catch (SQLException ex) {
+				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
 			System.out.println("PREPARING TO BACKUP...");
 
 			try {

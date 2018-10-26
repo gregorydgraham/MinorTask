@@ -169,6 +169,7 @@ public class EditTask extends Div implements RequiresLogin {
 				projectPath,
 				nameDiv,
 				description,
+//				rangeDatePicker,
 				addButtons,
 				placeSearcher,
 				weblinkEditor,
@@ -468,7 +469,7 @@ public class EditTask extends Div implements RequiresLogin {
 				try {
 					final DBDatabase database = Globals.getDatabase();
 					DBActionList update = database.update(task);
-					System.out.println(update.getSQL(database));
+//					System.out.println(update.getSQL(database));
 				} catch (SQLException ex) {
 					Globals.sqlerror(ex);
 				}
