@@ -82,7 +82,6 @@ public class EditTask extends Div implements RequiresLogin {
 	ImageUpload imageUpload = new ImageUpload();
 	PlaceGrid placeGrid = new PlaceGrid();
 	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
-	RangeDatePicker rangeDatePicker = new RangeDatePicker();
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
 	Label overdueIndicator = new Label("Overdue");
@@ -155,7 +154,14 @@ public class EditTask extends Div implements RequiresLogin {
 		addPlace.addClassName("friendly");
 		addWebLink.addClassName("friendly");
 		final Div addButtons = new Div();
-		addButtons.add(addSubTask, addDates, addDocument, addImage, addPlace, addWebLink);
+		addButtons.add(
+				addSubTask, 
+				addDates,
+				addDocument, 
+				addImage, 
+				addPlace, 
+				addWebLink
+		);
 		addButtons.addClassName("edit-task-addbuttons");
 
 		Div extrasLayout = new Div();
@@ -163,13 +169,14 @@ public class EditTask extends Div implements RequiresLogin {
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
+		
 		final Div nameDiv = new Div(name, project);
 		nameDiv.addClassName("edit-task-name");
+		
 		Div topLayout = new Div(
 				projectPath,
 				nameDiv,
 				description,
-//				rangeDatePicker,
 				addButtons,
 				placeSearcher,
 				weblinkEditor,

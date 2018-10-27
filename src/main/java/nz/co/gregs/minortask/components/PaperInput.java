@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.AbstractSinglePropertyField;
 import com.vaadin.flow.component.BlurNotifier;
+import com.vaadin.flow.component.FocusNotifier;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
 
@@ -16,10 +17,8 @@ import com.vaadin.flow.component.dependency.HtmlImport;
  */
 @Tag("paper-input")
 @HtmlImport("bower_components/paper-input/paper-input.html")
-public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> implements BlurNotifier<PaperInput>{
+public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> implements BlurNotifier<PaperInput>, FocusNotifier<PaperInput>{
 	
-//	private static final PropertyDescriptor<String, String> VALUE_PROPERTY = PropertyDescriptors.propertyWithDefault("value", "");
-
 	private PaperInput(String propertyName, String defaultValue, boolean acceptNullValues) {
 		super(propertyName, defaultValue, acceptNullValues);
 	}
@@ -27,15 +26,6 @@ public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> 
 		this("value", "", false);
 	}
 	
-//	public void setValue(String value){
-//		VALUE_PROPERTY.set(getElement(), value);
-//	}
-//	
-//	public String getValue(){
-//		String value = VALUE_PROPERTY.get(getElement());
-//		return value;
-//	}
-
 	public void addClassName(String className) {
 		this.getElement().getClassList().add(className);
 	}
