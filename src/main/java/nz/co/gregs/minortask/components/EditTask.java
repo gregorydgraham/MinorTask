@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.actions.DBActionList;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
@@ -43,6 +44,9 @@ import nz.co.gregs.minortask.documentupload.DocumentUpload;
 import nz.co.gregs.minortask.documentupload.ImageUpload;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
+import org.joda.time.Chronology;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 /**
  *
@@ -55,6 +59,7 @@ public class EditTask extends Div implements RequiresLogin {
 	PaperInput description = new PaperInput();
 	AddTaskButton addSubTask = new AddTaskButton();
 	Button addDates = new Button("Dates", new Icon(VaadinIcon.CALENDAR_O));
+	Button addRepeat = new Button("Repeat", new Icon(VaadinIcon.TIME_FORWARD));
 	Button addPlace = new Button("Place", new Icon(VaadinIcon.MAP_MARKER));
 	Button addImage = new Button("Image", new Icon(VaadinIcon.FILE_PICTURE));
 	Button addDocument = new Button("Document", new Icon(VaadinIcon.FILE_ADD));
@@ -68,6 +73,7 @@ public class EditTask extends Div implements RequiresLogin {
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
+	OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
 	DatePicker completedDate = new DatePicker("Completed");
 	private Div dates = new Div(
 			startDate,
@@ -149,17 +155,19 @@ public class EditTask extends Div implements RequiresLogin {
 
 		addSubTask.addClassName("friendly");
 		addDates.addClassName("friendly");
+		addRepeat.addClassName("friendly");
 		addDocument.addClassName("friendly");
 		addImage.addClassName("friendly");
 		addPlace.addClassName("friendly");
 		addWebLink.addClassName("friendly");
 		final Div addButtons = new Div();
 		addButtons.add(
-				addSubTask, 
+				addSubTask,
 				addDates,
-				addDocument, 
-				addImage, 
-				addPlace, 
+				addRepeat,
+				addDocument,
+				addImage,
+				addPlace,
 				addWebLink
 		);
 		addButtons.addClassName("edit-task-addbuttons");
@@ -169,15 +177,16 @@ public class EditTask extends Div implements RequiresLogin {
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
-		
+
 		final Div nameDiv = new Div(name, project);
 		nameDiv.addClassName("edit-task-name");
-		
+
 		Div topLayout = new Div(
 				projectPath,
 				nameDiv,
 				description,
 				addButtons,
+				repeatEditor,
 				placeSearcher,
 				weblinkEditor,
 				documentUpload,
@@ -223,8 +232,15 @@ public class EditTask extends Div implements RequiresLogin {
 		preferredEndDate.addValueChangeListener(changer);
 		deadlineDate.addValueChangeListener(changer);
 
+		repeatEditor.addValueChangeListener((event) -> {
+			saveTask();
+		});
+
 		addDates.addClickListener((event) -> {
 			showEditor(dates);
+		});
+		addRepeat.addClickListener((event) -> {
+			showEditor(repeatEditor);
 		});
 		addDocument.addClickListener((event) -> {
 			showEditor(documentUpload);
@@ -267,6 +283,7 @@ public class EditTask extends Div implements RequiresLogin {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
+				repeatEditor.setValue(task.repeatOffset.getValue());
 
 				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 					dates.setVisible(false);
@@ -315,6 +332,7 @@ public class EditTask extends Div implements RequiresLogin {
 					startDate.setReadOnly(true);
 					preferredEndDate.setReadOnly(true);
 					deadlineDate.setReadOnly(true);
+					repeatEditor.setReadOnly(true);
 					subtasks.disableNewButton();
 
 					placeGrid.setReadOnly(true);
@@ -350,6 +368,7 @@ public class EditTask extends Div implements RequiresLogin {
 			task.startDate.setValue(asDate(startDate.getValue()));
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
 			task.finalDate.setValue(asDate(deadlineDate.getValue()));
+			task.repeatOffset.setValue(repeatEditor.getValue());
 
 			try {
 				getDatabase().update(task);
@@ -384,6 +403,7 @@ public class EditTask extends Div implements RequiresLogin {
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
+		repeatEditor.setVisible(false);
 		documentUpload.setVisible(false);
 		imageUpload.setVisible(false);
 		placeSearcher.setVisible(false);
@@ -404,9 +424,9 @@ public class EditTask extends Div implements RequiresLogin {
 		@Override
 		public void onComponentEvent(ClickEvent<Button> event) {
 			List<Task> projectPathTasks = getProjectPathTasks(taskID);
-			for (Task projectPathTask : projectPathTasks) {
+			projectPathTasks.forEach((projectPathTask) -> {
 				setCompletionDateToNull(projectPathTask);
-			}
+			});
 			Task task;
 			try {
 				task = getTask(taskID);
@@ -476,13 +496,46 @@ public class EditTask extends Div implements RequiresLogin {
 				try {
 					final DBDatabase database = Globals.getDatabase();
 					DBActionList update = database.update(task);
-//					System.out.println(update.getSQL(database));
+					repeatTask(task);
 				} catch (SQLException ex) {
 					Globals.sqlerror(ex);
 				}
 				return task;
 			}
 			return null;
+		}
+
+		private void repeatTask(Task task) {
+			if (task.repeatOffset.isNotNull()) {
+				Period value = task.repeatOffset.getValue();
+				final Date now = new Date();
+				final Date startDateValue = task.startDate.getValue();
+				if (startDateValue != null
+						&& (startDateValue.before(now))) {
+					Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
+					value = value.plus(period);
+				}
+				Task copy = DBRow.copyDBRow(task);
+				copy.taskID.setValueToNull();
+				copy.completionDate.setValueToNull();
+				copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
+				copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
+				copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
+				try {
+					getDatabase().insert(copy);
+				} catch (SQLException ex) {
+					sqlerror(ex);
+				}
+			}
+		}
+
+		private Date offsetDate(final Date originalDate, Period value) {
+			if (originalDate != null) {
+				Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
+				return newDate;
+			} else {
+				return null;
+			}
 		}
 	}
 }

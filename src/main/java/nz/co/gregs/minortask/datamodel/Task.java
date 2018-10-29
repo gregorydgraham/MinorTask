@@ -16,6 +16,7 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBBoolean;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
+import nz.co.gregs.dbvolution.datatypes.DBDateRepeat;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBLargeText;
 import nz.co.gregs.dbvolution.datatypes.DBString;
@@ -61,6 +62,9 @@ public class Task extends DBRow {
 	
 	@DBColumn
 	public final DBLargeText notes = new DBLargeText(); 
+	
+	@DBColumn
+	public final DBDateRepeat repeatOffset = new DBDateRepeat(); 
 	
 	@Override
 	public String toString() {
