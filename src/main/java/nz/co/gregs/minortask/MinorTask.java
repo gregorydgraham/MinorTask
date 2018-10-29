@@ -42,6 +42,7 @@ public class MinorTask extends Globals implements Serializable {
 	private Location loginDestination = null;
 
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
+	private User user;
 
 	public MinorTask() {
 		super();
@@ -95,6 +96,7 @@ public class MinorTask extends Globals implements Serializable {
 	private void doLogin(User user, boolean rememberUser, String cookieValue) throws TooManyUsersException, UnknownUserException {
 		this.notLoggedIn = false;
 		this.setUserID(user.getUserID());
+		this.user = user;
 		if (rememberUser) {
 			try {
 				setRememberMeCookie(user, cookieValue);
@@ -133,7 +135,6 @@ public class MinorTask extends Globals implements Serializable {
 //		cookie.setMaxAge(0);
 //		VaadinService.getCurrentResponse().addCookie(cookie);
 //	}
-
 	public boolean loginAsRememberedUser() {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
@@ -141,6 +142,7 @@ public class MinorTask extends Globals implements Serializable {
 			doLogin(user, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
+			ex.printStackTrace();
 			System.out.println("RETURN: false");
 			return false;
 		}
@@ -184,18 +186,22 @@ public class MinorTask extends Globals implements Serializable {
 
 	public User getUser() {
 		if (isLoggedIn()) {
-			User user = new User();
-			user.queryUserID().permittedValues(getUserID());
-			try {
-				List<User> got = getDatabase().get(user);
-				if (got.size() != 1) {
-					warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
-				} else {
-					return got.get(0);
+			if (user == null) {
+				User user = new User();
+				user.queryUserID().permittedValues(getUserID());
+				try {
+					List<User> got = getDatabase().get(user);
+					if (got.size() != 1) {
+						warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
+					} else {
+						return got.get(0);
+					}
+				} catch (SQLException ex) {
+					sqlerror(ex);
 				}
-			} catch (SQLException ex) {
-				sqlerror(ex);
 			}
+		} else {
+			return user;
 		}
 		return null;
 	}
