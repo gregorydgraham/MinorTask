@@ -87,7 +87,7 @@ public class Globals {
 	private static DBDatabase database = null;
 
 	public static Date asDate(LocalDate localDate) {
-		return localDate == null ? null : Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+		return localDate == null ? null : Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 	public static Date asDate(LocalDateTime localDateTime) {

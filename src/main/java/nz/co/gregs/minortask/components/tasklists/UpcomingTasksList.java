@@ -6,6 +6,10 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -36,10 +40,11 @@ public class UpcomingTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		final GregorianCalendar gregorianCalendar = new GregorianCalendar();
-		gregorianCalendar.roll(GregorianCalendar.DATE, DAYS_AHEAD);
-		Date threeDaysHence = gregorianCalendar.getTime();
-		example.startDate.permittedRange(new Date(), threeDaysHence);
+		LocalDate now = LocalDate.now();
+		final LocalDate plusDays = now.plusDays(DAYS_AHEAD);
+		Date threeDaysHence = asDate(plusDays);
+		
+		example.startDate.permittedRange(asDate(now), threeDaysHence);
 		example.completionDate.permitOnlyNull();
 		final Task task = new Task();
 		final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
