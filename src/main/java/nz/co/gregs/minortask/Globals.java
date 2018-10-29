@@ -80,7 +80,7 @@ import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 public class Globals {
 
 	protected static final int REMEMBER_ME_COOKIE_SECONDS_OFFSET = 60 * 60 * 24 * 30;
-	protected static final String MINORTASK_LASTUSERNAME_COOKIE_KEY ="MinorTaskLastUser";
+	protected static final String MINORTASK_LASTUSERNAME_COOKIE_KEY = "MinorTaskLastUser";
 	protected static final String MINORTASK_MEMORY_KEY = "MinorTaskMemoryKey";
 	protected static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
 	public static final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
@@ -188,7 +188,7 @@ public class Globals {
 		UI.getCurrent().navigate(SignUpLayout.class, username);
 	}
 
-	protected static User getRememberedUser(Optional<Cookie> rememberMeCookieValue) throws UnknownUserException, TooManyUsersException {
+	protected static synchronized User getRememberedUser(Optional<Cookie> rememberMeCookieValue) throws UnknownUserException, TooManyUsersException {
 		if (rememberMeCookieValue.isPresent()) {
 			String value = rememberMeCookieValue.get().getValue();
 			if (!value.isEmpty()) {
@@ -204,13 +204,18 @@ public class Globals {
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				} catch (UnexpectedNumberOfRowsException ex) {
+//					sqlerror(ex);
 					if (ex.getActualRows() == 0) {
 						throw new UnknownUserException();
 					} else {
 						throw new TooManyUsersException();
 					}
 				}
+			} else {
+				System.out.println("REMEMBERED COOKIE VALUE IS EMPTY.");
 			}
+		} else {
+			System.out.println("NO REMEMBERED COOKIE FOUND.");
 		}
 		throw new UnknownUserException();
 	}
@@ -237,8 +242,8 @@ public class Globals {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
 		if (secondsOffset > 0) {
 			cookie.setMaxAge(secondsOffset);
-		} 
-		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
+		}
+//		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
 		cookie.setHttpOnly(true);
 		cookie.setDomain(getApplicationURL().replaceAll("http[s]*://", "").replaceAll(":[0-9]*/*.*", ""));
 		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue() + " - " + cookie.getDomain());
@@ -246,7 +251,7 @@ public class Globals {
 	}
 
 	protected static void setRememberMeCookie(User user, String cookieValue) throws SQLException {
-		setCookie(MINORTASK_LASTUSERNAME_COOKIE_KEY, user.getUsername(), -1);
+		setCookie(MINORTASK_LASTUSERNAME_COOKIE_KEY, user.getUsername(), REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 		Optional<Cookie> cookie = getRememberMeCookieValue();
 		if (cookie.isPresent()) {
 		} else {
@@ -254,7 +259,7 @@ public class Globals {
 			if (identifier == null) {
 				identifier = getRandomID();
 			}
-			setCookie(MINORTASK_MEMORY_KEY, identifier, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
+			setCookie(MINORTASK_MEMORY_KEY, identifier, -1);
 			RememberedLogin example = new RememberedLogin();
 			example.expires.permittedRange(new Date(), null);
 			example.userid.permittedValues(user.getUserID());
@@ -281,6 +286,17 @@ public class Globals {
 
 	public static void showTaskCreation(Long taskID) {
 		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
+	}
+
+	public static void showLocation(Location dest) {
+		if (dest != null) {
+			String pathWithQueryParameters = dest.getPathWithQueryParameters();
+			if (pathWithQueryParameters.isEmpty()) {
+				showOpeningPage();
+			} else {
+				UI.getCurrent().navigate(pathWithQueryParameters);
+			}
+		} 
 	}
 
 	public static void showLogin() {
