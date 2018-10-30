@@ -635,6 +635,14 @@ public class Globals {
 		return spacer;
 	}
 
+	public static String getURL(Class<? extends Component> aClass) {
+		return UI.getCurrent().getRouter().getUrl(aClass);
+	}
+
+	public static Location getLocation(Class<? extends Component> aClass) {
+		return new Location(getURL(aClass));
+	}
+
 	public static class InaccessibleTaskException extends Exception {
 
 		public InaccessibleTaskException(Long taskID) {
@@ -645,14 +653,14 @@ public class Globals {
 	public static class TooManyUsersException extends Exception {
 
 		public TooManyUsersException() {
-			super();
+			super("More Than One User Was Found While Expecting Only One");
 		}
 	}
 
 	public static class UnknownUserException extends Exception {
 
 		public UnknownUserException() {
-			super();
+			super("No Such User Found");
 		}
 	}
 

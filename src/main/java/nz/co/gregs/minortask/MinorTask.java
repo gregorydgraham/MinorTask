@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.NavigationTrigger;
@@ -66,10 +67,10 @@ public class MinorTask extends Globals implements Serializable {
 	 */
 	public void setUserID(long userID) throws UnknownUserException, TooManyUsersException {
 		this.userID = userID;
-		User user = new User();
-		user.queryUserID().permittedValues(userID);
+		User example = new User();
+		example.queryUserID().permittedValues(userID);
 		try {
-			User onlyRow = getDatabase().get(1L, user).get(0);
+			User onlyRow = getDatabase().get(1L, example).get(0);
 			username = onlyRow.getUsername();
 		} catch (SQLException ex) {
 			error("SQL ERROR", ex.getLocalizedMessage());
@@ -105,7 +106,7 @@ public class MinorTask extends Globals implements Serializable {
 				sqlerror(ex);
 			}
 		}
-		showLoginDestination();
+//		showLoginDestination();
 	}
 
 	private void removeRememberMeCookieValue() {
@@ -138,11 +139,11 @@ public class MinorTask extends Globals implements Serializable {
 	public boolean loginAsRememberedUser() {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
-			User user = getRememberedUser(rememberMeCookieValue);
-			doLogin(user, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
+			User rememberedUser = getRememberedUser(rememberMeCookieValue);
+			doLogin(rememberedUser, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
-			ex.printStackTrace();
+			System.out.println("CANT LOGIN AS REMEMBERED USER: "+ex.getMessage());
 			System.out.println("RETURN: false");
 			return false;
 		}
@@ -157,7 +158,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void logout() {
 		removeRememberMeCookieValue();
-		this.setLoginDestination(null);
+		this.clearLoginDestination();
 		this.userID = 0;
 		this.username = null;
 		notLoggedIn = true;
@@ -199,15 +200,23 @@ public class MinorTask extends Globals implements Serializable {
 				} catch (SQLException ex) {
 					sqlerror(ex);
 				}
+			} else {
+				return user;
 			}
-		} else {
-			return user;
 		}
 		return null;
 	}
 
+	public void clearLoginDestination() {
+		this.loginDestination = null;
+	}
+
 	public void setLoginDestination(Location location) {
 		this.loginDestination = location;
+	}
+
+	public void setLoginDestination(Class<? extends Component> aClass) {
+		setLoginDestination(getLocation(aClass));
 	}
 
 	public Task.TaskAndProject getTaskAndProject(Long taskID) throws InaccessibleTaskException {
