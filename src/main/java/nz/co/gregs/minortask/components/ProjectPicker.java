@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -40,9 +41,15 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		try {
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getUserID());
-			example.completionDate.permittedValues((Date) null);
+			example.taskID.excludedValues(taskAndProject.getTask().taskID.getValue());
 			example.name.setSortOrderAscending();
-			final DBQuery query = getDatabase().getDBQuery(example, new Task());
+			final DBQuery query = getDatabase().getDBQuery(example);
+			query.addCondition(
+					BooleanExpression.anyOf(
+							example.column(example.completionDate).isNull(),
+							example.column(example.taskID).is(taskAndProject.getProject().taskID.getValue())
+					)
+			);
 			query.setSortOrder(example.column(example.name));
 
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
