@@ -49,10 +49,9 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
-		String url = UI.getCurrent().getRouter().getUrl(TodaysTaskLayout.class);
-		Location location = new Location(url);
-		minortask.setLoginDestination(location);
+//		minortask.setLoginDestination(TodaysTaskLayout.class);
 		if (minortask.isLoggedIn()) {
+			Globals.showOpeningPage();
 		}
 	}
 
