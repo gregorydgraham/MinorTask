@@ -176,17 +176,4 @@ public class User extends DBRow {
 		this.lastLoginDate.setValue(lastLoginDate);
 	}
 
-	/**
-	 * @return the rememberedID
-	 */
-//	public DBString getRememberedID() {
-//		return rememberedID;
-//	}
-
-	/**
-	 * @param newValue
-	 */
-//	public void setRememberedID(String newValue) {
-//		rememberedID.setValue(newValue);
-//	}
 }

@@ -24,4 +24,12 @@ public class ImageUpload extends DocumentUpload implements RequiresLogin {
 		uploader.setUploadButton(new Button("Add Images..."));
 		uploader.setAcceptedFileTypes("image/*");
 	}
+
+	@Override
+	protected Document getDocumentExampleForSelector() {
+		Document docExample = new Document();
+		docExample.userID.permittedValues(getUserID());
+		docExample.mediaType.permittedPattern("image/%");
+		return docExample;
+	}
 }

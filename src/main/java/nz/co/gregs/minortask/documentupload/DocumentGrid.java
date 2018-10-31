@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.RequiresLogin;
 
 /**
@@ -25,9 +26,8 @@ import nz.co.gregs.minortask.components.RequiresLogin;
 public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 
 	private Long taskID = null;
-	private final Grid<TaskDocument> grid = new Grid<TaskDocument>();
-	private List<TaskDocument> allRows;
-//	private DocumentUpload uploader;
+	private final Grid<Document> grid = new Grid<>();
+	private List<Document> allRows;
 
 	public DocumentGrid() {
 	}
@@ -46,18 +46,18 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		setItems();
 		getDatabase().print(allRows);
 		grid.setHeightByRows(true);
-		grid.addComponentColumn((TaskDocument source) -> getFileIconComponent(source));
-		grid.addComponentColumn((TaskDocument source) -> getDescriptionComponent(source))
+		grid.addComponentColumn((Document source) -> getFileIconComponent(source));
+		grid.addComponentColumn((Document source) -> getDescriptionComponent(source))
 				.setFlexGrow(20);
-		grid.addComponentColumn((TaskDocument source) -> getRemoveComponent(source));
+		grid.addComponentColumn((Document source) -> getRemoveComponent(source));
 		add(grid);
 	}
 
-	private Button getRemoveComponent(TaskDocument source) {
+	private Button getRemoveComponent(Document source) {
 		return new Button(new Icon(VaadinIcon.TRASH), (event) -> removeDocument(source));
 	}
 
-	private Anchor getFileIconComponent(TaskDocument source) {
+	private Anchor getFileIconComponent(Document source) {
 		Anchor anchor = new Anchor(new DocumentStreamResource(source), "");
 		anchor.setTarget("_blank");
 		Component icon;
@@ -70,7 +70,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		return anchor;
 	}
 
-	private TextField getDescriptionComponent(TaskDocument source) {
+	private TextField getDescriptionComponent(Document source) {
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue(source.filename.getValueWithDefaultValue("...")),
@@ -82,10 +82,11 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 
 	private void setItems() {
 		try {
-			TaskDocument example = new TaskDocument();
-			example.taskID.permittedValues(this.taskID);
-			example.userID.permittedValues(minortask().getUserID());
-			allRows = getDatabase().getDBTable(example).getAllRows();
+			TaskDocumentLink link = new TaskDocumentLink();
+			link.taskID.permittedValues(taskID);
+			link.ownerID.permittedValues(getUserID());
+			Document docExample = new Document();
+			allRows = getDatabase().getDBQuery(link,docExample).getAllInstancesOf(docExample);
 			this.setVisible(!allRows.isEmpty()); 
 			grid.setItems(allRows);
 		} catch (SQLException ex) {
@@ -93,30 +94,33 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		}
 	}
 
-	private void removeDocument(TaskDocument img) {
+	private void removeDocument(Document doc) {
 		try {
-			getDatabase().delete(img);
+			TaskDocumentLink link = new TaskDocumentLink();
+			link.documentID.permittedValues(doc.documentID);
+			link.taskID.permittedValues(taskID);
+			link.ownerID.permittedValues(getUserID());
+			getDatabase().delete(link);
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
 		setItems();
 	}
 
-	private void updateDescription(TaskDocument source, String value) {
+	private void updateDescription(Document source, String value) {
 		source.description.setValue(value);
 		try {
 			getDatabase().update(source);
-			minortask().chat("Saved");
+			MinorTask.chat("Saved");
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
-	}
-
-	public void setReadOnly(boolean b) {
-//		uploader.setEnabled(!b);
 	}
 
 	public void refresh() {
 		setItems();
+	}
+
+	public void setReadOnly(boolean b) {
 	}
 }

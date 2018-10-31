@@ -49,6 +49,7 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
@@ -63,6 +64,8 @@ import nz.co.gregs.dbvolution.utility.RegularProcess;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.documentupload.Document;
+import nz.co.gregs.minortask.documentupload.TaskDocumentLink;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
 import nz.co.gregs.minortask.pages.AuthorisedTaskPage;
 import nz.co.gregs.minortask.pages.LoginPage;
@@ -296,7 +299,7 @@ public class Globals {
 			} else {
 				UI.getCurrent().navigate(pathWithQueryParameters);
 			}
-		} 
+		}
 	}
 
 	public static void showLogin() {
@@ -530,7 +533,8 @@ public class Globals {
 					}
 					debug(cluster.getClusterStatus());
 					if (cluster.getReadyDatabase() != null) {
-						cluster.addRegularProcess(new DatabaseBackupProcess(cluster));
+						cluster.addRegularProcess(new DatabaseBackupProcess());
+						cluster.addRegularProcess(new CleanupDatabaseProcess());
 						Globals.database = cluster;
 						debug("Database created from context based configuration");
 					} else {
@@ -670,21 +674,12 @@ public class Globals {
 
 	private static class DatabaseBackupProcess extends RegularProcess {
 
-		private final DBDatabaseCluster cluster;
-
-		public DatabaseBackupProcess(DBDatabaseCluster cluster) {
-			this.cluster = cluster;
+		public DatabaseBackupProcess() {
 			this.setTimeOffset(GregorianCalendar.MINUTE, 30);
 		}
 
 		@Override
 		public synchronized void process() {
-			System.out.println("CLEANING UP THE REMEMBERED LOGINS");
-			try {
-				RememberedLogin.cleanUpTable(cluster);
-			} catch (SQLException ex) {
-				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
-			}
 
 			System.out.println("PREPARING TO BACKUP...");
 
@@ -694,8 +689,8 @@ public class Globals {
 				String dcsFactory = "bean/BackupDatabase";
 				DatabaseConnectionSettings settings = (DatabaseConnectionSettings) envCtx.lookup(dcsFactory);
 				final DBDatabase backupDB = settings.createDBDatabase();
-				cluster.backupToDBDatabase(backupDB);
-				backupDB.terminate();
+				getDatabase().backupToDBDatabase(backupDB);
+				backupDB.stop();
 			} catch (SQLException | NamingException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				System.out.println("nz.co.gregs.minortask.Globals.DatabaseBackupProcess.process(): " + ex.getMessage());
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
@@ -703,6 +698,57 @@ public class Globals {
 
 			System.out.println("FINISHED BACKUP.");
 		}
+	}
+
+	private static class CleanupDatabaseProcess extends RegularProcess {
+
+		@Override
+		public void process() {
+			cleanupRememberedLogins();
+
+			moveOldDocumentLinksToNewLinkTable();
+		}
+
+		private void cleanupRememberedLogins() {
+			System.out.println("CLEANING UP THE REMEMBERED LOGINS...");
+			try {
+				RememberedLogin.cleanUpTable(this.getDatabase());
+			} catch (SQLException ex) {
+				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+			System.out.println("CLEANED UP THE REMEMBERED LOGINS");
+		}
+
+		private void moveOldDocumentLinksToNewLinkTable() {
+			Document docExample = new Document();
+			TaskDocumentLink linkExample = new TaskDocumentLink();
+
+			docExample.taskID.permitOnlyNotNull();
+			DBQuery query = getDatabase().getDBQuery(docExample).addOptional(linkExample);
+			query.addCondition(
+					docExample.column(docExample.taskID)
+							.is(
+									linkExample.column(linkExample.taskID)
+							)
+			);
+			query.addCondition(linkExample.column(linkExample.taskDocumentLinkID).isNull());
+			try {
+				List<DBQueryRow> allRows = query.getAllRows();
+				for (DBQueryRow row : allRows) {
+					Document doc = row.get(docExample);
+					TaskDocumentLink link = new TaskDocumentLink();
+					link.description.setValue(doc.description);
+					link.documentID.setValue(doc.documentID);
+					link.ownerID.setValue(doc.userID);
+					link.taskID.setValue(doc.taskID);
+					getDatabase().insert(link);
+				}
+			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+
 	}
 
 }

@@ -8,7 +8,7 @@ package nz.co.gregs.minortask.documentupload;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import java.io.InputStream;
-import nz.co.gregs.minortask.documentupload.TaskDocument;
+import nz.co.gregs.minortask.documentupload.Document;
 
 /**
  *
@@ -16,22 +16,22 @@ import nz.co.gregs.minortask.documentupload.TaskDocument;
  */
 public class DocumentStreamResource extends StreamResource {
 	
-	private final TaskDocument originalDoc;
+	private final Document originalDoc;
 
-	public DocumentStreamResource(TaskDocument doc) {
+	public DocumentStreamResource(Document doc) {
 		super(doc.filename.getValue(), new DocumentInputStreamFactory(doc));
 		originalDoc = doc;
 	}
 
-	public TaskDocument getOriginalDocumentRow() {
+	public Document getOriginalDocumentRow() {
 		return originalDoc;
 	}
 
 	public static class DocumentInputStreamFactory implements InputStreamFactory {
 
-		private final TaskDocument doc;
+		private final Document doc;
 
-		public DocumentInputStreamFactory(TaskDocument doc) {
+		public DocumentInputStreamFactory(Document doc) {
 			this.doc = doc;
 		}
 
