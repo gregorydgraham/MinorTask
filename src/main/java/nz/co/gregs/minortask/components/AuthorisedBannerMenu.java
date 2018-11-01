@@ -41,7 +41,7 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 
 		Div right = new Div();
 		right.addClassName("authorised-banner-right");
-		
+
 		welcomeMessage.addClassName("welcome-message");
 
 		left.add(welcomeMessage);
@@ -53,15 +53,14 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		try {
 			final DBTable<User> userTable = getDatabase().getDBTable(example);
 			User user = userTable.getOnlyRow();
-			final String welcomeUser = "Welcome to MinorTask @" + user.getUsername();
+			final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 			setText(welcomeUser);
 		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
 		}
 
 		Icon userIcon = new Icon(VaadinIcon.USER);
 		Icon unlock = new Icon(VaadinIcon.UNLOCK);
-		Icon lock = new Icon(VaadinIcon.LOCK);
-		
+
 		Button profileButton = new Button(userIcon);
 		profileButton.addClickListener((event) -> {
 			minortask().showProfile();
