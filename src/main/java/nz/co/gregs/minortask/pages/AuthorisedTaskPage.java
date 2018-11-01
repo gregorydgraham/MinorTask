@@ -10,7 +10,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
-import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
@@ -31,7 +30,7 @@ public abstract class AuthorisedTaskPage extends AuthorisedPage implements HasUr
 	}
 
 	@Override
-	public final void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
+	public final void setParameter(BeforeEvent event, Long parameter) {
 		taskID = parameter;
 		minortask().setLoginDestination(MinorTask.getCurrentLocation());
 		removeAll();
