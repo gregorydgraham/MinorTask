@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -21,20 +22,18 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
+@Tag("authorised-banner")
 public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 
 	public AuthorisedBannerMenu() {
 		buildComponent();
-
-//		this.getElement().setAttribute("theme", "success primary");
 		this.addClassName("authorised-banner");
 	}
 
 	public final void buildComponent() {
 		setSizeUndefined();
-//		setWidth("100%");
 
 		Div left = new Div();
 		left.addClassName("authorised-banner-left");
