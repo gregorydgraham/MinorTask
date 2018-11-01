@@ -124,7 +124,12 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		private <C extends Component & HasUrlParameter<Long>> void moveTo(Long taskID) {
 			@SuppressWarnings("unchecked")
 			Class<C> dest = (Class<C>) destinationComponent;
-			UI.getCurrent().navigate(dest, taskID);
+			try {
+				UI.getCurrent().navigate(dest, taskID);
+			} catch (IllegalArgumentException ex) {
+				// Throw by pages that require the task ID so divert to projects
+				UI.getCurrent().navigate(ProjectsLayout.class);
+			}
 		}
 	}
 
