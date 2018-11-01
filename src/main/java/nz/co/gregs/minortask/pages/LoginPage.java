@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.AfterNavigationEvent;
@@ -39,8 +38,13 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 	private MinorTask minortask = new MinorTask();
 
 	public LoginPage() {
+		this(Globals.getLocation(TodaysTaskLayout.class));
+	}
+
+	public LoginPage(Location location) {
 		try {
 			add(getLoginPageContents());
+			loginComponent.setDestination(location);
 			MinorTask.chatAboutUsers();
 		} catch (Exception ex) {
 		}
@@ -49,7 +53,6 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
-//		minortask.setLoginDestination(TodaysTaskLayout.class);
 		if (minortask.isLoggedIn()) {
 			Globals.showOpeningPage();
 		}

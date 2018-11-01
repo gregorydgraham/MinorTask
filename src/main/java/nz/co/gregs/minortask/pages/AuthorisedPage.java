@@ -43,7 +43,8 @@ public abstract class AuthorisedPage extends VerticalLayout implements MinorTask
 		Location location = MinorTask.getCurrentLocation();
 		minortask().setLoginDestination(location);
 		if (!minortask().isLoggedIn()) {
-			event.rerouteTo(LoginPage.class); 
+			setLoginComponents();
+//event.rerouteTo(LoginPage.class); 
 		} else {
 			setComponents();
 		}
@@ -70,5 +71,10 @@ public abstract class AuthorisedPage extends VerticalLayout implements MinorTask
 		VerticalLayout verticalLayout = new VerticalLayout(internalComponentHolder);
 		add(verticalLayout);
 		add(new FooterMenu());
+	}
+
+	private void setLoginComponents() {
+		removeAll();
+		add(new LoginPage(MinorTask.getCurrentLocation()).getLoginPageContents());
 	}
 }

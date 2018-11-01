@@ -11,6 +11,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
+import com.vaadin.flow.router.Location;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.pages.AuthorisedPage;
 
 /**
  *
@@ -32,6 +34,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	private TextField USERNAME_FIELD;
 	private PasswordField PASSWORD_FIELD;
 	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", true);
+	private Location destination;
 
 	public LoginComponent() {
 		this("", "");
@@ -119,6 +122,9 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 					case 1:
 						User user = users.get(0);
 						minortask().loginAs(user, password, rememberMeValue);
+						if(minortask().isLoggedIn()){
+							showDestination();
+						}
 						break;
 					case 0:
 						throw new MinorTask.UnknownUserException();
@@ -142,5 +148,15 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	public void setUsername(String parameter) {
 		this.USERNAME_FIELD.setValue(parameter == null ? "" : parameter);
 		PASSWORD_FIELD.focus();
+	}
+
+	public void setDestination(Location location) {
+		destination = location;
+	}
+
+	private void showDestination() {
+		if (destination!=null){
+			Globals.showLocation(destination);
+		}
 	}
 }
