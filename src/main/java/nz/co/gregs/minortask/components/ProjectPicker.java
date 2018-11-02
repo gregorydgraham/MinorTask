@@ -118,7 +118,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 							}
 							// force the deadline downwards
 							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
-							if (taskDeadlineDate != null && taskDeadlineDate != null) {
+							if (taskDeadlineDate != null && projectPathTaskDeadlineDate != null) {
 								if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
 									task.finalDate.setValue(projectPathTaskDeadlineDate);
 								}
