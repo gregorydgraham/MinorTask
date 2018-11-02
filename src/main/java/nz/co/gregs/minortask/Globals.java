@@ -420,6 +420,10 @@ public class Globals {
 		notice(image, string);
 	}
 
+	public static final void savedNotice() {
+		Globals.notice(new Icon(VaadinIcon.SAFE), "Saved.");
+	}
+
 	public static void chatAboutUsers() {
 		try {
 			String message = "Currently serving " + getDatabase().getDBTable(new User()).setBlankQueryAllowed(true).count() + " users " + "and " + getDatabase().getDBTable(new Task()).setBlankQueryAllowed(true).count() + " tasks";

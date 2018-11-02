@@ -376,7 +376,7 @@ public class EditTask extends Div implements RequiresLogin {
 				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
 				Globals.sqlerror(ex);
 			}
-			Globals.notice(new Icon(VaadinIcon.SAFE), "Saved.");
+			Globals.savedNotice();
 		} catch (Globals.InaccessibleTaskException ex) {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}

@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.RequiresLogin;
 
@@ -111,7 +112,7 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 		source.description.setValue(value);
 		try {
 			getDatabase().update(source);
-			MinorTask.chat("Saved");
+			Globals.savedNotice();
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
