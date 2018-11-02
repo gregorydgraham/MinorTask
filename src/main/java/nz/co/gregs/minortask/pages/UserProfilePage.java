@@ -29,6 +29,10 @@ public class UserProfilePage extends PolymerTemplate<UserProfilePage.UserModel> 
 
 	@Id("username")
 	private PaperInput usernameDiv;
+	@Id("email")
+	private PaperInput emailInput;
+//	@Id("user")
+//	private Div userDiv;
 
 	MinorTask minortask = new MinorTask();
 
@@ -39,8 +43,9 @@ public class UserProfilePage extends PolymerTemplate<UserProfilePage.UserModel> 
 			final User user = minortask.getUser();
 			System.out.println("IS LOGGED IN USER: " + user);
 			System.out.println("USERNAME: " + user.getUsername());
-			getModel().setUser(user);
+//			getModel().setUser(user);
 			getModel().setUsername(user.getUsername());
+			getModel().setEmail(user.getEmail());
 		}
 		getModel().setGreeting("Welcome to the User Profile page.");
 	}
@@ -55,12 +60,26 @@ public class UserProfilePage extends PolymerTemplate<UserProfilePage.UserModel> 
 
 	public static interface UserModel extends TemplateModel {
 
+//		public default String getUsername(){
+//			return getUser().getUsername();
+//		}
+//
+//		public default void setUsername(String newValue){
+//			getUser().setUsername(newValue);
+//		}
+		
 		public String getUsername();
 
 		public void setUsername(String newValue);
+		
+		public String getEmail();
+
+		public void setEmail(String newValue);
 
 		public void setGreeting(String newValue);
 
-		public void setUser(User user);
+//		public void setUser(User user);
+//
+//		public User getUser();
 	}
 }
