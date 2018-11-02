@@ -80,6 +80,22 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 		}
 	}
 
+	public static class WithAddProjectButton extends ProjectPathNavigator {
+ 
+		public WithAddProjectButton() {
+			super(null);
+		}
+
+		@Override
+		protected void buildComponent() {
+			super.buildComponent();
+			final AddTaskButton addTaskButton = new AddTaskButton("Add Project...");
+			addTaskButton.addClassNames("small", "projectpath");
+			addTaskButton.getElement().setAttribute("theme", "small");
+			add(addTaskButton);
+		}
+	}
+
 	public static class WithNewTaskLabel extends ProjectPathNavigator {
 
 		public WithNewTaskLabel(Long taskID) {

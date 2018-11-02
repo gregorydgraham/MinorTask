@@ -32,7 +32,7 @@ public class RootTaskComponent extends Div implements RequiresLogin {
 		Label spacer = new Label("");
 		spacer.setHeight("1em");
 		layout.add(
-				new ProjectPathNavigator.WithAddTaskButton(null),
+				new ProjectPathNavigator.WithAddProjectButton(), 
 				new OpenProjectsList(),
 				spacer,
 				new CompletedProjectsList()

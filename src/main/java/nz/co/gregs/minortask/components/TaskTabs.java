@@ -94,7 +94,8 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 		public static MinorTaskTab[] getTabArray() {
 			return new MinorTaskTab[]{
-				getFirstTab(),
+				new MinorTaskTab("Search", SearchForTaskPage.class),
+				//				getFirstTab(),
 				new MinorTaskTab("Projects", ProjectsLayout.class),
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
@@ -102,13 +103,13 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 				new MinorTaskTab("Ideas", IdeasPage.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
 				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
-				new MinorTaskTab("Search", SearchForTaskPage.class)
+				new MinorTaskTab("Task", TaskEditorLayout.class)
 			};
+
 		}
 
-		public static MinorTaskTab getFirstTab() {
-			return new MinorTaskTab("Task", TaskEditorLayout.class);
-		}
+//		public static MinorTaskTab getFirstTab() {;
+//		}
 
 		public static Tab getTabForPage(Component page) {
 			Class<? extends Component> pageClass = page.getClass();

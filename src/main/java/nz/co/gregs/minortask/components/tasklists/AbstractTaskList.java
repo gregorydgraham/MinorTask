@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.components.tasklists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -61,11 +62,15 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			List<Task> allRows = getTasksToList();
 			setLabel(allRows);
 			HorizontalLayout header = new HorizontalLayout();
+			header.addClassName("tasklist-header");
 			header.add(label);
+			Div headerRight = new Div();
+			headerRight.addClassName("right");
 			final Component[] headerExtras = getHeaderExtras();
 			if (headerExtras.length > 0) {
-				header.add(headerExtras);
+				headerRight.add(headerExtras);
 			}
+			header.add(headerRight);
 			well.add(header);
 
 			setGridItems(allRows);

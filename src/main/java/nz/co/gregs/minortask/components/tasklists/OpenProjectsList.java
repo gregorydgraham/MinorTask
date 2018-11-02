@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBTable;
@@ -18,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class OpenProjectsList extends AbstractTaskList {
 
-	private AddTaskButton newTaskButton = new AddTaskButton(null);
+	private AddTaskButton newTaskButton= null;
 
 	public OpenProjectsList() {
 		super();
@@ -47,6 +48,11 @@ public class OpenProjectsList extends AbstractTaskList {
 	}
 
 	@Override
+	protected Component[] getHeaderExtras() {
+		return new Component[]{getNewTaskButton()};
+	}
+
+	@Override
 	protected String getListClassName() {
 		return "openprojectslist";
 	}
@@ -56,7 +62,8 @@ public class OpenProjectsList extends AbstractTaskList {
 	 */
 	public final AddTaskButton getNewTaskButton() {
 		if (newTaskButton == null) {
-			newTaskButton = new AddTaskButton(null);
+			newTaskButton = new AddTaskButton("Add Project...");
+			newTaskButton.addClassNames("small", "openprojectslist-addproject"); 
 		}
 		return newTaskButton;
 	}

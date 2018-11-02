@@ -15,17 +15,27 @@ import nz.co.gregs.minortask.MinorTask;
 //@Tag("add-task-button")
 public class AddTaskButton extends Button implements RequiresLogin {
 
-	final Button newTaskButton = new Button("+ Add Subtask");
+//	final Button newTaskButton;
 	private Long originatingTaskID = null;
-
-	public AddTaskButton(Long taskID) {
-		this();
-		this.originatingTaskID = taskID;
-	}
+	private static final String DEFAULT_LABEL = "+ Add Subtask";
 
 	public AddTaskButton() {
-		super("+Add Subtask");
+		this(null, DEFAULT_LABEL);
+	}
+	
+	public AddTaskButton(String buttonLabel) {
+		this(null, buttonLabel);
+	}
+	
+	public AddTaskButton(Long taskID) {
+		this(taskID, DEFAULT_LABEL);
+	}
+
+	AddTaskButton(Long taskID, String buttonLabel) {
+		super(buttonLabel);
+		this.originatingTaskID = taskID;
 		buildComponent();
+		addClassNames("addtaskbutton");
 	}
 	
 	public void setTaskID(Long id){
