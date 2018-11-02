@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.router.Location;
@@ -22,7 +21,6 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
-import nz.co.gregs.minortask.pages.AuthorisedPage;
 
 /**
  *
@@ -55,9 +53,6 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		VerticalLayout loginPanel = new VerticalLayout();
 		loginPanel.addClassName("login-panel");
 
-		final Label welcomeLabel = new Label("Welcome To " + MinorTask.getApplicationName());
-		welcomeLabel.addClassName("login-welcome-message");
-
 		Button loginButton = new Button("Login");
 		loginButton.addClassName("login-button");
 		loginButton.addClickListener((event) -> {
@@ -85,10 +80,9 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 
 		loginPanel.add(
-				welcomeLabel,
 				USERNAME_FIELD,
 				PASSWORD_FIELD,
-				LoginButtons/*REMEMBER_ME_FIELD, loginButton*/,
+				LoginButtons,
 				buttons);
 		USERNAME_FIELD.focus();
 

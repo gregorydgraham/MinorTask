@@ -4,8 +4,8 @@
 		.main-layout {
 			padding: 0;
 			margin: 0;
-/*			margin-left:  5px;
-			margin-right: 2px;*/
+			/*			margin-left:  5px;
+						margin-right: 2px;*/
 			border:  0;
 		}
 
@@ -17,6 +17,11 @@
 		}
 
 		html{
+		}
+		body{
+			padding:0;
+			margin:0;
+			width: 100%;
 		}
 
 		.background-1{background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);}
@@ -39,10 +44,18 @@
 		}
 
 		footer {
+			position: relative;
 			background-color: #0099cc;
 			color: white;
-			padding:1em;
-			/*width: 95%;*/
+			width: 100%;
+			padding-block-end: 1em;
+		}
+		
+		footer label {
+			display: block;
+			padding-block-start: 1em;
+			padding-inline-start: 1em;
+			padding-inline-end: 1em;
 		}
 
 		vaadin-vertical-layout{
@@ -56,11 +69,8 @@
 		}
 
 		.minortask-page{
-			padding-top: 0;
-			padding-left: 0;
-			margin-left:  0;
-			padding-right: 0;
-			margin-right:  0;
+			padding:0;
+			margin:0;
 			border-radius: 0;
 		}
 
@@ -105,7 +115,7 @@
 
 		.minortask-tabs {
 			background-color: white;
-			width:100%;
+			/*width:100%;*/
 		}
 
 		.dates-component{ 
@@ -120,8 +130,8 @@
 			width:calc(100%-16px);
 			margin:0;
 			padding:0;
-/*			padding-left: 8px;
-			padding-right: 8px;*/
+			/*			padding-left: 8px;
+						padding-right: 8px;*/
 		}
 
 		.edit-task-name{
@@ -171,12 +181,12 @@
 		}
 
 		.authorised-banner {
-			padding-top:20px;
 			width: 100%;
 			background-color: cadetblue;
 			color:white;
 			margin:0;
 			padding: 0;
+			padding-top:20px;
 			display: flex;
 			justify-content: space-between
 		}
@@ -322,7 +332,7 @@
 		.notice-label{
 			position:relative;
 		}
-		
+
 		.celebration-spin{
 			opacity: 0;
 			transform: scale(0.01, 0.01);

@@ -17,7 +17,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Location;
+import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.router.RouteData;
+import com.vaadin.flow.router.Router;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import java.io.File;
@@ -67,7 +69,7 @@ import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.documentupload.Document;
 import nz.co.gregs.minortask.documentupload.TaskDocumentLink;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
-import nz.co.gregs.minortask.pages.AuthorisedTaskPage;
+import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
@@ -328,15 +330,13 @@ public class Globals {
 
 	public static void showTodaysTasks() {
 		showPage(TodaysTaskLayout.class);
-//		router.navigate(ui, new Location(url), NavigationTrigger.PROGRAMMATIC);
-//		UI.getCurrent().navigate(TodaysTaskLayout.class);
 	}
 
 	public static void showPage(Class<? extends AuthorisedPage> page) {
 		UI.getCurrent().navigate(page);
 	}
 
-	public static void showPage(Class<? extends AuthorisedTaskPage> page, Long taskID) {
+	public static void showPage(Class<? extends AuthorisedOptionalTaskPage> page, Long taskID) {
 		UI.getCurrent().navigate(page, taskID);
 	}
 

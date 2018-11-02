@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
@@ -29,35 +28,22 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  */
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
 
-
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
 	private final Label label = new Label();
 	private List<Task> list = new ArrayList<>(0);
 
 	public AbstractTaskList() {
-		this.taskID = null;
-		try {
-			this.list = getTasksToList();
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
+		this((Long) null);
+	}
+
+	public AbstractTaskList(Long taskID) {
+		this.taskID = taskID;
 		buildComponent();
 		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
-	
-	public AbstractTaskList(Long taskID) {
-		this.taskID = taskID;
-		try {
-			this.list = getTasksToList();
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-		buildComponent();
-		this.addClassName("tasklist");
-	}
-	
+
 	protected AbstractTaskList(List<Task> list) {
 		this.taskID = null;
 		this.list = list;
@@ -94,7 +80,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			footer.addClassNames(getListClassName(), "footer");
 			well.add(footer);
 		} catch (SQLException ex) {
-			minortask().sqlerror(ex);
+			MinorTask.sqlerror(ex);
 		}
 		add(well);
 	}
@@ -140,21 +126,23 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		final VerticalLayout summary = new VerticalLayout(name, desc);
 		summary.setSpacing(false);
 
-		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class, task.taskID.getValue());
-		Anchor anchor = new Anchor(url, "");
-		anchor.add(summary);
+		Component anchor = wrapInALinkToTheTask(task, summary);
 
 		return anchor;
 	}
 
 	private Component getSubTaskNumberComponent(Task task) {
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		Button arrow = new Button("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
-		arrow.setIconAfterText(true);
-		arrow.addClickListener((event) -> {
-			MinorTask.showTask(task.taskID.longValue());
-		});
-		return arrow;
+		Label label1 = new Label("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size());
+		label1.add(icon); 
+		return wrapInALinkToTheTask(task, label1);
+	}
+
+	private Component wrapInALinkToTheTask(final Task task, final Component summary) {
+		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class, task.taskID.getValue());
+		Anchor anchor = new Anchor(url, "");
+		anchor.add(summary);
+		return anchor;
 	}
 
 	protected void refreshList() {
