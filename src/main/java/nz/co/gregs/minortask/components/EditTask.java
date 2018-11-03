@@ -459,21 +459,29 @@ public class EditTask extends Div implements RequiresLogin {
 		public void onComponentEvent(ClickEvent<Button> event) {
 			try {
 				Task task = completeTask(taskID);
+				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
 				if (task == null) {
 					Globals.showTask(null);
 				} else {
 					Long projectID = task.projectID.getValue();
-					Task completedTasks = new Task();
-					completedTasks.projectID.setValue(projectID);
-					completedTasks.completionDate.excludeNull();
+					Task usersCompletedTasks = new Task();
+					usersCompletedTasks.userID.setValue(getUserID());
+					usersCompletedTasks.completionDate.excludeNull();
 					try {
-						if (getDatabase().getDBQuery(completedTasks).count() > 0) {
-							Task openTasks = new Task();
-							openTasks.projectID.setValue(projectID);
-							openTasks.completionDate.permitOnlyNull();
-							if (getDatabase().getDBQuery(openTasks).count() == 0) {
-								Globals.congratulate("All the subtasks are completed!");
-							}
+						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
+						Task currentProject = new Task();
+						currentProject.projectID.setValue(projectID);
+						currentProject.completionDate.permitOnlyNull();
+						if (getDatabase().getDBQuery(currentProject).count() == 0) {
+							Globals.congratulate("All the subtasks are completed!");
+						}
+						if (completedTaskCount < 11) {
+							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+						} else if (completedTaskCount > 11 && completedTaskCount < 51
+								&& completedTaskCount % 10 == 0) {
+							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+						} else if (completedTaskCount % 50 == 0) {
+							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
 						}
 					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 						sqlerror(ex);

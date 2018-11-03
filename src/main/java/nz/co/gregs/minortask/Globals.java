@@ -398,10 +398,10 @@ public class Globals {
 
 	public static final void notice(String string) {
 		Icon image = new Icon(VaadinIcon.ALARM);
-		notice(image, string);
+		animatedNotice(image, string);
 	}
 
-	public static final void notice(Component image, String string) {
+	public static final void animatedNotice(Component image, String string) {
 		if (image instanceof HasStyle) {
 			((HasStyle) image).addClassName("celebration-spin");
 		}
@@ -415,13 +415,17 @@ public class Globals {
 		note.open();
 	}
 
+	public static final void congratulate(Component bling, String string) {
+		animatedNotice(bling, string);
+	}
+
 	public static final void congratulate(String string) {
 		Image image = new Image("images/star-small.png", "STAR");
-		notice(image, string);
+		congratulate(image, string);
 	}
 
 	public static final void savedNotice() {
-		Globals.notice(new Icon(VaadinIcon.SAFE), "Saved.");
+		Globals.animatedNotice(new Icon(VaadinIcon.SAFE), "Saved.");
 	}
 
 	public static void chatAboutUsers() {
