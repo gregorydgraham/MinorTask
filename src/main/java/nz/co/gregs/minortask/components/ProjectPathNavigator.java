@@ -37,7 +37,6 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
-		
 	}
 
 	public Button getButtonForTaskID(Task task) {
@@ -46,6 +45,9 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 			MinorTask.showTask(foundID);
 		});
 		formatButton(button);
+		if(task!=null && task.taskID.getValue().equals(taskID)){
+			button.addClassName("currenttask");
+		}
 		return button;
 	}
 
