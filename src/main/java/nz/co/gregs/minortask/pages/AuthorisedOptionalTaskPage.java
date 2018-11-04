@@ -6,7 +6,7 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -44,14 +44,15 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
-		VerticalLayout internalComponentHolder
-				= new VerticalLayout(
+		Div internalComponentHolder
+				= new Div(
 						banner,
 						taskTabs,
 						internalComponent
 				);
 		internalComponentHolder.addClassName("minortask-internal");
-		VerticalLayout verticalLayout = new VerticalLayout(internalComponentHolder);
+		Div verticalLayout = new Div(internalComponentHolder);
+		verticalLayout.addClassName("minortask-internal-container");
 		add(verticalLayout);
 		add(new FooterMenu());
 	}

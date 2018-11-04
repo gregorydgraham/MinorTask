@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -25,7 +25,7 @@ import nz.co.gregs.minortask.components.TaskTabs;
  * @author gregorygraham
  */
 @HtmlImport("frontend://styles/shared-styles.html")
-public abstract class AuthorisedPage extends VerticalLayout implements MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle {
+public abstract class AuthorisedPage extends Div implements MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle {
 
 	protected Long taskID = null;
 	TaskTabs taskTabs;
@@ -61,14 +61,14 @@ public abstract class AuthorisedPage extends VerticalLayout implements MinorTask
 		taskTabs = new TaskTabs(this, taskID);
 		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 		final Component internalComponent = getInternalComponent();
-		VerticalLayout internalComponentHolder
-				= new VerticalLayout(
+		Div internalComponentHolder
+				= new Div(
 						banner,
 						taskTabs,
 						internalComponent
 				);
 		internalComponentHolder.addClassName("minortask-internal");
-		VerticalLayout verticalLayout = new VerticalLayout(internalComponentHolder);
+		Div verticalLayout = new Div(internalComponentHolder);
 		add(verticalLayout);
 		add(new FooterMenu());
 	}

@@ -19,9 +19,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
@@ -140,12 +137,14 @@ public class EditTask extends Div implements RequiresLogin {
 		reopenButton.setVisible(false);
 
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
-		VerticalLayout completedLayout = new VerticalLayout(completedIndicator, reopenButton);
-		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
+		Div completedLayout = new Div(completedIndicator, reopenButton);
+		completedLayout.addClassName("completedindicator-container");
+//		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
-		HorizontalLayout details = new HorizontalLayout(
+		Div details = new Div(
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
-		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
+		details.addClassName("statusindicators-container");
+//		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
 
 		dates.addClassName("dates-component");
