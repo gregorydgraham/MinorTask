@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.documentupload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;

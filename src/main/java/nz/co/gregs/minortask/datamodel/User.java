@@ -33,6 +33,9 @@ public class User extends DBRow {
 
 	@DBColumn
 	private final DBStringTrimmed email = new DBStringTrimmed();
+	
+	@DBColumn
+	private DBStringTrimmed blurb = new DBStringTrimmed();
 
 	@DBColumn
 	private final DBPasswordHash password = new DBPasswordHash();
@@ -174,6 +177,27 @@ public class User extends DBRow {
 	 */
 	public void setLastLoginDate(Date lastLoginDate) {
 		this.lastLoginDate.setValue(lastLoginDate);
+	}
+
+	/**
+	 * @return the blurb
+	 */
+	public DBStringTrimmed getBlurb() {
+		return blurb;
+	}
+
+	/**
+	 * @param blurb the blurb to set
+	 */
+	public void setBlurb(String blurb) {
+		this.blurb.setValue(blurb);
+	}
+
+	/**
+	 * @return 
+	 */
+	public DBStringTrimmed queryBlurb() {
+		return blurb;
 	}
 
 }
