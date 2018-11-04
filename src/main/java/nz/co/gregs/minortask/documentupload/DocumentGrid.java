@@ -33,8 +33,8 @@ public class DocumentGrid extends Div implements RequiresLogin {
 
 	public DocumentGrid() {
 	}
-	
-	public final void setTaskID(Long taskID){
+
+	public final void setTaskID(Long taskID) {
 		this.taskID = taskID;
 		makeComponent();
 	}
@@ -61,7 +61,8 @@ public class DocumentGrid extends Div implements RequiresLogin {
 		anchor.setTarget("_blank");
 		Component icon;
 		if (source.mediaType.getValue().startsWith("image/")) {
-			icon = new Image(new DocumentIconStreamResource(source), source.filename.getValue());
+//			icon = new Image(new DocumentIconStreamResource(source), source.filename.getValue());
+			icon = new ImageIconFromDocument(source);
 		} else {
 			icon = new Icon(VaadinIcon.FILE);
 		}
@@ -85,8 +86,8 @@ public class DocumentGrid extends Div implements RequiresLogin {
 			link.taskID.permittedValues(taskID);
 			link.ownerID.permittedValues(getUserID());
 			Document docExample = new Document();
-			allRows = getDatabase().getDBQuery(link,docExample).getAllInstancesOf(docExample);
-			this.setVisible(!allRows.isEmpty()); 
+			allRows = getDatabase().getDBQuery(link, docExample).getAllInstancesOf(docExample);
+			this.setVisible(!allRows.isEmpty());
 			grid.setItems(allRows);
 		} catch (SQLException ex) {
 			sqlerror(ex);
