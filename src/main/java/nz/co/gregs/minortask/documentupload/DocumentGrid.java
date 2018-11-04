@@ -6,25 +6,26 @@
 package nz.co.gregs.minortask.documentupload;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.RequiresLogin;
 
 /**
  *
  * @author gregorygraham
  */
-public class DocumentGrid extends VerticalLayout implements RequiresLogin {
+@Tag("document-grid")
+public class DocumentGrid extends Div implements RequiresLogin {
 
 	private Long taskID = null;
 	private final Grid<Document> grid = new Grid<>();
@@ -41,9 +42,6 @@ public class DocumentGrid extends VerticalLayout implements RequiresLogin {
 	@SuppressWarnings("unchecked")
 	private void makeComponent() {
 		removeAll();
-		setMargin(false);
-		setPadding(false);
-		setSpacing(false);
 		setItems();
 		getDatabase().print(allRows);
 		grid.setHeightByRows(true);

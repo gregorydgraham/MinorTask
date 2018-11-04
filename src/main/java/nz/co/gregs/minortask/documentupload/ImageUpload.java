@@ -5,14 +5,15 @@
  */
 package nz.co.gregs.minortask.documentupload;
 
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
-import nz.co.gregs.minortask.components.RequiresLogin;
 
 /**
  *
  * @author gregorygraham
  */
-public class ImageUpload extends DocumentUpload implements RequiresLogin {
+@Tag("image-upload")
+public class ImageUpload extends DocumentUpload {
 
 	public ImageUpload(Long taskID) {
 		this();

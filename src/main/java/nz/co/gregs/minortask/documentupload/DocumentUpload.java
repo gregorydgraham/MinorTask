@@ -8,7 +8,7 @@ package nz.co.gregs.minortask.documentupload;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
@@ -30,6 +30,7 @@ import nz.co.gregs.minortask.components.RequiresLogin;
  *
  * @author gregorygraham
  */
+@Tag("document-upload")
 public class DocumentUpload extends Div implements RequiresLogin {
 
 	MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();

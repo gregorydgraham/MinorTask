@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.documentupload;
 
 import com.vaadin.flow.component.ComponentEvent;
-import nz.co.gregs.minortask.documentupload.DocumentUpload;
 
 /**
  *
