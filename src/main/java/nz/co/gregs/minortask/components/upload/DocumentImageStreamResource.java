@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components.upload;
 
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,19 +51,7 @@ public class DocumentImageStreamResource extends StreamResource {
 		private BufferedImage createThumbnailFromOriginalRow() throws IOException {
 			final InputStream inputStream = doc.documentContents.getInputStream();
 			BufferedImage originalImage = ImageIO.read(inputStream);
-			BufferedImage thumbnail = createImage(originalImage);
 			return originalImage;
-		}
-
-		private BufferedImage createImage(BufferedImage original) {
-			double scale = 1.0;
-			final int width = (int) ((0d + original.getWidth()) * scale);
-			final int height = (int) ((0d + original.getHeight()) * scale);
-			BufferedImage thumbnail = new BufferedImage(width, height, original.getType());
-			Graphics2D g = thumbnail.createGraphics();
-			g.drawImage(original, 0, 0, width, height, null);
-			g.dispose();
-			return thumbnail;
 		}
 	}
 	
