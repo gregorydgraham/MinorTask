@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.documentupload;
+package nz.co.gregs.minortask.components.upload;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;

@@ -7,7 +7,7 @@ package nz.co.gregs.minortask.components;
 
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
-import nz.co.gregs.minortask.documentupload.DocumentGrid;
+import nz.co.gregs.minortask.components.upload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.ClickEvent;
@@ -38,8 +38,11 @@ import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
-import nz.co.gregs.minortask.documentupload.DocumentUpload;
-import nz.co.gregs.minortask.documentupload.ImageUpload;
+import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
+import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
+import nz.co.gregs.minortask.components.upload.ImageUpload;
+import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
+import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 import org.joda.time.Chronology;
@@ -82,8 +85,8 @@ public class EditTask extends Div implements RequiresLogin {
 	WeblinkGrid weblinkGrid = new WeblinkGrid();
 	WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
 	DocumentGrid documentGrid = new DocumentGrid();
-	DocumentUpload documentUpload = new DocumentUpload();
-	ImageUpload imageUpload = new ImageUpload();
+	DocumentUploadAndSelector documentUpload;
+	ImageUploadAndSelector imageUpload;
 	PlaceGrid placeGrid = new PlaceGrid();
 	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
 	Label activeIndicator = new Label("Active");
@@ -103,6 +106,8 @@ public class EditTask extends Div implements RequiresLogin {
 
 			subtasks = new OpenTaskList(taskID);
 			completedTasks = new CompletedTaskList(taskID);
+			documentUpload = new DocumentUploadAndSelector(taskID);
+			imageUpload = new ImageUploadAndSelector(taskID);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(taskID));
 		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
@@ -246,6 +251,7 @@ public class EditTask extends Div implements RequiresLogin {
 			showEditor(documentUpload);
 		});
 		documentUpload.addDocumentAddedListener((event) -> {
+			insertLinkToDocument(event);
 			documentGrid.refresh();
 			showEditor(null);
 		});
@@ -253,6 +259,7 @@ public class EditTask extends Div implements RequiresLogin {
 			showEditor(imageUpload);
 		});
 		imageUpload.addDocumentAddedListener((event) -> {
+			insertLinkToDocument(event);
 			documentGrid.refresh();
 			showEditor(null);
 		});
@@ -410,6 +417,23 @@ public class EditTask extends Div implements RequiresLogin {
 		weblinkEditor.setVisible(false);
 		if (editor != null) {
 			editor.setVisible(!editorAlreadyShowing);
+		}
+	}
+
+	private void insertLinkToDocument(DocumentAddedEvent event) {
+		if (event.getValue() != null) {
+			chat("Adding document link..."+event.getSource().getClass().getSimpleName());
+			TaskDocumentLink link = new TaskDocumentLink();
+			link.documentID.setValue(event.getValue().documentID);
+			link.taskID.setValue(taskID);
+			link.ownerID.setValue(getUserID());
+			try {
+				getDatabase().insert(link);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}else{
+			chat("No Document Found!!: "+event.getSource().getClass().getSimpleName());
 		}
 	}
 

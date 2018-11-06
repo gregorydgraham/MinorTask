@@ -7,14 +7,18 @@ package nz.co.gregs.minortask.datamodel;
 
 import java.util.Date;
 import nz.co.gregs.dbvolution.DBRow;
+import nz.co.gregs.dbvolution.annotations.AutoFillDuringQueryIfPossible;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
+import nz.co.gregs.dbvolution.annotations.DBForeignKey;
 import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBLargeBinary;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.datatypes.DBStringTrimmed;
+import nz.co.gregs.minortask.components.upload.Document;
 
 /**
  *
@@ -35,7 +39,7 @@ public class User extends DBRow {
 	private final DBStringTrimmed email = new DBStringTrimmed();
 	
 	@DBColumn
-	private DBStringTrimmed blurb = new DBStringTrimmed();
+	private final DBStringTrimmed blurb = new DBStringTrimmed();
 
 	@DBColumn
 	private final DBPasswordHash password = new DBPasswordHash();
@@ -45,6 +49,13 @@ public class User extends DBRow {
 
 	@DBColumn
 	private final DBDate lastLoginDate = new DBDate();
+
+	@DBColumn
+	@DBForeignKey(Document.class)
+	private DBInteger profileImageID = new DBInteger();
+	
+	@AutoFillDuringQueryIfPossible
+	public Document profileImage;
 
 	/**
 	 * @return the userID
@@ -198,6 +209,27 @@ public class User extends DBRow {
 	 */
 	public DBStringTrimmed queryBlurb() {
 		return blurb;
+	}
+
+	/**
+	 * @return the profileImageID
+	 */
+	public DBInteger queryProfileImageID() {
+		return profileImageID;
+	}
+
+	/**
+	 * @return the profileImageID
+	 */
+	public Long getProfileImageID() {
+		return profileImageID.getValue();
+	}
+
+	/**
+	 * @param profileImageID the profileImageID to set
+	 */
+	public void setProfileImageID(Long profileImageID) {
+		this.profileImageID.setValue(profileImageID);
 	}
 
 }

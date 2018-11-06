@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.documentupload;
+package nz.co.gregs.minortask.components.upload;
 
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import java.io.InputStream;
-import nz.co.gregs.minortask.documentupload.Document;
+import nz.co.gregs.minortask.components.upload.Document;
 
 /**
  *

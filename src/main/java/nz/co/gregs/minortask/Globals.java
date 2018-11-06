@@ -66,8 +66,8 @@ import nz.co.gregs.dbvolution.utility.RegularProcess;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
-import nz.co.gregs.minortask.documentupload.Document;
-import nz.co.gregs.minortask.documentupload.TaskDocumentLink;
+import nz.co.gregs.minortask.components.upload.Document;
+import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
 import nz.co.gregs.minortask.pages.LoginPage;
@@ -714,7 +714,7 @@ public class Globals {
 		public void process() {
 			cleanupRememberedLogins();
 
-			moveOldDocumentLinksToNewLinkTable();
+//			moveOldDocumentLinksToNewLinkTable();
 		}
 
 		private void cleanupRememberedLogins() {
@@ -728,34 +728,34 @@ public class Globals {
 			System.out.println("CLEANED UP THE REMEMBERED LOGINS");
 		}
 
-		private void moveOldDocumentLinksToNewLinkTable() {
-			Document docExample = new Document();
-			TaskDocumentLink linkExample = new TaskDocumentLink();
-
-			docExample.taskID.permitOnlyNotNull();
-			DBQuery query = getDatabase().getDBQuery(docExample).addOptional(linkExample);
-			query.addCondition(
-					docExample.column(docExample.taskID)
-							.is(
-									linkExample.column(linkExample.taskID)
-							)
-			);
-			query.addCondition(linkExample.column(linkExample.taskDocumentLinkID).isNull());
-			try {
-				List<DBQueryRow> allRows = query.getAllRows();
-				for (DBQueryRow row : allRows) {
-					Document doc = row.get(docExample);
-					TaskDocumentLink link = new TaskDocumentLink();
-					link.description.setValue(doc.description);
-					link.documentID.setValue(doc.documentID);
-					link.ownerID.setValue(doc.userID);
-					link.taskID.setValue(doc.taskID);
-					getDatabase().insert(link);
-				}
-			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
+//		private void moveOldDocumentLinksToNewLinkTable() {
+//			Document docExample = new Document();
+//			TaskDocumentLink linkExample = new TaskDocumentLink();
+//
+//			docExample.taskID.permitOnlyNotNull();
+//			DBQuery query = getDatabase().getDBQuery(docExample).addOptional(linkExample);
+//			query.addCondition(
+//					docExample.column(docExample.taskID)
+//							.is(
+//									linkExample.column(linkExample.taskID)
+//							)
+//			);
+//			query.addCondition(linkExample.column(linkExample.taskDocumentLinkID).isNull());
+//			try {
+//				List<DBQueryRow> allRows = query.getAllRows();
+//				for (DBQueryRow row : allRows) {
+//					Document doc = row.get(docExample);
+//					TaskDocumentLink link = new TaskDocumentLink();
+//					link.description.setValue(doc.description);
+//					link.documentID.setValue(doc.documentID);
+//					link.ownerID.setValue(doc.userID);
+//					link.taskID.setValue(doc.taskID);
+//					getDatabase().insert(link);
+//				}
+//			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+//				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+//			}
+//		}
 
 	}
 

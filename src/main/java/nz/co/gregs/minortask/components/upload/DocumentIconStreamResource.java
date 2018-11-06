@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.documentupload;
+package nz.co.gregs.minortask.components.upload;
 
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
@@ -21,17 +21,17 @@ import javax.imageio.ImageIO;
  *
  * @author gregorygraham
  */
-public class DocumentImageStreamResource extends StreamResource {
+public class DocumentIconStreamResource extends StreamResource {
 	
-	public DocumentImageStreamResource(Document doc) {
-		super(doc.filename.getValue(), new ImageInputStreamFactory(doc));
+	public DocumentIconStreamResource(Document doc) {
+		super(doc.filename.getValue(), new ThumbnailInputStreamFactory(doc));
 	}
 
-	public static class ImageInputStreamFactory implements InputStreamFactory {
+	public static class ThumbnailInputStreamFactory implements InputStreamFactory {
 
 		private final Document doc;
 
-		public ImageInputStreamFactory(Document doc) {
+		public ThumbnailInputStreamFactory(Document doc) {
 			this.doc = doc;
 		}
 
@@ -44,7 +44,7 @@ public class DocumentImageStreamResource extends StreamResource {
 				InputStream fis = new ByteArrayInputStream(os.toByteArray());
 				return fis;
 			} catch (IOException ex) {
-				Logger.getLogger(DocumentImageStreamResource.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(DocumentIconStreamResource.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			return new ByteArrayInputStream(new byte[]{});
 		}
@@ -52,12 +52,13 @@ public class DocumentImageStreamResource extends StreamResource {
 		private BufferedImage createThumbnailFromOriginalRow() throws IOException {
 			final InputStream inputStream = doc.documentContents.getInputStream();
 			BufferedImage originalImage = ImageIO.read(inputStream);
-			BufferedImage thumbnail = createImage(originalImage);
-			return originalImage;
+			BufferedImage thumbnail = createThumbnail(originalImage);
+			return thumbnail;
 		}
 
-		private BufferedImage createImage(BufferedImage original) {
-			double scale = 1.0;
+		private BufferedImage createThumbnail(BufferedImage original) {
+			final double targetSize = 50d;
+			double scale = Math.min(targetSize / original.getWidth(), targetSize / original.getHeight());
 			final int width = (int) ((0d + original.getWidth()) * scale);
 			final int height = (int) ((0d + original.getHeight()) * scale);
 			BufferedImage thumbnail = new BufferedImage(width, height, original.getType());
