@@ -4,20 +4,23 @@
 <dom-module id="user-profile">
 	<template>
 		<div>
-			<div width="100%" style="display: flex; justify-content: space-between; background-color: #0099cc; color: white;">
+			<div width="100%" style="display: flex; justify-content: space-between; flex-direction: row;  background-color: #0099cc; color: white;">
 				<div><h1>WARNING: BETA RELEASE</h1></div>
 				<div style="">
 					User Profile for @{{username}}
 				</div>
 				<div style="">
-					<button id="projectsButton" on-click=returnToProjects">Projects</button>
+					<button id="userButton" on-click="showUser">User</button>
+					<button id="projectsButton" on-click="returnToProjects">Projects</button>
 					<button id="logoutButton" on-click="logoutAction">Logout</button>
 				</div>
 			</div>
 			<div id="user" value="{{user}}"></div>
-			<paper-input id="username" value="{{username}}"></paper-input>
-			<paper-input id="email" value="{{email}}"></paper-input>
-			<button id="helloButton" on-click="sayHello">Say hello</button>
+			<img id="profile-image" style="width: 20%;" alt="Profile image">
+			<image-upload id="image-uploader" style="width:30%;"></image-upload>
+			<paper-input id="username" label="Username" value="{{username}}" on-blur="saveUser" style="width:30%;"></paper-input>
+			<paper-input id="email" label="Email" value="{{email}}" on-blur="saveUser" style="width:30%;" placeholder="Used for password resets..."></paper-input>
+			<paper-textarea id="biography" label="Bio" value="{{biography}}" style="width:60%;" on-blur="saveUser" placeholder="Describe yourself to others..."></paper-textarea>
 			<div id="greeting">[[greeting]]</div>
 		</div>
 	</template>
