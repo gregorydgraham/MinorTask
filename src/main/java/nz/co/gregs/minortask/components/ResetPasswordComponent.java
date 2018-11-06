@@ -20,6 +20,7 @@ import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.datamodel.PasswordResetRequests;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -134,7 +135,7 @@ public class ResetPasswordComponent extends VerticalLayout implements MinorTaskC
 				example.resetCode.permittedValues(resetCode);
 				example.expiryTime.permittedRange(new Date(),null);
 				DBDatabase database = getDatabase();
-				List<DBQueryRow> requestsFound = database.get(example, new User());
+				List<DBQueryRow> requestsFound = database.getDBQuery(example, new User()).addOptional(new Document()).getAllRows();
 				if (requestsFound.size() == 1) {
 					PasswordResetRequests actualRequest = requestsFound.get(0).get(example);
 					User user = requestsFound.get(0).get(new User());

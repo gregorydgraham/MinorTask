@@ -15,7 +15,6 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
-import nz.co.gregs.dbvolution.datatypes.DBLargeBinary;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.datatypes.DBStringTrimmed;
 import nz.co.gregs.minortask.components.upload.Document;
@@ -52,7 +51,7 @@ public class User extends DBRow {
 
 	@DBColumn
 	@DBForeignKey(Document.class)
-	private DBInteger profileImageID = new DBInteger();
+	private final DBInteger profileImageID = new DBInteger();
 	
 	@AutoFillDuringQueryIfPossible
 	public Document profileImage;

@@ -35,7 +35,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
 public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnterObserver, AfterNavigationObserver {
 
 	LoginComponent loginComponent = new LoginComponent();
-	private MinorTask minortask = new MinorTask();
+	private MinorTask minortask = MinorTask.getMinorTask();
 
 	public LoginPage() {
 		this(Globals.getLocation(TodaysTaskLayout.class));

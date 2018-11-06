@@ -20,13 +20,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 public interface MinorTaskComponent {
 
 	default MinorTask minortask() {
-		final VaadinSession session = VaadinSession.getCurrent();
-		MinorTask minortask = session.getAttribute(MinorTask.class);
-		if (minortask == null) {
-			session.setAttribute(MinorTask.class, new MinorTask());
-			minortask = session.getAttribute(MinorTask.class);
-		}
-		return minortask;
+		return MinorTask.getMinorTask();
 	}
 
 	default DBDatabase getDatabase() {

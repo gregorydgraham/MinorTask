@@ -15,11 +15,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
-import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -110,8 +111,8 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 			example.queryUsername().permittedValuesIgnoreCase(username);
 			try {
 				final DBDatabase database = MinorTask.getDatabase();
-				final DBTable<User> query = database.getDBTable(example);
-				List<User> users = query.getAllRows();
+				final DBQuery query = database.getDBQuery(example).addOptional(new Document());
+				List<User> users = query.getAllInstancesOf(example);
 				switch (users.size()) {
 					case 1:
 						User user = users.get(0);

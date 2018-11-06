@@ -28,6 +28,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,16 @@ import org.slf4j.LoggerFactory;
  */
 public class MinorTask extends Globals implements Serializable {
 
+	public static MinorTask getMinorTask() {
+		final VaadinSession session = VaadinSession.getCurrent();
+		MinorTask minortask = session.getAttribute(MinorTask.class);
+		if (minortask == null) {
+			session.setAttribute(MinorTask.class, new MinorTask());
+			minortask = session.getAttribute(MinorTask.class);
+		}
+		return minortask;
+	}
+
 	private long userID = 0;
 	boolean notLoggedIn = true;
 	public String username = "";
@@ -45,7 +56,7 @@ public class MinorTask extends Globals implements Serializable {
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 	private User user;
 
-	public MinorTask() {
+	private MinorTask() {
 		super();
 	}
 
@@ -188,14 +199,15 @@ public class MinorTask extends Globals implements Serializable {
 	public User getUser() {
 		if (isLoggedIn()) {
 			if (user == null) {
-				User user = new User();
-				user.queryUserID().permittedValues(getUserID());
+				User example = new User();
+				example.queryUserID().permittedValues(getUserID());
 				try {
-					List<User> got = getDatabase().get(user);
+					List<User> got = getDatabase().getDBQuery(example).addOptional(new Document()).getAllInstancesOf(example);
 					if (got.size() != 1) {
 						warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
 					} else {
-						return got.get(0);
+						user = got.get(0);
+						return user;
 					}
 				} catch (SQLException ex) {
 					sqlerror(ex);

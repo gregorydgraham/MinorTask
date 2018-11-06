@@ -47,7 +47,7 @@ public class PasswordResetPage extends VerticalLayout implements HasUrlParameter
 			layout.add(new Label("Unable to use this reset request, please request another"));
 			Button button = new Button("Request Reset");
 			button.addClickListener((event2) -> {
-				new MinorTask().showLostPassword("");
+				MinorTask.showLostPassword("");
 			});
 			layout.add(button);
 			add(layout);
