@@ -1,0 +1,15 @@
+
+footer-menu {
+	position: relative;
+	background-color: #0099cc;
+	color: white;
+	width: 100%;
+	margin-top: 1em;
+	padding-top: 1em;
+}
+
+footer-menu label {
+	display: block;
+	padding-left: 1em;
+	padding-bottom: 1em;
+}
