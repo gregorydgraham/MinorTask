@@ -204,7 +204,7 @@ public class Globals {
 				try {
 					final DBDatabase db = getDatabase();
 					db.setPrintSQLBeforeExecuting(true);
-					User onlyRow = db.getDBQuery(example, new User()).getOnlyInstanceOf(new User());
+					User onlyRow = db.getDBQuery(example, new User()).addOptional(new Document()).getOnlyInstanceOf(new User());
 					return onlyRow;
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
