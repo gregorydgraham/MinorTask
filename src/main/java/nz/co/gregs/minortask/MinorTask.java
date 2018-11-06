@@ -154,7 +154,7 @@ public class MinorTask extends Globals implements Serializable {
 			doLogin(rememberedUser, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
 		} catch (UnknownUserException | TooManyUsersException ex) {
-			System.out.println("CANT LOGIN AS REMEMBERED USER: "+ex.getMessage());
+			System.out.println("CANT LOGIN AS REMEMBERED USER: " + ex.getMessage());
 			System.out.println("RETURN: false");
 			return false;
 		}
@@ -207,16 +207,37 @@ public class MinorTask extends Globals implements Serializable {
 						warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
 					} else {
 						user = got.get(0);
+						setProfileImage(user);
 						return user;
 					}
 				} catch (SQLException ex) {
 					sqlerror(ex);
 				}
 			} else {
+				setProfileImage(user);
 				return user;
 			}
 		}
 		return null;
+	}
+
+	private void setProfileImage(User user) {
+		if (user.profileImage == null) {
+			if (user.getProfileImageID() != null) {
+				try {
+					List<Document> docs = getDatabase().getDBQuery(user, new Document()).getAllInstancesOf(new Document());
+					if (docs.size() == 1) {
+						user.profileImage = docs.get(0);
+					} else {
+						chat("Couldn't find the picture");
+					}
+				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+					sqlerror(ex);
+				}
+			} else {
+				chat("image not provided");
+			}
+		}
 	}
 
 	public void clearLoginDestination() {
