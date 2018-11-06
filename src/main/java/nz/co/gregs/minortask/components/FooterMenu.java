@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.Label;
 
@@ -12,6 +14,8 @@ import com.vaadin.flow.component.html.Label;
  *
  * @author gregorygraham
  */
+@Tag("footer-menu")
+@StyleSheet("frontend://styles/footer-menu.css")
 public class FooterMenu extends Footer implements MinorTaskComponent {
 
 	public FooterMenu() {
