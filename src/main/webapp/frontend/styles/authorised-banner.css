@@ -1,0 +1,36 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 6/11/2018, 10:27:54 PM
+    Author     : gregorygraham
+*/
+
+authorised-banner {
+	width: 100%;
+	background-color: cadetblue;
+	color:white;
+	margin:0;
+	padding: 0;
+	padding-top:20px;
+	display: flex;
+	justify-content: space-between
+}
+
+authorised-banner a{color: white;}
+authorised-banner a:hover{color: white;font-weight: bold;}
+authorised-banner a:active{color: white;font-style: oblique;}
+
+authorised-banner-left {
+	padding-left: 1em;
+}
+
+authorised-banner-right{	
+	/*width:30%*/
+}
+
+authorised-banner-right vaadin-button {
+	/*float:right;*/
+}
