@@ -34,18 +34,16 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText,
 	public final void buildComponent() {
 		setSizeUndefined();
 
-		Div left = new Div();
-		left.addClassName("authorised-banner-left");
-
-		Div right = new Div();
-		right.addClassName("authorised-banner-right");
-
 		welcomeMessage.addClassName("welcome-message");
 
-		left.add(welcomeMessage);
 		setText("Welcome to " + Globals.getApplicationName());
 
 		User user = minortask().getUser();
+		Div profileImageDiv = new Div();
+		profileImageDiv.setId("authorised-banner-profile-image");
+		if (user.profileImage!=null){
+			minortask().setBackgroundToImage(profileImageDiv, user.profileImage);
+		}
 		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 		setText(welcomeUser);
 
@@ -63,10 +61,15 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText,
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
+		
+		Div left = new Div();
+		left.addClassName("authorised-banner-left");
 
+		Div right = new Div();
+		right.addClassName("authorised-banner-right");
+
+		left.add(profileImageDiv, welcomeMessage);
 		right.add(logoutButton, profileButton);
-//		final Div clearBreak = new Div();
-//		clearBreak.getStyle().set("clear", "both");
 		add(left, right);
 	}
 

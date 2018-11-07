@@ -25,6 +25,8 @@ authorised-banner a:active{color: white;font-style: oblique;}
 
 authorised-banner-left {
 	padding-left: 1em;
+	display: flex;
+	flex-direction: row;
 }
 
 authorised-banner-right{	
@@ -33,4 +35,11 @@ authorised-banner-right{
 
 authorised-banner-right vaadin-button {
 	/*float:right;*/
+}
+
+#authorised-banner-profile-image{
+	width: 50px;
+	height: 50px;
+	border-radius: 5px;
+	display: inline-block;	
 }

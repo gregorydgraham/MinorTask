@@ -24,7 +24,6 @@ import nz.co.gregs.minortask.components.polymer.PaperTextArea;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
-import nz.co.gregs.minortask.components.upload.ImageFromDocument;
 import nz.co.gregs.minortask.components.upload.ImageUpload;
 
 /**
@@ -38,7 +37,7 @@ public class UserProfilePage extends AuthorisedPage {
 
 	private User user = null;
 	private final ImageUpload imageUpload = new ImageUpload();
-	private ImageFromDocument profileImage = new ImageFromDocument(200l);
+//	private ImageFromDocument profileImage = new ImageFromDocument(200l);
 	private final PaperInput usernameDiv = new PaperInput();
 	private final PaperInput emailInput = new PaperInput();
 	private final PaperTextArea blurb = new PaperTextArea();
@@ -51,12 +50,15 @@ public class UserProfilePage extends AuthorisedPage {
 
 	@Override
 	protected Component getInternalComponent() {
+		setValues();
+		setStyles();
+		addListeners();
+		
+		final Div imageStuff = new Div(imageDiv, imageUpload);
+		imageStuff.setId("image-container");
+		
 		Div component = new Div();
 		component.setId("user-profile-contents");
-		setValues();
-		addListeners();
-		final Div imageStuff = new Div(profileImage,imageUpload, imageDiv);
-		imageStuff.setId("image-container");
 		component.add(greeting, imageStuff, usernameDiv, emailInput, blurb);
 
 		return component;
@@ -88,21 +90,19 @@ public class UserProfilePage extends AuthorisedPage {
 		emailInput.setValue(user.getEmail()==null?"":user.getEmail());
 		blurb.setValue(user.getBlurb()==null?"":user.getBlurb());
 		greeting.setText("Welcome to the User Profile page.");
-		imageDiv.setId("profile-image-div");
 		minortask().setBackgroundToImage(imageDiv, user.profileImage);
 		setProfileImage();
 	}
 
 	private void setProfileImage() {
 		if (user.profileImage != null) {
-			profileImage.setSrc(user.profileImage);
+			minortask().setBackgroundToImage(imageDiv, user.profileImage);
 		} else {
 			if (user.getProfileImageID() != null) {
 				try {
 					List<Document> docs = getDatabase().getDBQuery(user, new Document()).getAllInstancesOf(new Document());
 					if (docs.size() == 1) {
 						user.profileImage = docs.get(0);
-						profileImage.setSrc(user.profileImage);
 					} else {
 						chat("Couldn't find the picture");
 					}
@@ -140,16 +140,27 @@ public class UserProfilePage extends AuthorisedPage {
 
 	private void profileImageUploaded(DocumentAddedEvent event) {
 		final Document doc = event.getValue();
-		profileImage.setSrc(doc);
+//		profileImage.setSrc(doc);
 		user.setProfileImageID(doc.documentID.getValue());
 		user.profileImage = doc;
 		try {
 			getDatabase().update(user);
 			savedNotice();
-			profileImage = new ImageFromDocument(doc);
+//			profileImage = new ImageFromDocument(doc);
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	private void setStyles() {
+		blurb.setId("user-profile-bio");
+		emailInput.setId("user-profile-email");
+		greeting.setId("user-profile-greeting");
+		imageDiv.setId("profile-image-div");
+		imageUpload.setId("user-profile-imageupload");
+//		profileImage.setId("user-profile-profileimage");
+		usernameDiv.setId("user-profile-username");
+
 	}
 
 	public static interface UserModel extends TemplateModel {
