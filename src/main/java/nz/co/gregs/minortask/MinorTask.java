@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.NavigationTrigger;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
+import javax.xml.bind.DatatypeConverter;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
@@ -141,12 +143,6 @@ public class MinorTask extends Globals implements Serializable {
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
-//	private void removeLastUsernameCookieValue() {
-//		Cookie cookie = new Cookie(MINORTASK_LASTUSERNAME_COOKIE_KEY, "");
-//		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
-//		cookie.setMaxAge(0);
-//		VaadinService.getCurrentResponse().addCookie(cookie);
-//	}
 	public boolean loginAsRememberedUser() {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
@@ -311,5 +307,16 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void showProfile() {
 		UI.getCurrent().navigate(UserProfilePage.class);
+	}
+
+	public void setBackgroundToImage(HasStyle aThis, Document profileImage) {
+		if (profileImage != null) {
+			String imageString
+					= "data:" + profileImage.mediaType.getValue()
+					+ ";base64,"
+					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
+			aThis.getStyle().set("background", "url(" + imageString + ")");
+			aThis.getStyle().set("background-size", "cover");
+		}
 	}
 }
