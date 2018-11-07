@@ -192,8 +192,8 @@ public class User extends DBRow {
 	/**
 	 * @return the blurb
 	 */
-	public DBStringTrimmed getBlurb() {
-		return blurb;
+	public String getBlurb() {
+		return blurb.getValue();
 	}
 
 	/**
