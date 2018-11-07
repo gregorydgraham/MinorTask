@@ -63,19 +63,20 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		Icon unlock = new Icon(VaadinIcon.UNLOCK);
 
 		Button profileButton = new Button(userIcon);
+		profileButton.setId("authorised-banner-profile-button");
 		profileButton.addClickListener((event) -> {
 			minortask().showProfile();
 		});
-		right.add();
 
 		Button logoutButton = new Button(unlock);
+		logoutButton.setId("authorised-banner-logout-button");
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
-
+		
 		right.add(logoutButton, profileButton);
-		final Div clearBreak = new Div();
-		clearBreak.getStyle().set("clear", "both");
+//		final Div clearBreak = new Div();
+//		clearBreak.getStyle().set("clear", "both");
 		add(left, right);
 	}
 
