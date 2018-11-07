@@ -21,3 +21,22 @@ and open the template in the editor.
 	background-color: white;
 	color: cadetblue;
 }
+
+#profile-image-div{
+	height: 200px;
+	width: 200px;
+}
+
+image-upload{
+	width: 20em;
+}
+
+#image-container{
+	display: flex;
+	flex-direction: row;
+}
+
+#user-profile-contents{
+	display:flex;
+	flex-direction: column;
+}

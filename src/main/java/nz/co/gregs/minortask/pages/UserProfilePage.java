@@ -43,6 +43,7 @@ public class UserProfilePage extends AuthorisedPage {
 	private final PaperInput emailInput = new PaperInput();
 	private final PaperTextArea blurb = new PaperTextArea();
 	private final H2 greeting = new H2();
+	private final Div imageDiv = new Div();
 
 	public UserProfilePage() {
 		super();
@@ -51,9 +52,12 @@ public class UserProfilePage extends AuthorisedPage {
 	@Override
 	protected Component getInternalComponent() {
 		Div component = new Div();
+		component.setId("user-profile-contents");
 		setValues();
 		addListeners();
-		component.add(greeting, profileImage, imageUpload, usernameDiv, emailInput, blurb);
+		final Div imageStuff = new Div(profileImage,imageUpload, imageDiv);
+		imageStuff.setId("image-container");
+		component.add(greeting, imageStuff, usernameDiv, emailInput, blurb);
 
 		return component;
 	}
@@ -84,6 +88,8 @@ public class UserProfilePage extends AuthorisedPage {
 		emailInput.setValue(user.getEmail()==null?"":user.getEmail());
 		blurb.setValue(user.getBlurb()==null?"":user.getBlurb());
 		greeting.setText("Welcome to the User Profile page.");
+		imageDiv.setId("profile-image-div");
+		minortask().setBackgroundToImage(imageDiv, user.profileImage);
 		setProfileImage();
 	}
 
