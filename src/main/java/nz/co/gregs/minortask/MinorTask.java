@@ -310,7 +310,7 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public void setBackgroundToImage(HasStyle aThis, Document profileImage) {
-		if (profileImage != null) {
+		if (profileImage != null && profileImage.mediaType.getValue().startsWith("image/")) {
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
