@@ -11,21 +11,40 @@ import com.vaadin.flow.component.html.Image;
  *
  * @author gregorygraham
  */
-public class ImageFromDocument extends Image {
+public class ImageFromDocument extends Image { 
+
+	private boolean userOriginalSize = true;
+	private long maxWidth;
 
 	public ImageFromDocument(Document doc) {
 		super(new DocumentImageStreamResource(doc), doc.filename.getValue());
+	}
+
+	public ImageFromDocument(Document doc, long maxWidth) {
+		super(new DocumentImageStreamResource(doc, maxWidth), doc.filename.getValue());
+		userOriginalSize = false;
+		this.maxWidth = maxWidth;
 	}
 
 	public ImageFromDocument() {
 		super();
 	}
 
+	public ImageFromDocument(long maxWidth) {
+		super();
+		userOriginalSize = false;
+		this.maxWidth = maxWidth;
+	}
+
 	public void setSrc(Document doc) {
 		if (doc != null) {
-			super.setSrc(new DocumentImageStreamResource(doc));
+			if (userOriginalSize) {
+				super.setSrc(new DocumentImageStreamResource(doc));
+			} else {
+				super.setSrc(new DocumentImageStreamResource(doc, maxWidth));
+			}
 			setAlt(doc.filename.getValue());
-		}else{
+		} else {
 			setAlt("No Image");
 		}
 	}
