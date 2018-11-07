@@ -310,15 +310,17 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public void setBackgroundToImage(HasStyle aThis, Document profileImage) {
-		if (profileImage != null && profileImage.mediaType.getValue().startsWith("image/")) {
+		if (profileImage != null
+				&& profileImage.mediaType.getValue() != null
+				&& profileImage.mediaType.getValue().startsWith("image/")) {
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
 					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
-			aThis.getStyle().set("background-image", "url(" + imageString + ")"); 
-			aThis.getStyle().set("background-size", "cover"); 
-			aThis.getStyle().set("background-position", "center"); 
-			aThis.getStyle().set("background-repeat", "no-repeat"); 
+			aThis.getStyle().set("background-image", "url(" + imageString + ")");
+			aThis.getStyle().set("background-size", "cover");
+			aThis.getStyle().set("background-position", "center");
+			aThis.getStyle().set("background-repeat", "no-repeat");
 		}
 	}
 }
