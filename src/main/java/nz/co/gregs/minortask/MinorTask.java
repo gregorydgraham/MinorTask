@@ -315,8 +315,10 @@ public class MinorTask extends Globals implements Serializable {
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
 					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
-			aThis.getStyle().set("background", "url(" + imageString + ")");
-			aThis.getStyle().set("background-size", "cover");
+			aThis.getStyle().set("background-image", "url(" + imageString + ")"); 
+			aThis.getStyle().set("background-size", "cover"); 
+			aThis.getStyle().set("background-position", "center"); 
+			aThis.getStyle().set("background-repeat", "no-repeat"); 
 		}
 	}
 }
