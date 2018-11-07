@@ -13,9 +13,6 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import java.sql.SQLException;
-import nz.co.gregs.dbvolution.DBTable;
-import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -25,7 +22,7 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 @Tag("authorised-banner")
 @StyleSheet("styles/authorised-banner.css")
-public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
+public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText, MinorTaskComponent {
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 
@@ -36,7 +33,7 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 
 	public final void buildComponent() {
 		setSizeUndefined();
-		
+
 		Div left = new Div();
 		left.addClassName("authorised-banner-left");
 
@@ -48,16 +45,9 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		left.add(welcomeMessage);
 		setText("Welcome to " + Globals.getApplicationName());
 
-		final long userID = minortask().getUserID();
-		User example = new User();
-		example.queryUserID().permittedValues(userID);
-		try {
-			final DBTable<User> userTable = getDatabase().getDBTable(example);
-			User user = userTable.getOnlyRow();
-			final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
-			setText(welcomeUser);
-		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
-		}
+		User user = minortask().getUser();
+		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
+		setText(welcomeUser);
 
 		Icon userIcon = new Icon(VaadinIcon.USER);
 		Icon unlock = new Icon(VaadinIcon.UNLOCK);
@@ -73,7 +63,7 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
-		
+
 		right.add(logoutButton, profileButton);
 //		final Div clearBreak = new Div();
 //		clearBreak.getStyle().set("clear", "both");
