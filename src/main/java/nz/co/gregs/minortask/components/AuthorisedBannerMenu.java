@@ -36,7 +36,7 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 
 	public final void buildComponent() {
 		setSizeUndefined();
-
+		
 		Div left = new Div();
 		left.addClassName("authorised-banner-left");
 
