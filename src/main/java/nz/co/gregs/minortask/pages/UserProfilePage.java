@@ -35,9 +35,7 @@ import nz.co.gregs.minortask.components.upload.ImageUpload;
 @StyleSheet("styles/user-profile-page.css")
 public class UserProfilePage extends AuthorisedPage {
 
-	private User user = null;
 	private final ImageUpload imageUpload = new ImageUpload();
-//	private ImageFromDocument profileImage = new ImageFromDocument(200l);
 	private final PaperInput usernameDiv = new PaperInput();
 	private final PaperInput emailInput = new PaperInput();
 	private final PaperTextArea blurb = new PaperTextArea();
@@ -53,10 +51,10 @@ public class UserProfilePage extends AuthorisedPage {
 		setValues();
 		setStyles();
 		addListeners();
-		
+
 		final Div imageStuff = new Div(imageDiv, imageUpload);
 		imageStuff.setId("image-container");
-		
+
 		Div component = new Div();
 		component.setId("user-profile-contents");
 		component.add(greeting, imageStuff, usernameDiv, emailInput, blurb);
@@ -66,7 +64,10 @@ public class UserProfilePage extends AuthorisedPage {
 
 	@Override
 	public String getPageTitle() {
-		return "Profile: @" + user.getUsername();
+		if (minortask().isLoggedIn()) {
+			return "Profile: @" + getUser().getUsername();
+		}
+		return "Profile Page";
 	}
 
 	private void addListeners() {
@@ -85,16 +86,17 @@ public class UserProfilePage extends AuthorisedPage {
 	}
 
 	private void setValues() {
-		user = minortask().getUser();
-		usernameDiv.setValue(user.getUsername()==null?"":user.getUsername());
-		emailInput.setValue(user.getEmail()==null?"":user.getEmail());
-		blurb.setValue(user.getBlurb()==null?"":user.getBlurb());
+		User user = minortask().getUser();
+		usernameDiv.setValue(user.getUsername() == null ? "" : user.getUsername());
+		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
+		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
 		greeting.setText("Welcome to the User Profile page.");
 		minortask().setBackgroundToImage(imageDiv, user.profileImage);
 		setProfileImage();
 	}
 
 	private void setProfileImage() {
+		User user = getUser();
 		if (user.profileImage != null) {
 			minortask().setBackgroundToImage(imageDiv, user.profileImage);
 		} else {
@@ -127,6 +129,7 @@ public class UserProfilePage extends AuthorisedPage {
 		System.out.println("EMAIL: " + emailInput.getValue());
 		System.out.println("BLURB: " + blurb.getValue());
 		MinorTask.chat("USERNAME: " + usernameDiv.getValue() + " EMAIL: " + emailInput.getValue());
+		User user = getUser();
 		user.setUsername(usernameDiv.getValue());
 		user.setEmail(emailInput.getValue());
 		user.setBlurb(blurb.getValue());
@@ -140,13 +143,12 @@ public class UserProfilePage extends AuthorisedPage {
 
 	private void profileImageUploaded(DocumentAddedEvent event) {
 		final Document doc = event.getValue();
-//		profileImage.setSrc(doc);
+		User user = getUser();
 		user.setProfileImageID(doc.documentID.getValue());
 		user.profileImage = doc;
 		try {
 			getDatabase().update(user);
 			savedNotice();
-//			profileImage = new ImageFromDocument(doc);
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -158,7 +160,6 @@ public class UserProfilePage extends AuthorisedPage {
 		greeting.setId("user-profile-greeting");
 		imageDiv.setId("profile-image-div");
 		imageUpload.setId("user-profile-imageupload");
-//		profileImage.setId("user-profile-profileimage");
 		usernameDiv.setId("user-profile-username");
 
 	}

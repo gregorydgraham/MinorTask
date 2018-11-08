@@ -10,5 +10,4 @@ package nz.co.gregs.minortask.components;
  * @author gregorygraham
  */
 public interface RequiresLogin extends MinorTaskComponent  {
-	
 }

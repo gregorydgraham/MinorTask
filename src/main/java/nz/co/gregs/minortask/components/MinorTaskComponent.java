@@ -11,6 +11,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
@@ -32,6 +33,10 @@ public interface MinorTaskComponent {
 
 	default Long getUserID() {
 		return minortask().getUserID();
+	}
+
+	default User getUser() {
+		return minortask().getUser();
 	}
 
 	default LocalDate asLocalDate(Date date) {
