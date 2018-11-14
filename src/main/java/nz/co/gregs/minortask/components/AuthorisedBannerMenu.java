@@ -14,8 +14,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -28,6 +26,8 @@ import nz.co.gregs.minortask.datamodel.User;
 public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
+	Button profileButton = new Button();
+	Button logoutButton = new Button();
 
 	public AuthorisedBannerMenu() {
 		if (minortask().isLoggedIn()) {
@@ -61,14 +61,16 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		Icon userIcon = new Icon(VaadinIcon.USER);
 		Icon unlock = new Icon(VaadinIcon.UNLOCK);
 
-		Button profileButton = new Button(userIcon);
+		profileButton.setIcon(userIcon);
 		profileButton.setId("authorised-banner-profile-button");
+		profileButton.addClassName("authorised-banner-button");
 		profileButton.addClickListener((event) -> {
 			minortask().showProfile();
 		});
 
-		Button logoutButton = new Button(unlock);
+		logoutButton.setIcon(unlock);
 		logoutButton.setId("authorised-banner-logout-button");
+		profileButton.addClassName("authorised-banner-button");
 		logoutButton.addClickListener((event) -> {
 			minortask().logout();
 		});
@@ -92,6 +94,19 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 	@Override
 	public void setText(String text) {
 		welcomeMessage.setText(text);
+	}
+
+	public void setAllButtonsUnselected() {
+		profileButton.removeClassName("authorised-banner-selected-button");
+		logoutButton.removeClassName("authorised-banner-selected-button");
+	}
+
+	public void setProfileButtonSelected() {
+		profileButton.addClassName("authorised-banner-selected-button");
+	}
+
+	public void setLogoutButtonSelected() {
+		logoutButton.addClassName("authorised-banner-selected-button");
 	}
 
 }

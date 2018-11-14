@@ -115,9 +115,8 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
-		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)
-		).setFlexGrow(20);
-		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source));
+		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
+		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
 	}
 
 	private Component getDescriptionComponent(Task task) {

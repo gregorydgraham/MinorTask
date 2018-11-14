@@ -29,12 +29,7 @@ authorised-banner-left {
 	flex-direction: row;
 }
 
-authorised-banner-right{	
-	/*width:30%*/
-}
-
-authorised-banner-right vaadin-button {
-	/*float:right;*/
+authorised-banner-right{
 }
 
 #authorised-banner-profile-image{
@@ -42,4 +37,13 @@ authorised-banner-right vaadin-button {
 	height: 50px;
 	border-radius: 5px;
 	display: inline-block;	
+}
+
+.authorised-banner-selected-button{
+	background-color: white;
+	color: cadetblue;
+}
+
+.authorised-banner-button{
+	color: #0099cc;
 }

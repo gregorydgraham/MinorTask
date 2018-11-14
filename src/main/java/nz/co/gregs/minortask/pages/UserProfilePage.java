@@ -10,12 +10,12 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import static nz.co.gregs.minortask.Globals.*;
@@ -34,7 +34,7 @@ import nz.co.gregs.minortask.components.upload.ImageUpload;
 @Route("profile")
 @Tag("user-profile")
 @StyleSheet("styles/user-profile-page.css")
-public class UserProfilePage extends AuthorisedPage {
+public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListener{
 
 	private final ImageUpload imageUpload = new ImageUpload();
 	private final PaperInput usernameDiv = new PaperInput();
@@ -158,6 +158,7 @@ public class UserProfilePage extends AuthorisedPage {
 	}
 
 	private void setStyles() {
+		banner.setProfileButtonSelected();
 		blurb.setId("user-profile-bio");
 		emailInput.setId("user-profile-email");
 		greeting.setId("user-profile-greeting");
@@ -166,4 +167,9 @@ public class UserProfilePage extends AuthorisedPage {
 		usernameDiv.setId("user-profile-username");
 
 	}
+
+	@Override
+	public void beforeLeave(BeforeLeaveEvent event) {
+		banner.setAllButtonsUnselected();
+	} 
 }
