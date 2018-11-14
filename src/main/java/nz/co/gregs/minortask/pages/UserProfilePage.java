@@ -10,11 +10,12 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.polymertemplate.EventHandler;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.templatemodel.TemplateModel;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import static nz.co.gregs.minortask.Globals.*;
@@ -91,14 +92,22 @@ public class UserProfilePage extends AuthorisedPage {
 		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
 		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
 		greeting.setText("Welcome to the User Profile page.");
-		minortask().setBackgroundToImage(imageDiv, user.profileImage);
+		try {
+			minortask().setBackgroundToLargeImage(imageDiv, user.profileImage);
+		} catch (IOException ex) {
+			error("Profile Image", ex.getMessage());
+		}
 		setProfileImage();
 	}
 
 	private void setProfileImage() {
 		User user = getUser();
 		if (user.profileImage != null) {
-			minortask().setBackgroundToImage(imageDiv, user.profileImage);
+			try {
+				minortask().setBackgroundToLargeImage(imageDiv, user.profileImage);
+			} catch (IOException ex) {
+				error("Profile Image", ex.getMessage());
+			}
 		} else {
 			if (user.getProfileImageID() != null) {
 				try {
@@ -117,12 +126,6 @@ public class UserProfilePage extends AuthorisedPage {
 		}
 	}
 
-	@EventHandler
-	public void returnToProjects() {
-		MinorTask.showProjects();
-	}
-
-	@EventHandler
 	public void saveUser() {
 		System.out.println("VALUE CHANGED!");
 		System.out.println("USERNAME: " + usernameDiv.getValue());
@@ -162,20 +165,5 @@ public class UserProfilePage extends AuthorisedPage {
 		imageUpload.setId("user-profile-imageupload");
 		usernameDiv.setId("user-profile-username");
 
-	}
-
-	public static interface UserModel extends TemplateModel {
-
-		public String getUsername();
-
-		public void setUsername(String newValue);
-
-		public String getEmail();
-
-		public void setEmail(String newValue);
-
-		public void setGreeting(String newValue);
-
-		public String getBiography();
 	}
 }

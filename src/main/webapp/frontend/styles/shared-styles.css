@@ -319,6 +319,7 @@ task-summary{
 }
 
 .celebration-spin{
+	color: limegreen;
 	opacity: 0;
 	transform: scale(0.01, 0.01);
 	position: absolute;

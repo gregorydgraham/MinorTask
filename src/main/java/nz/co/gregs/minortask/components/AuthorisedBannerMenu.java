@@ -13,6 +13,9 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -46,7 +49,11 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		Div profileImageDiv = new Div();
 		profileImageDiv.setId("authorised-banner-profile-image");
 		if (user.profileImage != null) {
-			minortask().setBackgroundToImage(profileImageDiv, user.profileImage);
+			try {
+				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
+			} catch (IOException ex) {
+				warning("Profile Image", ex.getMessage());
+			}
 		}
 		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 		setText(welcomeUser);

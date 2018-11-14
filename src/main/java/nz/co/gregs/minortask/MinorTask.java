@@ -13,6 +13,7 @@ import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.VaadinSessionState;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,6 +32,9 @@ import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.components.upload.Document;
+import nz.co.gregs.minortask.components.upload.DocumentIconStreamResource;
+import nz.co.gregs.minortask.components.upload.LargeImageInputStreamFactory;
+import nz.co.gregs.minortask.components.upload.ThumbnailInputStreamFactory;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.slf4j.LoggerFactory;
 
@@ -309,10 +313,44 @@ public class MinorTask extends Globals implements Serializable {
 		UI.getCurrent().navigate(UserProfilePage.class);
 	}
 
-	public void setBackgroundToImage(HasStyle aThis, Document profileImage) {
+	public void setBackgroundToFullsizeImage(HasStyle aThis, Document profileImage) {
 		if (profileImage != null
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
+			String imageString
+					= "data:" + profileImage.mediaType.getValue()
+					+ ";base64,"
+					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
+			aThis.getStyle().set("background-image", "url(" + imageString + ")");
+			aThis.getStyle().set("background-size", "cover");
+			aThis.getStyle().set("background-position", "center");
+			aThis.getStyle().set("background-repeat", "no-repeat");
+		}
+	}
+
+	public void setBackgroundToSmallImage(HasStyle aThis, Document profileImage) throws IOException {
+		if (profileImage != null
+				&& profileImage.mediaType.getValue() != null
+				&& profileImage.mediaType.getValue().startsWith("image/")) {
+			ThumbnailInputStreamFactory res = new ThumbnailInputStreamFactory(profileImage);
+			DatatypeConverter.printBase64Binary(res.getByteArray());
+			String imageString
+					= "data:" + profileImage.mediaType.getValue()
+					+ ";base64,"
+					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
+			aThis.getStyle().set("background-image", "url(" + imageString + ")");
+			aThis.getStyle().set("background-size", "cover");
+			aThis.getStyle().set("background-position", "center");
+			aThis.getStyle().set("background-repeat", "no-repeat");
+		}
+	}
+
+	public void setBackgroundToLargeImage(HasStyle aThis, Document profileImage) throws IOException {
+		if (profileImage != null
+				&& profileImage.mediaType.getValue() != null
+				&& profileImage.mediaType.getValue().startsWith("image/")) {
+			LargeImageInputStreamFactory res = new LargeImageInputStreamFactory(profileImage);
+			DatatypeConverter.printBase64Binary(res.getByteArray());
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"

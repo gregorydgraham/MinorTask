@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -25,6 +26,7 @@ import nz.co.gregs.minortask.components.TaskTabs;
  * @author gregorygraham
  */
 @HtmlImport("frontend://styles/shared-styles.html")
+@StyleSheet("frontend://styles/authorised-page.css")
 public abstract class AuthorisedPage extends Div implements MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle {
 
 	protected Long taskID = null;
