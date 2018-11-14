@@ -12,11 +12,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.Location;
 import java.sql.SQLException;
 import java.util.Date;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.pages.ProjectsLayout;
 
 /**
  *
@@ -30,6 +33,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	public final TextField EMAIL_FIELD = new TextField("Rescue Email Address");
 	private final User newUser = new User();
 	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", false);
+	private Location destination;
 
 	public SignupComponent() {
 		this("", "");
@@ -38,6 +42,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	public SignupComponent(String username, String password) {
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
+		minortask().setLoginDestination(ProjectsLayout.class);
 		add(getComponent());
 	}
 
@@ -70,7 +75,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 			final String pass = PASSWORD_FIELD.getValue();
 			final String pass2 = REPEAT_PASSWORD_FIELD.getValue();
 			final StringBuffer warningBuffer = new StringBuffer();
-			minortask().chat(username);
+			MinorTask.chat(username);
 			if (username.isEmpty() || pass.isEmpty()) {
 				warningBuffer.append("Blank names and passwords are not allowed\n");
 			}
@@ -92,11 +97,11 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 			User example = new User();
 			example.queryUsername().permittedValuesIgnoreCase(username);
 			Long count = getDatabase().getDBTable(example).count();
-			if (count > 0) {
-				minortask().error("You're unique", "Sorry, that username is already taken, please try another one");
+			if (warningBuffer.length() > 0) {
+				MinorTask.error("Secure password required", warningBuffer.toString());
 			} else {
-				if (warningBuffer.length() > 0) {
-					minortask().error("Secure password required", warningBuffer.toString());
+				if (count > 0) {
+					MinorTask.error("You're unique", "Sorry, that username is already taken, please try another one");
 				} else {
 					try {
 						newUser.setUsername(username);
@@ -104,12 +109,15 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 						newUser.setEmail(email);
 						newUser.setSignupDate(new Date());
 						getDatabase().insert(newUser);
-						minortask().chat("Welcome to Minor Task @" + username);
+						MinorTask.chat("Welcome to Minor Task @" + username);
 						minortask().loginAs(newUser, pass, REMEMBER_ME_FIELD.getValue());
+						if (minortask().isLoggedIn()) {
+							showDestination();
+						}
 					} catch (MinorTask.UnknownUserException | IncorrectPasswordException ex) {
-						minortask().warning("Login Error", "Name and/or password do not match any known combination");
+						MinorTask.warning("Login Error", "Name and/or password do not match any known combination");
 					} catch (MinorTask.TooManyUsersException ex) {
-						minortask().warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
+						MinorTask.warning("Login Error", "There is something odd with this login, please contact MinorTask about this issue");
 					}
 				}
 			}
@@ -118,8 +126,16 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 		}
 	}
 
+	private void showDestination() {
+		if (destination != null) {
+			Globals.showLocation(destination);
+		}else{
+			Globals.showOpeningPage();
+		}
+	}
+
 	public void handleEscapeButton() {
-		minortask().showLogin(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
+		MinorTask.showLogin(USERNAME_FIELD.getValue(), PASSWORD_FIELD.getValue());
 	}
 
 	public final void setAsDefaultButton(Button button) {
