@@ -370,7 +370,7 @@ public class MinorTask extends Globals implements Serializable {
 		example.taskID.permittedValues(projectID);
 		final DBDatabase database = getDatabase();
 		DBQuery query = database.getDBQuery(example);
-		DBRecursiveQuery<Task> recurse = database.getDBRecursiveQuery(query, example.column(example.projectID), example);
+		DBRecursiveQuery<Task> recurse = query.getDBRecursiveQuery(example.column(example.projectID));
 		List<Task> descendants = recurse.getDescendants();
 		return descendants;
 	}
@@ -380,7 +380,7 @@ public class MinorTask extends Globals implements Serializable {
 		example.taskID.permittedValues(taskId);
 		final DBDatabase database = getDatabase();
 		DBQuery query = database.getDBQuery(example);
-		DBRecursiveQuery<Task> recurse = database.getDBRecursiveQuery(query, example.column(example.projectID), example);
+		DBRecursiveQuery<Task> recurse = query.getDBRecursiveQuery(example.column(example.projectID));
 		List<Task> ancestors = recurse.getAncestors();
 		return ancestors;
 	}
