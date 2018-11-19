@@ -16,6 +16,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -40,7 +41,6 @@ import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
 import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
-import nz.co.gregs.minortask.components.upload.ImageUpload;
 import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
@@ -53,6 +53,7 @@ import org.joda.time.Period;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/edittask.css")
 public class EditTask extends Div implements RequiresLogin {
 
 	PaperInput name = new PaperInput();
@@ -137,6 +138,8 @@ public class EditTask extends Div implements RequiresLogin {
 		completeButton.addClassNames("danger", "completebutton");
 		completeButton.addClickListener(new CompleteTaskListener(minortask(), taskID));
 		completeButton.setVisible(false);
+		Div completeButtonDiv = new Div(completeButton);
+		completeButtonDiv.addClassName("edit-task-complete-button-container");
 
 		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
 		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
@@ -156,15 +159,15 @@ public class EditTask extends Div implements RequiresLogin {
 		dates.addClassName("dates-component");
 		dates.setSizeUndefined();
 
-		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
+//		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 
 		addSubTask.addClassName("friendly");
-		addDates.addClassName("friendly");
-		addRepeat.addClassName("friendly");
-		addDocument.addClassName("friendly");
-		addImage.addClassName("friendly");
-		addPlace.addClassName("friendly");
-		addWebLink.addClassName("friendly");
+		addDates.addClassName("edit-task-button");
+		addRepeat.addClassName("edit-task-button");
+		addDocument.addClassName("edit-task-button");
+		addImage.addClassName("edit-task-button");
+		addPlace.addClassName("edit-task-button");
+		addWebLink.addClassName("edit-task-button");
 		final Div addButtons = new Div();
 		addButtons.add(
 				addSubTask,
@@ -187,7 +190,7 @@ public class EditTask extends Div implements RequiresLogin {
 		nameDiv.addClassName("edit-task-name");
 
 		Div topLayout = new Div(
-				projectPath,
+//				projectPath,
 				nameDiv,
 				description,
 				addButtons,
@@ -200,7 +203,7 @@ public class EditTask extends Div implements RequiresLogin {
 				subtasks,
 				extrasLayout,
 				Globals.getSpacer(),
-				completeButton,
+				completeButtonDiv,
 				reopenButton,
 				Globals.getSpacer(),
 				completedTasks);

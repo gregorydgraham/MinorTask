@@ -11,11 +11,11 @@ import nz.co.gregs.minortask.components.tasklists.UpcomingTasksList;
 
 
 @Route("upcoming")
-public class UpcomingTasksPage extends AuthorisedPage {
+public class UpcomingTasksPage extends AuthorisedOptionalTaskPage{
 
 	@Override
-	public Component getInternalComponent() {
-		return new UpcomingTasksList();
+	public Component getInternalComponent(Long taskID) {
+		return new UpcomingTasksList(taskID);
 	}
 
 	@Override

@@ -10,11 +10,11 @@ import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.AllCompletedTasksComponent;
 
 @Route("complete")
-public class AllCompletedTasksPage extends AuthorisedPage {
+public class AllCompletedTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override
-	public Component getInternalComponent() { 
-		return new AllCompletedTasksComponent();
+	protected Component getInternalComponent(Long parameter) {
+		return new AllCompletedTasksComponent(parameter);
 	}
 
 	@Override

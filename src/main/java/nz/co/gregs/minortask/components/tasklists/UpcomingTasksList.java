@@ -7,11 +7,8 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.MinorTask;
@@ -22,8 +19,8 @@ public class UpcomingTasksList extends AbstractTaskList {
 	
 	private static final int DAYS_AHEAD = +3;
 
-	public UpcomingTasksList() {
-		super();
+	public UpcomingTasksList(Long taskID) {
+		super(taskID);
 	}
 
 	@Override
@@ -38,13 +35,14 @@ public class UpcomingTasksList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
+		LocalDate nowLocalDate = LocalDate.now();
+		Date now = asDate(nowLocalDate);
+		final LocalDate plusDays = nowLocalDate.plusDays(DAYS_AHEAD);
+		Date threeDaysHence = asDate(plusDays);
+		if(taskID==null){
 		Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
-		LocalDate now = LocalDate.now();
-		final LocalDate plusDays = now.plusDays(DAYS_AHEAD);
-		Date threeDaysHence = asDate(plusDays);
-		
-		example.startDate.permittedRange(asDate(now), threeDaysHence);
+		example.startDate.permittedRange(now, threeDaysHence);
 		example.completionDate.permitOnlyNull();
 		final Task task = new Task();
 		final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
@@ -56,6 +54,17 @@ public class UpcomingTasksList extends AbstractTaskList {
 				example.column(example.startDate)
 		);
 		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;
+		return tasks;}else{
+			List<Task> descendants = minortask().getTasksOfProject(taskID);
+			List<Task> tasks = new ArrayList<>();
+			descendants.stream().filter((t) -> {
+				return t.completionDate.getValue() == null
+						&& !t.taskID.getValue().equals(taskID)
+						&& t.startDate.getValue() != null
+						&& t.startDate.getValue().after(now)
+						&& t.startDate.getValue().before(threeDaysHence);
+			}).forEach(tasks::add);
+			return tasks;
+		}
 	}
 }

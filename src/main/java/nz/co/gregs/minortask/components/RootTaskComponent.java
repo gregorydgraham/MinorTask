@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.components.tasklists.CompletedProjectsList;
@@ -16,9 +15,10 @@ import nz.co.gregs.minortask.components.tasklists.OpenProjectsList;
  *
  * @author gregorygraham
  */
-public class RootTaskComponent extends Div implements RequiresLogin {
+public class RootTaskComponent extends SecureDiv {
 
 	public RootTaskComponent(Long taskID) {
+		super();
 		add(taskID == null ? getComponent() : new EditTask(taskID));
 		this.setWidth("100%");
 		addClassName("root-task-component");
@@ -32,7 +32,7 @@ public class RootTaskComponent extends Div implements RequiresLogin {
 		Label spacer = new Label("");
 		spacer.setHeight("1em");
 		layout.add(
-				new ProjectPathNavigator.WithAddProjectButton(), 
+//				new ProjectPathNavigator.WithAddProjectButton(), 
 				new OpenProjectsList(),
 				spacer,
 				new CompletedProjectsList()

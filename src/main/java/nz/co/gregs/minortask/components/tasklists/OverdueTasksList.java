@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -15,47 +16,45 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public class IdeasList extends AbstractTaskList {
+public class OverdueTasksList extends AbstractTaskList {
 
-	public IdeasList(Long parameter) {
-		super(parameter);
+	public OverdueTasksList(Long TaskID) {
+		super(TaskID);
 	}
 
 	@Override
 	protected String getListClassName() {
-		return "ideaslist";
+		return "overduetaskslist";
 	}
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return tasks.size() + " Ideas";
+		return tasks.size() + " Overdue Tasks";
 	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		System.out.println("TASKID: "+taskID);
 		if (taskID == null) {
-			Task.Project example = new Task.Project();
-			example.userID.permittedValues(getUserID());
-			example.startDate.permitOnlyNull();
-			example.preferredDate.permitOnlyNull();
-			example.preferredDate.permitOnlyNull();
-			example.completionDate.permitOnlyNull();
-			Task task = new Task();
+			Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
+			example.userID.permittedValues(minortask().getUserID());
+			example.finalDate.permittedRangeExclusive(null, new Date());
+			example.completionDate.permittedValues((Date) null);
+			final Task task = new Task();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
-			query.setSortOrder(example.column(example.name));
+			query.addCondition(task.column(task.taskID).isNull());
+			query.setSortOrder(example.column(example.isOverdue), example.column(example.hasStarted), example.column(example.finalDate), example.column(example.startDate));
 			query.printAllRows();
 			List<Task> tasks = query.getAllInstancesOf(example);
 			return tasks;
 		} else {
 			List<Task> descendants = minortask().getTasksOfProject(taskID);
 			List<Task> tasks = new ArrayList<>();
+			final Date now = new Date();
 			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() == null 
-						&& t.startDate.getValue()==null
-						&& t.preferredDate.getValue()==null
-						&& t.finalDate.getValue()==null
-						&& !t.taskID.getValue().equals(taskID);
+				return t.completionDate.getValue() == null
+						&& !t.taskID.getValue().equals(taskID)
+						&& t.finalDate.getValue() != null
+						&& t.finalDate.getValue().before(now);
 			}).forEach(tasks::add);
 			return tasks;
 		}

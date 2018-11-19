@@ -23,13 +23,14 @@ import nz.co.gregs.minortask.datamodel.User;
  */
 @Tag("authorised-banner")
 @StyleSheet("styles/authorised-banner.css")
-public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText {
+public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 	Button profileButton = new Button();
 	Button logoutButton = new Button();
 
 	public AuthorisedBannerMenu() {
+		super();
 		if (minortask().isLoggedIn()) {
 			buildComponent();
 		} else {
@@ -48,13 +49,13 @@ public class AuthorisedBannerMenu extends Div implements RequiresLogin, HasText 
 		User user = minortask().getUser();
 		Div profileImageDiv = new Div();
 		profileImageDiv.setId("authorised-banner-profile-image");
-		if (user.profileImage != null) {
-			try {
-				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
-			} catch (IOException ex) {
-				warning("Profile Image", ex.getMessage());
-			}
-		}
+//		if (user.profileImage != null) {
+//			try {
+//				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
+//			} catch (IOException ex) {
+//				warning("Profile Image", ex.getMessage());
+//			}
+//		}
 		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 		setText(welcomeUser);
 

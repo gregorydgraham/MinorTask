@@ -15,6 +15,7 @@ import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.FooterMenu;
+import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.components.TaskTabs;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
@@ -44,9 +45,11 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
+		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 		Div internalComponentHolder
 				= new Div(
 						banner,
+						projectPath,
 						taskTabs,
 						internalComponent
 				);

@@ -24,6 +24,8 @@ import javax.servlet.http.Cookie;
 import javax.xml.bind.DatatypeConverter;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
+import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.datatypes.DBPasswordHash;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
@@ -31,6 +33,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.components.tasklists.IdeasList;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.upload.DocumentIconStreamResource;
 import nz.co.gregs.minortask.components.upload.LargeImageInputStreamFactory;
@@ -360,5 +363,25 @@ public class MinorTask extends Globals implements Serializable {
 			aThis.getStyle().set("background-position", "center");
 			aThis.getStyle().set("background-repeat", "no-repeat");
 		}
+	}
+
+	public List<Task> getTasksOfProject(Long projectID) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		Task example = new Task();
+		example.taskID.permittedValues(projectID);
+		final DBDatabase database = getDatabase();
+		DBQuery query = database.getDBQuery(example);
+		DBRecursiveQuery<Task> recurse = database.getDBRecursiveQuery(query, example.column(example.projectID), example);
+		List<Task> descendants = recurse.getDescendants();
+		return descendants;
+	}
+
+	public List<Task> getProjectsOfTask(Long taskId) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		Task example = new Task();
+		example.taskID.permittedValues(taskId);
+		final DBDatabase database = getDatabase();
+		DBQuery query = database.getDBQuery(example);
+		DBRecursiveQuery<Task> recurse = database.getDBRecursiveQuery(query, example.column(example.projectID), example);
+		List<Task> ancestors = recurse.getAncestors();
+		return ancestors;
 	}
 }

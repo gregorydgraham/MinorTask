@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Component;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -73,5 +74,13 @@ public interface MinorTaskComponent {
 
 	default public Task.Project getProjectOfTask(Long taskID) throws MinorTask.InaccessibleTaskException {
 		return getTaskAndProject(taskID).getProject();
+	}
+
+	default boolean isLoggedIn(){
+		return minortask().isLoggedIn();
+	}
+
+	default boolean isAccessDenied(Component component){
+		return !minortask().isLoggedIn();
 	}
 }

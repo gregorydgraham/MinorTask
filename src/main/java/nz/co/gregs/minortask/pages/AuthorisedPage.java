@@ -19,6 +19,7 @@ import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
+import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.components.TaskTabs;
 
 /**
@@ -63,9 +64,12 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 		taskTabs = new TaskTabs(this, taskID);
 		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 		final Component internalComponent = getInternalComponent();
+		
+		ProjectPathNavigator projectPath = new ProjectPathNavigator.WithAddProjectButton();
 		Div internalComponentHolder
 				= new Div(
 						banner,
+						projectPath,
 						taskTabs,
 						internalComponent
 				);

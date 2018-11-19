@@ -113,48 +113,6 @@ paper-input{
 	padding-top: 5px;
 }
 
-.edit-task-component{
-	width: 100%;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	align-content: space-around;
-	align-items: center;
-}
-
-.edit-task-contents{
-	width: 98%;
-}
-
-.edit-task-name{
-	display: -webkit-flex; /* Safari */
-	-webkit-flex-wrap: wrap; /* Safari 6.1+ */
-	display: flex;   
-	flex-wrap: wrap;
-	width: 100%;
-}
-
-.edit-task-name-input{
-	width:100%;
-	max-width:30em;
-}
-
-.edit-task-description{
-	width:100%;
-}
-
-.edit-task-notes{
-	width:100%;
-}
-
-.edit-task-addbuttons{
-	display: -webkit-flex; /* Safari */
-	-webkit-flex-wrap: wrap; /* Safari 6.1+ */
-	display: flex;   
-	flex-wrap: wrap;
-}
-
 .optional-date-picker{
 	padding:0;
 	display: block;
@@ -239,12 +197,6 @@ weblink-editor-addbutton{
 		padding: 0;
 		margin-left: 0; margin-right: 0;
 	}
-}
-
-.completebutton{
-	background-color: red; 
-	color: white; 
-	border-radius: 4px;
 }
 
 task-summary{

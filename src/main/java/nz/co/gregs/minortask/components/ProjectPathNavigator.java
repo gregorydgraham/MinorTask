@@ -9,8 +9,15 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import static nz.co.gregs.minortask.Globals.getDatabase;
+import static nz.co.gregs.minortask.Globals.getTaskExample;
+import static nz.co.gregs.minortask.Globals.sqlerror;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -19,7 +26,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  * @author gregorygraham
  */
 //@Tag("project-path-navigator")
-public class ProjectPathNavigator extends Div implements RequiresLogin {
+public class ProjectPathNavigator extends Div implements MinorTaskComponent, RequiresLogin {
 
 	private final Long taskID;
 
@@ -30,13 +37,27 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	}
 
 	protected void buildComponent() {
-		List<Task> ancestors = MinorTask.getProjectPathTasks(getTaskID(), minortask().getUserID());
+		List<Task> ancestors = getProjectPathTasks(getTaskID(), getUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
-				.filter((ancestor) -> (ancestor != null))
+				//.filter((ancestor) -> (ancestor != null))
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
+	}
+
+	public List<Task> getProjectPathTasks(Long taskID, final long userID) {
+		try {
+			final Task task = getTaskExample(taskID, userID);
+			DBQuery query = getDatabase().getDBQuery(task);
+			DBRecursiveQuery<Task> recurse = new DBRecursiveQuery<Task>(query, task.column(task.projectID));
+			List<Task> ancestors = recurse.getAncestors();
+			ancestors.add(null);
+			return ancestors;
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		return new ArrayList<>();
 	}
 
 	public Button getButtonForTaskID(Task task) {
@@ -45,7 +66,8 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 			MinorTask.showTask(foundID);
 		});
 		formatButton(button);
-		if(task!=null && task.taskID.getValue().equals(taskID)){
+		if ((task != null && task.taskID.getValue().equals(taskID))
+				|| (task == null && taskID == null)) {
 			button.addClassName("currenttask");
 		}
 		return button;
@@ -67,7 +89,7 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	}
 
 	public static class WithAddTaskButton extends ProjectPathNavigator {
- 
+
 		public WithAddTaskButton(Long taskID) {
 			super(taskID);
 		}
@@ -83,7 +105,7 @@ public class ProjectPathNavigator extends Div implements RequiresLogin {
 	}
 
 	public static class WithAddProjectButton extends ProjectPathNavigator {
- 
+
 		public WithAddProjectButton() {
 			super(null);
 		}

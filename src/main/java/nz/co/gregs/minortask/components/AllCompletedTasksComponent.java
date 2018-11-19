@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -25,8 +26,14 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	private ArrayList<Task> month;
 	private ArrayList<Task> others;
 	private ArrayList<Task> year;
+	private Long taskID = null;
 
 	public AllCompletedTasksComponent() {
+		this(null);
+	}
+
+	public AllCompletedTasksComponent(Long parameter) {
+		this.taskID = parameter;
 		try {
 			addClassName("all-completed-tasks-component");
 			this.allTasks = getTasksToList();
@@ -83,18 +90,33 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	}
 
 	protected final List<Task> getTasksToList() throws SQLException {
-		Task example = new Task();
-		example.userID.permittedValues(getUserID());
-		example.completionDate.excludedValues((Date) null);
-		example.completionDate.setSortOrderDescending();
-		final DBQuery dbTable = getDatabase().getDBQuery(example);
-		dbTable.setSortOrder(
-				example.column(example.completionDate),
-				example.column(example.name),
-				example.column(example.taskID)
-		);
-		List<Task> tasks = dbTable.getAllInstancesOf(example);
-		return tasks;
+		if (taskID == null) {
+			// non-recursive query is faster
+			Task example = new Task();
+			example.userID.permittedValues(getUserID());
+			example.completionDate.excludedValues((Date) null);
+			example.completionDate.setSortOrderDescending();
+			final DBQuery dbTable = getDatabase().getDBQuery(example);
+			dbTable.setSortOrder(
+					example.column(example.completionDate),
+					example.column(example.name),
+					example.column(example.taskID)
+			);
+			List<Task> tasks = dbTable.getAllInstancesOf(example);
+			return tasks;
+		} else {
+			Task example = new Task();
+			example.taskID.permittedValues(taskID);
+//			example.userID.permittedValues(getUserID());
+			DBQuery query = getDatabase().getDBQuery(example);
+			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
+			List<Task> descendants = recurse.getDescendants();
+			List<Task> tasks = new ArrayList<>();
+			descendants.stream().filter((t) -> {
+				return t.completionDate.getValue() != null && !t.taskID.getValue().equals(taskID);
+			}).forEach(tasks::add);
+			return tasks;
+		}
 	}
 
 	private void splitTasks(List<Task> allTasks) throws SQLException {
