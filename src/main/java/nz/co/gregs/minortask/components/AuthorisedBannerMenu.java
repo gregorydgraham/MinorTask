@@ -13,7 +13,6 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import java.io.IOException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -24,6 +23,7 @@ import nz.co.gregs.minortask.datamodel.User;
 @Tag("authorised-banner")
 @StyleSheet("styles/authorised-banner.css")
 public class AuthorisedBannerMenu extends SecureDiv implements HasText {
+
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 	Button profileButton = new Button();
@@ -37,6 +37,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 			add(new AccessDeniedComponent());
 		}
 		this.addClassName("authorised-banner");
+		this.setId(getStaticID());
 	}
 
 	public final void buildComponent() {
@@ -85,6 +86,10 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		left.add(profileImageDiv, welcomeMessage);
 		right.add(logoutButton, profileButton);
 		add(left, right);
+	}
+	
+	static String getStaticID() {
+		return "authorised_banner_id";
 	}
 
 	@Override

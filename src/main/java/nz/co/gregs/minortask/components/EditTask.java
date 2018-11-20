@@ -14,6 +14,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.StyleSheet;
@@ -54,7 +55,7 @@ import org.joda.time.Period;
  * @author gregorygraham
  */
 @StyleSheet("styles/edittask.css")
-public class EditTask extends Div implements RequiresLogin {
+public class EditTask extends SecureDiv {
 
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
@@ -148,18 +149,14 @@ public class EditTask extends Div implements RequiresLogin {
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
 		Div completedLayout = new Div(completedIndicator, reopenButton);
 		completedLayout.addClassName("completedindicator-container");
-//		completedLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.END);
 
 		Div details = new Div(
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.addClassName("statusindicators-container");
-//		details.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.END);
 		details.setSizeUndefined();
 
 		dates.addClassName("dates-component");
 		dates.setSizeUndefined();
-
-//		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
 
 		addSubTask.addClassName("friendly");
 		addDates.addClassName("edit-task-button");
@@ -190,7 +187,6 @@ public class EditTask extends Div implements RequiresLogin {
 		nameDiv.addClassName("edit-task-name");
 
 		Div topLayout = new Div(
-//				projectPath,
 				nameDiv,
 				description,
 				addButtons,
@@ -521,6 +517,7 @@ public class EditTask extends Div implements RequiresLogin {
 		}
 
 		private Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
+			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
 			if (taskID != null) {
 				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask().getUserID());
 				for (Task subtask : subtasks) {
