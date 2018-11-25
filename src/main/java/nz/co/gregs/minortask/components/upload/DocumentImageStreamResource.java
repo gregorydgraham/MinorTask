@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
  *
  * @author gregorygraham
  */
+@Deprecated
 public class DocumentImageStreamResource extends StreamResource {
 
 	public DocumentImageStreamResource(Document doc) {

@@ -10,6 +10,8 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
@@ -31,13 +33,13 @@ import nz.co.gregs.minortask.components.upload.ImageUpload;
  *
  * @author gregorygraham
  */
-@Route(value="profile", layout = MinortaskPage.class)
+@Route(value = "profile", layout = MinortaskPage.class)
 @Tag("user-profile")
 @StyleSheet("styles/user-profile-page.css")
-public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListener{
+public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListener {
 
 	private final ImageUpload imageUpload = new ImageUpload();
-	private final PaperInput usernameDiv = new PaperInput();
+	private final PaperInput usernameInput = new PaperInput();
 	private final PaperInput emailInput = new PaperInput();
 	private final PaperTextArea blurb = new PaperTextArea();
 	private final H2 greeting = new H2();
@@ -58,7 +60,13 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 
 		Div component = new Div();
 		component.setId("user-profile-contents");
-		component.add(greeting, imageStuff, usernameDiv, emailInput, blurb);
+		component.add(
+				greeting,
+				imageStuff,
+				new HorizontalLayout(new Label("Username: "), usernameInput),
+				new HorizontalLayout(new Label("Email: "), emailInput),
+				new HorizontalLayout(new Label("Bio: "), blurb)
+		);
 
 		return component;
 	}
@@ -75,7 +83,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		imageUpload.addDocumentAddedListener((event) -> {
 			profileImageUploaded(event);
 		});
-		usernameDiv.addBlurListener((event) -> {
+		usernameInput.addBlurListener((event) -> {
 			saveUser();
 		});
 		emailInput.addBlurListener((event) -> {
@@ -88,10 +96,10 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 
 	private void setValues() {
 		User user = minortask().getUser();
-		usernameDiv.setValue(user.getUsername() == null ? "" : user.getUsername());
+		usernameInput.setValue(user.getUsername() == null ? "" : user.getUsername());
 		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
 		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
-		greeting.setText("Welcome to the User Profile page.");
+		greeting.setText("@"+user.getUsername()+" Profile");
 		try {
 			minortask().setBackgroundToLargeImage(imageDiv, user.profileImage);
 		} catch (IOException ex) {
@@ -128,12 +136,12 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 
 	public void saveUser() {
 		System.out.println("VALUE CHANGED!");
-		System.out.println("USERNAME: " + usernameDiv.getValue());
+		System.out.println("USERNAME: " + usernameInput.getValue());
 		System.out.println("EMAIL: " + emailInput.getValue());
 		System.out.println("BLURB: " + blurb.getValue());
-		MinorTask.chat("USERNAME: " + usernameDiv.getValue() + " EMAIL: " + emailInput.getValue());
+		MinorTask.chat("USERNAME: " + usernameInput.getValue() + " EMAIL: " + emailInput.getValue());
 		User user = getUser();
-		user.setUsername(usernameDiv.getValue());
+		user.setUsername(usernameInput.getValue());
 		user.setEmail(emailInput.getValue());
 		user.setBlurb(blurb.getValue());
 		try {
@@ -164,12 +172,12 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		greeting.setId("user-profile-greeting");
 		imageDiv.setId("profile-image-div");
 		imageUpload.setId("user-profile-imageupload");
-		usernameDiv.setId("user-profile-username");
+		usernameInput.setId("user-profile-username");
 
 	}
 
 	@Override
 	public void beforeLeave(BeforeLeaveEvent event) {
 		banner.setAllButtonsUnselected();
-	} 
+	}
 }

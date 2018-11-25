@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import java.io.IOException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.User;
 
@@ -50,13 +51,13 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		User user = minortask().getUser();
 		Div profileImageDiv = new Div();
 		profileImageDiv.setId("authorised-banner-profile-image");
-//		if (user.profileImage != null) {
-//			try {
-//				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
-//			} catch (IOException ex) {
-//				warning("Profile Image", ex.getMessage());
-//			}
-//		}
+		if (user.profileImage != null) {
+			try {
+				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
+			} catch (IOException ex) {
+				warning("Profile Image", ex.getMessage());
+			}
+		}
 		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 		setText(welcomeUser);
 
