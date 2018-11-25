@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.AllOpenTasksList;
 
-@Route("open")
+@Route(value="open", layout = MinortaskPage.class)
 public class AllOpenTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override

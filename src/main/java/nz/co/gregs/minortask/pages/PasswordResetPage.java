@@ -13,8 +13,6 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.PublicBannerMenu;
@@ -26,7 +24,7 @@ import nz.co.gregs.minortask.components.ResetPasswordComponent;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("resetpassword")
+@Route(value="resetpassword", layout = MinortaskPage.class)
 public class PasswordResetPage extends VerticalLayout implements HasUrlParameter<String>{
 
 	public PasswordResetPage() {

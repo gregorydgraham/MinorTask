@@ -9,7 +9,7 @@ import nz.co.gregs.minortask.components.tasklists.OverdueTasksList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 
-@Route("overdue")
+@Route(value="overdue", layout = MinortaskPage.class)
 public class OverdueTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override

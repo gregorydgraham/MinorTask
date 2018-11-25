@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.AllCompletedTasksComponent;
 
-@Route("complete")
+@Route(value="complete", layout = MinortaskPage.class)
 public class AllCompletedTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override

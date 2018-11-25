@@ -13,7 +13,7 @@ import nz.co.gregs.minortask.components.RootTaskComponent;
  *
  * @author gregorygraham
  */
-@Route("projects")
+@Route(value="projects", layout = MinortaskPage.class)
 public class ProjectsLayout extends AuthorisedPage{
 
 	@Override

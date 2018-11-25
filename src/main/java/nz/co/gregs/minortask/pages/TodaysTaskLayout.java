@@ -14,7 +14,7 @@ import nz.co.gregs.minortask.components.tasklists.TodaysTasksList;
  *
  * @author gregorygraham
  */
-@Route("today")
+@Route(value="today", layout = MinortaskPage.class)
 public class TodaysTaskLayout extends AuthorisedOptionalTaskPage{
 
 	@Override

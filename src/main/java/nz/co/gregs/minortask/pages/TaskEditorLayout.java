@@ -15,7 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-@Route("task")
+@Route(value = "task", layout = MinortaskPage.class)
 public class TaskEditorLayout extends AuthorisedTaskPage{
 
 

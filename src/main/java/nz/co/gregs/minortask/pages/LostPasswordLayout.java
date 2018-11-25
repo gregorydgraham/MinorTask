@@ -20,7 +20,7 @@ import nz.co.gregs.minortask.components.LostPasswordComponent;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("lostpassword")
+@Route(value="lostpassword", layout = MinortaskPage.class)
 public class LostPasswordLayout extends VerticalLayout implements HasUrlParameter<String> {
 
 	public LostPasswordLayout() {

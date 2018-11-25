@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.components.SignupComponent;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("signup")
+@Route(value="signup", layout = MinortaskPage.class)
 public class SignUpLayout extends VerticalLayout implements HasUrlParameter<String>{
 
 	public SignUpLayout() {

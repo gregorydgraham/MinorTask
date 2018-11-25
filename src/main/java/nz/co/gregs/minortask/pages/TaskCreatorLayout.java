@@ -17,7 +17,7 @@ import nz.co.gregs.minortask.components.CreateTask;
  *
  * @author gregorygraham
  */
-@Route("create")
+@Route(value="create", layout = MinortaskPage.class)
 public class TaskCreatorLayout extends AuthorisedOptionalTaskPage {
 
 	@Override

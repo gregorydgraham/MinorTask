@@ -31,7 +31,7 @@ import nz.co.gregs.minortask.components.upload.ImageUpload;
  *
  * @author gregorygraham
  */
-@Route("profile")
+@Route(value="profile", layout = MinortaskPage.class)
 @Tag("user-profile")
 @StyleSheet("styles/user-profile-page.css")
 public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListener{

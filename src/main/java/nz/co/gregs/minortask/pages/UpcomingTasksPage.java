@@ -10,7 +10,7 @@ import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.UpcomingTasksList;
 
 
-@Route("upcoming")
+@Route(value="upcoming", layout = MinortaskPage.class)
 public class UpcomingTasksPage extends AuthorisedOptionalTaskPage{
 
 	@Override

@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.SearchedTasksList;
 
-@Route("search")
+@Route(value="search", layout=MinortaskPage.class)
 public class SearchForTaskPage extends AuthorisedPage {
 
 	@Override

@@ -9,7 +9,7 @@ import nz.co.gregs.minortask.components.tasklists.IdeasList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 
-@Route("ideas")
+@Route(value="ideas", layout = MinortaskPage.class)
 public class IdeasPage extends AuthorisedOptionalTaskPage {
 
 	@Override

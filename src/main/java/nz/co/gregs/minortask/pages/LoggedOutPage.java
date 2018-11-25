@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("bye")
+@Route(value="bye", layout = MinortaskPage.class)
 public class LoggedOutPage extends VerticalLayout{
 
 	public LoggedOutPage() {

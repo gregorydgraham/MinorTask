@@ -31,7 +31,7 @@ import nz.co.gregs.minortask.components.PublicBannerMenu;
  * @author gregorygraham
  */
 @HtmlImport("styles/shared-styles.html")
-@Route("")
+@Route(value="", layout = MinortaskPage.class)
 public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnterObserver, AfterNavigationObserver {
 
 	LoginComponent loginComponent = new LoginComponent();
