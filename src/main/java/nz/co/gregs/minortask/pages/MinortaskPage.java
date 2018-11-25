@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
+import nz.co.gregs.minortask.MinorTask;
 
 //@Push // used by the cluster adminitration page
 public class MinortaskPage extends Div
@@ -25,6 +26,8 @@ public class MinortaskPage extends Div
 //				"http://www.imdb.com/title/tt0117500/");
 //		settings.addMetaTag("og:image",
 //				"http://ia.media-imdb.com/images/rock.jpg");
+
+		settings.addMetaTag("apple-mobile-web-app-title", MinorTask.getApplicationName());
 
 		settings.addLink("shortcut icon", "favicon.ico");
 		settings.addLink("apple-touch-startup-image", "favicons/apple-icon-180x180.png");
