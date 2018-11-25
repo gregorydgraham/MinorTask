@@ -28,6 +28,7 @@ public class MinortaskPage extends Div
 //				"http://ia.media-imdb.com/images/rock.jpg");
 
 		settings.addMetaTag("apple-mobile-web-app-title", MinorTask.getApplicationName());
+		settings.addMetaTag("apple-mobile-web-app-capable", "yes");
 
 		settings.addLink("shortcut icon", "favicon.ico");
 		settings.addLink("apple-touch-startup-image", "favicons/apple-icon-180x180.png");
