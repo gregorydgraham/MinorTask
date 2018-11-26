@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
@@ -13,8 +14,8 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import java.io.IOException;
 import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.components.images.ImageIconFromDocument;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -24,7 +25,6 @@ import nz.co.gregs.minortask.datamodel.User;
 @Tag("authorised-banner")
 @StyleSheet("styles/authorised-banner.css")
 public class AuthorisedBannerMenu extends SecureDiv implements HasText {
-
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 	Button profileButton = new Button();
@@ -48,16 +48,12 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 		setText("Welcome to " + Globals.getApplicationName());
 
-		User user = minortask().getUser();
-		Div profileImageDiv = new Div();
-		profileImageDiv.setId("authorised-banner-profile-image");
+		User user = minortask().getUser(); 
+		Component profileImageDiv = new Div();
 		if (user.profileImage != null) {
-			try {
-				minortask().setBackgroundToSmallImage(profileImageDiv, user.profileImage);
-			} catch (IOException ex) {
-				warning("Profile Image", ex.getMessage());
-			}
+			profileImageDiv = new ImageIconFromDocument(user.profileImage);
 		}
+		profileImageDiv.setId("authorised-banner-profile-image");
 		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
 		setText(welcomeUser);
 
@@ -88,7 +84,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		right.add(logoutButton, profileButton);
 		add(left, right);
 	}
-	
+
 	static String getStaticID() {
 		return "authorised_banner_id";
 	}

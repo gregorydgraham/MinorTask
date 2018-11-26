@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.upload;
 
+import nz.co.gregs.minortask.components.images.ImageSelector;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Div;

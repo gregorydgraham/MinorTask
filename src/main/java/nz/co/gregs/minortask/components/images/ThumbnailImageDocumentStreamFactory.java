@@ -3,25 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components.upload;
+package nz.co.gregs.minortask.components.images;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import nz.co.gregs.minortask.components.upload.Document;
 
 /**
  *
  * @author gregorygraham
  */
-public class ThumbnailInputStreamFactory extends ImageDocumentStreamFactory {//implements InputStreamFactory {
+public class ThumbnailImageDocumentStreamFactory extends ImageDocumentStreamFactory {//implements InputStreamFactory {
 
 	private double targetSize = 50d;
 
-	public ThumbnailInputStreamFactory(Document doc) {
+	public ThumbnailImageDocumentStreamFactory(Document doc) {
 		super(doc);
 	}
 	
-	public ThumbnailInputStreamFactory(Document doc, double targetSize) {
+	public ThumbnailImageDocumentStreamFactory(Document doc, double targetSize) {
 		super(doc);
 		setTargetSize(targetSize);
 	}

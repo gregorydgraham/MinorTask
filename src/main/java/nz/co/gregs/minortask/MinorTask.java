@@ -33,11 +33,9 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
-import nz.co.gregs.minortask.components.tasklists.IdeasList;
 import nz.co.gregs.minortask.components.upload.Document;
-import nz.co.gregs.minortask.components.upload.DocumentIconStreamResource;
-import nz.co.gregs.minortask.components.upload.SizedImageInputStreamFactory;
-import nz.co.gregs.minortask.components.upload.ThumbnailInputStreamFactory;
+import nz.co.gregs.minortask.components.images.SizedImageDocumentStreamFactory;
+import nz.co.gregs.minortask.components.images.ThumbnailImageDocumentStreamFactory;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.slf4j.LoggerFactory;
 
@@ -335,7 +333,7 @@ public class MinorTask extends Globals implements Serializable {
 		if (profileImage != null
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
-			ThumbnailInputStreamFactory res = new ThumbnailInputStreamFactory(profileImage);
+			ThumbnailImageDocumentStreamFactory res = new ThumbnailImageDocumentStreamFactory(profileImage);
 			DatatypeConverter.printBase64Binary(res.getByteArray());
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
@@ -352,7 +350,7 @@ public class MinorTask extends Globals implements Serializable {
 		if (profileImage != null
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
-			SizedImageInputStreamFactory res = new SizedImageInputStreamFactory(profileImage);
+			SizedImageDocumentStreamFactory res = new SizedImageDocumentStreamFactory(profileImage);
 			DatatypeConverter.printBase64Binary(res.getByteArray()); 
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()

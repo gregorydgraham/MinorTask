@@ -3,11 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components.upload;
+package nz.co.gregs.minortask.components.images;
 
 import com.vaadin.flow.server.InputStreamFactory;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +14,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import nz.co.gregs.minortask.components.upload.Document;
 
 /**
  *
@@ -24,10 +23,17 @@ import javax.imageio.ImageIO;
 public class ImageDocumentStreamFactory implements InputStreamFactory {
 
 	private final Document doc;
-	private double targetSize = 50d;
 
 	public ImageDocumentStreamFactory(Document doc) {
 		this.doc = doc;
+	}
+
+	public byte[] getByteArray() throws IOException {
+		final InputStream inputStream = createInputStream();
+		BufferedImage originalImage = ImageIO.read(inputStream);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		boolean wrote = ImageIO.write(originalImage, "png", outputStream);
+		return outputStream.toByteArray();
 	}
 
 	@Override
@@ -39,7 +45,7 @@ public class ImageDocumentStreamFactory implements InputStreamFactory {
 			InputStream fis = new ByteArrayInputStream(os.toByteArray());
 			return fis;
 		} catch (IOException ex) {
-			Logger.getLogger(DocumentIconStreamResource.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(ImageDocumentStreamFactory.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return new ByteArrayInputStream(new byte[]{});
 	}
@@ -49,14 +55,6 @@ public class ImageDocumentStreamFactory implements InputStreamFactory {
 		BufferedImage originalImage = ImageIO.read(inputStream);
 		BufferedImage thumbnail = transformImage(originalImage);
 		return thumbnail;
-	}
-
-	public byte[] getByteArray() throws IOException {
-		final InputStream inputStream = createInputStream();
-		BufferedImage originalImage = ImageIO.read(inputStream);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		boolean wrote = ImageIO.write(originalImage, "png", outputStream);
-		return outputStream.toByteArray();
 	}
 
 	protected BufferedImage transformImage(BufferedImage original) {

@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components.upload;
+package nz.co.gregs.minortask.components.images;
+
+import nz.co.gregs.minortask.components.upload.Document;
+import nz.co.gregs.minortask.components.upload.DocumentSelector;
 
 
 public class ImageSelector extends DocumentSelector {
@@ -17,7 +20,7 @@ public class ImageSelector extends DocumentSelector {
 	}
 
 	@Override
-	protected Document getDocumentExampleForSelector() {
+	public Document getDocumentExampleForSelector() {
 		Document docExample = new Document();
 		docExample.userID.permittedValues(getUserID());
 		docExample.mediaType.permittedPattern("image/%");

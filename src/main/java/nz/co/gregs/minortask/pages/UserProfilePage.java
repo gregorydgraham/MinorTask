@@ -15,13 +15,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
-import static nz.co.gregs.minortask.Globals.*;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.components.polymer.PaperTextArea;
 import nz.co.gregs.minortask.components.upload.Document;
@@ -43,7 +43,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	private final PaperInput emailInput = new PaperInput();
 	private final PaperTextArea blurb = new PaperTextArea();
 	private final H2 greeting = new H2();
-	private final Div imageDiv = new Div();
+	private Component imageDiv = new Div();
 
 	public UserProfilePage() {
 		super();
@@ -99,38 +99,26 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		usernameInput.setValue(user.getUsername() == null ? "" : user.getUsername());
 		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
 		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
-		greeting.setText("@"+user.getUsername()+" Profile");
-		try {
-			minortask().setBackgroundToLargeImage(imageDiv, user.profileImage);
-		} catch (IOException ex) {
-			error("Profile Image", ex.getMessage());
-		}
+		greeting.setText("@" + user.getUsername() + " Profile");
 		setProfileImage();
 	}
 
 	private void setProfileImage() {
 		User user = getUser();
-		if (user.profileImage != null) {
+		if (user.profileImage == null && user.getProfileImageID() != null) {
 			try {
-				minortask().setBackgroundToLargeImage(imageDiv, user.profileImage);
-			} catch (IOException ex) {
-				error("Profile Image", ex.getMessage());
-			}
-		} else {
-			if (user.getProfileImageID() != null) {
-				try {
-					List<Document> docs = getDatabase().getDBQuery(user, new Document()).getAllInstancesOf(new Document());
-					if (docs.size() == 1) {
-						user.profileImage = docs.get(0);
-					} else {
-						chat("Couldn't find the picture");
-					}
-				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-					sqlerror(ex);
+				List<Document> docs = getDatabase().getDBQuery(user, new Document()).getAllInstancesOf(new Document());
+				if (docs.size() == 1) {
+					user.profileImage = docs.get(0);
+				} else {
+					chat("Couldn't find the picture");
 				}
-			} else {
-				chat("image not provided");
+			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+				sqlerror(ex);
 			}
+		}
+		if (user.profileImage != null) {
+			imageDiv = new SizedImageFromDocument(user.profileImage, 200d);
 		}
 	}
 
@@ -146,7 +134,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		user.setBlurb(blurb.getValue());
 		try {
 			getDatabase().update(user);
-			savedNotice();
+			Globals.savedNotice();
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -159,7 +147,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		user.profileImage = doc;
 		try {
 			getDatabase().update(user);
-			savedNotice();
+			Globals.savedNotice();
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -173,7 +161,6 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		imageDiv.setId("profile-image-div");
 		imageUpload.setId("user-profile-imageupload");
 		usernameInput.setId("user-profile-username");
-
 	}
 
 	@Override

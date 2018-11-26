@@ -5,13 +5,13 @@
  */
 package nz.co.gregs.minortask.components.upload;
 
+import nz.co.gregs.minortask.components.images.ImageIconFromDocument;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
@@ -61,7 +61,6 @@ public class DocumentGrid extends Div implements RequiresLogin {
 		anchor.setTarget("_blank");
 		Component icon;
 		if (source.mediaType.getValue().startsWith("image/")) {
-//			icon = new Image(new DocumentIconStreamResource(source), source.filename.getValue());
 			icon = new ImageIconFromDocument(source);
 		} else {
 			icon = new Icon(VaadinIcon.FILE);
