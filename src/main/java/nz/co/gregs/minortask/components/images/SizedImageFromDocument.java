@@ -19,7 +19,7 @@ public class SizedImageFromDocument extends Image{
 	public SizedImageFromDocument(Document doc, double size) {
 		super(
 				new StreamResource(
-						doc.filename.getValue(), 
+						doc.filename.getValue()==null?"image.jpg":doc.filename.getValue(),
 						new SizedImageDocumentStreamFactory(doc, size)
 				), 
 				doc.filename.getValue());
