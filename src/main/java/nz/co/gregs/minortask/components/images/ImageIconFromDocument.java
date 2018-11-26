@@ -18,10 +18,10 @@ public class ImageIconFromDocument extends Image {
 	public ImageIconFromDocument(Document doc) {
 		super(
 				new StreamResource(
-						doc.filename.getValue()==null?"image.jpg":doc.filename.getValue(),
+						doc.filename.getValue()==null?"image.jpg":doc.filename.getValue("image.jpg"),
 						new ThumbnailImageDocumentStreamFactory(doc)
 				),
-				doc.filename.getValue());
+				doc.filename.getValue()==null?"image.jpg":doc.filename.getValue("image.jpg"));
 	}
 
 }

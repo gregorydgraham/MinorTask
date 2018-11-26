@@ -21,6 +21,6 @@ public class ImageFromDocument extends Image {
 						doc.filename.getValue()==null?"image.jpg":doc.filename.getValue(),
 						new ImageDocumentStreamFactory(doc)
 				), 
-				doc.filename.getValue());
+				doc.filename.getValue()==null?"image.jpg":doc.filename.getValue("image.jpg"));
 	}
 }
