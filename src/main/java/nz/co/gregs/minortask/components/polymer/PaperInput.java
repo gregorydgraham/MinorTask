@@ -17,16 +17,35 @@ import com.vaadin.flow.component.dependency.HtmlImport;
  */
 @Tag("paper-input")
 @HtmlImport("bower_components/paper-input/paper-input.html")
-public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> implements BlurNotifier<PaperInput>, FocusNotifier<PaperInput>{
-	
+public class PaperInput extends AbstractSinglePropertyField<PaperInput, String> implements BlurNotifier<PaperInput>, FocusNotifier<PaperInput> {
+
 	private PaperInput(String propertyName, String defaultValue, boolean acceptNullValues) {
 		super(propertyName, defaultValue, acceptNullValues);
 	}
+
 	public PaperInput() {
 		this("value", "", false);
 	}
-	
+
 	public void addClassName(String className) {
 		this.getElement().getClassList().add(className);
+	}
+
+	@Override
+	public void setValue(String val) {
+		getElement().setProperty("value", val);
+	}
+
+	@Override
+	public String getValue() {
+		return getElement().getProperty("value", "");
+	}
+
+	public void setLabel(String val) {
+		getElement().setProperty("label", val);
+	}
+
+	public String getLabel() {
+		return getElement().getProperty("label", "");
 	}
 }

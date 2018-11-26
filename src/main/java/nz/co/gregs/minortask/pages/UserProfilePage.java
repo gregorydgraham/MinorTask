@@ -52,6 +52,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	@Override
 	protected Component getInternalComponent() {
 		setValues();
+		setLabels();
 		setStyles();
 		addListeners();
 
@@ -63,9 +64,9 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		component.add(
 				greeting,
 				imageStuff,
-				new HorizontalLayout(new Label("Username: "), usernameInput),
-				new HorizontalLayout(new Label("Email: "), emailInput),
-				new HorizontalLayout(new Label("Bio: "), blurb)
+				usernameInput,
+				emailInput,
+				blurb
 		);
 
 		return component;
@@ -99,8 +100,15 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		usernameInput.setValue(user.getUsername() == null ? "" : user.getUsername());
 		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
 		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
-		greeting.setText("@" + user.getUsername() + " Profile");
 		setProfileImage();
+	}
+
+	private void setLabels() {
+		User user = minortask().getUser();
+		usernameInput.setLabel("Username");
+		emailInput.setLabel("Email");
+		blurb.setLabel("Biography");
+		greeting.setText("@" + user.getUsername() + " Profile");
 	}
 
 	private void setProfileImage() {
@@ -127,7 +135,6 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		System.out.println("USERNAME: " + usernameInput.getValue());
 		System.out.println("EMAIL: " + emailInput.getValue());
 		System.out.println("BLURB: " + blurb.getValue());
-		MinorTask.chat("USERNAME: " + usernameInput.getValue() + " EMAIL: " + emailInput.getValue());
 		User user = getUser();
 		user.setUsername(usernameInput.getValue());
 		user.setEmail(emailInput.getValue());
@@ -156,6 +163,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	private void setStyles() {
 		banner.setProfileButtonSelected();
 		blurb.setId("user-profile-bio");
+		blurb.setRows(5);
 		emailInput.setId("user-profile-email");
 		greeting.setId("user-profile-greeting");
 		imageDiv.setId("profile-image-div");

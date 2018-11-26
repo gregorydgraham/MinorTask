@@ -29,4 +29,48 @@ public class PaperTextArea extends AbstractSinglePropertyField<PaperTextArea, St
 	public void addClassName(String className) {
 		this.getElement().getClassList().add(className);
 	}
+
+	public void setRows(int rows) {
+		getElement().setProperty("rows", rows);
+	}
+
+	public int getRows() {
+		return getElement().getProperty("rows", 1);
+	}
+
+	@Override
+	public void setValue(String val) {
+		getElement().setProperty("value", val);
+	}
+
+	@Override
+	public String getValue() {
+		return getElement().getProperty("value", "");
+	}
+
+	public void setLabel(String val) {
+		getElement().setProperty("label", val);
+	}
+
+	public String getLabel() {
+		return getElement().getProperty("label", "");
+	}
+
+	@Override
+	public void setReadOnly(boolean readonly) {
+		getElement().setProperty("readonly", readonly);
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return getElement().getProperty("readonly", false);
+	}
+
+	public void setDisabled(boolean readonly) {
+		getElement().setProperty("disabled", readonly);
+	}
+
+	public boolean isDisabled() {
+		return getElement().getProperty("disabled", false);
+	}
 }
