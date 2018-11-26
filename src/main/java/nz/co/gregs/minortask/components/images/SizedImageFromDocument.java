@@ -22,7 +22,7 @@ public class SizedImageFromDocument extends Image{
 						doc.filename.getValue()==null?"image.jpg":doc.filename.getValue(),
 						new SizedImageDocumentStreamFactory(doc, size)
 				), 
-				doc.filename.getValue());
+				doc.filename.getValue()==null?"image.jpg":doc.filename.getValue("image.jpg"));
 	}
 	
 }
