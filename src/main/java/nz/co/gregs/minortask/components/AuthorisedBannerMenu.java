@@ -32,11 +32,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 	public AuthorisedBannerMenu() {
 		super();
-		if (minortask().isLoggedIn()) {
-			buildComponent();
-		} else {
-			add(new AccessDeniedComponent());
-		}
+		buildComponent();
 		this.addClassName("authorised-banner");
 		this.setId(getStaticID());
 	}
@@ -48,7 +44,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 		setText("Welcome to " + Globals.getApplicationName());
 
-		User user = minortask().getUser(); 
+		User user = minortask().getUser();
 		Component profileImageDiv = new Div();
 		if (user.profileImage != null) {
 			profileImageDiv = new ImageIconFromDocument(user.profileImage);
