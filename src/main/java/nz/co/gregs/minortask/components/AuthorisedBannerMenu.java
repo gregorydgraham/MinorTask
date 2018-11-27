@@ -45,40 +45,42 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		setText("Welcome to " + Globals.getApplicationName());
 
 		User user = minortask().getUser();
-		Component profileImageDiv = new Div();
-		if (user.profileImage != null) {
-			profileImageDiv = new ImageIconFromDocument(user.profileImage);
+		if (user != null) {
+			Component profileImageDiv = new Div();
+			if (user.profileImage != null) {
+				profileImageDiv = new ImageIconFromDocument(user.profileImage);
+			}
+			profileImageDiv.setId("authorised-banner-profile-image");
+			final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
+			setText(welcomeUser);
+
+			Icon userIcon = new Icon(VaadinIcon.USER);
+			Icon unlock = new Icon(VaadinIcon.UNLOCK);
+
+			profileButton.setIcon(userIcon);
+			profileButton.setId("authorised-banner-profile-button");
+			profileButton.addClassName("authorised-banner-button");
+			profileButton.addClickListener((event) -> {
+				minortask().showProfile();
+			});
+
+			logoutButton.setIcon(unlock);
+			logoutButton.setId("authorised-banner-logout-button");
+			profileButton.addClassName("authorised-banner-button");
+			logoutButton.addClickListener((event) -> {
+				minortask().logout();
+			});
+
+			Div left = new Div();
+			left.addClassName("authorised-banner-left");
+
+			Div right = new Div();
+			right.addClassName("authorised-banner-right");
+
+			left.add(profileImageDiv, welcomeMessage);
+			right.add(logoutButton, profileButton);
+			add(left, right);
 		}
-		profileImageDiv.setId("authorised-banner-profile-image");
-		final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
-		setText(welcomeUser);
-
-		Icon userIcon = new Icon(VaadinIcon.USER);
-		Icon unlock = new Icon(VaadinIcon.UNLOCK);
-
-		profileButton.setIcon(userIcon);
-		profileButton.setId("authorised-banner-profile-button");
-		profileButton.addClassName("authorised-banner-button");
-		profileButton.addClickListener((event) -> {
-			minortask().showProfile();
-		});
-
-		logoutButton.setIcon(unlock);
-		logoutButton.setId("authorised-banner-logout-button");
-		profileButton.addClassName("authorised-banner-button");
-		logoutButton.addClickListener((event) -> {
-			minortask().logout();
-		});
-
-		Div left = new Div();
-		left.addClassName("authorised-banner-left");
-
-		Div right = new Div();
-		right.addClassName("authorised-banner-right");
-
-		left.add(profileImageDiv, welcomeMessage);
-		right.add(logoutButton, profileButton);
-		add(left, right);
 	}
 
 	static String getStaticID() {

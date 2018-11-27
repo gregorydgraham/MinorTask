@@ -33,6 +33,7 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
 	Button createAndShowTaskButton = new Button("Create and Edit");
 	Button createAndShowProjectButton = new Button("Create and Return To Project");
+	Button createAndAddAnother = new Button("Create and Add Another");
 	Button cancelButton = new Button("Cancel");
 	private final Long projectID;
 
@@ -52,6 +53,9 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 			setAsDefaultButton(createAndShowProjectButton);
 			createAndShowTaskButton.addClickListener((event) -> {
 				saveAndEdit();
+			});
+			createAndAddAnother.addClickListener((event) -> {
+				saveAndCreateAnother();
 			});
 
 			name.addClassName("create-task-name");
@@ -80,7 +84,8 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 					new Div(
 							cancelButton,
 							createAndShowTaskButton,
-							createAndShowProjectButton
+							createAndShowProjectButton,
+							createAndAddAnother
 					)
 			);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
@@ -90,6 +95,9 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
+		name.clear();
+		description.clear();
+
 		LocalDate startDefault = LocalDate.now().plusDays(1);
 		LocalDate preferredDefault = LocalDate.now().plusWeeks(2);
 		LocalDate deadlineDefault = LocalDate.now().plusMonths(1);
@@ -138,6 +146,17 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 	public void saveAndEdit() {
 		Task task = saveTask();
 		MinorTask.showTask(task.taskID.getValue());
+	}
+
+	public void saveAndCreateAnother() {
+		try {
+			Task task = saveTask();
+			setFieldValues();
+		} catch (UnexpectedNumberOfRowsException | SQLException ex) {
+			sqlerror(ex);
+		} catch (Globals.InaccessibleTaskException ex) {
+			error("Inaccessible Task", ex.getMessage());
+		}
 	}
 
 	public void saveAndProject() {
