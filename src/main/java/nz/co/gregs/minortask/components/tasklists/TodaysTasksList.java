@@ -58,6 +58,6 @@ public class TodaysTasksList extends AbstractTaskList {
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return "" + tasks.size() + " for Today";
+		return "" + tasks.size() + " for Today (open tasks with a start date  in the past)";
 	}
 }
