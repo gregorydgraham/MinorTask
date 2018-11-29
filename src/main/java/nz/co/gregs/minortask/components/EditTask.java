@@ -14,7 +14,6 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.StyleSheet;
@@ -30,11 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nz.co.gregs.dbvolution.DBRow;
-import nz.co.gregs.dbvolution.actions.DBActionList;
-import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
-import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
@@ -46,9 +40,6 @@ import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
 
 /**
  *
@@ -119,7 +110,9 @@ public class EditTask extends SecureDiv {
 
 	public final Component getComponent() {
 
+		name.setLabel("Task");
 		name.addClassName("edit-task-name-input");
+		description.setLabel("Description");
 		description.addClassName("edit-task-description");
 		notes.addClassName("edit-task-notes");
 
@@ -137,7 +130,10 @@ public class EditTask extends SecureDiv {
 		completedDate.setReadOnly(true);
 
 		completeButton.addClassNames("danger", "completebutton");
-		completeButton.addClickListener(new CompleteTaskListener(minortask(), taskID));
+		completeButton.addClickListener((event) -> {
+			minortask().completeTaskWithCongratulations(taskAndProject.getTask());
+			Globals.showTask(taskAndProject.getProject().taskID.getValue());
+		});
 		completeButton.setVisible(false);
 		Div completeButtonDiv = new Div(completeButton);
 		completeButtonDiv.addClassName("edit-task-complete-button-container");
@@ -421,7 +417,7 @@ public class EditTask extends SecureDiv {
 
 	private void insertLinkToDocument(DocumentAddedEvent event) {
 		if (event.getValue() != null) {
-			chat("Adding document link..."+event.getSource().getClass().getSimpleName());
+			chat("Adding document link..." + event.getSource().getClass().getSimpleName());
 			TaskDocumentLink link = new TaskDocumentLink();
 			link.documentID.setValue(event.getValue().documentID);
 			link.taskID.setValue(taskID);
@@ -431,8 +427,8 @@ public class EditTask extends SecureDiv {
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}
-		}else{
-			chat("No Document Found!!: "+event.getSource().getClass().getSimpleName());
+		} else {
+			chat("No Document Found!!: " + event.getSource().getClass().getSimpleName());
 		}
 	}
 
@@ -466,107 +462,6 @@ public class EditTask extends SecureDiv {
 				Globals.getDatabase().update(projectPathTask);
 			} catch (SQLException ex) {
 				Globals.sqlerror(ex);
-			}
-		}
-	}
-
-	private class CompleteTaskListener implements ComponentEventListener<ClickEvent<Button>> {
-
-		private final Long taskID;
-
-		public CompleteTaskListener(MinorTask minortask, Long taskID) {
-			this.taskID = taskID;
-		}
-
-		@Override
-		public void onComponentEvent(ClickEvent<Button> event) {
-			try {
-				Task task = completeTask(taskID);
-				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
-				if (task == null) {
-					Globals.showTask(null);
-				} else {
-					Long projectID = task.projectID.getValue();
-					Task usersCompletedTasks = new Task();
-					usersCompletedTasks.userID.setValue(getUserID());
-					usersCompletedTasks.completionDate.excludeNull();
-					try {
-						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
-						Task currentProject = new Task();
-						currentProject.projectID.setValue(projectID);
-						currentProject.completionDate.permitOnlyNull();
-						if (getDatabase().getDBQuery(currentProject).count() == 0) {
-							Globals.congratulate("All the subtasks are completed!");
-						}
-						if (completedTaskCount < 11) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount > 11 && completedTaskCount < 51
-								&& completedTaskCount % 10 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount % 50 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						}
-					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-						sqlerror(ex);
-					}
-					Globals.showTask(projectID);
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-
-		private Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
-			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
-			if (taskID != null) {
-				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask().getUserID());
-				for (Task subtask : subtasks) {
-					completeTask(subtask.taskID.getValue());
-				}
-				Task task = getTask(taskID);
-				task.completionDate.setValue(new Date());
-				try {
-					final DBDatabase database = Globals.getDatabase();
-					DBActionList update = database.update(task);
-					repeatTask(task);
-				} catch (SQLException ex) {
-					Globals.sqlerror(ex);
-				}
-				return task;
-			}
-			return null;
-		}
-
-		private void repeatTask(Task task) {
-			if (task.repeatOffset.isNotNull()) {
-				Period value = task.repeatOffset.getValue();
-				final Date now = new Date();
-				final Date startDateValue = task.startDate.getValue();
-				if (startDateValue != null
-						&& (startDateValue.before(now))) {
-					Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
-					value = value.plus(period);
-				}
-				Task copy = DBRow.copyDBRow(task);
-				copy.taskID.setValueToNull();
-				copy.completionDate.setValueToNull();
-				copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
-				copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
-				copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
-				try {
-					getDatabase().insert(copy);
-				} catch (SQLException ex) {
-					sqlerror(ex);
-				}
-			}
-		}
-
-		private Date offsetDate(final Date originalDate, Period value) {
-			if (originalDate != null) {
-				Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
-				return newDate;
-			} else {
-				return null;
 			}
 		}
 	}

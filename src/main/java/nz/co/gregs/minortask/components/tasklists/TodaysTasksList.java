@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("todays-task-list")
@@ -29,7 +28,7 @@ public class TodaysTasksList extends AbstractTaskList {
 			example.completionDate.permitOnlyNull();
 			final Task task = new Task();
 			task.completionDate.permitOnlyNull();
-			final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
+			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
 			// add the leaf requirement
 			query.addCondition(task.column(task.taskID).isNull());
 			query.setSortOrder(

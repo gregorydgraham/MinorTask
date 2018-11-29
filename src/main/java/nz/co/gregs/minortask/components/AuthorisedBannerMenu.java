@@ -83,7 +83,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		}
 	}
 
-	static String getStaticID() {
+	public static String getStaticID() {
 		return "authorised_banner_id";
 	}
 

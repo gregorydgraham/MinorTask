@@ -6,6 +6,8 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -18,7 +20,9 @@ import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -27,6 +31,7 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/abstract-task-list.css")
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
 
 	protected final Long taskID;
@@ -105,6 +110,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	}
 
 	private void setGridItems(List<Task> allRows) {
+		grid.setItems();//clear it first
 		grid.setItems(allRows);
 	}
 
@@ -136,10 +142,26 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	}
 
 	private Component getSubTaskNumberComponent(Task task) {
+		HorizontalLayout layout = new HorizontalLayout();
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		Label label1 = new Label("" + MinorTask.getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size());
-		label1.add(icon); 
-		return wrapInALinkToTheTask(task, label1);
+		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
+		Label label1 = new Label("" + numberOfSubTasks);
+		label1.add(icon);
+		Component wrapped = wrapInALinkToTheTask(task, label1);
+		layout.add(wrapped);
+
+		if (task.completionDate.isNull()) {
+			if (numberOfSubTasks == 0) {
+				final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
+				checkIcon.addClickListener((event) -> {
+					minortask().completeTaskWithCongratulations(task);
+					this.refreshList();
+				});
+				checkIcon.addClassName("tasklist-complete-tick");
+				layout.add(checkIcon);
+			}
+		}
+		return layout;
 	}
 
 	private Component wrapInALinkToTheTask(final Task task, final Component summary) {
