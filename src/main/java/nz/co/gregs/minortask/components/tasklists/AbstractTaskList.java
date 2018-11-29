@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
@@ -20,7 +19,6 @@ import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;

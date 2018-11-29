@@ -364,7 +364,7 @@ public class MinorTask extends Globals implements Serializable {
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
 			SizedImageDocumentStreamFactory res = new SizedImageDocumentStreamFactory(profileImage);
-			DatatypeConverter.printBase64Binary(res.getByteArray()); 
+			DatatypeConverter.printBase64Binary(res.getByteArray());
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
@@ -395,91 +395,88 @@ public class MinorTask extends Globals implements Serializable {
 		List<Task> ancestors = recurse.getAncestors();
 		return ancestors;
 	}
-	
+
 	public void completeTaskWithCongratulations(Task task) {
-			try {
+		try {
+			if (task != null) {
 				completeTask(task);
 				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
-				if (task == null) {
-					Globals.showTask(null);
-				} else {
-					Long projectID = task.projectID.getValue();
-					Task usersCompletedTasks = new Task();
-					usersCompletedTasks.userID.setValue(getUserID());
-					usersCompletedTasks.completionDate.excludeNull();
-					try {
-						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
-						Task currentProject = new Task();
-						currentProject.projectID.setValue(projectID);
-						currentProject.completionDate.permitOnlyNull();
-						if (getDatabase().getDBQuery(currentProject).count() == 0) {
-							Globals.congratulate("All the subtasks are completed!");
-						}
-						if (completedTaskCount < 11) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount > 11 && completedTaskCount < 51
-								&& completedTaskCount % 10 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount % 50 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						}
-					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-						sqlerror(ex);
+				Long projectID = task.projectID.getValue();
+				Task usersCompletedTasks = new Task();
+				usersCompletedTasks.userID.setValue(getUserID());
+				usersCompletedTasks.completionDate.excludeNull();
+				try {
+					final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
+					Task currentProject = new Task();
+					currentProject.projectID.setValue(projectID);
+					currentProject.completionDate.permitOnlyNull();
+					if (getDatabase().getDBQuery(currentProject).count() == 0) {
+						Globals.congratulate("All the subtasks are completed!");
 					}
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-
-		public void completeTask(Task task) throws Globals.InaccessibleTaskException {
-			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
-			if (task != null) {
-				List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
-				for (Task subtask : subtasks) {
-					completeTask(subtask);
-				}
-				task.completionDate.setValue(new Date());
-				try {
-					final DBDatabase database = Globals.getDatabase();
-					DBActionList update = database.update(task);
-					repeatTask(task);
-				} catch (SQLException ex) {
-					Globals.sqlerror(ex);
-				}
-			}
-		}
-
-		public void repeatTask(Task task) {
-			if (task.repeatOffset.isNotNull()) {
-				Period value = task.repeatOffset.getValue();
-				final Date now = new Date();
-				final Date startDateValue = task.startDate.getValue();
-				if (startDateValue != null
-						&& (startDateValue.before(now))) {
-					Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
-					value = value.plus(period);
-				}
-				Task copy = DBRow.copyDBRow(task);
-				copy.taskID.setValueToNull();
-				copy.completionDate.setValueToNull();
-				copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
-				copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
-				copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
-				try {
-					getDatabase().insert(copy);
-				} catch (SQLException ex) {
+					if (completedTaskCount < 11) {
+						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+					} else if (completedTaskCount > 11 && completedTaskCount < 51
+							&& completedTaskCount % 10 == 0) {
+						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+					} else if (completedTaskCount % 50 == 0) {
+						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+					}
+				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				}
 			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
 
-		public Date offsetDate(final Date originalDate, Period value) {
-			if (originalDate != null) {
-				Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
-				return newDate;
-			} else {
-				return null;
+	public void completeTask(Task task) throws Globals.InaccessibleTaskException {
+		if (task != null) {
+			List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
+			for (Task subtask : subtasks) {
+				completeTask(subtask);
+			}
+			task.completionDate.setValue(new Date());
+			try {
+				final DBDatabase database = Globals.getDatabase();
+				DBActionList update = database.update(task);
+				repeatTask(task);
+			} catch (SQLException ex) {
+				Globals.sqlerror(ex);
 			}
 		}
+	}
+
+	public void repeatTask(Task task) {
+		if (task.repeatOffset.isNotNull()) {
+			Period value = task.repeatOffset.getValue();
+			final Date now = new Date();
+			final Date startDateValue = task.startDate.getValue();
+			if (startDateValue != null
+					&& (startDateValue.before(now))) {
+				Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
+				value = value.plus(period);
+			}
+			Task copy = DBRow.copyDBRow(task);
+			copy.taskID.setValueToNull();
+			copy.completionDate.setValueToNull();
+			copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
+			copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
+			copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
+			try {
+				getDatabase().insert(copy);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}
+		}
+	}
+
+	public Date offsetDate(final Date originalDate, Period value) {
+		if (originalDate != null) {
+			Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
+			return newDate;
+		} else {
+			return null;
+		}
+	}
 }
