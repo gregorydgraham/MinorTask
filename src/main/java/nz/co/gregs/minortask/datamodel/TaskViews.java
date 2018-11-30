@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.datamodel;
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.annotations.DBForeignKey;
-import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
@@ -22,12 +21,10 @@ public class TaskViews extends DBRow{
 	
 	
 	@DBColumn(value = "taskid")
-	@DBPrimaryKey
 	@DBForeignKey(Task.class)
 	public final DBInteger taskID = new DBInteger();
 
 	@DBColumn
-	@DBPrimaryKey
 	@DBForeignKey(User.class)
 	public final DBInteger userID = new DBInteger();
 	
