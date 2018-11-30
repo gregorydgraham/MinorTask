@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
@@ -38,6 +40,7 @@ import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
 import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
+import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 
@@ -102,6 +105,7 @@ public class EditTask extends SecureDiv {
 			documentUpload = new DocumentUploadAndSelector(taskID);
 			imageUpload = new ImageUploadAndSelector(taskID);
 			add(currentTask != null ? getComponent() : new RootTaskComponent(taskID));
+			addViewedDate(taskAndProject);
 		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
 		}
@@ -429,6 +433,18 @@ public class EditTask extends SecureDiv {
 			}
 		} else {
 			chat("No Document Found!!: " + event.getSource().getClass().getSimpleName());
+		}
+	}
+
+	private void addViewedDate(Task.TaskAndProject taskAndProject) {
+		TaskViews taskView = new TaskViews();
+		taskView.taskID.setValue(taskAndProject.getTask().taskID);
+		taskView.userID.setValue(getUserID());
+		taskView.lastviewed.setValue(new Date());
+		try {
+			getDatabase().insert(taskView);
+		} catch (SQLException ex) {
+			sqlerror(ex);
 		}
 	}
 

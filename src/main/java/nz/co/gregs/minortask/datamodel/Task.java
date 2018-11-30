@@ -59,13 +59,13 @@ public class Task extends DBRow {
 
 	@DBColumn
 	public final DBDate completionDate = new DBDate();
-	
+
 	@DBColumn
-	public final DBLargeText notes = new DBLargeText(); 
-	
+	public final DBLargeText notes = new DBLargeText();
+
 	@DBColumn
-	public final DBDateRepeat repeatOffset = new DBDateRepeat(); 
-	
+	public final DBDateRepeat repeatOffset = new DBDateRepeat();
+
 	@Override
 	public String toString() {
 		return name.getValue();
