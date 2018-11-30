@@ -29,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
-import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
@@ -143,7 +141,9 @@ public class EditTask extends SecureDiv {
 		completeButtonDiv.addClassName("edit-task-complete-button-container");
 
 		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
-		reopenButton.addClickListener(new ReopenTaskListener(minortask(), taskID));
+		reopenButton.addClickListener((event) -> {
+			minortask().reopenTask(taskAndProject.getTask());
+		});//new ReopenTaskListener(minortask(), taskID));
 		reopenButton.setVisible(false);
 
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
@@ -448,37 +448,37 @@ public class EditTask extends SecureDiv {
 		}
 	}
 
-	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
-
-		private final Long taskID;
-
-		public ReopenTaskListener(MinorTask minortask, Long taskID) {
-			this.taskID = taskID;
-		}
-
-		@Override
-		public void onComponentEvent(ClickEvent<Button> event) {
-			List<Task> projectPathTasks = getProjectPathTasks(taskID);
-			projectPathTasks.forEach((projectPathTask) -> {
-				setCompletionDateToNull(projectPathTask);
-			});
-			Task task;
-			try {
-				task = getTask(taskID);
-				setCompletionDateToNull(task);
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			Globals.showTask(taskID);
-		}
-
-		private void setCompletionDateToNull(Task projectPathTask) {
-			projectPathTask.completionDate.setValue((Date) null);
-			try {
-				Globals.getDatabase().update(projectPathTask);
-			} catch (SQLException ex) {
-				Globals.sqlerror(ex);
-			}
-		}
-	}
+//	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
+//
+//		private final Long taskID;
+//
+//		public ReopenTaskListener(MinorTask minortask, Long taskID) {
+//			this.taskID = taskID;
+//		}
+//
+//		@Override
+//		public void onComponentEvent(ClickEvent<Button> event) {
+//			List<Task> projectPathTasks = getProjectPathTasks(taskID);
+//			projectPathTasks.forEach((projectPathTask) -> {
+//				setCompletionDateToNull(projectPathTask);
+//			});
+//			Task task;
+//			try {
+//				task = getTask(taskID);
+//				setCompletionDateToNull(task);
+//			} catch (Globals.InaccessibleTaskException ex) {
+//				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+//			}
+//			Globals.showTask(taskID);
+//		}
+//
+//		private void setCompletionDateToNull(Task projectPathTask) {
+//			projectPathTask.completionDate.setValue((Date) null);
+//			try {
+//				Globals.getDatabase().update(projectPathTask);
+//			} catch (SQLException ex) {
+//				Globals.sqlerror(ex);
+//			}
+//		}
+//	}
 }

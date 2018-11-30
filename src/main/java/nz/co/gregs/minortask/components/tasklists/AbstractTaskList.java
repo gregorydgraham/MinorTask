@@ -123,9 +123,10 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("2em");
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
 		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
+		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("2em");
 	}
-	
-	private Component getPrefixComponent(Task task){
+
+	private Component getPrefixComponent(Task task) {
 		final IconWithClickHandler heart = new IconWithClickHandler(VaadinIcon.HEART);
 		if (minortask().taskIsFavourited(task)) {
 			heart.addClickListener((event) -> {
@@ -170,16 +171,32 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		Component wrapped = wrapInALinkToTheTask(task, label1);
 		layout.add(wrapped);
 
-		if (task.completionDate.isNull()) {
-			if (numberOfSubTasks == 0) {
-				final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
-				checkIcon.addClickListener((event) -> {
+		return layout;
+	}
+
+	private Component getSuffixComponent(Task task) {
+		HorizontalLayout layout = new HorizontalLayout();
+		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
+
+		if (numberOfSubTasks == 0) {
+			final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
+			checkIcon.addClickListener((event) -> {
+				if (task.completionDate.isNull()) {
 					minortask().completeTaskWithCongratulations(task);
-					this.refreshList();
-				});
+					checkIcon.removeClassName("tasklist-complete-tick");
+					checkIcon.addClassName("tasklist-reopen-tick");
+				} else {
+					minortask().reopenTask(task);
+					checkIcon.removeClassName("tasklist-reopen-tick");
+					checkIcon.addClassName("tasklist-complete-tick");
+				}
+			});
+			if (task.completionDate.isNull()) {
 				checkIcon.addClassName("tasklist-complete-tick");
-				layout.add(checkIcon);
+			} else {
+				checkIcon.addClassName("tasklist-reopen-tick");
 			}
+			layout.add(checkIcon);
 		}
 		return layout;
 	}

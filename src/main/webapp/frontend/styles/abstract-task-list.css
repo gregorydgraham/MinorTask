@@ -37,6 +37,13 @@ and open the template in the editor.
 	border-radius: 4px;
 	font-size: smaller;
 }
+
+.tasklist-complete-tick{
+	background-color: white; 
+	color: limegreen; 
+	border-radius: 4px;
+	font-size: smaller;
+}
 .favourited-task-heart{
 	background-color: white; 
 	color: red; 

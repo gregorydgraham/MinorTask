@@ -120,6 +120,12 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 		});
 		search.addClassName("navigator-task-search");
 
+		IconWithClickHandler today = new IconWithClickHandler(VaadinIcon.TIMER);
+		today.addClickListener((event) -> {
+			Globals.showTodaysTasks();
+		});
+		today.addClassName("navigator-task-recents");
+		
 		IconWithClickHandler recent = new IconWithClickHandler(VaadinIcon.CLOCK);
 		recent.addClickListener((event) -> {
 			Globals.showRecentsPage();
@@ -132,7 +138,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 		});
 		favourites.addClassName("navigator-task-favourites");
 
-		return new Component[]{search, recent, favourites};
+		return new Component[]{search, today, recent, favourites};
 	}
 
 	public static class WithAddTaskButton extends ProjectPathNavigator {

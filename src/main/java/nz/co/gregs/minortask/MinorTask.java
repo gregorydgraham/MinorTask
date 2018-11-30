@@ -5,9 +5,11 @@
  */
 package nz.co.gregs.minortask;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -484,10 +486,29 @@ public class MinorTask extends Globals implements Serializable {
 		favouritedTasks.taskID.permittedValues(task.taskID);
 		favouritedTasks.userID.permittedValues(getUserID());
 		try {
-			return getDatabase().get(favouritedTasks).size()>0;
+			return getDatabase().get(favouritedTasks).size() > 0;
 		} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 			sqlerror(ex);
 		}
 		return false;
+	}
+
+	public void reopenTask(Task task) {
+		// a completed task can't be within a complete project so reopen all the tasks above it
+		List<Task> projectPathTasks = getProjectPathTasks(task.taskID.getValue(), getUserID());
+		projectPathTasks.forEach((projectPathTask) -> {
+			setCompletionDateToNull(projectPathTask);
+		});
+			setCompletionDateToNull(task);
+		Globals.showTask(task);
+	}
+
+	public void setCompletionDateToNull(Task projectPathTask) {
+		projectPathTask.completionDate.setValue((Date) null);
+		try {
+			Globals.getDatabase().update(projectPathTask);
+		} catch (SQLException ex) {
+			Globals.sqlerror(ex);
+		}
 	}
 }

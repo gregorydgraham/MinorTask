@@ -687,6 +687,14 @@ public class Globals {
 		showPage(FavouriteTasksPage.class);
 	}
 
+	static void showTask(Task task) {
+		if (task==null){
+			showProjects();
+		}else{
+			showTask(task.taskID.getValue());
+		}
+	}
+
 	public static class InaccessibleTaskException extends Exception {
 
 		public InaccessibleTaskException(Long taskID) {
@@ -732,7 +740,7 @@ public class Globals {
 				Task task = completeTask(taskID);
 				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
 				if (task == null) {
-					Globals.showTask(null);
+					Globals.showProjects();
 				} else {
 					Long projectID = task.projectID.getValue();
 					Task usersCompletedTasks = new Task();
