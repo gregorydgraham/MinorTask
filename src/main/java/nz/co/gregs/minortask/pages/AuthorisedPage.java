@@ -31,7 +31,7 @@ import nz.co.gregs.minortask.components.TaskTabs;
 public abstract class AuthorisedPage extends Div implements MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle {
 
 	protected Long taskID = null;
-	TaskTabs taskTabs;
+//	TaskTabs taskTabs;
 	protected final AuthorisedBannerMenu banner = new AuthorisedBannerMenu();
 
 	protected abstract Component getInternalComponent();
@@ -61,8 +61,8 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 		minortask().setLoginDestination(MinorTask.getCurrentLocation());
 		removeAll();
 		add(new MinorTaskTemplate());
-		taskTabs = new TaskTabs(this, taskID);
-		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
+//		taskTabs = new TaskTabs(this, taskID);
+//		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 		final Component internalComponent = getInternalComponent();
 		
 		ProjectPathNavigator projectPath = new ProjectPathNavigator.WithAddProjectButton();
@@ -70,7 +70,7 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 				= new Div(
 						banner,
 						projectPath,
-						taskTabs,
+//						taskTabs,
 						internalComponent
 				);
 		internalComponentHolder.addClassName("minortask-internal");

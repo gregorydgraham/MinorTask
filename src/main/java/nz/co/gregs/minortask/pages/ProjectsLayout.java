@@ -14,7 +14,7 @@ import nz.co.gregs.minortask.components.RootTaskComponent;
  * @author gregorygraham
  */
 @Route(value="projects", layout = MinortaskPage.class)
-public class ProjectsLayout extends AuthorisedPage{
+public class ProjectsLayout extends AuthorisedOptionalTaskPage{
 
 	@Override
 	public String getPageTitle() {
@@ -22,7 +22,7 @@ public class ProjectsLayout extends AuthorisedPage{
 	}
 
 	@Override
-	public Component getInternalComponent() {
+	protected Component getInternalComponent(Long parameter) {
 		return new RootTaskComponent(null);
 	}
 

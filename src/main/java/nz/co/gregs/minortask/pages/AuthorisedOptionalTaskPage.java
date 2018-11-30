@@ -20,6 +20,8 @@ import nz.co.gregs.minortask.components.TaskTabs;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
 
+	TaskTabs taskTabs;
+	
 	@Override
 	protected final Component getInternalComponent() {
 		return new AccessDeniedComponent();

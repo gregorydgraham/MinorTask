@@ -46,6 +46,7 @@ import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.images.SizedImageDocumentStreamFactory;
 import nz.co.gregs.minortask.components.images.ThumbnailImageDocumentStreamFactory;
+import nz.co.gregs.minortask.pages.SearchForTaskPage;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
@@ -478,5 +479,17 @@ public class MinorTask extends Globals implements Serializable {
 		} else {
 			return null;
 		}
+	}
+
+	public boolean taskIsFavourited(Task task) {
+		FavouritedTasks favouritedTasks = new FavouritedTasks();
+		favouritedTasks.taskID.permittedValues(task.taskID);
+		favouritedTasks.userID.permittedValues(getUserID());
+		try {
+			return getDatabase().get(favouritedTasks).size()>0;
+		} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+			sqlerror(ex);
+		}
+		return false;
 	}
 }

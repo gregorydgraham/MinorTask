@@ -8,16 +8,27 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 
-.tasklist{
-	background-color: #e5e5e5;
-	box-shadow: inset 0 0 6px darkgrey, 0 0 0 black;
-	border-radius: 5px;
-	width: 100%;
+.project-path-navigator{
 }
 
-.tasklist-header{
-	display: flex;
-	justify-content: space-between;
+.navigator-task-search{
+	color: cadetblue;
+	padding-right: 2px;
+}
+
+.navigator-task-recents{
+	color: cadetblue;
+	padding-right: 2px;
+}
+
+.navigator-task-projects{
+	color: cadetblue;
+	padding-right: 2px;
+}
+
+.navigator-task-favourites{
+	color: cadetblue;
+	padding-right: 2px;
 }
 
 .tasklist-header .addtaskbutton{

@@ -94,17 +94,18 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 		public static MinorTaskTab[] getTabArray() {
 			return new MinorTaskTab[]{
-				new MinorTaskTab("Search", SearchForTaskPage.class),
+//				new MinorTaskTab("Search", SearchForTaskPage.class),
 				//				getFirstTab(),
-				new MinorTaskTab("Projects", ProjectsLayout.class),
-				new MinorTaskTab("Recent", RecentTasksPage.class),
+//				new MinorTaskTab("Projects", ProjectsLayout.class),
+//				new MinorTaskTab("Recent", RecentTasksPage.class),
+//				new MinorTaskTab("Favourites", FavouriteTasksPage.class),
+				new MinorTaskTab("Task", TaskEditorLayout.class),
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
 				new MinorTaskTab("Ideas", IdeasPage.class),
 				new MinorTaskTab("All Open", AllOpenTasksPage.class),
-				new MinorTaskTab("All Completed", AllCompletedTasksPage.class),
-				new MinorTaskTab("Task", TaskEditorLayout.class)
+				new MinorTaskTab("All Completed", AllCompletedTasksPage.class)
 			};
 
 		}

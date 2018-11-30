@@ -71,9 +71,12 @@ import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
+import nz.co.gregs.minortask.pages.FavouriteTasksPage;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
 import nz.co.gregs.minortask.pages.ProjectsLayout;
+import nz.co.gregs.minortask.pages.RecentTasksPage;
+import nz.co.gregs.minortask.pages.SearchForTaskPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
 import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -334,6 +337,10 @@ public class Globals {
 
 	public static void showTodaysTasks() {
 		showPage(TodaysTaskLayout.class);
+	}
+
+	public static void showSearchPage() {
+		showPage(SearchForTaskPage.class);
 	}
 
 	public static void showPage(Class<? extends AuthorisedPage> page) {
@@ -670,6 +677,14 @@ public class Globals {
 
 	public static Location getLocation(Class<? extends Component> aClass) {
 		return new Location(getURL(aClass));
+	}
+
+	public static void showRecentsPage() {
+		showPage(RecentTasksPage.class);
+	}
+
+	public static void showFavouritesPage() {
+		showPage(FavouriteTasksPage.class);
 	}
 
 	public static class InaccessibleTaskException extends Exception {

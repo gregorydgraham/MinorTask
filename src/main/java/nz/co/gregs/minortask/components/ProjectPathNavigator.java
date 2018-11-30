@@ -6,7 +6,9 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
@@ -15,9 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
-import static nz.co.gregs.minortask.Globals.getDatabase;
+import nz.co.gregs.minortask.Globals;
 import static nz.co.gregs.minortask.Globals.getTaskExample;
-import static nz.co.gregs.minortask.Globals.sqlerror;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -25,7 +26,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-//@Tag("project-path-navigator")
+@StyleSheet("styles/project-path-navigator.css")
 public class ProjectPathNavigator extends Div implements MinorTaskComponent, RequiresLogin {
 
 	private final Long taskID;
@@ -37,6 +38,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	protected void buildComponent() {
+		add(getPrefixComponents());
 		List<Task> ancestors = getProjectPathTasks(getTaskID(), getUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
@@ -61,7 +63,10 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button = new Button((task == null ? "Projects" : task.name.getValue()), (ClickEvent<Button> event) -> {
+		final Button button = new Button(
+				(task == null
+						? "Projects"
+						: task.name.getValue()), (ClickEvent<Button> event) -> {
 			final Long foundID = task == null ? null : task.taskID.getValue();
 			MinorTask.showTask(foundID);
 		});
@@ -86,6 +91,33 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	 */
 	public Long getTaskID() {
 		return taskID;
+	}
+
+	private Component[] getPrefixComponents() {
+		IconWithClickHandler search = new IconWithClickHandler(VaadinIcon.SEARCH);
+		search.addClickListener((event) -> {
+			Globals.showSearchPage();
+		});
+		search.addClassName("navigator-task-search");
+
+		IconWithClickHandler recent = new IconWithClickHandler(VaadinIcon.CLOCK);
+		recent.addClickListener((event) -> {
+			Globals.showRecentsPage();
+		});
+		recent.addClassName("navigator-task-recents");
+
+		IconWithClickHandler favourites = new IconWithClickHandler(VaadinIcon.HEART);
+		favourites.addClickListener((event) -> {
+			Globals.showFavouritesPage();
+		});
+		favourites.addClassName("navigator-task-favourites");
+
+		IconWithClickHandler project = new IconWithClickHandler(VaadinIcon.LIST);
+		project.addClickListener((event) -> {
+			Globals.showProjects();
+		});
+		project.addClassName("navigator-task-projects");
+		return new Component[]{search, recent, favourites, project};
 	}
 
 	public static class WithAddTaskButton extends ProjectPathNavigator {

@@ -22,6 +22,7 @@ import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
@@ -119,8 +120,29 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
+		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("2em");
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
 		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
+	}
+	
+	private Component getPrefixComponent(Task task){
+		final IconWithClickHandler heart = new IconWithClickHandler(VaadinIcon.HEART);
+		if (minortask().taskIsFavourited(task)) {
+			heart.addClickListener((event) -> {
+				removeFavourite(task);
+				heart.removeClassName("favourited-task-heart");
+				heart.addClassName("normal-task-heart");
+			});
+			heart.addClassName("favourited-task-heart");
+		} else {
+			heart.addClickListener((event) -> {
+				addFavourite(task);
+				heart.removeClassName("normal-task-heart");
+				heart.addClassName("favourited-task-heart");
+			});
+			heart.addClassName("normal-task-heart");
+		}
+		return heart;
 	}
 
 	private Component getDescriptionComponent(Task task) {
@@ -187,6 +209,26 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	protected boolean thereAreRowsToShow() {
 		return true;
+	}
+
+	private void addFavourite(Task task) {
+		try {
+			final FavouritedTasks favour = new FavouritedTasks(task, getUser());
+			getDatabase().insert(favour);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+	}
+
+	private void removeFavourite(Task task) {
+		try {
+			final FavouritedTasks favour = new FavouritedTasks();
+			favour.taskID.setValue(task.taskID);
+			favour.userID.setValue(getUserID());
+			getDatabase().delete(favour);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
 	}
 
 	public static abstract class PreQueried extends AbstractTaskList {
