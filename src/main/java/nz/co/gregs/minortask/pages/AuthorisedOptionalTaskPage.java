@@ -47,7 +47,7 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
-		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(taskID);
+		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(this.getClass(), taskID);
 		Div internalComponentHolder
 				= new Div(
 						banner,

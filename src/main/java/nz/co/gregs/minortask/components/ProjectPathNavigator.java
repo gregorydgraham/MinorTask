@@ -21,6 +21,8 @@ import nz.co.gregs.minortask.Globals;
 import static nz.co.gregs.minortask.Globals.getTaskExample;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
+import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -30,8 +32,14 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class ProjectPathNavigator extends Div implements MinorTaskComponent, RequiresLogin {
 
 	private final Long taskID;
+	private final Class<? extends AuthorisedOptionalTaskPage> targetPage;
 
-	public ProjectPathNavigator(Long taskID) {
+	public ProjectPathNavigator() {
+		this(null, null);
+	}
+
+	public ProjectPathNavigator(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
+		this.targetPage = targetPage;
 		this.taskID = taskID;
 		buildComponent();
 		addClassName("project-path-navigator");
@@ -63,13 +71,25 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button = new Button(
-				(task == null
-						? "Projects"
-						: task.name.getValue()), (ClickEvent<Button> event) -> {
-			final Long foundID = task == null ? null : task.taskID.getValue();
-			MinorTask.showTask(foundID);
-		});
+		final Button button;
+		if (task == null) {
+			button = new Button(
+					"Projects",
+					(ClickEvent<Button> event) -> {
+						if (targetPage.equals(TaskEditorLayout.class)) {
+							MinorTask.showProjects();
+						} else {
+							MinorTask.showPage(targetPage, null);
+						}
+					});
+		} else {
+			button = new Button(
+					task.name.getValue(),
+					(ClickEvent<Button> event) -> {
+						final Long foundID = task.taskID.getValue();
+						MinorTask.showPage(targetPage, foundID);
+					});
+		}
 		formatButton(button);
 		if ((task != null && task.taskID.getValue().equals(taskID))
 				|| (task == null && taskID == null)) {
@@ -112,18 +132,13 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 		});
 		favourites.addClassName("navigator-task-favourites");
 
-		IconWithClickHandler project = new IconWithClickHandler(VaadinIcon.LIST);
-		project.addClickListener((event) -> {
-			Globals.showProjects();
-		});
-		project.addClassName("navigator-task-projects");
-		return new Component[]{search, recent, favourites, project};
+		return new Component[]{search, recent, favourites};
 	}
 
 	public static class WithAddTaskButton extends ProjectPathNavigator {
 
-		public WithAddTaskButton(Long taskID) {
-			super(taskID);
+		public WithAddTaskButton(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
+			super(targetPage, taskID);
 		}
 
 		@Override
@@ -139,7 +154,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	public static class WithAddProjectButton extends ProjectPathNavigator {
 
 		public WithAddProjectButton() {
-			super(null);
+			super(null, null);
 		}
 
 		@Override
@@ -154,8 +169,8 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 
 	public static class WithNewTaskLabel extends ProjectPathNavigator {
 
-		public WithNewTaskLabel(Long taskID) {
-			super(taskID);
+		public WithNewTaskLabel(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
+			super(targetPage, taskID);
 		}
 
 		@Override

@@ -16,6 +16,7 @@ import java.util.logging.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.*;
 import nz.co.gregs.minortask.datamodel.*;
+import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -47,7 +48,7 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigator.WithNewTaskLabel(projectID));
+		layout.add(new ProjectPathNavigator.WithNewTaskLabel(TaskEditorLayout.class, projectID));
 		try {
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createAndShowProjectButton);

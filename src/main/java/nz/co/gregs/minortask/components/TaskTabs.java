@@ -81,9 +81,9 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 			return 0;
 		}
 
-		protected final Class<? extends Component> destinationComponent;
+		protected final Class<? extends AuthorisedOptionalTaskPage> destinationComponent;
 
-		<C extends Component> MinorTaskTab(String label, Class<C> destination) {
+		<C extends AuthorisedOptionalTaskPage> MinorTaskTab(String label, Class<C> destination) {
 			super(label);
 			this.destinationComponent = destination;
 		}
