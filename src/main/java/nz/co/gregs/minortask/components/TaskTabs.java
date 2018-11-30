@@ -94,24 +94,17 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 		public static MinorTaskTab[] getTabArray() {
 			return new MinorTaskTab[]{
-//				new MinorTaskTab("Search", SearchForTaskPage.class),
-				//				getFirstTab(),
-//				new MinorTaskTab("Projects", ProjectsLayout.class),
-//				new MinorTaskTab("Recent", RecentTasksPage.class),
-//				new MinorTaskTab("Favourites", FavouriteTasksPage.class),
 				new MinorTaskTab("Task", TaskEditorLayout.class),
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
 				new MinorTaskTab("Ideas", IdeasPage.class),
-				new MinorTaskTab("All Open", AllOpenTasksPage.class),
-				new MinorTaskTab("All Completed", AllCompletedTasksPage.class)
+				new MinorTaskTab("Open", AllOpenTasksPage.class),
+				new MinorTaskTab("Completed", AllCompletedTasksPage.class)
 			};
 
 		}
 
-//		public static MinorTaskTab getFirstTab() {;
-//		}
 
 		public static Tab getTabForPage(Component page) {
 			Class<? extends Component> pageClass = page.getClass();
@@ -121,7 +114,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 					return value;
 				}
 			}
-			return null;//getFirstTab();
+			return null;
 		}
 
 		private <C extends Component & HasUrlParameter<Long>> void moveTo(Long taskID) {
