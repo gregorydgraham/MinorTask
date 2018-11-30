@@ -76,7 +76,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 			button = new Button(
 					"Projects",
 					(ClickEvent<Button> event) -> {
-						if (targetPage.equals(TaskEditorLayout.class)) {
+						if (targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
 							MinorTask.showProjects();
 						} else {
 							MinorTask.showPage(targetPage, null);
