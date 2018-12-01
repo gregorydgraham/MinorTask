@@ -31,6 +31,10 @@ and open the template in the editor.
 	}
 }
 
+.tasklist-project.tasklist-complete-tick{
+	display: none;
+}
+
 .tasklist-complete-tick{
 	background-color: red; 
 	color: white; 
@@ -38,9 +42,9 @@ and open the template in the editor.
 	font-size: smaller;
 }
 
-.tasklist-complete-tick{
-	background-color: white; 
-	color: limegreen; 
+.tasklist-reopen-tick{
+	background-color: limegreen; 
+	color: white; 
 	border-radius: 4px;
 	font-size: smaller;
 }

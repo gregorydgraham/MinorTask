@@ -120,10 +120,10 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
-		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("2em");
+		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("4em").setFlexGrow(0);
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
-		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
-		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("2em");
+		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em").setFlexGrow(0);
+		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("4em").setFlexGrow(0);
 	}
 
 	private Component getPrefixComponent(Task task) {
@@ -178,31 +178,36 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		HorizontalLayout layout = new HorizontalLayout();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
 
-		if (numberOfSubTasks == 0) {
-			final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
-			checkIcon.addClickListener((event) -> {
-				if (task.completionDate.isNull()) {
-					minortask().completeTaskWithCongratulations(task);
-					checkIcon.removeClassName("tasklist-complete-tick");
-					checkIcon.addClassName("tasklist-reopen-tick");
-				} else {
-					minortask().reopenTask(task);
-					checkIcon.removeClassName("tasklist-reopen-tick");
-					checkIcon.addClassName("tasklist-complete-tick");
-				}
-			});
+		final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
+		checkIcon.addClickListener((event) -> {
 			if (task.completionDate.isNull()) {
-				checkIcon.addClassName("tasklist-complete-tick");
-			} else {
+				minortask().completeTaskWithCongratulations(task);
+				checkIcon.removeClassName("tasklist-complete-tick");
 				checkIcon.addClassName("tasklist-reopen-tick");
+			} else {
+				minortask().reopenTask(task);
+				checkIcon.removeClassName("tasklist-reopen-tick");
+				checkIcon.addClassName("tasklist-complete-tick");
 			}
-			layout.add(checkIcon);
+		});
+		if (numberOfSubTasks == 0) {
+			checkIcon.addClassName("tasklist-endtask");
+		} else {
+			checkIcon.addClassName("tasklist-project");
 		}
+		if (task.completionDate.isNull()) {
+			checkIcon.addClassName("tasklist-complete-tick");
+		} else {
+			checkIcon.addClassName("tasklist-reopen-tick");
+		}
+		layout.add(checkIcon);
+		layout.addClassName("tasklist-entry-suffix");
 		return layout;
 	}
 
 	private Component wrapInALinkToTheTask(final Task task, final Component summary) {
-		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class, task.taskID.getValue());
+		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
+				 task.taskID.getValue());
 		Anchor anchor = new Anchor(url, "");
 		anchor.add(summary);
 		return anchor;
@@ -245,6 +250,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			getDatabase().delete(favour);
 		} catch (SQLException ex) {
 			sqlerror(ex);
+
 		}
 	}
 

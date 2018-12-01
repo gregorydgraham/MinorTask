@@ -398,44 +398,10 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public void completeTaskWithCongratulations(Task task) {
-		try {
-			if (task != null) {
-				completeTask(task);
-				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
-				Long projectID = task.projectID.getValue();
-				Task usersCompletedTasks = new Task();
-				usersCompletedTasks.userID.setValue(getUserID());
-				usersCompletedTasks.completionDate.excludeNull();
-				try {
-					final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
-					Task currentProject = new Task();
-					currentProject.projectID.setValue(projectID);
-					currentProject.completionDate.permitOnlyNull();
-					if (getDatabase().getDBQuery(currentProject).count() == 0) {
-						Globals.congratulate("All the subtasks are completed!");
-					}
-					if (completedTaskCount < 11) {
-						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-					} else if (completedTaskCount > 11 && completedTaskCount < 51
-							&& completedTaskCount % 10 == 0) {
-						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-					} else if (completedTaskCount % 50 == 0) {
-						Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-					}
-				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-					sqlerror(ex);
-				}
-			}
-		} catch (Globals.InaccessibleTaskException ex) {
-			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-
-	public void completeTask(Task task) throws Globals.InaccessibleTaskException {
 		if (task != null) {
 			List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
 			for (Task subtask : subtasks) {
-				completeTask(subtask);
+				completeTaskWithCongratulations(subtask);
 			}
 			task.completionDate.setValue(new Date());
 			try {
@@ -445,8 +411,49 @@ public class MinorTask extends Globals implements Serializable {
 			} catch (SQLException ex) {
 				Globals.sqlerror(ex);
 			}
+			Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
+			Long projectID = task.projectID.getValue();
+			Task usersCompletedTasks = new Task();
+			usersCompletedTasks.userID.setValue(getUserID());
+			usersCompletedTasks.completionDate.excludeNull();
+			try {
+				final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
+				Task currentProject = new Task();
+				currentProject.projectID.setValue(projectID);
+				currentProject.completionDate.permitOnlyNull();
+				if (getDatabase().getDBQuery(currentProject).count() == 0) {
+					Globals.congratulate("All the subtasks are completed!");
+				}
+				if (completedTaskCount < 11) {
+					Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+				} else if (completedTaskCount > 11 && completedTaskCount < 51
+						&& completedTaskCount % 10 == 0) {
+					Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+				} else if (completedTaskCount % 50 == 0) {
+					Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+				}
+			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+				sqlerror(ex);
+			}
 		}
 	}
+
+//	public void completeTask(Task task) throws Globals.InaccessibleTaskException {
+//		if (task != null) {
+//			List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
+//			for (Task subtask : subtasks) {
+//				completeTask(subtask);
+//			}
+//			task.completionDate.setValue(new Date());
+//			try {
+//				final DBDatabase database = Globals.getDatabase();
+//				DBActionList update = database.update(task);
+//				repeatTask(task);
+//			} catch (SQLException ex) {
+//				Globals.sqlerror(ex);
+//			}
+//		}
+//	}
 
 	public void repeatTask(Task task) {
 		if (task.repeatOffset.isNotNull()) {
@@ -499,8 +506,7 @@ public class MinorTask extends Globals implements Serializable {
 		projectPathTasks.forEach((projectPathTask) -> {
 			setCompletionDateToNull(projectPathTask);
 		});
-			setCompletionDateToNull(task);
-		Globals.showTask(task);
+		setCompletionDateToNull(task);
 	}
 
 	public void setCompletionDateToNull(Task projectPathTask) {
