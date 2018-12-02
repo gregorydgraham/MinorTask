@@ -98,6 +98,9 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
 		name.clear();
 		description.clear();
+		startDate.setValue(null);
+		preferredEndDate.setValue(null);
+		deadlineDate.setValue(null);
 
 		LocalDate startDefault = LocalDate.now().plusDays(1);
 		LocalDate preferredDefault = LocalDate.now().plusWeeks(2);

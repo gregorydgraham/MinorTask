@@ -32,30 +32,30 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  */
 @StyleSheet("styles/abstract-task-list.css")
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
-
+	
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
 	private final Label label = new Label();
 	private List<Task> list = new ArrayList<>(0);
-
+	
 	public AbstractTaskList() {
 		this((Long) null);
 	}
-
+	
 	public AbstractTaskList(Long taskID) {
 		this.taskID = taskID;
 		buildComponent();
 		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
-
+	
 	protected AbstractTaskList(List<Task> list) {
 		this.taskID = null;
 		this.list = list;
 		buildComponent();
 		this.addClassName("tasklist");
 	}
-
+	
 	public final void buildComponent() {
 		VerticalLayout well = new VerticalLayout();
 		well.addClassName(getListClassName());
@@ -76,11 +76,11 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			}
 			header.add(headerRight);
 			well.add(header);
-
+			
 			setGridItems(allRows);
 			setGridColumns();
 			well.add(grid);
-
+			
 			HorizontalLayout footer = new HorizontalLayout();
 			final Component[] footerExtras = getFooterExtras();
 			if (footerExtras.length > 0) {
@@ -93,41 +93,43 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		}
 		add(well);
 	}
-
+	
 	protected abstract String getListClassName();
-
+	
 	protected abstract String getListCaption(List<Task> tasks);
-
+	
 	protected abstract List<Task> getTasksToList() throws SQLException;
-
+	
 	protected Component[] getFooterExtras() {
 		return new Component[]{};
 	}
-
+	
 	protected Component[] getHeaderExtras() {
 		return new Component[]{};
 	}
-
+	
 	private void setGridItems(List<Task> allRows) {
 		grid.setItems();//clear it first
 		grid.setItems(allRows);
 	}
-
+	
 	private void setLabel(List<Task> allRows) {
 		final String caption = getListCaption(allRows);
 		label.setText(caption);
 	}
-
+	
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
-		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("4em").setFlexGrow(0);
+		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
 		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em").setFlexGrow(0);
-		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("4em").setFlexGrow(0);
+		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("2em").setFlexGrow(0);
+		grid.setWidth("auto");
 	}
-
+	
 	private Component getPrefixComponent(Task task) {
 		final IconWithClickHandler heart = new IconWithClickHandler(VaadinIcon.HEART);
+		heart.addClassName("tasklist-entry-prefix");
 		if (minortask().taskIsFavourited(task)) {
 			heart.addClickListener((event) -> {
 				removeFavourite(task);
@@ -145,39 +147,43 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		}
 		return heart;
 	}
-
+	
 	private Component getDescriptionComponent(Task task) {
-		Label name = new Label(task.name.getValue());
-		Label desc = new Label(task.description.getValue());
-
+		Div name = new Div();
+		name.setText(task.name.getValue());
+		Div desc = new Div();
+		desc.setText(task.description.getValue());
+		
 		name.setSizeFull();
+		desc.addClassNames("tiny", "tasklist-name");
 		desc.setSizeFull();
 		desc.addClassNames("tiny", "tasklist-description");
-
-		final VerticalLayout summary = new VerticalLayout(name, desc);
-		summary.setSpacing(false);
-
-		Component anchor = wrapInALinkToTheTask(task, summary);
-
+		
+		final Div summary = new Div(name, desc);
+		
+		Anchor anchor = wrapInALinkToTheTask(task, summary);
+		anchor.addClassName("tasklist-entry-summary");
+		
 		return anchor;
 	}
-
+	
 	private Component getSubTaskNumberComponent(Task task) {
 		HorizontalLayout layout = new HorizontalLayout();
+		layout.addClassName("tasklist-subtask-count");
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
 		Label label1 = new Label("" + numberOfSubTasks);
 		label1.add(icon);
 		Component wrapped = wrapInALinkToTheTask(task, label1);
 		layout.add(wrapped);
-
+		
 		return layout;
 	}
-
+	
 	private Component getSuffixComponent(Task task) {
 		HorizontalLayout layout = new HorizontalLayout();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
-
+		
 		final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
 		checkIcon.addClickListener((event) -> {
 			if (task.completionDate.isNull()) {
@@ -204,15 +210,15 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		layout.addClassName("tasklist-entry-suffix");
 		return layout;
 	}
-
-	private Component wrapInALinkToTheTask(final Task task, final Component summary) {
+	
+	private Anchor wrapInALinkToTheTask(final Task task, final Component summary) {
 		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
-				 task.taskID.getValue());
+				task.taskID.getValue());
 		Anchor anchor = new Anchor(url, "");
 		anchor.add(summary);
 		return anchor;
 	}
-
+	
 	protected void refreshList() {
 		try {
 			if (thereAreRowsToShow()) {
@@ -224,15 +230,15 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			sqlerror(ex);
 		}
 	}
-
+	
 	protected Component[] getControlsAbove() {
 		return new Component[]{};
 	}
-
+	
 	protected boolean thereAreRowsToShow() {
 		return true;
 	}
-
+	
 	private void addFavourite(Task task) {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks(task, getUser());
@@ -241,7 +247,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			sqlerror(ex);
 		}
 	}
-
+	
 	private void removeFavourite(Task task) {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks();
@@ -250,21 +256,21 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			getDatabase().delete(favour);
 		} catch (SQLException ex) {
 			sqlerror(ex);
-
+			
 		}
 	}
-
+	
 	public static abstract class PreQueried extends AbstractTaskList {
-
+		
 		public PreQueried(List<Task> list) {
 			super(list);
 		}
-
+		
 		@Override
 		protected List<Task> getTasksToList() throws SQLException {
 			return super.list;
 		}
-
+		
 	}
-
+	
 }

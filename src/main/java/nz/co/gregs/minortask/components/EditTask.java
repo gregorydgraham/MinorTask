@@ -10,9 +10,7 @@ import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.components.upload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -26,12 +24,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
@@ -143,7 +139,7 @@ public class EditTask extends SecureDiv {
 		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
 		reopenButton.addClickListener((event) -> {
 			minortask().reopenTask(taskAndProject.getTask());
-		});//new ReopenTaskListener(minortask(), taskID));
+		});
 		reopenButton.setVisible(false);
 
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
