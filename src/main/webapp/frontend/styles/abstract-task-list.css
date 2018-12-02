@@ -10,13 +10,9 @@ and open the template in the editor.
 
 vaadin-grid-cell-content{
 	padding: 1px;
+	padding-bottom: 5px;
 	width: auto;
 } 
-
-[role~="gridcell"]{
-	width:auto;
-	background-color: green;
-}
 vaadin-grid td{
 	padding: 1px;
 	width: auto;
@@ -51,6 +47,7 @@ vaadin-grid td{
 
 .tasklist-description{
 	white-space: normal;
+	font-size: smaller;
 }
 
 .tasklist-project.tasklist-complete-tick{
@@ -70,23 +67,23 @@ vaadin-grid td{
 }
 
 .tasklist-complete-tick{
-	background-color: red; 
+	background-color: lightgray; 
 	color: white; 
 	border-radius: 4px;
 	font-size: smaller;
 }
 
 .tasklist-reopen-tick{
-	background-color: limegreen; 
-	color: white; 
+	background-color: transparent; 
+	color: limegreen; 
 	border-radius: 4px;
 	font-size: smaller;
 }
 .favourited-task-heart{
-	background-color: white; 
+	background-color: transparent; 
 	color: red; 
 }
 .normal-task-heart{
-	background-color: white; 
+	background-color: transparent; 
 	color: lightgray; 
 }

@@ -41,18 +41,3 @@ and open the template in the editor.
 		border-radius: 0;
 	}
 }
-
-.tasklist-complete-tick{
-	background-color: red; 
-	color: white; 
-	border-radius: 4px;
-	font-size: smaller;
-}
-.favourited-task-heart{
-	background-color: white; 
-	color: red; 
-}
-.normal-task-heart{
-	background-color: white; 
-	color: lightgray; 
-}

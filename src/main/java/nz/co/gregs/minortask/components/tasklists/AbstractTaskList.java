@@ -155,9 +155,9 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		desc.setText(task.description.getValue());
 		
 		name.setSizeFull();
-		desc.addClassNames("tiny", "tasklist-name");
+		name.addClassNames("tasklist-name");
 		desc.setSizeFull();
-		desc.addClassNames("tiny", "tasklist-description");
+		desc.addClassNames("tasklist-description");
 		
 		final Div summary = new Div(name, desc);
 		
