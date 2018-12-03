@@ -48,6 +48,7 @@ public class EditTask extends SecureDiv {
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	PaperInput description = new PaperInput();
+	TextArea notes = new TextArea("Notes");
 	AddTaskButton addSubTask = new AddTaskButton();
 	Button addDates = new Button("Dates", new Icon(VaadinIcon.CALENDAR_O));
 	Button addRepeat = new Button("Repeat", new Icon(VaadinIcon.TIME_FORWARD));
@@ -55,12 +56,12 @@ public class EditTask extends SecureDiv {
 	Button addImage = new Button("Image", new Icon(VaadinIcon.FILE_PICTURE));
 	Button addDocument = new Button("Document", new Icon(VaadinIcon.FILE_ADD));
 	Button addWebLink = new Button("Bookmark", new Icon(VaadinIcon.BOOKMARK_O));
+	Button addNotes = new Button("Notes", new Icon(VaadinIcon.NOTEBOOK));
 	Button completeButton = new Button("Complete This Task");
 	Button reopenButton = new Button("Reopen This Task");
 	ProjectPicker project;
 	OpenTaskList subtasks;
 	CompletedTaskList completedTasks;
-	TextArea notes = new TextArea("Notes");
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
@@ -74,6 +75,7 @@ public class EditTask extends SecureDiv {
 	);
 	WeblinkGrid weblinkGrid = new WeblinkGrid();
 	WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
+	TextArea notesEditor = new TextArea("Notes");
 	DocumentGrid documentGrid = new DocumentGrid();
 	DocumentUploadAndSelector documentUpload;
 	ImageUploadAndSelector imageUpload;
@@ -113,6 +115,7 @@ public class EditTask extends SecureDiv {
 		description.setLabel("Description");
 		description.addClassName("edit-task-description");
 		notes.addClassName("edit-task-notes");
+		notesEditor.addClassName("edit-task-notes");
 
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
@@ -161,6 +164,7 @@ public class EditTask extends SecureDiv {
 		addImage.addClassName("edit-task-button");
 		addPlace.addClassName("edit-task-button");
 		addWebLink.addClassName("edit-task-button");
+		addNotes.addClassName("edit-task-button");
 		final Div addButtons = new Div();
 		addButtons.add(
 				addSubTask,
@@ -169,7 +173,8 @@ public class EditTask extends SecureDiv {
 				addDocument,
 				addImage,
 				addPlace,
-				addWebLink
+				addWebLink,
+				addNotes
 		);
 		addButtons.addClassName("edit-task-addbuttons");
 
@@ -189,6 +194,7 @@ public class EditTask extends SecureDiv {
 				repeatEditor,
 				placeSearcher,
 				weblinkEditor,
+				notesEditor,
 				documentUpload,
 				imageUpload,
 				dates,
@@ -220,8 +226,20 @@ public class EditTask extends SecureDiv {
 				saveTask();
 			}
 		});
-		notes.addValueChangeListener((event) -> {
-			saveTask();
+		notes.addBlurListener((event) -> {
+			if (!notes.getValue().equals(task.notes.stringValue())) {
+				notesEditor.setValue(notes.getValue());
+				saveTask();
+			}
+			notes.setVisible(!notes.getValue().isEmpty());
+		});
+		notesEditor.addBlurListener((event) -> {
+			if (!notesEditor.getValue().equals(task.notes.stringValue())) {
+				notes.setValue(notesEditor.getValue());
+				notes.setVisible(!notes.getValue().isEmpty());
+				saveTask();
+			}
+			showEditor(null);
 		});
 
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
@@ -268,6 +286,9 @@ public class EditTask extends SecureDiv {
 		addWebLink.addClickListener((event) -> {
 			showEditor(weblinkEditor);
 		});
+		addNotes.addClickListener((event) -> {
+			showEditor(notesEditor);
+		});
 		weblinkEditor.addWeblinkAddedListener((event) -> {
 			weblinkGrid.refresh();
 			showEditor(null);
@@ -282,10 +303,13 @@ public class EditTask extends SecureDiv {
 				name.setValue(task.name.stringValue());
 				description.setValue(task.description.toString());
 				notes.setValue(task.notes.stringValue());
+				notesEditor.setValue(task.notes.stringValue());
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
 				repeatEditor.setValue(task.repeatOffset.getValue());
+
+				notes.setVisible(!notes.getValue().isEmpty());
 
 				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 					dates.setVisible(false);
@@ -410,6 +434,7 @@ public class EditTask extends SecureDiv {
 		imageUpload.setVisible(false);
 		placeSearcher.setVisible(false);
 		weblinkEditor.setVisible(false);
+		notesEditor.setVisible(false);
 		if (editor != null) {
 			editor.setVisible(!editorAlreadyShowing);
 		}
@@ -443,38 +468,4 @@ public class EditTask extends SecureDiv {
 			sqlerror(ex);
 		}
 	}
-
-//	private class ReopenTaskListener implements ComponentEventListener<ClickEvent<Button>> {
-//
-//		private final Long taskID;
-//
-//		public ReopenTaskListener(MinorTask minortask, Long taskID) {
-//			this.taskID = taskID;
-//		}
-//
-//		@Override
-//		public void onComponentEvent(ClickEvent<Button> event) {
-//			List<Task> projectPathTasks = getProjectPathTasks(taskID);
-//			projectPathTasks.forEach((projectPathTask) -> {
-//				setCompletionDateToNull(projectPathTask);
-//			});
-//			Task task;
-//			try {
-//				task = getTask(taskID);
-//				setCompletionDateToNull(task);
-//			} catch (Globals.InaccessibleTaskException ex) {
-//				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-//			}
-//			Globals.showTask(taskID);
-//		}
-//
-//		private void setCompletionDateToNull(Task projectPathTask) {
-//			projectPathTask.completionDate.setValue((Date) null);
-//			try {
-//				Globals.getDatabase().update(projectPathTask);
-//			} catch (SQLException ex) {
-//				Globals.sqlerror(ex);
-//			}
-//		}
-//	}
 }
