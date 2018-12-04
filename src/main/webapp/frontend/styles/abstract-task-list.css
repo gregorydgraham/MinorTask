@@ -87,3 +87,7 @@ vaadin-grid td{
 	background-color: transparent; 
 	color: lightgray; 
 }
+.edit-task-complete-button-container {
+	display: flex;
+	flex-direction: row-reverse;
+}
