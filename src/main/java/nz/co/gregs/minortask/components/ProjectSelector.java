@@ -15,20 +15,11 @@ import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@Tag("project-selector")
 public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 
-//	private final Long taskID;
-//	private Task.TaskAndProject taskAndProject;
-
 	public ProjectSelector(Long taskID) {
-//		this.taskID = taskID;
 		try {
-//			taskAndProject = getTaskAndProject(taskID);
-
 			Task.Project example = new Task.Project();
-//			example.userID.permittedValues(minortask().getUserID());
-//			example.completionDate.permittedValues((Date) null);
 			example.name.setSortOrderAscending();
 			final Task task = new Task();
 			final DBQuery query = getDatabase()
