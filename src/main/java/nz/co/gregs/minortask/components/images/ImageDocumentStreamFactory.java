@@ -51,10 +51,15 @@ public class ImageDocumentStreamFactory implements InputStreamFactory {
 	}
 
 	protected BufferedImage createImageFromOriginalRow() throws IOException {
-		final InputStream inputStream = doc.documentContents.getInputStream();
-		BufferedImage originalImage = ImageIO.read(inputStream);
-		BufferedImage thumbnail = transformImage(originalImage);
-		return thumbnail;
+		if (doc.documentContents.isNotNull()) {
+			final InputStream inputStream = doc.documentContents.getInputStream();
+			BufferedImage originalImage = ImageIO.read(inputStream);
+			BufferedImage thumbnail = transformImage(originalImage);
+			return thumbnail;
+		} else {
+//			System.out.println(ClassLoader.getSystemResource("/").toString());
+			return transformImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("logo.png")));
+		}
 	}
 
 	protected BufferedImage transformImage(BufferedImage original) {
