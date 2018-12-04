@@ -13,8 +13,7 @@ authorised-banner {
 	background-color: cadetblue;
 	color:white;
 	margin:0;
-	padding: 0;
-	padding-top:20px;
+	padding: 5px;
 	display: flex;
 	justify-content: space-between
 }
@@ -27,6 +26,8 @@ authorised-banner-left {
 	padding-left: 1em;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	align-content: center;
 }
 
 authorised-banner-right{

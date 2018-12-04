@@ -78,7 +78,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 			right.addClassName("authorised-banner-right");
 
 			left.add(profileImageDiv, welcomeMessage);
-			right.add(logoutButton, profileButton);
+			right.add(profileButton, logoutButton);
 			add(left, right);
 		}
 	}
