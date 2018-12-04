@@ -57,7 +57,6 @@ public class ImageDocumentStreamFactory implements InputStreamFactory {
 			BufferedImage thumbnail = transformImage(originalImage);
 			return thumbnail;
 		} else {
-//			System.out.println(ClassLoader.getSystemResource("/").toString());
 			return transformImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("logo.png")));
 		}
 	}
