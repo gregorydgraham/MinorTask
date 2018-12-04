@@ -120,13 +120,13 @@ public class Task extends DBRow {
 			@DBColumn
 			public DBBoolean isOverdue = new DBBoolean(this.column(this.finalDate).isLessThan(DateExpression.currentDate()));
 
-			{
-				this.hasStarted.setSortOrderDescending();
-				this.isOverdue.setSortOrderDescending();
-				this.startDate.setSortOrderAscending();
-				this.preferredDate.setSortOrderAscending();
-				this.finalDate.setSortOrderAscending();
-			}
+//			{
+//				this.hasStarted.setSortOrderDescending();
+//				this.isOverdue.setSortOrderDescending();
+//				this.startDate.setSortOrderAscending();
+//				this.preferredDate.setSortOrderAscending();
+//				this.finalDate.setSortOrderAscending();
+//			}
 		}
 	}
 
@@ -141,13 +141,14 @@ public class Task extends DBRow {
 		@DBColumn
 		public DBBoolean isOverdue = new DBBoolean(this.column(this.finalDate).isLessThan(DateExpression.currentDate()));
 
-		{
-			this.hasStarted.setSortOrderDescending();
-			this.isOverdue.setSortOrderDescending();
-			this.startDate.setSortOrderAscending();
-			this.preferredDate.setSortOrderAscending();
-			this.finalDate.setSortOrderAscending();
-		}
+//		{
+//			this.hasStarted.setSortOrderDescending();
+//			this.isOverdue.setSortOrderDescending();
+//			this.startDate.setSortOrderAscending();
+//			this.preferredDate.setSortOrderAscending();
+//			this.finalDate.setSortOrderAscending();
+//			this.name.setSortOrderAscending();
+//		}
 	}
 
 	public static class TaskAndProject implements Serializable {

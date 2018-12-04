@@ -43,7 +43,7 @@ public class IdeasList extends AbstractTaskList {
 			example.completionDate.permitOnlyNull();
 			Task task = new Task();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
-			query.setSortOrder(example.column(example.name));
+			query.setSortOrder(example.column(example.name).ascending());
 			query.printAllRows();
 			List<Task> tasks = query.getAllInstancesOf(example);
 			return tasks;

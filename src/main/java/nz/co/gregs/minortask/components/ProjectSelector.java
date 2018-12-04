@@ -33,7 +33,7 @@ public class ProjectSelector extends ComboBox<Task> implements RequiresLogin {
 			final Task task = new Task();
 			final DBQuery query = getDatabase()
 					.getDBQuery(example,task);
-			query.setSortOrder(task.column(task.name));
+			query.setSortOrder(task.column(task.name).ascending());
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
 			setDataProvider(new TasksDataProvider(listOfTasks));
 		} catch (SQLException ex) {

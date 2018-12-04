@@ -35,7 +35,7 @@ public class OpenTaskList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		Task example = new Task();
+		Task example = new Task.WithSortColumns();
 		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
@@ -44,7 +44,8 @@ public class OpenTaskList extends AbstractTaskList {
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.finalDate).ascending(),
-				example.column(example.startDate).ascending()
+				example.column(example.startDate).ascending(),
+				example.column(example.name).ascending()
 		);
 		List<Task> tasks = dbTable.getAllRows();
 		return tasks;

@@ -26,9 +26,9 @@ public class CompletedTaskList extends AbstractTaskList{
 		example.completionDate.setSortOrderDescending();
 		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
 		dbTable.setSortOrder(
-				example.column(example.completionDate),
-				example.column(example.name),
-				example.column(example.taskID)
+				example.column(example.completionDate).descending(),
+				example.column(example.name).ascending(),
+				example.column(example.taskID).ascending()
 		);
 		List<Task> tasks = dbTable.getAllRows();
 		return tasks;

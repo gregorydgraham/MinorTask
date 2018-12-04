@@ -50,7 +50,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 							example.column(example.taskID).is(taskAndProject.getProject().taskID.getValue())
 					)
 			);
-			query.setSortOrder(example.column(example.name));
+			query.setSortOrder(example.column(example.name).ascending());
 
 			List<Task> listOfTasks = query.getAllInstancesOf(example);
 

@@ -36,7 +36,8 @@ public class OpenProjectsList extends AbstractTaskList {
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.finalDate).ascending(),
-				example.column(example.startDate).ascending()
+				example.column(example.startDate).ascending(),
+				example.column(example.name).ascending()
 		);
 		List<Task> tasks = dbTable.getAllRows();
 		return tasks;

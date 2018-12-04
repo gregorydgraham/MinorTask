@@ -42,7 +42,13 @@ public class OverdueTasksList extends AbstractTaskList {
 			final Task task = new Task();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
 			query.addCondition(task.column(task.taskID).isNull());
-			query.setSortOrder(example.column(example.isOverdue), example.column(example.hasStarted), example.column(example.finalDate), example.column(example.startDate));
+			query.setSortOrder(
+					example.column(example.isOverdue).descending(),
+					example.column(example.hasStarted).descending(),
+					example.column(example.finalDate).ascending(),
+					example.column(example.startDate).ascending(),
+					example.column(example.name).ascending()
+			);
 			query.printAllRows();
 			List<Task> tasks = query.getAllInstancesOf(example);
 			return tasks;

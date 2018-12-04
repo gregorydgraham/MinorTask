@@ -98,9 +98,9 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			example.completionDate.setSortOrderDescending();
 			final DBQuery dbTable = getDatabase().getDBQuery(example);
 			dbTable.setSortOrder(
-					example.column(example.completionDate),
-					example.column(example.name),
-					example.column(example.taskID)
+					example.column(example.completionDate).descending(),
+					example.column(example.name).ascending(),
+					example.column(example.taskID).ascending()
 			);
 			List<Task> tasks = dbTable.getAllInstancesOf(example);
 			return tasks;

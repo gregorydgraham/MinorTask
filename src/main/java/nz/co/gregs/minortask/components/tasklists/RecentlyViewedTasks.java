@@ -38,9 +38,11 @@ public class RecentlyViewedTasks extends AbstractTaskList {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.add(GregorianCalendar.DAY_OF_YEAR, -7);
 		taskViews.lastviewed.permittedRange(cal.getTime(), null);
-		DBQuery query = getDatabase().getDBQuery(new Task(), taskViews);
-		query.setSortOrder(taskViews.column(taskViews.lastviewed).descending());
-		return query.getAllInstancesOf(new Task());
+		final Task task = new Task();
+		DBQuery query = getDatabase().getDBQuery(task, taskViews);
+		query.setSortOrder(taskViews.column(taskViews.lastviewed).descending(),
+				task.column(task.name).ascending());
+		return query.getAllInstancesOf(task);
 	}
 	
 }
