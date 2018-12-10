@@ -1,0 +1,19 @@
+
+.cluster-monitor{
+	border: solid cadetblue;
+	display: flex;
+}
+
+.cluster-monitor-database-description{
+	color: blue;
+	font-size: small;
+}
+
+.cluster-monitor-database-status{
+	background-color: bisque;
+}
+
+.cluster-monitor-database{
+	border: dashed blueviolet; 
+	display: inline-block;
+}
