@@ -271,7 +271,7 @@ public class Globals {
 			if (identifier == null) {
 				identifier = getRandomID();
 			}
-			setCookie(MINORTASK_MEMORY_KEY, identifier, -1);
+			setCookie(MINORTASK_MEMORY_KEY, identifier, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 			RememberedLogin example = new RememberedLogin();
 			example.expires.permittedRange(new Date(), null);
 			example.userid.permittedValues(user.getUserID());
