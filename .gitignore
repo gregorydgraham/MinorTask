@@ -3,3 +3,8 @@
 /target/
 /MinorTaskBackup.h2.mv.db
 /MinorTaskBackup.h2.trace.db
+/MinorTask1.h2.trace.db
+/MinorTask2.sqlite
+/MinorTask1.h2.mv.db
+/MinorTask2.h2.trace.db
+/MinorTask2.h2.mv.db
