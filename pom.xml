@@ -14,7 +14,7 @@
 	</prerequisites>
 
 	<properties>
-		<vaadin.version>11.0.1</vaadin.version>
+		<vaadin.version>11.0.4</vaadin.version>
 		<!--<vaadin.version>8.4.4</vaadin.version>-->
 		<!--<vaadin.plugin.version>8.4.4</vaadin.plugin.version>-->
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-core</artifactId>
-			<version>11.0.1</version>
+			<version>11.0.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.code.findbugs</groupId>
