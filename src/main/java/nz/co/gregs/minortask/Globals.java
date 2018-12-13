@@ -547,11 +547,15 @@ public class Globals {
 					try {
 						do {
 							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
+							if(settings.getLabel().isEmpty()){
+								settings.setLabel(thisFactory);
+							}
 							System.out.println(thisFactory + ": " + settings);
 							try {
-								cluster.addDatabase(settings.createDBDatabase());
+								final DBDatabase newDB = settings.createDBDatabase();
+								cluster.addDatabase(newDB);
 							} catch (SQLException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-								error("Unable to create database: " + settings.toString(), ex.getMessage());
+								error("Unable to create database: " + settings.toString(), ex);
 							}
 							index++;
 							thisFactory = dcsFactory + index;
@@ -606,6 +610,19 @@ public class Globals {
 		System.out.println("ERROR: " + topic + " - " + error);
 		Button closeButton = new Button("Oops");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error), closeButton);
+		Notification note = new Notification(layout);
+		closeButton.addClickListener((ClickEvent<Button> event) -> {
+			note.close();
+		});
+		note.setPosition(Notification.Position.TOP_CENTER);
+		note.open();
+	}
+
+	public static final void error(final String topic, final Exception error) {
+		error.printStackTrace();
+		System.out.println("ERROR: " + topic + " - " + error.getClass().getSimpleName()+": "+error.getMessage());
+		Button closeButton = new Button("Oops");
+		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error.getMessage()), closeButton);
 		Notification note = new Notification(layout);
 		closeButton.addClickListener((ClickEvent<Button> event) -> {
 			note.close();
@@ -688,9 +705,9 @@ public class Globals {
 	}
 
 	static void showTask(Task task) {
-		if (task==null){
+		if (task == null) {
 			showProjects();
-		}else{
+		} else {
 			showTask(task.taskID.getValue());
 		}
 	}
@@ -827,7 +844,6 @@ public class Globals {
 		}
 	}
 
-
 	private static class DatabaseBackupProcess extends RegularProcess {
 
 		public DatabaseBackupProcess() {
@@ -904,7 +920,6 @@ public class Globals {
 //				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
 //			}
 //		}
-
 	}
 
 }
