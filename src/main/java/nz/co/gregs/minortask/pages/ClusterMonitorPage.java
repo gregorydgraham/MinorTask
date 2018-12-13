@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import nz.co.gregs.minortask.components.DatabaseComponent;
 import com.vaadin.flow.component.Component;
 import nz.co.gregs.minortask.components.ClusterMonitorComponent;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -37,42 +38,21 @@ public class ClusterMonitorPage extends AuthorisedPage {
 	protected Component getInternalComponent() {
 		Div div = new Div(clusterMonitorComponent);
 		DBDatabase database = getDatabase();
+		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
+		div.add(databaseDiv);
 		if (database instanceof DBDatabaseCluster) { // never assume its a cluster ;-)
+			databaseDiv.addClassName("cluster-monitor");
 			DBDatabaseCluster cluster = (DBDatabaseCluster) database;
 			Div clusterDiv = new Div(new Label(cluster.getDatabaseName()));
 			clusterDiv.addClassName("cluster-monitor");
 			div.add(clusterDiv);
 			ClusterDetails details = cluster.getClusterDetails();
 			DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
-			Div allDatabasesDiv = new Div();
 			DBDatabase[] allDBs = details.getAllDatabases();
 			for (DBDatabase db : allDBs) {
-				String databaseName = db.getDatabaseName();
-				databaseName = databaseName.isEmpty() ? "Unnamed" : databaseName;
-				final DatabaseConnectionSettings settings = db.getSettings();
-				final Div databaseDescriptionDiv = new Div(
-						new Label(settings.toString()
-								.replaceAll("DATABASECONNECTIONSETTINGS:* *", "")
-								.replaceAll("nz\\.co\\.gregs\\.dbvolution\\.databases\\.", ""))
-				);
-				databaseDescriptionDiv.addClassName("cluster-monitor-database-description");
-				final Div databaseStatusDiv = new Div(
-						new Label(details.getStatusOf(db).name()
-						)
-				);
-				if (settings.equals(authoritativeDatabase)){
-					databaseStatusDiv.add(new Label("AUTHORITATIVE"));
-				}
-				databaseStatusDiv.addClassName("cluster-monitor-database-status");
-				final Div databaseDiv = new Div(
-						new Label(databaseName),
-						databaseDescriptionDiv,
-						databaseStatusDiv
-				);
-				databaseDiv.addClassName("cluster-monitor-database");
-				allDatabasesDiv.add(databaseDiv);
+				Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
+				databaseDiv.add(dbDiv);
 			}
-			clusterDiv.add(allDatabasesDiv);
 		}
 		return div;
 	}
