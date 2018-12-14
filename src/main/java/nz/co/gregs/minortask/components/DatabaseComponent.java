@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
 
@@ -38,7 +39,7 @@ public class DatabaseComponent extends Div {
 		}
 		databaseStatusDiv.addClassName("cluster-monitor-database-status");
 		add(
-				new Label(label),
+				new Label(label+": "+db.getClass().getSimpleName()),
 				databaseDescriptionDiv,
 				databaseStatusDiv
 		);
@@ -57,7 +58,7 @@ public class DatabaseComponent extends Div {
 		databaseDescriptionDiv.addClassName("cluster-monitor-database-description");
 
 		add(
-				new Label(label),
+				new Label(label+": "+db.getClass().getSimpleName()),
 				databaseDescriptionDiv
 		);
 		Exception except = db.getLastException();
@@ -71,5 +72,4 @@ public class DatabaseComponent extends Div {
 
 		addClassName("cluster-monitor-database");
 	}
-
 }
