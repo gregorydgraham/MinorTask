@@ -7,6 +7,8 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
@@ -19,7 +21,7 @@ public class DatabaseComponent extends Div {
 
 	public DatabaseComponent(DBDatabase db, ClusterDetails details, DatabaseConnectionSettings authoritativeDatabase) {
 		String label = db.getLabel();
-		label = (label==null||label.isEmpty() )? "Unnamed" : label;
+		label = (label == null || label.isEmpty()) ? "Unnamed" : label;
 		final DatabaseConnectionSettings settings = db.getSettings();
 		final Div databaseDescriptionDiv = new Div(
 				new Label(settings.toString()
@@ -31,7 +33,7 @@ public class DatabaseComponent extends Div {
 				new Label(details.getStatusOf(db).name()
 				)
 		);
-		if (settings.equals(authoritativeDatabase)){
+		if (settings.equals(authoritativeDatabase)) {
 			databaseStatusDiv.add(new Label("AUTHORITATIVE"));
 		}
 		databaseStatusDiv.addClassName("cluster-monitor-database-status");
@@ -42,10 +44,10 @@ public class DatabaseComponent extends Div {
 		);
 		addClassName("cluster-monitor-database");
 	}
-	
+
 	public DatabaseComponent(DBDatabase db) {
 		String label = db.getLabel();
-		label = label==null||label.isEmpty() ? "Unnamed" : label;
+		label = label == null || label.isEmpty() ? "Unnamed" : label;
 		final DatabaseConnectionSettings settings = db.getSettings();
 		final Div databaseDescriptionDiv = new Div(
 				new Label(settings.toString()
@@ -53,12 +55,21 @@ public class DatabaseComponent extends Div {
 						.replaceAll("nz\\.co\\.gregs\\.dbvolution\\.databases\\.", ""))
 		);
 		databaseDescriptionDiv.addClassName("cluster-monitor-database-description");
-		
+
 		add(
 				new Label(label),
 				databaseDescriptionDiv
 		);
+		Exception except = db.getLastException();
+		if (except != null) {
+			add(new TextField("Exception", db.getLastException().getLocalizedMessage(), ""));
+			StackTraceElement[] stackTrace = except.getStackTrace();
+			for (StackTraceElement stackTraceElement : stackTrace) {
+				add(new TextField("", stackTraceElement.toString(), ""));
+			}
+		}
+
 		addClassName("cluster-monitor-database");
 	}
-	
+
 }

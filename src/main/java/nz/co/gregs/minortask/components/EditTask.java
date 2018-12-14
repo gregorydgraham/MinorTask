@@ -142,6 +142,7 @@ public class EditTask extends SecureDiv {
 		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
 		reopenButton.addClickListener((event) -> {
 			minortask().reopenTask(taskAndProject.getTask());
+			refresh();
 		});
 		reopenButton.setVisible(false);
 
@@ -367,6 +368,7 @@ public class EditTask extends SecureDiv {
 
 				} else {
 					completeButton.setVisible(true);
+					reopenButton.setVisible(false);
 					final Date now = new Date();
 					if (task.startDate.dateValue() == null && task.finalDate.dateValue() == null) {
 						oneDayMaybeIndicator.setVisible(true);
@@ -465,6 +467,14 @@ public class EditTask extends SecureDiv {
 		try {
 			getDatabase().insert(taskView);
 		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+	}
+
+	private void refresh() {
+		try {
+			setFieldValues();
+		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
 			sqlerror(ex);
 		}
 	}
