@@ -28,7 +28,9 @@ public class TaskEditorLayout extends AuthorisedOptionalTaskPage {
 		if (parameter == null) {
 			return new RootTaskComponent(null);
 		} else {
-			return new EditTask(parameter);
+//			chat("making EditTask");
+			final EditTask editor = new EditTask(parameter);
+			return editor;
 		}
 	}
 

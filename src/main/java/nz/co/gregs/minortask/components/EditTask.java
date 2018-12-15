@@ -11,6 +11,7 @@ import nz.co.gregs.minortask.components.upload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -43,7 +45,7 @@ import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
  * @author gregorygraham
  */
 @StyleSheet("styles/edittask.css")
-public class EditTask extends SecureDiv {
+public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
@@ -215,11 +217,18 @@ public class EditTask extends SecureDiv {
 		return topLayout;
 	}
 
+	@Override
+	public Registration addProjectPathAlteredListener(
+			ComponentEventListener<ProjectPathAltered> listener) {
+		return addListener(ProjectPathAltered.class, listener);
+	}
+
 	protected void addChangeListeners(Task task) {
 		name.addBlurListener((event) -> {
 			if (!event.getSource().getValue().equals(task.name.getValue())) {
 				saveTask();
-				Globals.showTask(taskID);
+				fireEvent(new ProjectPathAltered(this, task, false));
+//				Globals.showTask(taskID);
 			}
 		});
 		description.addBlurListener((event) -> {

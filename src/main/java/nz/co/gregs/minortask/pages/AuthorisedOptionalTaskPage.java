@@ -14,25 +14,27 @@ import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
+import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.components.FooterMenu;
+import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.components.TaskTabs;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
-
+	
 	TaskTabs taskTabs;
 	
 	@Override
 	protected final Component getInternalComponent() {
 		return new AccessDeniedComponent();
 	}
-
+	
 	protected abstract Component getInternalComponent(Long parameter);
-
+	
 	@Override
 	public final void setComponents() {
 	}
-
+	
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
@@ -48,6 +50,14 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 			internalComponent = new AccessDeniedComponent();
 		}
 		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(this.getClass(), taskID);
+		if (internalComponent instanceof ProjectPathChanger) {
+//			chat("adding path change listener");
+			ProjectPathChanger ppc = (ProjectPathChanger) internalComponent;
+			ppc.addProjectPathAlteredListener((evt) -> {
+//				chat("path changed...");
+				projectPath.refresh();
+			});
+		}
 		Div internalComponentHolder
 				= new Div(
 						banner,

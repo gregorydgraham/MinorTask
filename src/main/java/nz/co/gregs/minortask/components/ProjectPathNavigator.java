@@ -58,6 +58,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 	
 	public void refresh(){
+//		chat("refreshing path..."); 
 		buildComponent();
 	}
 
