@@ -46,6 +46,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	protected void buildComponent() {
+		removeAll();
 		add(getPrefixComponents());
 		List<Task> ancestors = getProjectPathTasks(getTaskID(), getUserID());
 		Collections.reverse(ancestors);
@@ -54,6 +55,10 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
+	}
+	
+	public void refresh(){
+		buildComponent();
 	}
 
 	public List<Task> getProjectPathTasks(Long taskID, final long userID) {
