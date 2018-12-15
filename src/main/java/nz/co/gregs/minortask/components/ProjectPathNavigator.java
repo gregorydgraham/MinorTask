@@ -82,7 +82,17 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 							MinorTask.showPage(targetPage, null);
 						}
 					});
-		} else {
+		} else if((task != null && task.taskID.getValue().equals(taskID))
+				|| (task == null && taskID == null)){
+			// clicking the current task should go to the details page
+			button = new Button(
+					task.name.getValue(),
+					(ClickEvent<Button> event) -> {
+						final Long foundID = task.taskID.getValue();
+						MinorTask.showTask(foundID);
+					});
+		}else{
+			// jump to the same tab on the new task
 			button = new Button(
 					task.name.getValue(),
 					(ClickEvent<Button> event) -> {
