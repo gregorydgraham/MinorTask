@@ -82,14 +82,14 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 			button = new Button(
 					"Projects",
 					(ClickEvent<Button> event) -> {
-						if (targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
+						if (taskID==null||targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
+							// if Projects is the current task or we're on the details page
 							MinorTask.showProjects();
 						} else {
 							MinorTask.showPage(targetPage, null);
 						}
 					});
-		} else if((task != null && task.taskID.getValue().equals(taskID))
-				|| (task == null && taskID == null)){
+		} else if(task.taskID.getValue().equals(taskID)){
 			// clicking the current task should go to the details page
 			button = new Button(
 					task.name.getValue(),
