@@ -16,6 +16,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.images.ImageIconFromDocument;
+import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -48,7 +49,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		if (user != null) {
 			Component profileImageDiv = new Div();
 			if (user.profileImage != null) {
-				profileImageDiv = new ImageIconFromDocument(user.profileImage);
+				profileImageDiv = new SizedImageFromDocument(user.profileImage, 100);
 			}
 			profileImageDiv.setId("authorised-banner-profile-image");
 			final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();

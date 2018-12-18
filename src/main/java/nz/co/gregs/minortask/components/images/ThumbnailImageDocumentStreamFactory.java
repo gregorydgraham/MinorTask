@@ -42,7 +42,7 @@ public class ThumbnailImageDocumentStreamFactory extends ImageDocumentStreamFact
 		System.out.println("SCALE: "+scale);
 		at.scale(scale,scale);
 		AffineTransformOp scaleOp
-				= new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+				= new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
 		after = scaleOp.filter(original, after);
 		return after;
 	}
