@@ -1,7 +1,28 @@
 
 .cluster-monitor{
-	border: solid cadetblue;
-	display: flex;
+	/*border: solid cadetblue;*/
+	/*display: flex;*/
+}
+
+.cluster-monitor-database-cluster{
+	border: solid blueviolet;
+	background-color: beige;
+}
+
+.cluster-monitor-contained-databases{
+}
+
+.cluster-monitor-contained-database{
+	background-color: white;
+	border-top:thin dashed darkslateblue;
+}
+
+.cluster-monitor-ready-database{
+	background-color: lightgreen;
+}
+
+.cluster-monitor-nonready-database{
+	background-color: bisque;
 }
 
 .cluster-monitor-database-description{
@@ -9,11 +30,11 @@
 	font-size: small;
 }
 
-.cluster-monitor-database-status{
+/*.cluster-monitor-database-status{
 	background-color: bisque;
-}
+}*/
 
 .cluster-monitor-database{
-	border: dashed blueviolet; 
-	display: inline-block;
+	/*border: dashed blueviolet;*/ 
+	/*display: block;*/
 }

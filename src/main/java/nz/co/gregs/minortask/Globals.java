@@ -547,7 +547,7 @@ public class Globals {
 					try {
 						do {
 							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
-							if(settings.getLabel().isEmpty()){
+							if (settings.getLabel().isEmpty()) {
 								settings.setLabel(thisFactory);
 							}
 							System.out.println(thisFactory + ": " + settings);
@@ -620,7 +620,7 @@ public class Globals {
 
 	public static final void error(final String topic, final Exception error) {
 		error.printStackTrace();
-		System.out.println("ERROR: " + topic + " - " + error.getClass().getSimpleName()+": "+error.getMessage());
+		System.out.println("ERROR: " + topic + " - " + error.getClass().getSimpleName() + ": " + error.getMessage());
 		Button closeButton = new Button("Oops");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error.getMessage()), closeButton);
 		Notification note = new Notification(layout);
@@ -851,9 +851,9 @@ public class Globals {
 		}
 
 		@Override
-		public synchronized void process() {
-
-			System.out.println("PREPARING TO BACKUP...");
+		public synchronized String process() {
+			String result = "PREPARING BACKUP\n";
+			System.out.println("PREPARING TO BACKUP...\n");
 
 			try {
 				Context initCtx = new InitialContext();
@@ -862,34 +862,42 @@ public class Globals {
 				DatabaseConnectionSettings settings = (DatabaseConnectionSettings) envCtx.lookup(dcsFactory);
 				final DBDatabase backupDB = settings.createDBDatabase();
 				getDatabase().backupToDBDatabase(backupDB);
+				result+= "BACKED UP TO "+backupDB+"\n";
 				backupDB.stop();
 			} catch (SQLException | NamingException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				System.out.println("nz.co.gregs.minortask.Globals.DatabaseBackupProcess.process(): " + ex.getMessage());
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
+				result+= "EXCEPTION: "+ex.getMessage();
 			}
 
 			System.out.println("FINISHED BACKUP.");
+			result += "FINISHED BACKUP\n";
+			return result;
 		}
 	}
 
 	private static class CleanupDatabaseProcess extends RegularProcess {
 
 		@Override
-		public void process() {
-			cleanupRememberedLogins();
+		public String process() {
+			return cleanupRememberedLogins();
 
 //			moveOldDocumentLinksToNewLinkTable();
 		}
 
-		private void cleanupRememberedLogins() {
-			System.out.println("CLEANING UP THE REMEMBERED LOGINS...");
+		private String cleanupRememberedLogins() {
+			String str = "CLEANING UP THE REMEMBERED LOGINS...";
+			System.out.println("CLEANING UP THE REMEMBERED LOGINS...\n");
 			try {
-				RememberedLogin.cleanUpTable(this.getDatabase());
+				final DBActionList cleanUpActions = RememberedLogin.cleanUpTable(this.getDatabase());
+				str += cleanUpActions.getSQL(database);
 			} catch (SQLException ex) {
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
 			System.out.println("CLEANED UP THE REMEMBERED LOGINS");
+			str += "\nCLEANED UP THE REMEMBERED LOGINS";
+			return str;
 		}
 
 //		private void moveOldDocumentLinksToNewLinkTable() {

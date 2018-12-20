@@ -40,20 +40,20 @@ public class ClusterMonitorPage extends AuthorisedPage {
 		DBDatabase database = getDatabase();
 		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
 		div.add(databaseDiv);
-		if (database instanceof DBDatabaseCluster) { // never assume its a cluster ;-)
-			databaseDiv.addClassName("cluster-monitor");
-			DBDatabaseCluster cluster = (DBDatabaseCluster) database;
-			Div clusterDiv = new Div(new Label(cluster.getDatabaseName()));
-			clusterDiv.addClassName("cluster-monitor");
-			div.add(clusterDiv);
-			ClusterDetails details = cluster.getClusterDetails();
-			DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
-			DBDatabase[] allDBs = details.getAllDatabases();
-			for (DBDatabase db : allDBs) {
-				Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
-				databaseDiv.add(dbDiv);
-			}
-		}
+//		if (database instanceof DBDatabaseCluster) { // never assume its a cluster ;-)
+//			databaseDiv.addClassName("cluster-monitor");
+//			DBDatabaseCluster cluster = (DBDatabaseCluster) database;
+//			Div clusterDiv = new Div(new Label(cluster.getDatabaseName()));
+//			clusterDiv.addClassName("cluster-monitor");
+//			div.add(clusterDiv);
+//			ClusterDetails details = cluster.getClusterDetails();
+//			DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
+//			DBDatabase[] allDBs = details.getAllDatabases();
+//			for (DBDatabase db : allDBs) {
+//				Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
+//				databaseDiv.add(dbDiv);
+//			}
+//		}
 		return div;
 	}
 

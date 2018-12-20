@@ -7,12 +7,11 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
+import nz.co.gregs.dbvolution.utility.RegularProcess;
 
 /**
  *
@@ -20,56 +19,84 @@ import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
  */
 public class DatabaseComponent extends Div {
 
+	private final Div databaseDescriptionDiv = new Div();
+	private final Div labelDiv = new Div();
+	private final Div databaseStatusDiv = new Div();
+	private final Div exceptionDiv = new Div();
+	private final Div containedDatabaseDiv = new Div();
+	private final Div regularProcessorsDiv = new Div();
+
 	public DatabaseComponent(DBDatabase db, ClusterDetails details, DatabaseConnectionSettings authoritativeDatabase) {
-		String label = db.getLabel();
-		label = (label == null || label.isEmpty()) ? "Unnamed" : label;
-		final DatabaseConnectionSettings settings = db.getSettings();
-		final Div databaseDescriptionDiv = new Div(
-				new Label(settings.toString()
-						.replaceAll("DATABASECONNECTIONSETTINGS:* *", "")
-						.replaceAll("nz\\.co\\.gregs\\.dbvolution\\.databases\\.", ""))
-		);
-		databaseDescriptionDiv.addClassName("cluster-monitor-database-description");
-		final Div databaseStatusDiv = new Div(
-				new Label(details.getStatusOf(db).name()
-				)
-		);
-		if (settings.equals(authoritativeDatabase)) {
-			databaseStatusDiv.add(new Label("AUTHORITATIVE"));
+		this(db);
+		if (db.getSettings().equals(authoritativeDatabase)) {
+			databaseStatusDiv.add(new Div(new Label("AUTHORITATIVE")));
 		}
+		final DBDatabaseCluster.Status status = details.getStatusOf(db);
+		databaseStatusDiv.add(new Div(new Label(status.name())));
 		databaseStatusDiv.addClassName("cluster-monitor-database-status");
-		add(
-				new Label(label+": "+db.getClass().getSimpleName()),
-				databaseDescriptionDiv,
-				databaseStatusDiv
-		);
-		addClassName("cluster-monitor-database");
+		addClassName(
+				status.equals(DBDatabaseCluster.Status.READY)
+						?"cluster-monitor-ready-database"
+						:"cluster-monitor-nonready-database");
 	}
 
-	public DatabaseComponent(DBDatabase db) {
-		String label = db.getLabel();
-		label = label == null || label.isEmpty() ? "Unnamed" : label;
-		final DatabaseConnectionSettings settings = db.getSettings();
-		final Div databaseDescriptionDiv = new Div(
-				new Label(settings.toString()
-						.replaceAll("DATABASECONNECTIONSETTINGS:* *", "")
-						.replaceAll("nz\\.co\\.gregs\\.dbvolution\\.databases\\.", ""))
-		);
+	public DatabaseComponent(DBDatabase database) {
+		addClassName("cluster-monitor-database");
+		add(labelDiv);
+		add(databaseDescriptionDiv);
+		add(databaseStatusDiv);
+		add(exceptionDiv);
+		add(containedDatabaseDiv);
+		add(regularProcessorsDiv);
+		labelDiv.addClassName("cluster-monitor-database-label");
 		databaseDescriptionDiv.addClassName("cluster-monitor-database-description");
+		databaseStatusDiv.addClassName("cluster-monitor-database-status");
+		exceptionDiv.addClassName("cluster-monitor-exception");
+		containedDatabaseDiv.addClassName("cluster-monitor-contained-databases");
+		regularProcessorsDiv.addClassName("cluster-monitor-regularProcessors");
 
-		add(
-				new Label(label+": "+db.getClass().getSimpleName()),
-				databaseDescriptionDiv
-		);
-		Exception except = db.getLastException();
-		if (except != null) {
-			add(new TextField("Exception", db.getLastException().getLocalizedMessage(), ""));
-			StackTraceElement[] stackTrace = except.getStackTrace();
-			for (StackTraceElement stackTraceElement : stackTrace) {
-				add(new TextField("", stackTraceElement.toString(), ""));
+		if (database != null) {
+			String label = database.getLabel();
+			label = label == null || label.isEmpty() ? "Unnamed" : label;
+			labelDiv.add(new Label(label + ": " + database.getClass().getSimpleName()));
+			DatabaseConnectionSettings settings = database.getSettings();
+			databaseDescriptionDiv.add(
+					new Label(settings.toString()
+							.replaceAll("DATABASECONNECTIONSETTINGS:* *", "")
+							.replaceAll("nz\\.co\\.gregs\\.dbvolution\\.databases\\.", ""))
+			);
+
+			Exception except = database.getLastException();
+			if (except != null) {
+				exceptionDiv.add(new Div(new Label(database.getLastException().getLocalizedMessage())));
+				StackTraceElement[] stackTrace = except.getStackTrace();
+				for (StackTraceElement stackTraceElement : stackTrace) {
+					exceptionDiv.add(new Div(new Label(stackTraceElement.toString())));
+				}
+			} else {
+				exceptionDiv.add(new Div(new Label("No Exception")));
+			}
+
+			for (RegularProcess regProc : database.getRegularProcessors()) {
+				regularProcessorsDiv.add(
+						new Div(
+								new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
+								new Div(new Label("" + regProc.getLastRuntime()))
+						)
+				);
+			}
+			if (database instanceof DBDatabaseCluster) {
+				addClassName("cluster-monitor-database-cluster");
+				DBDatabaseCluster cluster = (DBDatabaseCluster) database;
+				ClusterDetails details = cluster.getClusterDetails();
+				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
+				DBDatabase[] allDBs = details.getAllDatabases();
+				for (DBDatabase db : allDBs) {
+					Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
+					dbDiv.addClassName("cluster-monitor-contained-database");
+					containedDatabaseDiv.add(dbDiv);
+				}
 			}
 		}
-
-		addClassName("cluster-monitor-database");
 	}
 }
