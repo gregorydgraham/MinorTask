@@ -243,13 +243,13 @@ public class MinorTask extends Globals implements Serializable {
 					if (docs.size() == 1) {
 						user.profileImage = docs.get(0);
 					} else {
-						chat("Couldn't find the picture");
+						chat("Couldn't find your profile picture sorry");
 					}
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				}
 			} else {
-				chat("image not provided");
+//				chat("image not provided");
 			}
 		}
 	}
