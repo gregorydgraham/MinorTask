@@ -18,34 +18,40 @@ authorised-banner {
 	justify-content: space-between
 }
 
-authorised-banner a{color: white;}
-authorised-banner a:hover{color: white;font-weight: bold;}
-authorised-banner a:active{color: white;font-style: oblique;}
-
-authorised-banner-left {
-	padding-left: 1em;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	align-content: center;
+@media all and (max-width: 900px) {
+	authorised-banner {
+		padding: 0;
+	}
 }
 
-authorised-banner-right{
-}
+	authorised-banner a{color: white;}
+	authorised-banner a:hover{color: white;font-weight: bold;}
+	authorised-banner a:active{color: white;font-style: oblique;}
 
-#authorised-banner-profile-image{
-	width: 50px;
-	height: 50px;
-	object-fit: cover;
-	border-radius: 25px;
-	display: inline-block;	
-}
+	authorised-banner-left {
+		padding-left: 1em;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		align-content: center;
+	}
 
-.authorised-banner-selected-button{
-	background-color: white;
-	color: cadetblue;
-}
+	authorised-banner-right{
+	}
 
-.authorised-banner-button{
-	color: #0099cc;
-}
+	#authorised-banner-profile-image{
+		width: 50px;
+		height: 50px;
+		object-fit: cover;
+		border-radius: 25px;
+		display: inline-block;	
+	}
+
+	.authorised-banner-selected-button{
+		background-color: white;
+		color: cadetblue;
+	}
+
+	.authorised-banner-button{
+		color: #0099cc;
+	}
