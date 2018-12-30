@@ -30,6 +30,11 @@
 	font-size: small;
 }
 
+.cluster-monitor-exception{
+	color: red;
+	font-size: small;
+}
+
 /*.cluster-monitor-database-status{
 	background-color: bisque;
 }*/
