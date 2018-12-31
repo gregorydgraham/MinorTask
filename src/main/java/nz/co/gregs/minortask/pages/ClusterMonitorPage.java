@@ -11,12 +11,8 @@ import nz.co.gregs.minortask.components.ClusterMonitorComponent;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
-import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
-import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
 import nz.co.gregs.minortask.Globals;
 
 /**
@@ -40,20 +36,6 @@ public class ClusterMonitorPage extends AuthorisedPage {
 		DBDatabase database = getDatabase();
 		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
 		div.add(databaseDiv);
-//		if (database instanceof DBDatabaseCluster) { // never assume its a cluster ;-)
-//			databaseDiv.addClassName("cluster-monitor");
-//			DBDatabaseCluster cluster = (DBDatabaseCluster) database;
-//			Div clusterDiv = new Div(new Label(cluster.getDatabaseName()));
-//			clusterDiv.addClassName("cluster-monitor");
-//			div.add(clusterDiv);
-//			ClusterDetails details = cluster.getClusterDetails();
-//			DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
-//			DBDatabase[] allDBs = details.getAllDatabases();
-//			for (DBDatabase db : allDBs) {
-//				Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
-//				databaseDiv.add(dbDiv);
-//			}
-//		}
 		return div;
 	}
 

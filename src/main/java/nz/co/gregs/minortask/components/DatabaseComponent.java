@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
@@ -25,8 +26,10 @@ public class DatabaseComponent extends Div {
 	private final Div exceptionDiv = new Div();
 	private final Div containedDatabaseDiv = new Div();
 	private final Div regularProcessorsDiv = new Div();
+	private final Div clusterRebuildDiv = new Div();
+	private final Div clusterReconnectDiv = new Div();
 
-	public DatabaseComponent(DBDatabase db, ClusterDetails details, DatabaseConnectionSettings authoritativeDatabase) {
+	protected DatabaseComponent(DBDatabase db, ClusterDetails details, DatabaseConnectionSettings authoritativeDatabase) {
 		this(db);
 		if (db.getSettings().equals(authoritativeDatabase)) {
 			databaseStatusDiv.add(new Div(new Label("AUTHORITATIVE")));
@@ -44,6 +47,8 @@ public class DatabaseComponent extends Div {
 		addClassName("cluster-monitor-database");
 		add(labelDiv);
 		add(databaseDescriptionDiv);
+		add(clusterRebuildDiv);
+		add(clusterReconnectDiv);
 		add(databaseStatusDiv);
 		add(exceptionDiv);
 		add(containedDatabaseDiv);
@@ -81,13 +86,19 @@ public class DatabaseComponent extends Div {
 				regularProcessorsDiv.add(
 						new Div(
 								new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
-								new Div(new Label("" + regProc.getLastRuntime()))
+								new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
+								new Div(new Label("Next Processing: " + regProc.getNextRuntime()))
 						)
 				);
 			}
 			if (database instanceof DBDatabaseCluster) {
 				addClassName("cluster-monitor-database-cluster");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) database;
+				boolean autoReconnect = cluster.getAutoReconnect();
+				boolean autoRebuild = cluster.getAutoRebuild();
+				clusterRebuildDiv.add(new Label("Rebuild: "+autoRebuild));
+				clusterReconnectDiv.add(new Label("Reconnect: "+autoReconnect));
+				
 				ClusterDetails details = cluster.getClusterDetails();
 				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
 				DBDatabase[] allDBs = details.getAllDatabases();
