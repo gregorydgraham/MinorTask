@@ -54,10 +54,11 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 	public static Date getStartOfThisWeek() {
 		Calendar cal = GregorianCalendar.getInstance();
-		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+		cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
 		cal.clear(Calendar.HOUR_OF_DAY);
 		cal.clear(Calendar.MINUTE);
 		cal.clear(Calendar.SECOND);
+		cal.add(Calendar.DATE, -7);
 		Date startOfWeek = cal.getTime();
 		return startOfWeek;
 	}
@@ -70,7 +71,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		cal.clear(Calendar.MILLISECOND);
 
 // get start of the month
-		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.add(Calendar.MONTH, -1);
 		Date startOfMonth = cal.getTime();
 		return startOfMonth;
 	}
@@ -83,8 +84,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		cal.clear(Calendar.MILLISECOND);
 
 // get start of the month
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		cal.set(Calendar.MONTH, 0);
+		cal.add(Calendar.YEAR, -1);
 		Date startOfYear = cal.getTime();
 		return startOfYear;
 	}
@@ -129,11 +129,11 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		Date startOfMonth = getStartOfThisMonth();
 		Date startOfYear = getStartOfThisYear();
 		for (Task task : tasksToList) {
-			if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfWeek)) {
+			if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfWeek)) {
 				week.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfMonth)) {
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfMonth)) {
 				month.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfYear)) {
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfYear)) {
 				month.add(task);
 			} else {
 				others.add(task);
@@ -154,7 +154,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week";
+			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until "+AllCompletedTasksComponent.getStartOfThisWeek()+")";
 		}
 
 	}
@@ -172,7 +172,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Month";
+			return "" + tasks.size() + " Other Tasks Completed This Month (until "+AllCompletedTasksComponent.getStartOfThisMonth()+")";
 		}
 
 	}
@@ -190,7 +190,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Year";
+			return "" + tasks.size() + " Other Tasks Completed This Year (until "+AllCompletedTasksComponent.getStartOfThisYear()+")";
 		}
 
 	}
