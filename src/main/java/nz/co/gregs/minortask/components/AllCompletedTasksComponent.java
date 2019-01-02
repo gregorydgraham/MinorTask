@@ -22,6 +22,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class AllCompletedTasksComponent extends Div implements MinorTaskComponent {
 
 	private List<Task> allTasks = new ArrayList<>();
+	private ArrayList<Task> today;
 	private ArrayList<Task> week;
 	private ArrayList<Task> month;
 	private ArrayList<Task> others;
@@ -40,7 +41,9 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 			splitTasks(allTasks);
 
-			add(new WeeksTaskList(week));
+			add(new TodaysCompletedTasksList(today));
+			add(Globals.getSpacer());
+			add(new WeeksCompletedTasksList(week));
 			add(Globals.getSpacer());
 			add(new ThisMonthsCompletedTasksList(month));
 			add(Globals.getSpacer());
@@ -50,6 +53,17 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
+	}
+
+	public static Date getStartOfToday() {
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+		cal.clear(Calendar.HOUR_OF_DAY);
+		cal.clear(Calendar.MINUTE);
+		cal.clear(Calendar.SECOND);
+		cal.add(Calendar.DATE, -1);
+		Date startOfWeek = cal.getTime();
+		return startOfWeek;
 	}
 
 	public static Date getStartOfThisWeek() {
@@ -120,20 +134,24 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	}
 
 	private void splitTasks(List<Task> allTasks) throws SQLException {
+		today = new ArrayList<Task>();
 		week = new ArrayList<Task>();
 		month = new ArrayList<Task>();
 		year = new ArrayList<Task>();
 		others = new ArrayList<Task>();
 		List<Task> tasksToList = allTasks;
+		Date startOfToday = getStartOfToday();
 		Date startOfWeek = getStartOfThisWeek();
 		Date startOfMonth = getStartOfThisMonth();
 		Date startOfYear = getStartOfThisYear();
 		for (Task task : tasksToList) {
-			if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfWeek)) {
+			if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfToday)) {
+				today.add(task);
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfWeek)) {
 				week.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfMonth)) {
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfMonth)) {
 				month.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfYear)) {
+			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfYear)) {
 				year.add(task);
 			} else {
 				others.add(task);
@@ -141,9 +159,27 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 	}
 
-	public static class WeeksTaskList extends AbstractTaskList.PreQueried {
+	public static class TodaysCompletedTasksList extends AbstractTaskList.PreQueried {
 
-		public WeeksTaskList(List<Task> list) {
+		public TodaysCompletedTasksList(List<Task> list) {
+			super(list);
+		}
+
+		@Override
+		protected String getListClassName() {
+			return "todays-completedtaskslist";
+		}
+
+		@Override
+		protected String getListCaption(List<Task> tasks) {
+			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed Today (until " + AllCompletedTasksComponent.getStartOfToday() + ")";
+		}
+
+	}
+
+	public static class WeeksCompletedTasksList extends AbstractTaskList.PreQueried {
+
+		public WeeksCompletedTasksList(List<Task> list) {
 			super(list);
 		}
 
@@ -154,7 +190,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until "+AllCompletedTasksComponent.getStartOfThisWeek()+")";
+			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until " + AllCompletedTasksComponent.getStartOfThisWeek() + ")";
 		}
 
 	}
@@ -172,7 +208,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Month (until "+AllCompletedTasksComponent.getStartOfThisMonth()+")";
+			return "" + tasks.size() + " Other Tasks Completed This Month (until " + AllCompletedTasksComponent.getStartOfThisMonth() + ")";
 		}
 
 	}
@@ -190,7 +226,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 		@Override
 		protected String getListCaption(List<Task> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Year (until "+AllCompletedTasksComponent.getStartOfThisYear()+")";
+			return "" + tasks.size() + " Other Tasks Completed This Year (until " + AllCompletedTasksComponent.getStartOfThisYear() + ")";
 		}
 
 	}
