@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -31,11 +33,10 @@ public class ClusterMonitorComponent extends VerticalLayout {
 			if (thread != null) {
 				if (event.getValue()) {
 					// Start the data feed thread
-					thread.start();
+					thread.startup();
 				} else {
 					// Stop it
-					thread.interrupt();
-					thread = null;
+					thread.shutdown();
 				}
 			}
 		});
@@ -77,6 +78,7 @@ public class ClusterMonitorComponent extends VerticalLayout {
 		private final UI ui;
 		private final ClusterMonitorComponent view;
 		private final DBDatabaseCluster cluster;
+		private boolean keepGoing = true;
 
 		public FeederThread(UI ui, ClusterMonitorComponent view, DBDatabaseCluster cluster) {
 			this.ui = ui;
@@ -89,7 +91,7 @@ public class ClusterMonitorComponent extends VerticalLayout {
 		public void run() {
 			try {
 				// Update the data for a while
-				while (1 == 1) {
+				while (keepGoing) {
 					// Sleep to emulate background work
 					Thread.sleep(800);
 					String message = cluster.getClusterStatus() + "\n" + cluster.getDatabaseStatuses();
@@ -99,6 +101,21 @@ public class ClusterMonitorComponent extends VerticalLayout {
 			} catch (InterruptedException e) {
 //				e.printStackTrace();
 			}
+			keepGoing = true;
+		}
+
+		private void shutdown() {
+			this.keepGoing = false;
+		}
+
+		private void startup() {
+			this.start();
+		}
+
+		@Override
+		public void start() {
+			this.keepGoing = true;
+			super.start();
 		}
 	}
 

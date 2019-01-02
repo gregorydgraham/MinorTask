@@ -97,6 +97,7 @@ public class Globals {
 	protected static final String MINORTASK_DATABASE_ATTRIBUTE_NAME = "minortask_database";
 	public static final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
 	private static DBDatabase database = null;
+	private static boolean databaseSetup = false;
 
 	public static Date asDate(LocalDate localDate) {
 		return localDate == null ? null : Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -394,7 +395,7 @@ public class Globals {
 	}
 
 	public static synchronized DBDatabase getDatabase() {
-		if (database == null) {
+		if (databaseSetup == false) {
 			setDatabase(setupDatabase());
 		}
 		return database;
@@ -527,7 +528,7 @@ public class Globals {
 	}
 
 	private static synchronized DBDatabase setupDatabase() {
-		if (Globals.database == null) {
+		if (Globals.databaseSetup == false) {
 			try {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
@@ -572,6 +573,7 @@ public class Globals {
 						cluster.addRegularProcess(new DatabaseBackupProcess());
 						cluster.addRegularProcess(new CleanupDatabaseProcess());
 						Globals.database = cluster;
+						databaseSetup = true;
 						debug("Database created from context based configuration");
 					} else {
 						debug("Configuration failed to create database");
@@ -862,12 +864,12 @@ public class Globals {
 				DatabaseConnectionSettings settings = (DatabaseConnectionSettings) envCtx.lookup(dcsFactory);
 				final DBDatabase backupDB = settings.createDBDatabase();
 				getDatabase().backupToDBDatabase(backupDB);
-				result+= "BACKED UP TO "+backupDB+"\n";
+				result += "BACKED UP TO " + backupDB + "\n";
 				backupDB.stop();
 			} catch (SQLException | NamingException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				System.out.println("nz.co.gregs.minortask.Globals.DatabaseBackupProcess.process(): " + ex.getMessage());
 				Logger.getLogger(Globals.class.getName()).log(Level.SEVERE, null, ex);
-				result+= "EXCEPTION: "+ex.getMessage();
+				result += "EXCEPTION: " + ex.getMessage();
 			}
 
 			System.out.println("FINISHED BACKUP.");
