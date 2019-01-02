@@ -225,29 +225,49 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	protected void addChangeListeners(Task task) {
 		name.addBlurListener((event) -> {
-			if (!event.getSource().getValue().equals(task.name.getValue())) {
-				saveTask();
-				fireEvent(new ProjectPathAltered(this, task, false));
+			try {
+				final Task task1 = getTask(taskID);
+				if (!event.getSource().getValue().equals(task1.name.getValue())) {
+					saveTask();
+					fireEvent(new ProjectPathAltered(this, task1, false));
 //				Globals.showTask(taskID);
+				}
+			} catch (Globals.InaccessibleTaskException ex) {
+				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		});
 		description.addBlurListener((event) -> {
-			if (!event.getSource().getValue().equals(task.description.getValue())) {
-				saveTask();
+			try {
+				final Task task1 = getTask(taskID);
+				if (!event.getSource().getValue().equals(task1.description.getValue())) {
+					saveTask();
+				}
+			} catch (Globals.InaccessibleTaskException ex) {
+				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		});
 		notes.addBlurListener((event) -> {
-			if (!notes.getValue().equals(task.notes.stringValue())) {
-				notesEditor.setValue(notes.getValue());
-				saveTask();
+			try {
+				final Task task1 = getTask(taskID);
+				if (!notes.getValue().equals(task1.notes.stringValue())) {
+					notesEditor.setValue(notes.getValue());
+					saveTask();
+				}
+				notes.setVisible(!notes.getValue().isEmpty());
+			} catch (Globals.InaccessibleTaskException ex) {
+				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			notes.setVisible(!notes.getValue().isEmpty());
 		});
 		notesEditor.addBlurListener((event) -> {
-			if (!notesEditor.getValue().equals(task.notes.stringValue())) {
-				notes.setValue(notesEditor.getValue());
-				notes.setVisible(!notes.getValue().isEmpty());
-				saveTask();
+			try {
+				final Task task1 = getTask(taskID);
+				if (!notesEditor.getValue().equals(task1.notes.stringValue())) {
+					notes.setValue(notesEditor.getValue());
+					notes.setVisible(!notes.getValue().isEmpty());
+					saveTask();
+				}
+			} catch (Globals.InaccessibleTaskException ex) {
+				error("Inaccessible Task " + taskID, ex);
 			}
 			showEditor(null);
 		});
