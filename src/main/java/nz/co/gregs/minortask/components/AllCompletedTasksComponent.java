@@ -134,7 +134,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfMonth)) {
 				month.add(task);
 			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().before(startOfYear)) {
-				month.add(task);
+				year.add(task);
 			} else {
 				others.add(task);
 			}
