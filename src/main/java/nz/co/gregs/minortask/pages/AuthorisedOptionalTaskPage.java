@@ -14,7 +14,6 @@ import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
