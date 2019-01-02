@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
@@ -29,7 +30,12 @@ public interface MinorTaskComponent {
 	}
 
 	default Task getTask(Long taskID) throws MinorTask.InaccessibleTaskException {
-		return minortask().getTask(taskID);
+		try {
+			return minortask().getTask(taskID);
+		} catch (Globals.InaccessibleTaskException ex) {
+			error("Inaccessible Task " + taskID, ex);
+			throw ex;
+		}
 	}
 
 	default Long getUserID() {
@@ -64,6 +70,10 @@ public interface MinorTaskComponent {
 		MinorTask.error(topic, warning);
 	}
 
+	default void error(String topic, Exception ex) {
+		MinorTask.error(topic, ex);
+	}
+
 	default void sqlerror(Exception ex) {
 		MinorTask.sqlerror(ex);
 	}
@@ -76,11 +86,11 @@ public interface MinorTaskComponent {
 		return getTaskAndProject(taskID).getProject();
 	}
 
-	default boolean isLoggedIn(){
+	default boolean isLoggedIn() {
 		return minortask().isLoggedIn();
 	}
 
-	default boolean isAccessDenied(Component component){
+	default boolean isAccessDenied(Component component) {
 		return !minortask().isLoggedIn();
 	}
 }
