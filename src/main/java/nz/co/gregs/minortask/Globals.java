@@ -556,7 +556,7 @@ public class Globals {
 								final DBDatabase newDB = settings.createDBDatabase();
 								cluster.addDatabase(newDB);
 							} catch (SQLException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-								error("Unable to create database: " + settings.toString(), ex);
+								quietError("Unable to create database: " + settings.toString(), ex);
 							}
 							index++;
 							thisFactory = dcsFactory + index;
@@ -621,8 +621,7 @@ public class Globals {
 	}
 
 	public static final void error(final String topic, final Exception error) {
-		error.printStackTrace();
-		System.out.println("ERROR: " + topic + " - " + error.getClass().getSimpleName() + ": " + error.getMessage());
+		quietError(topic, error);
 		Button closeButton = new Button("Oops");
 		VerticalLayout layout = new VerticalLayout(new Label(topic), new Label(error.getMessage()), closeButton);
 		Notification note = new Notification(layout);
@@ -631,6 +630,12 @@ public class Globals {
 		});
 		note.setPosition(Notification.Position.TOP_CENTER);
 		note.open();
+	}
+
+	public static final void quietError(final String topic, final Exception error) {
+		System.out.println("ERROR: " + topic + " - " + error.getClass().getSimpleName() + ": " + error.getMessage());
+		System.err.println("ERROR: " + topic + " - " + error.getClass().getSimpleName() + ": " + error.getMessage());
+		error.printStackTrace();
 	}
 
 	protected static Task getTask(final Long taskID, final Long userID) throws InaccessibleTaskException {
