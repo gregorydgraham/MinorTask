@@ -14,16 +14,16 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.logging.*;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.minortask.*;
+import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.*;
-import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
  * @author gregorygraham
  */
 //@Tag("createtask")
-public class CreateTask extends VerticalLayout implements RequiresLogin {
+public class CreateTask extends SecureDiv implements RequiresLogin {
 
 	TextField name = new TextField("Name");
 	TextField description = new TextField("Description");
@@ -48,7 +48,6 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeUndefined();
-		layout.add(new ProjectPathNavigator.WithNewTaskLabel(TaskEditorLayout.class, projectID));
 		try {
 			setEscapeButton(cancelButton);
 			setAsDefaultButton(createAndShowProjectButton);
@@ -90,12 +89,12 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 					)
 			);
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
-			MinorTask.sqlerror(ex);
+			Globals.sqlerror(ex);
 		}
 		return layout;
 	}
 
-	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, MinorTask.InaccessibleTaskException {
+	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException, Globals.InaccessibleTaskException {
 		name.clear();
 		description.clear();
 		startDate.setValue(null);
@@ -111,8 +110,8 @@ public class CreateTask extends VerticalLayout implements RequiresLogin {
 
 			project.setValue(taskProject.name.getValue());
 
-			final LocalDate projectStart = MinorTask.asLocalDate(taskProject.startDate.getValue());
-			final LocalDate projectEnd = MinorTask.asLocalDate(taskProject.finalDate.getValue());
+			final LocalDate projectStart = Globals.asLocalDate(taskProject.startDate.getValue());
+			final LocalDate projectEnd = Globals.asLocalDate(taskProject.finalDate.getValue());
 
 			if (startDefault != null && projectStart != null) {
 				startDefault = startDefault.isAfter(projectStart) ? startDefault : projectStart;
