@@ -39,6 +39,7 @@ import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
+import org.joda.time.Period;
 
 /**
  *
@@ -68,6 +69,8 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
 	OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
+	OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
+	Period repeatValue = null;
 	DatePicker completedDate = new DatePicker("Completed");
 	private Div dates = new Div(
 			startDate,
@@ -200,6 +203,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				notesEditor,
 				documentUpload,
 				imageUpload,
+				repeat,
 				dates,
 				subtasks,
 				extrasLayout,
@@ -281,6 +285,12 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		deadlineDate.addValueChangeListener(changer);
 
 		repeatEditor.addValueChangeListener((event) -> {
+			repeatValue = repeatEditor.getValue();
+			saveTask();
+		});
+		
+		repeat.addValueChangeListener((event) -> {
+			repeatValue = repeat.getValue();
 			saveTask();
 		});
 
@@ -337,6 +347,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				startDate.setValue(asLocalDate(task.startDate.dateValue()));
 				preferredEndDate.setValue(asLocalDate(task.preferredDate.dateValue()));
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
+				repeat.setValue(task.repeatOffset.getValue());
 				repeatEditor.setValue(task.repeatOffset.getValue());
 
 				notes.setVisible(!notes.getValue().isEmpty());
@@ -345,6 +356,13 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 					dates.setVisible(false);
 				} else {
 					addDates.setVisible(false);
+				}
+				if (task.repeatOffset.isNotNull()) {
+					repeat.setVisible(true);
+					addRepeat.setVisible(false);
+				} else {
+					repeat.setVisible(false);
+					addRepeat.setVisible(true);
 				}
 				addSubTask.setTaskID(taskID);
 				documentUpload.setTaskID(taskID);
@@ -389,6 +407,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 					preferredEndDate.setReadOnly(true);
 					deadlineDate.setReadOnly(true);
 					repeatEditor.setReadOnly(true);
+					repeat.setReadOnly(true);
 					subtasks.disableNewButton();
 
 					placeGrid.setReadOnly(true);
@@ -425,7 +444,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			task.startDate.setValue(asDate(startDate.getValue()));
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
 			task.finalDate.setValue(asDate(deadlineDate.getValue()));
-			task.repeatOffset.setValue(repeatEditor.getValue());
+			task.repeatOffset.setValue(repeatValue);
 
 			try {
 				getDatabase().update(task);
