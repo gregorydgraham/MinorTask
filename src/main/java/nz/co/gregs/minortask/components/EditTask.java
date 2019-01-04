@@ -25,6 +25,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
@@ -34,6 +35,8 @@ import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
 import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
+import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
+import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 
