@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
 
+@StyleSheet("styles/open-task-list.css")
 public class OpenTaskList extends AbstractTaskList {
 
 	private AddTaskButton newTaskButton;
@@ -59,6 +62,11 @@ public class OpenTaskList extends AbstractTaskList {
 			newTaskButton = new AddTaskButton(taskID);
 		}
 		return newTaskButton;
+	}
+	
+	@Override
+	protected Component[] getFooterExtras() {
+		return new Component[]{getNewTaskButton()};
 	}
 
 	public void disableNewButton() {

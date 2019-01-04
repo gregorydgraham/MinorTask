@@ -1,0 +1,15 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 16/11/2018, 11:43:51 AM
+    Author     : gregorygraham
+*/
+
+.opentasks-footer {
+	width: 100%;
+	display: flex;
+	flex-direction: row-reverse;
+}

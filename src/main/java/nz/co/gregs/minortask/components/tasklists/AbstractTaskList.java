@@ -81,12 +81,12 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			setGridColumns();
 			well.add(grid);
 			
-			HorizontalLayout footer = new HorizontalLayout();
+			Div footer = new Div();
 			final Component[] footerExtras = getFooterExtras();
 			if (footerExtras.length > 0) {
 				footer.add(footerExtras);
 			}
-			footer.addClassNames(getListClassName(), "footer");
+			footer.addClassNames(getListClassName(), "footer",getListClassName()+"-footer");
 			well.add(footer);
 		} catch (SQLException ex) {
 			MinorTask.sqlerror(ex);
