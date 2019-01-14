@@ -29,9 +29,12 @@ public class MinortaskPage extends Div
 
 		settings.addMetaTag("apple-mobile-web-app-title", MinorTask.getApplicationName());
 		settings.addMetaTag("apple-mobile-web-app-capable", "yes");
+		settings.addMetaTag("viewport","width=device-width, initial-scale=1");
 
 		settings.addLink("shortcut icon", "favicon.ico");
 		settings.addLink("apple-touch-startup-image", "favicons/apple-icon-180x180.png");
+		settings.addLink("manifest", "frontend/manifest.json");
+		
 		settings.addFavIcon("icon", "favicons/android-icon-192x192.png", "192x192");
 		settings.addFavIcon("apple-touch-icon", "favicons/apple-icon-180x180.png", "180x180");
 		settings.addFavIcon("apple-touch-icon", "favicons/apple-icon-152x152.png", "152x152");

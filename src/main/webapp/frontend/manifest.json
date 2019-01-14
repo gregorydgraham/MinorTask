@@ -1,0 +1,13 @@
+{
+  "name": "MinorTask: Your Life Organised",
+  "short_name": "MinorTask",
+  "description": "Turn all of your big projects into minor tasks and get stuff done",
+  "start_url": "",
+  "background_color": "cadetblue",
+  "theme_color": "white",
+  "icons": [{
+    "src": "favicons/android-icon-192x192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}
