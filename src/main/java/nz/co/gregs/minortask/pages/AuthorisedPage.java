@@ -59,7 +59,7 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 		add(new MinorTaskTemplate());
 		final Component internalComponent = getInternalComponent();
 		
-		ProjectPathNavigator projectPath = new ProjectPathNavigator.WithAddProjectButton();
+		ProjectPathNavigator projectPath = new ProjectPathNavigator();
 		Div internalComponentHolder
 				= new Div(
 						banner,

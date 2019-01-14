@@ -55,9 +55,18 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
+		final AddTaskButton addTaskButton;
+		if (getTaskID() == null) {
+			addTaskButton = new AddTaskButton("Add Project...");
+		} else {
+			addTaskButton = new AddTaskButton(getTaskID());
+		}
+		addTaskButton.addClassNames("small", "projectpath");
+		addTaskButton.getElement().setAttribute("theme", "small");
+		add(addTaskButton);
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 //		chat("refreshing path..."); 
 		buildComponent();
 	}
@@ -82,14 +91,14 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 			button = new Button(
 					"Projects",
 					(ClickEvent<Button> event) -> {
-						if (taskID==null||targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
+						if (taskID == null || targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
 							// if Projects is the current task or we're on the details page
 							MinorTask.showProjects();
 						} else {
 							MinorTask.showPage(targetPage, null);
 						}
 					});
-		} else if(task.taskID.getValue().equals(taskID)){
+		} else if (task.taskID.getValue().equals(taskID)) {
 			// clicking the current task should go to the details page
 			button = new Button(
 					task.name.getValue(),
@@ -97,7 +106,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 						final Long foundID = task.taskID.getValue();
 						MinorTask.showTask(foundID);
 					});
-		}else{
+		} else {
 			// jump to the same tab on the new task
 			button = new Button(
 					task.name.getValue(),
@@ -141,7 +150,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 			Globals.showTodaysTasks();
 		});
 		today.addClassName("navigator-task-recents");
-		
+
 		IconWithClickHandler recent = new IconWithClickHandler(VaadinIcon.CLOCK);
 		recent.addClickListener((event) -> {
 			Globals.showRecentsPage();
@@ -156,53 +165,4 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 
 		return new Component[]{search, today, recent, favourites};
 	}
-
-	public static class WithAddTaskButton extends ProjectPathNavigator {
-
-		public WithAddTaskButton(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
-			super(targetPage, taskID);
-		}
-
-		@Override
-		protected void buildComponent() {
-			super.buildComponent();
-			final AddTaskButton addTaskButton = new AddTaskButton(getTaskID());
-			addTaskButton.addClassNames("small", "projectpath");
-			addTaskButton.getElement().setAttribute("theme", "small");
-			add(addTaskButton);
-		}
-	}
-
-	public static class WithAddProjectButton extends ProjectPathNavigator {
-
-		public WithAddProjectButton() {
-			super(null, null);
-		}
-
-		@Override
-		protected void buildComponent() {
-			super.buildComponent();
-			final AddTaskButton addTaskButton = new AddTaskButton("Add Project...");
-			addTaskButton.addClassNames("small", "projectpath");
-			addTaskButton.getElement().setAttribute("theme", "small");
-			add(addTaskButton);
-		}
-	}
-
-	public static class WithNewTaskLabel extends ProjectPathNavigator {
-
-		public WithNewTaskLabel(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
-			super(targetPage, taskID);
-		}
-
-		@Override
-		protected void buildComponent() {
-			super.buildComponent();
-			final Button newTaskButton = new Button("New Task...");
-			formatButton(newTaskButton);
-			//		newTaskButton.setEnabled(false);
-			add(newTaskButton);
-		}
-	}
-
 }

@@ -48,7 +48,7 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
-		ProjectPathNavigator.WithAddTaskButton projectPath = new ProjectPathNavigator.WithAddTaskButton(this.getClass(), taskID);
+		ProjectPathNavigator projectPath = new ProjectPathNavigator(this.getClass(), taskID);
 		if (internalComponent instanceof ProjectPathChanger) {
 //			chat("adding path change listener");
 			ProjectPathChanger ppc = (ProjectPathChanger) internalComponent;
