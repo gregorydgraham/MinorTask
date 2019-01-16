@@ -45,5 +45,7 @@ authorised-banner {
 	}
 
 	.authorised-banner-button{
-		color: #0099cc;
+		/*color: #0099cc;*/
+		color: white;
+		background-color: cadetblue;
 	}
