@@ -227,6 +227,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		@Override
 		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
 			Colleagues colleagues = new Colleagues();
+			colleagues.acceptanceDate.permitOnlyNotNull();
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
