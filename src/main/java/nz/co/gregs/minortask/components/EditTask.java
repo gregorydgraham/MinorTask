@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.google.common.base.Objects;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.components.upload.DocumentGrid;
@@ -51,7 +52,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	PaperInput description = new PaperInput();
-	Label assignedToLabel = new Label("Assigned To:");
+	Label assignedToLabel = new Label("Assigned To ");
 	UserSelector assignedToSelector = new UserSelector.ColleagueSelector();
 	TextArea notes = new TextArea("Notes");
 	AddTaskButton addSubTask = new AddTaskButton();
@@ -260,7 +261,11 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		assignedToSelector.addValueChangeListener((event) -> {
 			try {
 				final Task task1 = getTask(taskID);
-				if (!event.getSource().getValue().getUserID().equals(task1.assigneeID.getValue())) {
+				if (event.getSource().getValue() == null) {
+					if (task1.assigneeID.isNotNull()) {
+						saveTask();
+					}
+				} else if (!event.getSource().getValue().getUserID().equals(task1.assigneeID.getValue())) {
 					saveTask();
 				}
 			} catch (Globals.InaccessibleTaskException ex) {
@@ -370,7 +375,11 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				notes.setVisible(!notes.getValue().isEmpty());
 
 				if (task.assigneeID.isNotNull()) {
-					assignedToSelector.setValue(task.getAssigneeUser());
+					if (task.getAssigneeUser() != null) {
+						assignedToSelector.setValue(task.getAssigneeUser());
+					} else {
+						assignedToSelector.setValue(getUser(task.assigneeID.getValue()));
+					}
 				} else {
 					assignedToSelector.setValue(assignedToSelector.getEmptyValue());
 				}
@@ -463,7 +472,12 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 			task.name.setValue(name.getValue());
 			task.description.setValue(description.getValue());
-			task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
+			if (assignedToSelector.getValue() == null
+					|| Objects.equal(assignedToSelector.getEmptyValue(), assignedToSelector.getValue())) {
+				task.assigneeID.setValueToNull();
+			} else {
+				task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
+			}
 			task.notes.setValue(notes.getValue());
 			task.startDate.setValue(asDate(startDate.getValue()));
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));

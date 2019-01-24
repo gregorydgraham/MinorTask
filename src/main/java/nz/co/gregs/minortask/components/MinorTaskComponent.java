@@ -46,6 +46,10 @@ public interface MinorTaskComponent {
 		return minortask().getUser();
 	}
 
+	default User getUser(long userID) {
+		return minortask().getUser(userID);
+	}
+
 	default LocalDate asLocalDate(Date date) {
 		return MinorTask.asLocalDate(date);
 	}

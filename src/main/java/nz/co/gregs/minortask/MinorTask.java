@@ -234,6 +234,24 @@ public class MinorTask extends Globals implements Serializable {
 		return null;
 	}
 
+	public User getUser(long userID) {
+		User example = new User();
+		example.queryUserID().permittedValues(userID);
+		try {
+			List<User> got = getDatabase().getDBQuery(example).addOptional(new Document()).getAllInstancesOf(example);
+			if (got.size() != 1) {
+				warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
+			} else {
+				user = got.get(0);
+				setProfileImage(user);
+				return user;
+			}
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		return null;
+	}
+
 	private void setProfileImage(User user) {
 		if (user.profileImage == null) {
 			if (user.getProfileImageID() != null) {
@@ -276,7 +294,7 @@ public class MinorTask extends Globals implements Serializable {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
 				final Task taskFound = onlyRow.get(example);
-				System.out.println("TASK: "+taskFound);
+				System.out.println("TASK: " + taskFound);
 				return new Task.TaskAndProject(taskFound, onlyRow.get(projectExample));
 
 			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException ex) {
@@ -458,7 +476,6 @@ public class MinorTask extends Globals implements Serializable {
 //			}
 //		}
 //	}
-
 	public void repeatTask(Task task) {
 		if (task.repeatOffset.isNotNull()) {
 			Period value = task.repeatOffset.getValue();
