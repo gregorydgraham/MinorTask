@@ -5,11 +5,9 @@
  */
 package nz.co.gregs.minortask;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -46,6 +44,7 @@ import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.images.SizedImageDocumentStreamFactory;
 import nz.co.gregs.minortask.components.images.ThumbnailImageDocumentStreamFactory;
+import nz.co.gregs.minortask.pages.ColleaguesPage;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
@@ -325,6 +324,10 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void showProfile() {
 		UI.getCurrent().navigate(UserProfilePage.class);
+	}
+
+	public void showColleagues() {
+		UI.getCurrent().navigate(ColleaguesPage.class);
 	}
 
 	public void setBackgroundToFullsizeImage(HasStyle aThis, Document profileImage) {

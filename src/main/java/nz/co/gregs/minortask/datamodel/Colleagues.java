@@ -22,26 +22,29 @@ import nz.co.gregs.dbvolution.datatypes.DBInteger;
 public class Colleagues extends DBRow{
 	
 	
-	@DBColumn
+	@DBColumn("userid1")
 	@DBPrimaryKey
 	@DBForeignKey(RequestingUser.class)
-	public final DBInteger userID1 = new DBInteger();
+	public final DBInteger requestor = new DBInteger();
 	
-	@DBColumn
+	@DBColumn("userid2")
 	@DBPrimaryKey
 	@DBForeignKey(RequestedUser.class)
-	public final DBInteger userID2 = new DBInteger();
+	public final DBInteger invited = new DBInteger();
 	
 	@DBColumn
-	public final DBDate requestDate = new DBDate();
+	public final DBDate invitationDate = new DBDate();
 	
 	@DBColumn
-	public final DBDate requestAcceptanceDate = new DBDate();
+	public final DBDate acceptanceDate = new DBDate();
+	
+	@DBColumn
+	public final DBDate denialDate = new DBDate();
 
 	public Colleagues(User user1, User user2) {
-		userID1.setValue(user1.getUserID());
-		userID2.setValue(user2.getUserID());
-		requestDate.setValue(new Date());
+		requestor.setValue(user1.getUserID());
+		invited.setValue(user2.getUserID());
+		invitationDate.setValue(new Date());
 	}
 
 	public Colleagues() {

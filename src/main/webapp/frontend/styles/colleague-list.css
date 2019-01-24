@@ -1,0 +1,111 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 16/11/2018, 11:43:51 AM
+    Author     : gregorygraham
+*/
+.colleaguelist-entry-invitedonly{
+	color: lightgray;
+}
+.colleaguelist-entry-canaccept{
+	color: #ffcc00;
+}
+
+.colleaguelist-entry-accepted{
+	color: limegreen;
+}
+
+.colleaguelist-acceptbutton{
+	color: limegreen;
+}
+
+.colleaguelist-rescindbutton{
+	color: red;
+}
+
+vaadin-grid-cell-content{
+	padding: 1px;
+	padding-bottom: 5px;
+	width: auto;
+} 
+vaadin-grid td{
+	padding: 1px;
+	width: auto;
+}
+
+.tasklist{
+	background-color: #e5e5e5;
+	box-shadow: inset 0 0 6px darkgrey, 0 0 0 black;
+	border-radius: 5px;
+	width: 100%;
+}
+
+@media all and (max-width: 900px) {
+	.tasklist{
+		padding-left: 0;padding-right:0;
+		margin-left: 0; margin-right: 0;
+		border-radius: 0;
+	}
+}
+
+.tasklist-header{
+	display: flex;
+	justify-content: space-between;
+}
+
+.tasklist-header .addtaskbutton{
+}
+
+.tasklist-name{
+	white-space: normal;
+}
+
+.tasklist-description{
+	white-space: normal;
+	font-size: smaller;
+}
+
+.tasklist-project.tasklist-complete-tick{
+	display: none;
+}
+
+.tasklist-subtask-count{
+	width: 3em;
+}
+
+.tasklist-entry-prefix{
+	/*width: 2em;*/
+}
+
+.tasklist-entry-suffix{
+	/*width: 2em;*/
+}
+
+.tasklist-complete-tick{
+	background-color: lightgray; 
+	color: white; 
+	border-radius: 4px;
+	font-size: smaller;
+}
+
+.tasklist-reopen-tick{
+	background-color: transparent; 
+	color: limegreen; 
+	border-radius: 4px;
+	font-size: smaller;
+}
+.favourited-task-heart{
+	background-color: transparent; 
+	color: red; 
+}
+.normal-task-heart{
+	background-color: transparent; 
+	color: lightgray; 
+}
+.edit-task-complete-button-container {
+	display: flex;
+	flex-direction: row-reverse;
+}

@@ -66,7 +66,7 @@ public class ColleaguesPage extends AuthorisedPage implements BeforeLeaveListene
 
 	private void setLabels() {
 		User user = minortask().getUser();
-		greeting.setText("@" + user.getUsername() + " Profile");
+		greeting.setText("@" + user.getUsername() + "'s Team");
 	}
 
 	private void setStyles() {
