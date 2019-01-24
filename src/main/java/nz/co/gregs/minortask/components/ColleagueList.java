@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
@@ -149,17 +148,19 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		grid.setHeightByRows(true);
 		grid.addComponentColumn((ColleagueListItem source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
 		grid.addComponentColumn((ColleagueListItem source) -> getDescriptionComponent(source)).setFlexGrow(20);
-		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("10em").setFlexGrow(0);
+		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("30em").setFlexGrow(0);
 		grid.setWidth("auto");
 	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
 		final IconWithClickHandler icon = new IconWithClickHandler(VaadinIcon.USER);
 		icon.addClassName("colleaguelist-entry-prefix");
-		if (source.canAccept()) {
+		if (source.hasDeclined()) {
+			icon.addClassName("colleaguelist-entry-declined");
+		} else if (source.isInvited() && source.canAccept()) {
 			icon.addClassName("colleaguelist-entry-canaccept");
 		} else if (source.isInvited()) {
-			icon.addClassName("colleaguelist-entry-invitedonly");
+			icon.addClassName("colleaguelist-entry-invited");
 		} else {
 			icon.addClassName("colleaguelist-entry-accepted");
 		}
@@ -168,9 +169,9 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 	private Component getDescriptionComponent(ColleagueListItem source) {
 		Div name = new Div();
-		name.setText(source.colleague.getUsername());
+		name.setText(source.getColleague().getUsername());
 		Div desc = new Div();
-		desc.setText(source.colleague.getBlurb());
+		desc.setText(source.getColleague().getBlurb());
 
 		name.setSizeFull();
 		name.addClassNames("colleaguelist-name");
@@ -184,14 +185,47 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 	private Component getSuffixComponent(ColleagueListItem item) {
 		HorizontalLayout layout = new HorizontalLayout();
-		if (item.canAccept()) {
+		final Label statusLabel = new Label();
+		statusLabel.addClassName("colleaguelist-status-label");
+			layout.add(statusLabel);
+		if (item.hasDeclined() && !item.canAccept) {
+			statusLabel.setText("declined");
+			final Button rescindButton = new Button("Remove");
+			rescindButton.addClassName("colleaguelist-ejectbutton");
+			rescindButton.addClickListener((event) -> {
+				rescindInvitation(item);
+			});
+			layout.add(rescindButton);
+		} else if (item.hasDeclined() && item.canAccept()) {
+			statusLabel.setText("declined");
 			final Button acceptButton = new Button("Accept");
 			acceptButton.addClassName("colleaguelist-acceptbutton");
 			acceptButton.addClickListener((event) -> {
 				acceptInvitation(item);
 			});
 			layout.add(acceptButton);
+			final Button rescindButton = new Button("Remove");
+			rescindButton.addClassName("colleaguelist-ejectbutton");
+			rescindButton.addClickListener((event) -> {
+				rescindInvitation(item);
+			});
+			layout.add(rescindButton);
+		} else if (item.isInvited() && item.canAccept()) {
+			statusLabel.setText("invitation");
+			final Button acceptButton = new Button("Accept");
+			acceptButton.addClassName("colleaguelist-acceptbutton");
+			acceptButton.addClickListener((event) -> {
+				acceptInvitation(item);
+			});
+			layout.add(acceptButton);
+			final Button declineButton = new Button("Decline");
+			declineButton.addClassName("colleaguelist-declinebutton");
+			declineButton.addClickListener((event) -> {
+				declineInvitation(item);
+			});
+			layout.add(declineButton);
 		} else if(item.isInvited()){
+			statusLabel.setText("invited");
 			final Button rescindButton = new Button("Rescind");
 			rescindButton.addClassName("colleaguelist-rescindbutton");
 			rescindButton.addClickListener((event) -> {
@@ -199,7 +233,8 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 			});
 			layout.add(rescindButton);
 		} else {
-			final Button rescindButton = new Button("Eject");
+			statusLabel.setText("joined");
+			final Button rescindButton = new Button("Remove");
 			rescindButton.addClassName("colleaguelist-ejectbutton");
 			rescindButton.addClickListener((event) -> {
 				rescindInvitation(item);
@@ -233,7 +268,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		Button inviteButton = new Button("Invite");
 		Button cancelButton = new Button("cancel");
 
-		UserSelector potentialColleagueSelector = new UserSelector(new UserSelector.PotentialColleagueSelector(getUser()));
+		UserSelector potentialColleagueSelector = new UserSelector.PotentialColleagueSelector();
 
 		Div contentDiv = new Div(potentialColleagueSelector);
 		contentDiv.addClassName("colleague-list-content-div");
@@ -280,6 +315,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	private void acceptInvitation(ColleagueListItem item) {
 		Colleagues colleagues = item.getColleaguesRow();
 		colleagues.acceptanceDate.setValue(new Date());
+		colleagues.denialDate.setValueToNull();
 		try {
 			getDatabase().update(colleagues);
 		} catch (SQLException ex) {
@@ -297,17 +333,29 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		}
 	}
 
+	private void declineInvitation(ColleagueListItem item) {
+		Colleagues colleagues = item.getColleaguesRow();
+		colleagues.denialDate.setValue(new Date());
+		try {
+			getDatabase().update(colleagues);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		refreshList();
+	}
+
 	public static class ColleagueListItem implements MinorTaskComponent {
 
 		private User colleague;
-		private boolean invitedOnly;
+		private boolean accepted;
 		private boolean canAccept;
 		private Colleagues colleaguesRow;
+		private boolean declined;
 
 		public ColleagueListItem() {
 		}
 
-		private ColleagueListItem(Colleagues colleagues, User requester, User invitedUser) {
+		public ColleagueListItem(Colleagues colleagues, User requester, User invitedUser) {
 			this.colleaguesRow = colleagues;
 			if (getUserID().equals(invitedUser.getUserID())) {
 				colleague = requester;
@@ -316,21 +364,13 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 				colleague = invitedUser;
 				canAccept = false;
 			}
-			invitedOnly = colleagues.acceptanceDate.isNull();
+			accepted = colleagues.acceptanceDate.isNotNull();
+			declined = colleagues.denialDate.isNotNull();
 			System.out.println("ColleagueListItem");
 		}
 
-		private Colleagues getColleaguesRow() {
+		public Colleagues getColleaguesRow() {
 			return colleaguesRow;
-		}
-
-		private boolean checkUserIsColleague(User user) {
-			if (user != null) {
-				if (!Objects.equals(user.getUserID(), getUserID())) {
-					this.colleague = user;
-				}
-			}
-			return false;
 		}
 
 		public User getColleague() {
@@ -338,15 +378,19 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		}
 
 		public boolean hasAcceptedInvitation() {
-			return !invitedOnly;
+			return accepted && !hasDeclined();
 		}
 
 		public boolean isInvited() {
-			return invitedOnly;
+			return !accepted && !hasDeclined();
 		}
 
 		public boolean canAccept() {
-			return isInvited() && canAccept;
+			return canAccept;
+		}
+
+		public boolean hasDeclined() {
+			return declined;
 		}
 	}
 

@@ -33,7 +33,17 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		});
 	}
 	
+	public static class ColleagueSelector extends UserSelector{
+		public ColleagueSelector(){
+			super(new ColleagueProvider());
+		}
+	}
 	
+	public static class PotentialColleagueSelector extends UserSelector{
+		public PotentialColleagueSelector(){
+			super(new PotentialColleagueProvider());
+		}
+	}
 
 	protected static abstract class AbstractUserDataProvider extends AbstractBackEndDataProvider<User, BooleanExpression> implements MinorTaskComponent {
 
@@ -106,11 +116,15 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		}
 	}
 
-	public static class PotentialColleagueSelector extends UserProvider {
+	public static class PotentialColleagueProvider extends UserProvider {
 
 		private final User user;
 
-		public PotentialColleagueSelector(User currentUser) {
+		public PotentialColleagueProvider() {
+			user = getUser();
+		}
+		
+		public PotentialColleagueProvider(User currentUser) {
 			user = currentUser;
 		}
 
@@ -147,36 +161,86 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		@Override
 		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
 			Colleagues colleagues = new Colleagues();
-//			ColleagueInvite colleagueInvite = new ColleagueInvite();
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
-//			colleagueInvite.ignoreAllForeignKeys();
-			final DBQuery dbquery = getDatabase().getDBQuery(exampleUser).addOptional(colleagues);//.addOptional(colleagueInvite);
+			final DBQuery dbquery = getDatabase().getDBQuery(exampleUser).addOptional(colleagues);
 			dbquery.addCondition(// connect the user table and the colleagues table
 					exampleUser.column(exampleUser.queryUserID())
 							.isIn(
 									colleagues.column(colleagues.requestor),
 									colleagues.column(colleagues.invited))
-			.and(IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
-							.isIn(// and make sure we're looking for colleagues of the current user
-colleagues.column(colleagues.requestor),
-									colleagues.column(colleagues.invited))));
-//			dbquery.addCondition(// connect the user table and the colleague invites table
-//					exampleUser.column(exampleUser.queryUserID())
-//							.isIn(
-//									colleagueInvite.column(colleagueInvite.inviter),
-//									colleagueInvite.column(colleagueInvite.invited))
-//			.and(IntegerExpression.value(user.getUserID())// this needs to be added as part of the FK
-//							.isIn(// and make sure we're looking for colleague invites to/from the current user
-//									colleagueInvite.column(colleagueInvite.inviter),
-//									colleagueInvite.column(colleagueInvite.invited))));
+							.and(
+									IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
+											.isIn(// and make sure we're looking for colleagues of the current user
+													colleagues.column(colleagues.requestor),
+													colleagues.column(colleagues.invited))));
 			dbquery.addCondition( // But we only want the outer rows where we don't find a connection
 					colleagues.column(colleagues.requestor).isNull()
 			);
-//			dbquery.addCondition( // But we only want the outer rows where we don't find a connection
-//					colleagueInvite.column(colleagueInvite.inviter).isNull()
-//			);
+			System.out.println("" + dbquery.getSQLForQuery());
+			return dbquery;
+		}
+	}
+
+	public static class ColleagueProvider extends UserProvider {
+
+		private final User user;
+
+		public ColleagueProvider() {
+			user = getUser();
+		}
+		public ColleagueProvider(User currentUser) {
+			user = currentUser;
+		}
+
+		@Override
+		public Stream<User> fetchFromBackEnd(Query<User, BooleanExpression> query) {
+			ArrayList<User> listOfColleagues = new ArrayList<User>();
+			try {
+				User example = new User();
+				example.queryUsername().setSortOrderAscending();
+				DBQuery dbquery = getDBQuery(example, query);
+				List<User> listOfUsers = dbquery.getAllInstancesOf(example);
+				listOfUsers.forEach((t) -> {
+					listOfColleagues.add(t);
+				});
+			} catch (SQLException ex) {
+				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			return listOfColleagues.stream();
+		}
+
+		@Override
+		public int sizeInBackEnd(Query<User, BooleanExpression> query) {
+			try {
+				User example = new User();
+				example.queryUsername().setSortOrderAscending();
+				DBQuery dbquery = getDBQuery(example, query);
+				dbquery.count();
+			} catch (SQLException ex) {
+				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			return 0;
+		}
+
+		@Override
+		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
+			Colleagues colleagues = new Colleagues();
+			final User exampleUser = new User();
+			exampleUser.queryUserID().excludedValues(user.getUserID());
+			colleagues.ignoreAllForeignKeys();
+			final DBQuery dbquery = getDatabase().getDBQuery(exampleUser, colleagues);
+			dbquery.addCondition(// connect the user table and the colleagues table
+					exampleUser.column(exampleUser.queryUserID())
+							.isIn(
+									colleagues.column(colleagues.requestor),
+									colleagues.column(colleagues.invited))
+							.and(
+									IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
+											.isIn(// and make sure we're looking for colleagues of the current user
+													colleagues.column(colleagues.requestor),
+													colleagues.column(colleagues.invited))));
 			System.out.println("" + dbquery.getSQLForQuery());
 			return dbquery;
 		}

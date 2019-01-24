@@ -7,7 +7,13 @@ and open the template in the editor.
     Created on : 16/11/2018, 11:43:51 AM
     Author     : gregorygraham
 */
-.colleaguelist-entry-invitedonly{
+.colleaguelist-status-label{
+	align-self: center;
+}
+.colleaguelist-entry-declined{
+	color: red;
+}
+.colleaguelist-entry-invited{
 	color: lightgray;
 }
 .colleaguelist-entry-canaccept{
