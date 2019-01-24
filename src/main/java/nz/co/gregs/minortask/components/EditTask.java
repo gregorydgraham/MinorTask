@@ -51,6 +51,8 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	PaperInput description = new PaperInput();
+	Label assignedToLabel = new Label("Assigned To:");
+	UserSelector assignedToSelector = new UserSelector.ColleagueSelector();
 	TextArea notes = new TextArea("Notes");
 	AddTaskButton addSubTask = new AddTaskButton();
 	Button addDates = new Button("Dates", new Icon(VaadinIcon.CALENDAR_O));
@@ -121,6 +123,10 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		description.addClassName("edit-task-description");
 		notes.addClassName("edit-task-notes");
 		notesEditor.addClassName("edit-task-notes");
+
+		assignedToLabel.addClassName("edit-task-assignedto-label");
+		assignedToSelector.addClassName("edit-task-assignedto-selector");
+		final Div assignmentDiv = new Div(assignedToLabel, assignedToSelector);
 
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
@@ -196,6 +202,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		Div topLayout = new Div(
 				nameDiv,
 				description,
+				assignmentDiv,
 				addButtons,
 				repeatEditor,
 				placeSearcher,
@@ -250,6 +257,16 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		});
+		assignedToSelector.addValueChangeListener((event) -> {
+			try {
+				final Task task1 = getTask(taskID);
+				if (!event.getSource().getValue().getUserID().equals(task1.assigneeID.getValue())) {
+					saveTask();
+				}
+			} catch (Globals.InaccessibleTaskException ex) {
+				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		});
 		notes.addBlurListener((event) -> {
 			try {
 				final Task task1 = getTask(taskID);
@@ -288,7 +305,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			repeatValue = repeatEditor.getValue();
 			saveTask();
 		});
-		
+
 		repeat.addValueChangeListener((event) -> {
 			repeatValue = repeat.getValue();
 			saveTask();
@@ -351,6 +368,12 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				repeatEditor.setValue(task.repeatOffset.getValue());
 
 				notes.setVisible(!notes.getValue().isEmpty());
+
+				if (task.assigneeID.isNotNull()) {
+					assignedToSelector.setValue(task.getAssigneeUser());
+				} else {
+					assignedToSelector.setValue(assignedToSelector.getEmptyValue());
+				}
 
 				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 					dates.setVisible(false);
@@ -440,6 +463,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 			task.name.setValue(name.getValue());
 			task.description.setValue(description.getValue());
+			task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
 			task.notes.setValue(notes.getValue());
 			task.startDate.setValue(asDate(startDate.getValue()));
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));

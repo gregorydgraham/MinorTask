@@ -648,7 +648,7 @@ public class Globals {
 		example.taskID.permittedValues(taskID);
 		example.userID.permittedValues(userID);
 		try {
-			return getDatabase().getDBTable(example).getOnlyRow();
+			return getDatabase().getDBQuery(example).addOptional(new Task.Assignee()).getOnlyInstanceOf(example);
 		} catch (UnexpectedNumberOfRowsException ex) {
 			throw new InaccessibleTaskException(taskID);
 		} catch (SQLException ex) {
