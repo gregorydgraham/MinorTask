@@ -149,7 +149,6 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		grid.addComponentColumn((ColleagueListItem source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
 		grid.addComponentColumn((ColleagueListItem source) -> getDescriptionComponent(source)).setFlexGrow(20);
 		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("30em").setFlexGrow(0);
-		grid.setWidth("auto");
 	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
