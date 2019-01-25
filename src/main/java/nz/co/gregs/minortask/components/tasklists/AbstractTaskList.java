@@ -45,7 +45,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	public AbstractTaskList(Long taskID) {
 		this.taskID = taskID;
 		buildComponent();
-		this.setSpacing(false);
+//		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
 	
@@ -124,7 +124,6 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
 		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em").setFlexGrow(0);
 		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("2em").setFlexGrow(0);
-		grid.setWidth("auto");
 	}
 	
 	private Component getPrefixComponent(Task task) {
