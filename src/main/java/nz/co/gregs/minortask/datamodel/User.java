@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.datamodel;
 
 import java.util.Date;
+import java.util.Objects;
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.annotations.AutoFillDuringQueryIfPossible;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
@@ -229,6 +230,12 @@ public class User extends DBRow {
 	 */
 	public void setProfileImageID(Long profileImageID) {
 		this.profileImageID.setValue(profileImageID);
+	}
+
+	public boolean equals(User other) {
+		return (other == this)
+				|| (other.userID==this.userID)
+				|| Objects.equals(other.userID.getValue(), this.userID.getValue());
 	}
 
 }

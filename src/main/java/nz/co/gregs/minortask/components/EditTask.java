@@ -242,7 +242,6 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				if (!event.getSource().getValue().equals(task1.name.getValue())) {
 					saveTask();
 					fireEvent(new ProjectPathAltered(this, task1, false));
-//				Globals.showTask(taskID);
 				}
 			} catch (Globals.InaccessibleTaskException ex) {
 				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
@@ -374,15 +373,15 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 				notes.setVisible(!notes.getValue().isEmpty());
 
-				if (task.assigneeID.isNotNull()) {
-					if (task.getAssigneeUser() != null) {
-						assignedToSelector.setValue(task.getAssigneeUser());
+					if (task.assigneeID.isNotNull()) {
+						if (task.getAssigneeUser() != null) {
+							assignedToSelector.setValue(task.getAssigneeUser());
+						} else {
+							assignedToSelector.setValue(getUser(task.assigneeID.getValue()));
+						}
 					} else {
-						assignedToSelector.setValue(getUser(task.assigneeID.getValue()));
+						assignedToSelector.setValue(assignedToSelector.getEmptyValue());
 					}
-				} else {
-					assignedToSelector.setValue(assignedToSelector.getEmptyValue());
-				}
 
 				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 					dates.setVisible(false);

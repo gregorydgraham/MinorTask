@@ -29,18 +29,39 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 	public UserSelector(AbstractUserDataProvider provider) {
 		setDataProvider(provider);
 		setItemLabelGenerator((item) -> {
-			return item.getUsername();
+			if (item != null) {
+				if (item.queryUsername().isNotNull()) {
+					return item.getUsername();
+				} else {
+					return "User: " + item.getUserID();
+				}
+			} else {
+				return "No Such User";
+			}
 		});
 	}
-	
-	public static class ColleagueSelector extends UserSelector{
-		public ColleagueSelector(){
+
+	public static class ColleagueSelector extends UserSelector {
+
+		public ColleagueSelector() {
 			super(new ColleagueProvider());
+			setItemLabelGenerator((item) -> {
+				if (item != null) {
+					if (item.queryUsername().isNotNull()) {
+						return item.getUsername();
+					} else {
+						return getUser().getUsername();
+					}
+				} else {
+					return "No Such User";
+				}
+			});
 		}
 	}
-	
-	public static class PotentialColleagueSelector extends UserSelector{
-		public PotentialColleagueSelector(){
+
+	public static class PotentialColleagueSelector extends UserSelector {
+
+		public PotentialColleagueSelector() {
 			super(new PotentialColleagueProvider());
 		}
 	}
@@ -104,16 +125,6 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 			});
 			return dbquery;
 		}
-
-		@Override
-		public Stream<User> fetchFromBackEnd(Query<User, BooleanExpression> query) {
-			return super.fetchFromBackEnd(query);
-		}
-
-		@Override
-		protected int sizeInBackEnd(Query<User, BooleanExpression> query) {
-			return super.sizeInBackEnd(query);
-		}
 	}
 
 	public static class PotentialColleagueProvider extends UserProvider {
@@ -123,7 +134,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		public PotentialColleagueProvider() {
 			user = getUser();
 		}
-		
+
 		public PotentialColleagueProvider(User currentUser) {
 			user = currentUser;
 		}
@@ -190,6 +201,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 		public ColleagueProvider() {
 			user = getUser();
 		}
+
 		public ColleagueProvider(User currentUser) {
 			user = currentUser;
 		}
