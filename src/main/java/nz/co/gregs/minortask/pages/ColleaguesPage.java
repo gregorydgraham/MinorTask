@@ -52,9 +52,9 @@ public class ColleaguesPage extends AuthorisedPage implements BeforeLeaveListene
 	@Override
 	public String getPageTitle() {
 		if (minortask().isLoggedIn()) {
-			return "Colleagues Of @" + getUser().getUsername();
+			return getUser().getUsername()+"'s Team";
 		}
-		return "Colleagues Page";
+		return "Team Page";
 	}
 
 	private void addListeners() {
