@@ -94,7 +94,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	protected String getListCaption(List<ColleagueListItem> tasks) {
-		return "Colleagues";
+		return "Team Members";
 	}
 
 	protected List<ColleagueListItem> getColleaguesToList() throws SQLException {
