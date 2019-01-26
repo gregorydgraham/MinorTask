@@ -38,6 +38,7 @@ import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.datamodel.TaskViews;
+import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 import org.joda.time.Period;
@@ -260,11 +261,13 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		assignedToSelector.addValueChangeListener((event) -> {
 			try {
 				final Task task1 = getTask(taskID);
-				if (event.getSource().getValue() == null) {
+				final User sourceValue = event.getSource().getValue();
+				final Long sourceUserID = sourceValue.getUserID();
+				if (sourceValue == null||sourceUserID==null) {
 					if (task1.assigneeID.isNotNull()) {
 						saveTask();
 					}
-				} else if (!event.getSource().getValue().getUserID().equals(task1.assigneeID.getValue())) {
+				} else if (!sourceUserID.equals(task1.assigneeID.getValue())) {
 					saveTask();
 				}
 			} catch (Globals.InaccessibleTaskException ex) {
