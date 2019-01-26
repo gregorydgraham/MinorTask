@@ -88,6 +88,7 @@ public class MinorTask extends Globals implements Serializable {
 		example.taskID.permittedValues(taskID);
 		try {
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Assignee());
+			// add user requirement
 			query.addCondition(
 					example.column(example.userID).is(getUserID())
 							.or(
