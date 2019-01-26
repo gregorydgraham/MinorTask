@@ -40,18 +40,25 @@ public class AllOpenTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
-		example.userID.permittedValues(minortask().getUserID());
+//		example.userID.permittedValues(minortask().getUserID());
+		final DBQuery query = getDatabase().getDBQuery(example);
+		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getUserID())
+						.or(
+								example.column(example.assigneeID).is(getUserID())
+						)
+		);
 		if (getProjectID() == null) {
-			List<Task> list = getDatabase().getByExample(example);
+			List<Task> list = query.getAllInstancesOf(example);
 			return list;
 		} else {
 			example.taskID.permittedValues(getProjectID());
-			DBQuery query = getDatabase().getDBQuery(example);
 			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
 			List<Task> descendants = recurse.getDescendants();
-			List<Task> tasks  = new ArrayList<>();
+			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue()==null &&  !t.taskID.getValue().equals(getProjectID());
+				return t.completionDate.getValue() == null && !t.taskID.getValue().equals(getProjectID());
 			}).forEach(tasks::add);
 			return tasks;
 		}
