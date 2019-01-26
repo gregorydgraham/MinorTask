@@ -80,7 +80,27 @@ public class MinorTask extends Globals implements Serializable {
 	}
 
 	public Task getTask(Long taskID) throws InaccessibleTaskException {
-		return getTask(taskID, getUserID());
+		Task returnTask = null;
+		if (taskID == null) {
+			return returnTask;
+		}
+		final Task example = new Task();
+		example.taskID.permittedValues(taskID);
+		try {
+			final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Assignee());
+			query.addCondition(
+					example.column(example.userID).is(getUserID())
+							.or(
+									example.column(example.assigneeID).is(getUserID())
+							)
+			);
+			return query.getOnlyInstanceOf(example);
+		} catch (UnexpectedNumberOfRowsException ex) {
+			throw new InaccessibleTaskException(taskID);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+		return returnTask;
 	}
 
 	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
@@ -287,9 +307,15 @@ public class MinorTask extends Globals implements Serializable {
 		if (taskID != null) {
 			final Task example = new Task();
 			example.taskID.permittedValues(taskID);
-			example.userID.permittedValues(getUserID());
+//			example.userID.permittedValues(getUserID());
 			final Task.Project projectExample = new Task.Project();
 			DBQuery dbQuery = getDatabase().getDBQuery(example).addOptional(projectExample, new Task.Assignee());
+			dbQuery.addCondition(
+					example.column(example.userID).is(getUserID())
+							.or(
+									example.column(example.assigneeID).is(getUserID())
+							)
+			);
 			try {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
