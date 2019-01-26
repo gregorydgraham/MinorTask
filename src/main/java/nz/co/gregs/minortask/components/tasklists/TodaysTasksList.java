@@ -23,12 +23,19 @@ public class TodaysTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		if (taskID == null) {
 			Task.Project example = new Task.Project();
-			example.userID.permittedValues(minortask().getUserID());
+//			example.userID.permittedValues(minortask().getUserID());
 			example.startDate.permittedRangeInclusive(null, new Date());
 			example.completionDate.permitOnlyNull();
 			final Task task = new Task();
 			task.completionDate.permitOnlyNull();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
+			// add user requirement
+			query.addCondition(
+					example.column(example.userID).is(getUserID())
+							.or(
+									example.column(example.assigneeID).is(getUserID())
+							)
+			);
 			// add the leaf requirement
 			query.addCondition(task.column(task.taskID).isNull());
 			query.setSortOrder(
