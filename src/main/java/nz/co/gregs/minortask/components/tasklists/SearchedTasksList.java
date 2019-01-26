@@ -98,7 +98,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		try {
 			String[] terms = getSearchTerms();
 			if (terms.length > 0) {
-				Task example = minortask().getSafeTaskExample(this);
+				Task example = new Task();//minortask().getSafeTaskExample(this);
 				DBQuery query = getQuery(example, terms);
 				return query.getAllInstancesOf(example);
 			} else {
@@ -111,6 +111,13 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 
 	private DBQuery getQuery(Task example, String[] terms) {
 		DBQuery query = getDatabase().getDBQuery(example);
+		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getUserID())
+						.or(
+								example.column(example.assigneeID).is(getUserID())
+						)
+		);
 		StringExpression column = example.column(example.name);
 		BooleanExpression boolExpr = null;
 		boolExpr = column.searchFor(terms);

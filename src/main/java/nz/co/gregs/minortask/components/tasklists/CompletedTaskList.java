@@ -7,11 +7,12 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
-public class CompletedTaskList extends AbstractTaskList{
+public class CompletedTaskList extends AbstractTaskList {
 
 	public CompletedTaskList(Long taskID) {
 		super(taskID);
@@ -20,17 +21,24 @@ public class CompletedTaskList extends AbstractTaskList{
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
-		example.userID.permittedValues(minortask().getUserID());
+//		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
-		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
-		dbTable.setSortOrder(
+		final DBQuery query = getDatabase().getDBQuery(example);
+		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getUserID())
+						.or(
+								example.column(example.assigneeID).is(getUserID())
+						)
+		);
+		query.setSortOrder(
 				example.column(example.completionDate).descending(),
 				example.column(example.name).ascending(),
 				example.column(example.taskID).ascending()
 		);
-		List<Task> tasks = dbTable.getAllRows();
+		List<Task> tasks = query.getAllInstancesOf(example);
 		return tasks;
 	}
 
@@ -41,7 +49,7 @@ public class CompletedTaskList extends AbstractTaskList{
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return ""+tasks.size()+" Completed Tasks";
+		return "" + tasks.size() + " Completed Tasks";
 	}
 
 }

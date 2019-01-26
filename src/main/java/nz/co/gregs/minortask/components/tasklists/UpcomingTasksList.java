@@ -16,7 +16,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("upcoming-task-list")
 public class UpcomingTasksList extends AbstractTaskList {
-	
+
 	private static final int DAYS_AHEAD = +3;
 
 	public UpcomingTasksList(Long taskID) {
@@ -30,7 +30,7 @@ public class UpcomingTasksList extends AbstractTaskList {
 
 	@Override
 	protected String getListCaption(List<Task> tasks) {
-		return tasks.size() + " Tasks will start within "+DAYS_AHEAD+" days";
+		return tasks.size() + " Tasks will start within " + DAYS_AHEAD + " days";
 	}
 
 	@Override
@@ -39,23 +39,30 @@ public class UpcomingTasksList extends AbstractTaskList {
 		Date now = asDate(nowLocalDate);
 		final LocalDate plusDays = nowLocalDate.plusDays(DAYS_AHEAD);
 		Date threeDaysHence = asDate(plusDays);
-		if(taskID==null){
-		Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
-		example.userID.permittedValues(minortask().getUserID());
-		example.startDate.permittedRange(now, threeDaysHence);
-		example.completionDate.permitOnlyNull();
-		final Task task = new Task();
-		final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
-		query.addCondition(task.column(task.taskID).isNull());
-		query.setSortOrder(
-				example.column(example.isOverdue).descending(),
-				example.column(example.hasStarted).descending(),
-				example.column(example.finalDate).ascending(),
-				example.column(example.startDate).ascending(),
-				example.column(example.name).ascending()
-		);
-		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;}else{
+		if (taskID == null) {
+			Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
+			example.startDate.permittedRange(now, threeDaysHence);
+			example.completionDate.permitOnlyNull();
+			final Task task = new Task();
+			final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
+			// add user requirement
+			query.addCondition(
+					example.column(example.userID).is(getUserID())
+							.or(
+									example.column(example.assigneeID).is(getUserID())
+							)
+			);
+			query.addCondition(task.column(task.taskID).isNull());
+			query.setSortOrder(
+					example.column(example.isOverdue).descending(),
+					example.column(example.hasStarted).descending(),
+					example.column(example.finalDate).ascending(),
+					example.column(example.startDate).ascending(),
+					example.column(example.name).ascending()
+			);
+			List<Task> tasks = query.getAllInstancesOf(example);
+			return tasks;
+		} else {
 			List<Task> descendants = minortask().getTasksOfProject(taskID);
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {

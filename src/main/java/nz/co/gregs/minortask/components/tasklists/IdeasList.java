@@ -36,13 +36,20 @@ public class IdeasList extends AbstractTaskList {
 		System.out.println("TASKID: "+taskID);
 		if (taskID == null) {
 			Task.Project example = new Task.Project();
-			example.userID.permittedValues(getUserID());
+//			example.userID.permittedValues(getUserID());
 			example.startDate.permitOnlyNull();
 			example.preferredDate.permitOnlyNull();
 			example.preferredDate.permitOnlyNull();
 			example.completionDate.permitOnlyNull();
 			Task task = new Task();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
+			// add user requirement
+			query.addCondition(
+					example.column(example.userID).is(getUserID())
+							.or(
+									example.column(example.assigneeID).is(getUserID())
+							)
+			);
 			query.setSortOrder(example.column(example.name).ascending());
 			query.printAllRows();
 			List<Task> tasks = query.getAllInstancesOf(example);

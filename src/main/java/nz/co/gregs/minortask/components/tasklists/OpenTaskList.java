@@ -10,11 +10,10 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
-
 
 @StyleSheet("styles/open-task-list.css")
 public class OpenTaskList extends AbstractTaskList {
@@ -23,7 +22,7 @@ public class OpenTaskList extends AbstractTaskList {
 
 	public OpenTaskList(Long taskID) {
 		super(taskID);
-		 newTaskButton= new AddTaskButton(taskID);
+		newTaskButton = new AddTaskButton(taskID);
 	}
 
 	@Override
@@ -39,18 +38,25 @@ public class OpenTaskList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task.WithSortColumns();
-		example.userID.permittedValues(minortask().getUserID());
+//		example.userID.permittedValues(minortask().getUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
-		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
-		dbTable.setSortOrder(
+		final DBQuery query = getDatabase().getDBQuery(example);
+		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getUserID())
+						.or(
+								example.column(example.assigneeID).is(getUserID())
+						)
+		);
+		query.setSortOrder(
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.finalDate).ascending(),
 				example.column(example.startDate).ascending(),
 				example.column(example.name).ascending()
 		);
-		List<Task> tasks = dbTable.getAllRows();
+		List<Task> tasks = query.getAllInstancesOf(example);
 		return tasks;
 	}
 
@@ -63,7 +69,7 @@ public class OpenTaskList extends AbstractTaskList {
 		}
 		return newTaskButton;
 	}
-	
+
 	@Override
 	protected Component[] getFooterExtras() {
 		return new Component[]{getNewTaskButton()};
@@ -72,5 +78,5 @@ public class OpenTaskList extends AbstractTaskList {
 	public void disableNewButton() {
 		this.getNewTaskButton().setEnabled(false);
 	}
-	
+
 }
