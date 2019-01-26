@@ -639,24 +639,6 @@ public class Globals {
 		error.printStackTrace();
 	}
 
-	protected static Task getTask(final Long taskID, final Long userID) throws InaccessibleTaskException {
-		Task returnTask = null;
-		if (taskID == null) {
-			return returnTask;
-		}
-		final Task example = new Task();
-		example.taskID.permittedValues(taskID);
-		example.userID.permittedValues(userID);
-		try {
-			return getDatabase().getDBQuery(example).addOptional(new Task.Assignee()).getOnlyInstanceOf(example);
-		} catch (UnexpectedNumberOfRowsException ex) {
-			throw new InaccessibleTaskException(taskID);
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-		return returnTask;
-	}
-
 	public static String shorten(String value, int i) {
 		return value == null ? null : value.substring(0, value.length() < i ? value.length() : i);
 	}
