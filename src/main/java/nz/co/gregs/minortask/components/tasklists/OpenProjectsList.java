@@ -8,7 +8,8 @@ package nz.co.gregs.minortask.components.tasklists;
 import com.vaadin.flow.component.Component;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.dbvolution.DBTable;
+import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -19,7 +20,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class OpenProjectsList extends AbstractTaskList {
 
-	private AddTaskButton newTaskButton= null;
+	private AddTaskButton newTaskButton = null;
 
 	public OpenProjectsList() {
 		super();
@@ -28,10 +29,16 @@ public class OpenProjectsList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
-		example.userID.permittedValues(getUserID());
-		example.projectID.permitOnlyNull();
 		example.completionDate.permitOnlyNull();
-		final DBTable<Task> dbTable = getDatabase().getDBTable(example);
+		final DBQuery dbTable = getDatabase().getDBQuery(example);
+		dbTable.addCondition(
+				BooleanExpression.allOf(
+						example.column(example.userID).is(getUserID()),
+						example.column(example.projectID).isNull()
+				).or(
+						example.column(example.assigneeID).is(getUserID())
+				)
+		);
 		dbTable.setSortOrder(
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
@@ -39,7 +46,9 @@ public class OpenProjectsList extends AbstractTaskList {
 				example.column(example.startDate).ascending(),
 				example.column(example.name).ascending()
 		);
-		List<Task> tasks = dbTable.getAllRows();
+		System.out.println("OPEN PROJECTS:");
+		System.out.println(dbTable.getSQLForQuery());
+		List<Task> tasks = dbTable.getAllInstancesOf(example);
 		return tasks;
 	}
 
@@ -64,7 +73,7 @@ public class OpenProjectsList extends AbstractTaskList {
 	public final AddTaskButton getNewTaskButton() {
 		if (newTaskButton == null) {
 			newTaskButton = new AddTaskButton("Add Project...");
-			newTaskButton.addClassNames("small", "openprojectslist-addproject"); 
+			newTaskButton.addClassNames("small", "openprojectslist-addproject");
 		}
 		return newTaskButton;
 	}
