@@ -47,10 +47,10 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 			super(new ColleagueProvider());
 			setItemLabelGenerator((item) -> {
 				if (item != null) {
-					if (item.queryUsername().isNotNull()) {
-						return item.getUsername();
+					if (item.queryUsername().isNull()) {
+						return "";
 					} else {
-						return getUser().getUsername();
+						return item.getUsername();
 					}
 				} else {
 					return "No Such User";
@@ -206,9 +206,18 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 			user = currentUser;
 		}
 
+		private final List<User> staticTeamMembers = new ArrayList<User>() {
+			{
+				add(new User()); // can be assigned to nobody
+				add(getUser()); // can be assigned to the current user
+			}
+		};
+
 		@Override
+
 		public Stream<User> fetchFromBackEnd(Query<User, BooleanExpression> query) {
 			ArrayList<User> listOfColleagues = new ArrayList<User>();
+			listOfColleagues.addAll(staticTeamMembers);
 			try {
 				User example = new User();
 				example.queryUsername().setSortOrderAscending();
@@ -229,7 +238,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 				User example = new User();
 				example.queryUsername().setSortOrderAscending();
 				DBQuery dbquery = getDBQuery(example, query);
-				dbquery.count();
+				return dbquery.count().intValue() + staticTeamMembers.size();
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
