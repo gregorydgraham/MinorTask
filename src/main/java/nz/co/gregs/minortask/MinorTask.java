@@ -356,12 +356,6 @@ public class MinorTask extends Globals implements Serializable {
 		}
 	}
 
-	public Task getSafeTaskExample(MinorTaskComponent component) {
-		Task example = new Task();
-		example.userID.permittedValues(component.getUserID());
-		return example;
-	}
-
 	/**
 	 * @return the loginDestination
 	 */
@@ -431,6 +425,13 @@ public class MinorTask extends Globals implements Serializable {
 		example.taskID.permittedValues(projectID);
 		final DBDatabase database = getDatabase();
 		DBQuery query = database.getDBQuery(example);
+		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getUserID())
+						.or(
+								example.column(example.assigneeID).is(getUserID())
+						)
+		);
 		DBRecursiveQuery<Task> recurse = query.getDBRecursiveQuery(example.column(example.projectID), example);
 		List<Task> descendants = recurse.getDescendants();
 		return descendants;
