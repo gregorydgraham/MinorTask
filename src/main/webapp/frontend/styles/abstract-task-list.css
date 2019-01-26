@@ -41,6 +41,14 @@ vaadin-grid td{
 .tasklist-header .addtaskbutton{
 }
 
+@media all and (max-width: 900px) {
+	.addtaskbutton{
+		padding: 0;
+		margin-left: 0; margin-right: 0;
+		font-size: x-small;
+	}
+}
+
 .tasklist-name{
 	white-space: normal;
 }

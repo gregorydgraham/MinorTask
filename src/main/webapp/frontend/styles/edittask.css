@@ -9,8 +9,16 @@ and open the template in the editor.
 */
 
 .edit-task-button{
-	background-color: #0099cc;;
-	color: white;
+	background-color: #ccffcc; /*#0099cc;;*/
+	color: black;
+}
+
+@media all and (max-width: 900px) {
+	.edit-task-button{
+		padding: 0;
+		margin-left: 0; margin-right: 0;
+		font-size: x-small;
+	}
 }
 
 .edit-task-component{

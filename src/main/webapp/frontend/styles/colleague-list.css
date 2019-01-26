@@ -62,9 +62,6 @@ vaadin-grid td{
 	justify-content: space-between;
 }
 
-.tasklist-header .addtaskbutton{
-}
-
 .tasklist-name{
 	white-space: normal;
 }
