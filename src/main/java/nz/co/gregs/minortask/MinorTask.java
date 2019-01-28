@@ -308,22 +308,22 @@ public class MinorTask extends Globals implements Serializable {
 		if (taskID != null) {
 			final Task example = new Task();
 			example.taskID.permittedValues(taskID);
-//			example.userID.permittedValues(getUserID());
 			final Task.Project projectExample = new Task.Project();
+			// avoid connecting the project to anything other than the task
+			projectExample.ignoreAllForeignKeysExceptFKsTo(example);
 			DBQuery dbQuery = getDatabase().getDBQuery(example).addOptional(projectExample, new Task.Assignee());
 			dbQuery.addCondition(
 					example.column(example.userID).is(getUserID())
-							.or(
-									example.column(example.assigneeID).is(getUserID())
-							)
+							.or(example.column(example.assigneeID).is(getUserID()))
 			);
 			try {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
 				final Task taskFound = onlyRow.get(example);
+				final Task.Project projectFound = onlyRow.get(projectExample);
 				System.out.println("TASK: " + taskFound);
-				return new Task.TaskAndProject(taskFound, onlyRow.get(projectExample));
-
+				System.out.println("PROJECT: " + projectFound);
+				return new Task.TaskAndProject(taskFound, projectFound);
 			} catch (SQLException | AccidentalBlankQueryException | AccidentalCartesianJoinException ex) {
 				Logger.getLogger(MinorTask.class
 						.getName()).log(Level.SEVERE, null, ex);
