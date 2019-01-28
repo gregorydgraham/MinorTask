@@ -27,12 +27,13 @@ and open the template in the editor.
 	font-size: small;
 	font-weight: normal;
 	border-radius: 6px;
-	padding: 5px 0;
+	padding: 0;/*5px 0;*/
 	position: absolute;
 	z-index: 1;
 	top: 95%;
 	left: 50%;
 	margin-left: -60px;
+	opacity: 0.9;
 }
 
 .tooltip .tooltiptext::after {
