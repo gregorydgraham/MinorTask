@@ -11,21 +11,20 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("document-grid")
-public class DocumentGrid extends Div implements RequiresLogin {
+public class DocumentGrid extends SecureDiv {
 
 	private Long taskID = null;
 	private final Grid<Document> grid = new Grid<>();

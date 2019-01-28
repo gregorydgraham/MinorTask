@@ -21,6 +21,7 @@ public class UpcomingTasksList extends AbstractTaskList {
 
 	public UpcomingTasksList(Long taskID) {
 		super(taskID);
+		setTooltipText("You'll need to be doing these soon, but you've got a little time yet");
 	}
 
 	@Override

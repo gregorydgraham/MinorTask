@@ -17,13 +17,13 @@ public class TodaysTasksList extends AbstractTaskList {
 
 	public TodaysTasksList(Long taskID) {
 		super(taskID);
+		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
 	}
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		if (taskID == null) {
 			Task.Project example = new Task.Project();
-//			example.userID.permittedValues(minortask().getUserID());
 			example.startDate.permittedRangeInclusive(null, new Date());
 			example.completionDate.permitOnlyNull();
 			final Task task = new Task();

@@ -8,16 +8,15 @@ package nz.co.gregs.minortask.components.upload;
 import nz.co.gregs.minortask.components.images.ImageSelector;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.shared.Registration;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("document-upload")
-public class ImageUploadAndSelector extends Div implements RequiresLogin {
+public class ImageUploadAndSelector extends SecureDiv {
 
 	protected ImageUpload uploader = new ImageUpload();
 	protected ImageSelector selector = new ImageSelector();

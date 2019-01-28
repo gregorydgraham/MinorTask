@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.button.Button;
 import nz.co.gregs.minortask.MinorTask;
 
 /**
@@ -13,7 +12,7 @@ import nz.co.gregs.minortask.MinorTask;
  * @author gregorygraham
  */
 //@Tag("add-task-button")
-public class AddTaskButton extends Button implements RequiresLogin {
+public class AddTaskButton extends SecureButton {
 
 //	final Button newTaskButton;
 	private Long originatingTaskID = null;
@@ -36,6 +35,7 @@ public class AddTaskButton extends Button implements RequiresLogin {
 		this.originatingTaskID = taskID;
 		buildComponent();
 		addClassNames("addtaskbutton");
+		setTooltipText("Expand and simplify this task by adding a smaller task that will help complete this task");
 	}
 	
 	public void setTaskID(Long id){

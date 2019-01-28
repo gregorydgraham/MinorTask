@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -19,13 +18,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
-public class PlaceGrid extends Div implements RequiresLogin {
+public class PlaceGrid extends SecureDiv {
 
 	private Long taskID;
 	private final Grid<Place> grid = new Grid<Place>();

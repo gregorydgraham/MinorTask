@@ -6,9 +6,7 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -19,6 +17,7 @@ import nz.co.gregs.minortask.datamodel.TaskViews;
 public class RecentlyViewedTasks extends AbstractTaskList {
 
 	public RecentlyViewedTasks() {
+		setTooltipText("This list shows the tasks that you've viewed with the most recent one at the top");
 	}
 
 	@Override
@@ -40,7 +39,8 @@ public class RecentlyViewedTasks extends AbstractTaskList {
 		taskViews.lastviewed.permittedRange(cal.getTime(), null);
 		final Task task = new Task();
 		DBQuery query = getDatabase().getDBQuery(task, taskViews);
-		query.setSortOrder(taskViews.column(taskViews.lastviewed).descending(),
+		query.setSortOrder(
+				taskViews.column(taskViews.lastviewed).descending(),
 				task.column(task.name).ascending());
 		return query.getAllInstancesOf(task);
 	}

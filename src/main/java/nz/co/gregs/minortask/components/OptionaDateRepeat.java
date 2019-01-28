@@ -18,7 +18,7 @@ import org.joda.time.Period;
  *
  * @author gregorygraham
  */
-public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRepeat, Period> {
+public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRepeat, Period> implements HasToolTip {
 
 	private final Checkbox enabler = new Checkbox(false);
 	private final TextField input = new TextField();

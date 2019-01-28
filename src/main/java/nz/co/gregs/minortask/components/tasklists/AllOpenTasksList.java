@@ -16,10 +16,16 @@ public class AllOpenTasksList extends AbstractTaskList {
 
 	public AllOpenTasksList() {
 		super();
+		setToolTip();
 	}
 
 	public AllOpenTasksList(Long projectID) {
 		super(projectID);
+		setToolTip();
+	}
+
+	private void setToolTip() {
+		setTooltipText("All the tasks that are still be done");
 	}
 
 	@Override

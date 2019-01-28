@@ -12,9 +12,14 @@ import com.vaadin.flow.component.html.Div;
  *
  * @author gregorygraham
  */
-public class SecureDiv extends Div implements MinorTaskComponent {
+public class SecureDiv extends Div implements RequiresLogin {
 
 	public SecureDiv() {
+	}
+
+	SecureDiv(Component... components) {
+		super();
+		add(components);
 	}
 
 	@Override

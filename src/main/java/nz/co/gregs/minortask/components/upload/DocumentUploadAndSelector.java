@@ -7,16 +7,15 @@ package nz.co.gregs.minortask.components.upload;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.shared.Registration;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("document-upload")
-public class DocumentUploadAndSelector extends Div implements RequiresLogin {
+public class DocumentUploadAndSelector extends SecureDiv {
 
 	protected DocumentUpload uploader = new DocumentUpload();
 	protected DocumentSelector selector = new DocumentSelector();

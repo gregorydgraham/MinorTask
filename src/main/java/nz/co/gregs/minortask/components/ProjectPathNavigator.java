@@ -45,7 +45,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 		addClassName("project-path-navigator");
 	}
 
-	protected void buildComponent() {
+	protected final void buildComponent() {
 		removeAll();
 		add(getPrefixComponents());
 		List<Task> ancestors = getProjectPathTasks(getTaskID(), getUserID());
@@ -86,49 +86,8 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	public Button getButtonForTaskID(Task task) {
-		final Button button;
-		if (task == null) {
-			button = new Button(
-					"Projects",
-					(ClickEvent<Button> event) -> {
-						if (taskID == null || targetPage == null || targetPage.equals(TaskEditorLayout.class)) {
-							// if Projects is the current task or we're on the details page
-							MinorTask.showProjects();
-						} else {
-							MinorTask.showPage(targetPage, null);
-						}
-					});
-		} else if (task.taskID.getValue().equals(taskID)) {
-			// clicking the current task should go to the details page
-			button = new Button(
-					task.name.getValue(),
-					(ClickEvent<Button> event) -> {
-						final Long foundID = task.taskID.getValue();
-						MinorTask.showTask(foundID);
-					});
-		} else {
-			// jump to the same tab on the new task
-			button = new Button(
-					task.name.getValue(),
-					(ClickEvent<Button> event) -> {
-						final Long foundID = task.taskID.getValue();
-						MinorTask.showPage(targetPage, foundID);
-					});
-		}
-		formatButton(button);
-		if ((task != null && task.taskID.getValue().equals(taskID))
-				|| (task == null && taskID == null)) {
-			button.addClassName("currenttask");
-		}
+		final GoToTaskButton button = new GoToTaskButton(taskID, task, targetPage);
 		return button;
-	}
-
-	protected void formatButton(final Button button) {
-		button.setIcon(VaadinIcon.ANGLE_RIGHT.create());
-		button.setIconAfterText(true);
-		button.setSizeUndefined();
-		button.addClassNames("small", "projectpath");
-		button.getElement().setAttribute("theme", "small");
 	}
 
 	/**
@@ -144,24 +103,28 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 			Globals.showSearchPage();
 		});
 		search.addClassName("navigator-task-search");
+		search.setTooltipText("Find that task the quick way");
 
 		IconWithClickHandler today = new IconWithClickHandler(VaadinIcon.TIMER);
 		today.addClickListener((event) -> {
 			Globals.showTodaysTasks();
 		});
-		today.addClassName("navigator-task-recents");
+		today.addClassName("navigator-task-today");
+		search.setTooltipText("All of tasks you could work on today");
 
 		IconWithClickHandler recent = new IconWithClickHandler(VaadinIcon.CLOCK);
 		recent.addClickListener((event) -> {
 			Globals.showRecentsPage();
 		});
 		recent.addClassName("navigator-task-recents");
+		search.setTooltipText("See the tasks you've looked at recently");
 
 		IconWithClickHandler favourites = new IconWithClickHandler(VaadinIcon.HEART);
 		favourites.addClickListener((event) -> {
 			Globals.showFavouritesPage();
 		});
 		favourites.addClassName("navigator-task-favourites");
+		search.setTooltipText("Your favourite tasks collected together");
 
 		return new Component[]{search, today, recent, favourites};
 	}

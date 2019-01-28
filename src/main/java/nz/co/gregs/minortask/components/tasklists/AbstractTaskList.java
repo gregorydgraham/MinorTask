@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.HasToolTip;
 import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
@@ -31,7 +32,7 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  * @author gregorygraham
  */
 @StyleSheet("styles/abstract-task-list.css")
-public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin {
+public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin, HasToolTip {
 	
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();

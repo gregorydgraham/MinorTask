@@ -9,8 +9,6 @@ import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.io.IOException;
@@ -31,7 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import nz.co.gregs.minortask.components.HasDefaultButton;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +40,7 @@ import org.xml.sax.SAXException;
  *
  * @author gregorygraham
  */
-public class PlaceSearchComponent extends Div implements RequiresLogin, HasDefaultButton {
+public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton {
 
 	private Long taskID;
 	TextField locationText = new TextField("", "", "address to search for...");

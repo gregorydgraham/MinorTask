@@ -23,6 +23,7 @@ public class OpenTaskList extends AbstractTaskList {
 	public OpenTaskList(Long taskID) {
 		super(taskID);
 		newTaskButton = new AddTaskButton(taskID);
+		setTooltipText("All the tasks that are still be done");
 	}
 
 	@Override

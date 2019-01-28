@@ -20,6 +20,7 @@ public class OverdueTasksList extends AbstractTaskList {
 
 	public OverdueTasksList(Long TaskID) {
 		super(TaskID);
+		setTooltipText("This list show tasks that has passed their deadline, you might need to reschedule them or get them done now");
 	}
 
 	@Override

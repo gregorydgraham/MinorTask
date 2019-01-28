@@ -24,6 +24,7 @@ public class OpenProjectsList extends AbstractTaskList {
 
 	public OpenProjectsList() {
 		super();
+		setTooltipText("Start a project to include your tasks");
 	}
 
 	@Override

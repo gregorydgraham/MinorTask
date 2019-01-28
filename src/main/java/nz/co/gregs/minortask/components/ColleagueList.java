@@ -117,7 +117,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		allRows.forEach((row) -> {
 			final User requester = row.get(requesterExample);
 			final User requestee = row.get(requestedExample);
-			list.add(new ColleagueListItem(row.get(colleague), requester, requestee));
+			list.add(new ColleagueListItem(minortask(), row.get(colleague), requester, requestee));
 		});
 		return list;
 	}
@@ -186,7 +186,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		HorizontalLayout layout = new HorizontalLayout();
 		final Label statusLabel = new Label();
 		statusLabel.addClassName("colleaguelist-status-label");
-			layout.add(statusLabel);
+		layout.add(statusLabel);
 		if (item.hasDeclined() && !item.canAccept) {
 			statusLabel.setText("declined");
 			final Button rescindButton = new Button("Remove");
@@ -223,7 +223,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 				declineInvitation(item);
 			});
 			layout.add(declineButton);
-		} else if(item.isInvited()){
+		} else if (item.isInvited()) {
 			statusLabel.setText("invited");
 			final Button rescindButton = new Button("Rescind");
 			rescindButton.addClassName("colleaguelist-rescindbutton");
@@ -343,20 +343,23 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		refreshList();
 	}
 
-	public static class ColleagueListItem implements MinorTaskComponent {
+	public static class ColleagueListItem {
 
 		private User colleague;
 		private boolean accepted;
 		private boolean canAccept;
 		private Colleagues colleaguesRow;
 		private boolean declined;
+		private MinorTask minortask;
 
-		public ColleagueListItem() {
+		public ColleagueListItem(MinorTask minortask) {
+			this.minortask = minortask;
 		}
 
-		public ColleagueListItem(Colleagues colleagues, User requester, User invitedUser) {
+		public ColleagueListItem(MinorTask minorTask, Colleagues colleagues, User requester, User invitedUser) {
+			this(minorTask);
 			this.colleaguesRow = colleagues;
-			if (getUserID().equals(invitedUser.getUserID())) {
+			if (minortask.getUserID() == invitedUser.getUserID()) {
 				colleague = requester;
 				canAccept = true;
 			} else {

@@ -16,7 +16,7 @@ import java.time.LocalDate;
  *
  * @author gregorygraham
  */
-public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDatePicker, LocalDate> {
+public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDatePicker, LocalDate> implements HasToolTip {
 
 	private final DatePicker input = new DatePicker();
 	private final Checkbox enabler = new Checkbox(false);

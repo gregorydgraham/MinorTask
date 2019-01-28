@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components.tasklists;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
@@ -16,6 +15,7 @@ public class CompletedTaskList extends AbstractTaskList {
 
 	public CompletedTaskList(Long taskID) {
 		super(taskID);
+		setTooltipText("When you complete a task it will be moved to here, so you can see your progress");
 	}
 
 	@Override

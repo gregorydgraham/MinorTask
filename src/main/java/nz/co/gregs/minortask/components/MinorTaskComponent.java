@@ -19,7 +19,7 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-public interface MinorTaskComponent {
+public interface MinorTaskComponent extends HasToolTip{
 
 	default MinorTask minortask() {
 		return MinorTask.getMinorTask();

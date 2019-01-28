@@ -35,6 +35,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			this.add(new AccessDeniedComponent());
 		}
+		setTooltipText("Part of this project, you can move it to another from here");
 	}
 
 	private ComboBox<Task> getPickerComponent() {

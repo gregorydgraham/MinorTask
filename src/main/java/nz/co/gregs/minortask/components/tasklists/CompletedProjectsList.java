@@ -6,10 +6,8 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.DBTable;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
@@ -17,6 +15,7 @@ public class CompletedProjectsList extends AbstractTaskList {
 
 	public CompletedProjectsList() {
 		super();
+		setTooltipText("When you've finished a project it will be shown here");
 	}
 
 	@Override

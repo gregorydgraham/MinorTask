@@ -21,6 +21,11 @@ and open the template in the editor.
 	padding-right: 2px;
 }
 
+.navigator-task-today{
+	color: cadetblue;
+	padding-right: 2px;
+}
+
 .navigator-task-projects{
 	color: cadetblue;
 	padding-right: 2px;

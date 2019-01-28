@@ -17,13 +17,14 @@ import java.util.stream.Stream;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Colleagues;
 import nz.co.gregs.minortask.datamodel.User;
 
-public class UserSelector extends ComboBox<User> implements RequiresLogin, MinorTaskComponent {
+public class UserSelector extends ComboBox<User> implements RequiresLogin {
 
 	public UserSelector() {
-		setDataProvider(new UserProvider());
+		setDataProvider(new UserProvider(minortask()));
 	}
 
 	public UserSelector(AbstractUserDataProvider provider) {
@@ -44,7 +45,8 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 	public static class ColleagueSelector extends UserSelector {
 
 		public ColleagueSelector() {
-			super(new ColleagueProvider());
+			super();
+			setDataProvider(new ColleagueProvider(minortask()));
 			setItemLabelGenerator((item) -> {
 				if (item != null) {
 					if (item.queryUsername().isNull()) {
@@ -62,14 +64,22 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 	public static class PotentialColleagueSelector extends UserSelector {
 
 		public PotentialColleagueSelector() {
-			super(new PotentialColleagueProvider());
+			super();
+			setDataProvider(new PotentialColleagueProvider(minortask()));
 		}
 	}
 
-	protected static abstract class AbstractUserDataProvider extends AbstractBackEndDataProvider<User, BooleanExpression> implements MinorTaskComponent {
+	protected static abstract class AbstractUserDataProvider extends AbstractBackEndDataProvider<User, BooleanExpression> {
 
-		public AbstractUserDataProvider() {
+		private final MinorTask minortask;
+
+		public AbstractUserDataProvider(MinorTask minortask) {
 			super();
+			this.minortask = minortask;
+		}
+
+		protected MinorTask minortask() {
+			return minortask;
 		}
 
 		public abstract DBQuery getDBQuery(User example, Query<User, BooleanExpression> query);
@@ -111,13 +121,13 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 
 	protected static class UserProvider extends AbstractUserDataProvider {
 
-		public UserProvider() {
-			super();
+		public UserProvider(MinorTask minorTask) {
+			super(minorTask);
 		}
 
 		@Override
 		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
-			final DBQuery dbquery = getDatabase()
+			final DBQuery dbquery = minortask().getDatabase()
 					.getDBQuery(new User())
 					.setBlankQueryAllowed(true);
 			query.getFilter().ifPresent((t) -> {
@@ -131,11 +141,12 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 
 		private final User user;
 
-		public PotentialColleagueProvider() {
-			user = getUser();
+		public PotentialColleagueProvider(MinorTask minorTask) {
+			this(minorTask, minorTask.getUser());
 		}
 
-		public PotentialColleagueProvider(User currentUser) {
+		public PotentialColleagueProvider(MinorTask minorTask, User currentUser) {
+			super(minorTask);
 			user = currentUser;
 		}
 
@@ -175,7 +186,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
-			final DBQuery dbquery = getDatabase().getDBQuery(exampleUser).addOptional(colleagues);
+			final DBQuery dbquery = minortask().getDatabase().getDBQuery(exampleUser).addOptional(colleagues);
 			dbquery.addCondition(// connect the user table and the colleagues table
 					exampleUser.column(exampleUser.queryUserID())
 							.isIn(
@@ -198,18 +209,19 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 
 		private final User user;
 
-		public ColleagueProvider() {
-			user = getUser();
+		public ColleagueProvider(MinorTask minorTask) {
+			this(minorTask, minorTask.getUser());
 		}
 
-		public ColleagueProvider(User currentUser) {
+		public ColleagueProvider(MinorTask minorTask, User currentUser) {
+			super(minorTask);
 			user = currentUser;
 		}
 
 		private final List<User> staticTeamMembers = new ArrayList<User>() {
 			{
 				add(new User()); // can be assigned to nobody
-				add(getUser()); // can be assigned to the current user
+				add(minortask().getUser()); // can be assigned to the current user
 			}
 		};
 
@@ -252,7 +264,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin, Minor
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
-			final DBQuery dbquery = getDatabase().getDBQuery(exampleUser, colleagues);
+			final DBQuery dbquery = minortask().getDatabase().getDBQuery(exampleUser, colleagues);
 			dbquery.addCondition(// connect the user table and the colleagues table
 					exampleUser.column(exampleUser.queryUserID())
 							.isIn(

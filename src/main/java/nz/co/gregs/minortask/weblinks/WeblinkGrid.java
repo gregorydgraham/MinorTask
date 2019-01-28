@@ -18,13 +18,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
-public class WeblinkGrid extends Div implements RequiresLogin {
+public class WeblinkGrid extends SecureDiv {
 
 	private Long taskID;
 	private final Grid<Weblink> grid = new Grid<Weblink>();

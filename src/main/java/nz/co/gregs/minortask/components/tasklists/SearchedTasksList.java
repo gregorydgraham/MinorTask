@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.StringExpression;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -30,6 +29,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	public SearchedTasksList() {
 		super();
 		getSearchField();
+		setTooltipText("Search for your tasks based on their name and description");
 	}
 
 	private Checkbox getIncludeDescriptionOption() {
@@ -119,8 +119,6 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 						)
 		);
 		StringExpression column = example.column(example.name);
-		BooleanExpression boolExpr = null;
-		boolExpr = column.searchFor(terms);
 		if (getIncludeDescriptionOption().getValue()) {
 			column = column.append(" ").append(example.column(example.description));
 		}

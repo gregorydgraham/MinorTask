@@ -1,0 +1,51 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 27/01/2019, 11:06:42 PM
+    Author     : gregorygraham
+*/
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  /*border-bottom: 1px dotted antiquewhite;*/
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 15em;
+	height: auto;
+	white-space:normal;
+	word-wrap: break-word;
+	border:thin solid bisque;
+	background-color: antiquewhite;
+	color: #333333;
+	text-align: center;
+	font-size: small;
+	font-weight: normal;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	top: 95%;
+	left: 50%;
+	margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -6em;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent bisque transparent;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}

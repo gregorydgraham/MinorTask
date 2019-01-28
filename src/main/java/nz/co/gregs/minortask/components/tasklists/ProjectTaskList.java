@@ -20,6 +20,7 @@ public class ProjectTaskList extends AbstractTaskList {
 
 	public ProjectTaskList() {
 		super();
+		setTooltipText("I didn't think was used???");
 	}
 
 	@Override

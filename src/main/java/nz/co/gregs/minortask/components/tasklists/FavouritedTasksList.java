@@ -15,6 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 public class FavouritedTasksList extends AbstractTaskList {
 
 	public FavouritedTasksList() {
+		setTooltipText("Tick the heart to include a task in this list, then you be able to find it easily");
 	}
 
 	@Override

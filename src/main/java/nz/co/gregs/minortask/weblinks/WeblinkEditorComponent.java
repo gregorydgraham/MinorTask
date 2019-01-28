@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.weblinks;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -15,14 +14,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import nz.co.gregs.minortask.components.HasDefaultButton;
-import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  *
  * @author gregorygraham
  */
-public class WeblinkEditorComponent extends Div implements RequiresLogin, HasDefaultButton {
+public class WeblinkEditorComponent extends SecureDiv implements  HasDefaultButton {
 
 	private Long taskID;
 	TextField locationText = new TextField("Bookmark", "http://example.com/...");
