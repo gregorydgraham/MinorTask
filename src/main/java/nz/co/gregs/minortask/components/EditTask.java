@@ -210,13 +210,20 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
 
-		final HorizontalLayout projectAndAssignmentDiv = new HorizontalLayout(project, assignedToSelector);
+		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv);
+		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
+
+		final SecureDiv projectAndAssignmentDiv = new SecureDiv(project, assignedToSelector);
 		projectAndAssignmentDiv.addClassName("edit-task-projectandassignment");
 
+		final SecureDiv nameAndProjectDiv = new SecureDiv(nameAndDescriptionDiv, projectAndAssignmentDiv);
+		nameAndProjectDiv.addClassName("edit-task-nameandproject");
+
 		Div topLayout = new Div(
-				nameDiv,
-				descriptionDiv,
-				projectAndAssignmentDiv,
+				nameAndProjectDiv,
+//				nameDiv, 
+//				descriptionDiv,
+//				projectAndAssignmentDiv,
 				addButtons,
 				repeatEditor,
 				placeSearcher,

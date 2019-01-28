@@ -68,3 +68,29 @@ and open the template in the editor.
 	color: white; 
 	border-radius: 4px;
 }
+
+.edit-task-nameanddescription{
+	display: flex;
+	flex-direction: column;
+	align-content: flex-start;
+	width: 100%;
+}
+
+.edit-task-projectandassignment{
+	display: flex;
+	flex-direction: column;
+	/*align-content: flex-start;*/
+	align-items: flex-start;
+	flex-grow: 0;
+	border: thin solid #cccccc;
+	border-radius: 5px;
+	vertical-align: top;
+	margin-left: 2px;
+	padding: 2px;
+}
+
+.edit-task-nameandproject{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
