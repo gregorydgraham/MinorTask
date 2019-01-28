@@ -27,6 +27,10 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		setDataProvider(new UserProvider(minortask()));
 	}
 
+	public UserSelector(String label) {
+		super(label);
+	}
+
 	public UserSelector(AbstractUserDataProvider provider) {
 		setDataProvider(provider);
 		setItemLabelGenerator((item) -> {
@@ -45,7 +49,11 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 	public static class ColleagueSelector extends UserSelector {
 
 		public ColleagueSelector() {
-			super();
+			this("");
+		}
+
+		public ColleagueSelector(String label) {
+			super(label);
 			setDataProvider(new ColleagueProvider(minortask()));
 			setItemLabelGenerator((item) -> {
 				if (item != null) {
@@ -64,7 +72,11 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 	public static class PotentialColleagueSelector extends UserSelector {
 
 		public PotentialColleagueSelector() {
-			super();
+			this("");
+		}
+
+		public PotentialColleagueSelector(String label) {
+			super(label);
 			setDataProvider(new PotentialColleagueProvider(minortask()));
 		}
 	}
