@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
@@ -38,7 +40,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		setTooltipText("Part of this project, you can move it to another from here");
 	}
 
-	private ComboBox<Task> getPickerComponent() {
+	private Component getPickerComponent() {
 		try {
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getUserID());
@@ -62,11 +64,17 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
 			final Task.Project project = taskAndProject.getProject();
-			taskList.setValue(project == null ? taskList.getEmptyValue() : project);
-
-			taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
-
-			return taskList;
+			try {
+				taskList.setValue(project == null ? taskList.getEmptyValue() : project);
+				taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
+				return taskList;
+			} catch (IllegalArgumentException ex) {
+				final PaperInput label = new PaperInput();
+				label.setLabel("Project");
+				label.setValue(project.name.getValue());
+				label.setEnabled(false);
+				return label;
+			}
 		} catch (SQLException ex) {
 			Logger.getLogger(ProjectPicker.class.getName()).log(Level.SEVERE, null, ex);
 			minortask().sqlerror(ex);
