@@ -11,6 +11,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -23,6 +24,7 @@ import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip;
 import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -33,30 +35,31 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  */
 @StyleSheet("styles/abstract-task-list.css")
 public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin, HasToolTip {
-	
+
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
+	private final Div gridDiv = new Div(grid);
 	private final Label label = new Label();
 	private List<Task> list = new ArrayList<>(0);
-	
+
 	public AbstractTaskList() {
 		this((Long) null);
 	}
-	
+
 	public AbstractTaskList(Long taskID) {
 		this.taskID = taskID;
 		buildComponent();
 //		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
-	
+
 	protected AbstractTaskList(List<Task> list) {
 		this.taskID = null;
 		this.list = list;
 		buildComponent();
 		this.addClassName("tasklist");
 	}
-	
+
 	public final void buildComponent() {
 		VerticalLayout well = new VerticalLayout();
 		well.addClassName(getListClassName());
@@ -77,56 +80,69 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			}
 			header.add(headerRight);
 			well.add(header);
-			
+
 			setGridItems(allRows);
 			setGridColumns();
-			well.add(grid);
-			
+			gridDiv.addClassName("task-list-grid-container");
+			well.add(gridDiv);
+
 			Div footer = new Div();
 			final Component[] footerExtras = getFooterExtras();
 			if (footerExtras.length > 0) {
 				footer.add(footerExtras);
 			}
-			footer.addClassNames(getListClassName(), "footer",getListClassName()+"-footer");
+			footer.addClassNames(getListClassName(), "footer", getListClassName() + "-footer");
 			well.add(footer);
 		} catch (SQLException ex) {
 			MinorTask.sqlerror(ex);
 		}
 		add(well);
 	}
-	
+
+	public void setTooltipText(String text) {
+		label.addClassName("tooltip");
+		Div span = new Div(new Paragraph(text));
+		label.getElement().insertChild(0, span.getElement());
+		span.addClassName("tooltiptext");
+
+		gridDiv.addClassName("tooltip");
+		Div span2 = new Div(new Paragraph(text));
+		gridDiv.getElement().insertChild(0, span2.getElement());
+		span2.addClassName("tooltiptext");
+	}
+
 	protected abstract String getListClassName();
-	
+
 	protected abstract String getListCaption(List<Task> tasks);
-	
+
 	protected abstract List<Task> getTasksToList() throws SQLException;
-	
+
 	protected Component[] getFooterExtras() {
 		return new Component[]{};
 	}
-	
+
 	protected Component[] getHeaderExtras() {
 		return new Component[]{};
 	}
-	
+
 	private void setGridItems(List<Task> allRows) {
 		grid.setItems();//clear it first
 		grid.setItems(allRows);
 	}
-	
+
 	private void setLabel(List<Task> allRows) {
 		final String caption = getListCaption(allRows);
 		label.setText(caption);
 	}
-	
+
 	private void setGridColumns() {
 		grid.setHeightByRows(true);
-		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
+		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("30px").setFlexGrow(0);
 		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
-		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em").setFlexGrow(0);
-		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("2em").setFlexGrow(0);
+		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
+		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("50px").setFlexGrow(0);
 	}
-	
+
 	private Component getPrefixComponent(Task task) {
 		final IconWithClickHandler heart = new IconWithClickHandler(VaadinIcon.HEART);
 		heart.addClassName("tasklist-entry-prefix");
@@ -147,26 +163,26 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		}
 		return heart;
 	}
-	
+
 	private Component getDescriptionComponent(Task task) {
 		Div name = new Div();
 		name.setText(task.name.getValue());
 		Div desc = new Div();
 		desc.setText(task.description.getValue());
-		
+
 		name.setSizeFull();
 		name.addClassNames("tasklist-name");
 		desc.setSizeFull();
 		desc.addClassNames("tasklist-description");
-		
+
 		final Div summary = new Div(name, desc);
-		
+
 		Anchor anchor = wrapInALinkToTheTask(task, summary);
 		anchor.addClassName("tasklist-entry-summary");
-		
+
 		return anchor;
 	}
-	
+
 	private Component getSubTaskNumberComponent(Task task) {
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.addClassName("tasklist-subtask-count");
@@ -176,14 +192,14 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		label1.add(icon);
 		Component wrapped = wrapInALinkToTheTask(task, label1);
 		layout.add(wrapped);
-		
+
 		return layout;
 	}
-	
+
 	private Component getSuffixComponent(Task task) {
-		HorizontalLayout layout = new HorizontalLayout();
+		SecureDiv layout = new SecureDiv();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
-		
+
 		final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
 		checkIcon.addClickListener((event) -> {
 			if (task.completionDate.isNull()) {
@@ -210,7 +226,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		layout.addClassName("tasklist-entry-suffix");
 		return layout;
 	}
-	
+
 	private Anchor wrapInALinkToTheTask(final Task task, final Component summary) {
 		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
 				task.taskID.getValue());
@@ -218,7 +234,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		anchor.add(summary);
 		return anchor;
 	}
-	
+
 	protected void refreshList() {
 		try {
 			if (thereAreRowsToShow()) {
@@ -230,15 +246,15 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			sqlerror(ex);
 		}
 	}
-	
+
 	protected Component[] getControlsAbove() {
 		return new Component[]{};
 	}
-	
+
 	protected boolean thereAreRowsToShow() {
 		return true;
 	}
-	
+
 	private void addFavourite(Task task) {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks(task, getUser());
@@ -247,7 +263,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			sqlerror(ex);
 		}
 	}
-	
+
 	private void removeFavourite(Task task) {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks();
@@ -256,21 +272,21 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			getDatabase().delete(favour);
 		} catch (SQLException ex) {
 			sqlerror(ex);
-			
+
 		}
 	}
-	
+
 	public static abstract class PreQueried extends AbstractTaskList {
-		
+
 		public PreQueried(List<Task> list) {
 			super(list);
 		}
-		
+
 		@Override
 		protected List<Task> getTasksToList() throws SQLException {
 			return super.list;
 		}
-		
+
 	}
-	
+
 }
