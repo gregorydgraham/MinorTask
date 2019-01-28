@@ -6,6 +6,8 @@
 package nz.co.gregs.minortask.components;
 
 import com.google.common.base.Objects;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.BlurNotifier;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.components.upload.DocumentGrid;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
@@ -249,9 +252,9 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		descriptionDiv.setTooltipText("Add more context to the task name, displayed below the task's name in lists");
 		notesEditorDiv.setTooltipText("Add random text including your thoughts, feedback, and findings or anything else you'd like to kepp");
 		notesDiv.setTooltipText("Fill this with any findings, thoughts, or conclusions you like, it'll take all the text you can write");
-		
+
 		assignmentDiv.setTooltipText("Ask someone else to do this task, note that they can refuse");
-		
+
 		addDates.setTooltipText("Add dates to have the task appear on the Today's Task list when appropriate");
 		addDocument.setTooltipText("Collect relevant files and documents");
 		addImage.setTooltipText("Add images that support this task");
@@ -259,11 +262,11 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		addPlace.setTooltipText("Include any locations that are relevant");
 		addRepeat.setTooltipText("Have a new version of this task automatically created when you complete the current one, great for those regular jobs");
 		addWebLink.setTooltipText("Collect all the websites you need");
-		
+
 		startDate.setTooltipText("Start date defines when the task will start appearing in the Today's Tasks list, and removes it from the Ideas list.");
 		preferredEndDate.setTooltipText("The date when you would like to finish the task");
 		deadlineDate.setTooltipText("The task MUST be finished on or before this date.  Deadlines will push the task higher up the Today's Task list");
-		
+
 		completeButton.setTooltipText("When you're happy it's done press this button");
 	}
 
@@ -275,66 +278,19 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	protected void addChangeListeners(Task task) {
 		name.addBlurListener((event) -> {
-			try {
-				final Task task1 = getTask(taskID);
-				if (!event.getSource().getValue().equals(task1.name.getValue())) {
-					saveTask();
-					fireEvent(new ProjectPathAltered(this, task1, false));
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			checkAndSaveName(event);
 		});
 		description.addBlurListener((event) -> {
-			try {
-				final Task task1 = getTask(taskID);
-				if (!event.getSource().getValue().equals(task1.description.getValue())) {
-					saveTask();
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			checkAndSaveDescription(event);
 		});
 		assignedToSelector.addValueChangeListener((event) -> {
-			try {
-				final Task task1 = getTask(taskID);
-				final User sourceValue = event.getSource().getValue();
-				final Long sourceUserID = sourceValue.getUserID();
-				if (sourceValue == null || sourceUserID == null) {
-					if (task1.assigneeID.isNotNull()) {
-						saveTask();
-					}
-				} else if (!sourceUserID.equals(task1.assigneeID.getValue())) {
-					saveTask();
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			checkAndSaveAssignee(event);
 		});
 		notes.addBlurListener((event) -> {
-			try {
-				final Task task1 = getTask(taskID);
-				if (!notes.getValue().equals(task1.notes.stringValue())) {
-					notesEditor.setValue(notes.getValue());
-					saveTask();
-				}
-				notes.setVisible(!notes.getValue().isEmpty());
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			checkAndSaveNotes();
 		});
 		notesEditor.addBlurListener((event) -> {
-			try {
-				final Task task1 = getTask(taskID);
-				if (!notesEditor.getValue().equals(task1.notes.stringValue())) {
-					notes.setValue(notesEditor.getValue());
-					notes.setVisible(!notes.getValue().isEmpty());
-					saveTask();
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				error("Inaccessible Task " + taskID, ex);
-			}
-			showEditor(null);
+			checkAndSaveNotesEditor();
 		});
 
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
@@ -394,6 +350,79 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			weblinkGrid.refresh();
 			showEditor(null);
 		});
+	}
+
+	private void checkAndSaveName(BlurNotifier.BlurEvent<PaperInput> event) {
+		try {
+			final Task task1 = getTask(taskID);
+			if (!event.getSource().getValue().equals(task1.name.getValue())) {
+				saveTask();
+				fireEvent(new ProjectPathAltered(this, task1, false));
+			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperInput> event) {
+		try {
+			final Task task1 = getTask(taskID);
+			if (!event.getSource().getValue().equals(task1.description.getValue())) {
+				saveTask();
+			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	private void checkAndSaveNotesEditor() {
+		try {
+			final Task task1 = getTask(taskID);
+			if (!notesEditor.getValue().equals(task1.notes.stringValue())) {
+				notes.setValue(notesEditor.getValue());
+				notes.setVisible(!notes.getValue().isEmpty());
+				saveTask();
+			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			error("Inaccessible Task " + taskID, ex);
+		}
+		showEditor(null);
+	}
+
+	private void checkAndSaveNotes() {
+		try {
+			final Task task1 = getTask(taskID);
+			if (!notes.getValue().equals(task1.notes.stringValue())) {
+				notesEditor.setValue(notes.getValue());
+				saveTask();
+			}
+			notes.setVisible(!notes.getValue().isEmpty());
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	private void checkAndSaveAssignee(AbstractField.ComponentValueChangeEvent<ComboBox<User>, User> event) {
+		try {
+			final Task task1 = getTask(taskID);
+			final User sourceValue = event.getSource().getValue();
+			if (sourceValue != null) {
+				final Long sourceUserID = sourceValue.getUserID();
+				if (sourceUserID == null) {
+					if (task1.assigneeID.isNotNull()) {
+						saveTask();
+					}
+				} else if (!sourceUserID.equals(task1.assigneeID.getValue())) {
+					saveTask();
+				}
+			} else {
+				if (task1.assigneeID.isNotNull()) {
+					saveTask();
+				}
+			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
