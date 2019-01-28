@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -56,8 +57,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	PaperInput name = new PaperInput();
 	TextField user = new TextField("User");
 	PaperInput description = new PaperInput();
-	Label assignedToLabel = new Label("Assigned To ");
-	UserSelector assignedToSelector = new UserSelector.ColleagueSelector();
+	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
 	TextArea notes = new TextArea("Notes");
 	AddTaskButton addSubTask = new AddTaskButton();
 	SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
@@ -140,9 +140,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		notesEditor.addClassName("edit-task-notes");
 		notesDiv = new SecureDiv(notes);
 
-		assignedToLabel.addClassName("edit-task-assignedto-label");
 		assignedToSelector.addClassName("edit-task-assignedto-selector");
-		assignmentDiv = new SecureDiv(assignedToLabel, assignedToSelector);
 
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
@@ -212,7 +210,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
 
-		final Div projectAndAssignmentDiv = new Div(project, assignmentDiv);
+		final HorizontalLayout projectAndAssignmentDiv = new HorizontalLayout(project, assignedToSelector);
 		projectAndAssignmentDiv.addClassName("edit-task-projectandassignment");
 
 		Div topLayout = new Div(
@@ -253,7 +251,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		notesEditorDiv.setTooltipText("Add random text including your thoughts, feedback, and findings or anything else you'd like to kepp");
 		notesDiv.setTooltipText("Fill this with any findings, thoughts, or conclusions you like, it'll take all the text you can write");
 
-		assignmentDiv.setTooltipText("Ask someone else to do this task, note that they can refuse");
+		assignedToSelector.setTooltipText("Ask someone else to do this task, note that they can refuse");
 
 		addDates.setTooltipText("Add dates to have the task appear on the Today's Task list when appropriate");
 		addDocument.setTooltipText("Collect relevant files and documents");
