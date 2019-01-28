@@ -8,8 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -24,7 +22,7 @@ import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
+public class ProjectPicker extends SecureDiv {
 
 	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
