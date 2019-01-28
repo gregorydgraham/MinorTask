@@ -18,13 +18,11 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -79,7 +77,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
 	Period repeatValue = null;
 	SecureDatePicker completedDate = new SecureDatePicker("Completed");
-	private SecureDiv dates = new SecureDiv(
+	private Div dates = new Div(
 			startDate,
 			preferredEndDate,
 			deadlineDate,
@@ -180,7 +178,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		details.addClassName("statusindicators-container");
 		details.setSizeUndefined();
 
-		dates.addClassName("dates-component");
+		dates.addClassName("edit-task-dates");
 		dates.setSizeUndefined();
 
 		addSubTask.addClassName("friendly");
@@ -191,7 +189,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		addPlace.addClassName("edit-task-button");
 		addWebLink.addClassName("edit-task-button");
 		addNotes.addClassName("edit-task-button");
-		final Div addButtons = new Div();
+		final SecureDiv addButtons = new SecureDiv();
 		addButtons.add(
 				addSubTask,
 				addDates,
@@ -221,9 +219,6 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 		Div topLayout = new Div(
 				nameAndProjectDiv,
-//				nameDiv, 
-//				descriptionDiv,
-//				projectAndAssignmentDiv,
 				addButtons,
 				repeatEditor,
 				placeSearcher,

@@ -56,11 +56,20 @@ and open the template in the editor.
 	width:100%;
 }
 
+.edit-task-dates{ 
+	display: -webkit-flex; /* Safari */
+	-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+	display: flex;   
+	flex-wrap: wrap;
+	padding-top: 5px;
+}
+
 .edit-task-addbuttons{
 	display: -webkit-flex; /* Safari */
 	-webkit-flex-wrap: wrap; /* Safari 6.1+ */
 	display: flex;   
 	flex-wrap: wrap;
+	flex-direction: row;
 }
 
 .completebutton{
@@ -82,7 +91,7 @@ and open the template in the editor.
 	/*align-content: flex-start;*/
 	align-items: flex-start;
 	flex-grow: 0;
-	border: thin solid #cccccc;
+	border: thin dashed #CCC;
 	border-radius: 5px;
 	vertical-align: top;
 	margin-left: 2px;
