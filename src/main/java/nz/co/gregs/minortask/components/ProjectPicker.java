@@ -37,7 +37,6 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 		} catch (MinorTask.InaccessibleTaskException ex) {
 			this.add(new AccessDeniedComponent());
 		}
-		setTooltipText("Part of this project, you can move it to another from here");
 	}
 
 	private Component getPickerComponent() {
@@ -59,7 +58,7 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 
 			Task emptyTask = new Task();
 
-			ComboBox<Task> taskList = new ProjectComboBox("Project", listOfTasks, emptyTask);
+			ComboBox<Task> taskList = new ProjectComboBox("Part Of", listOfTasks, emptyTask);
 			listOfTasks.add(0, taskList.getEmptyValue());
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
@@ -67,12 +66,14 @@ public class ProjectPicker extends HorizontalLayout implements RequiresLogin {
 			try {
 				taskList.setValue(project == null ? taskList.getEmptyValue() : project);
 				taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, taskID));
+				setTooltipText("Part of this project, you can move it to another from here");
 				return taskList;
 			} catch (IllegalArgumentException ex) {
 				final PaperInput label = new PaperInput();
-				label.setLabel("Project");
+				label.setLabel("Part Of");
 				label.setValue(project.name.getValue());
 				label.setEnabled(false);
+				setTooltipText("This task is part of a project that you don't have access to");
 				return label;
 			}
 		} catch (SQLException ex) {
