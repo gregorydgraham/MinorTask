@@ -51,9 +51,9 @@ import org.joda.time.Period;
  */
 @StyleSheet("styles/edittask.css")
 public class EditTask extends SecureDiv implements ProjectPathChanger {
-
+	
 	PaperInput name = new PaperInput();
-	TextField user = new TextField("User");
+	TextField ownerField = new TextField("User");
 	PaperInput description = new PaperInput();
 	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
 	TextArea notes = new TextArea("Notes");
@@ -103,14 +103,14 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	private SecureDiv descriptionDiv;
 	private SecureDiv notesDiv;
 	private SecureDiv assignmentDiv;
-
+	
 	public EditTask(Long currentTask) {
 		this.taskID = currentTask;
 		try {
-
+			
 			taskAndProject = getTaskAndProject(taskID);
 			project = new ProjectPicker(taskID);
-
+			
 			subtasks = new OpenTaskList(taskID);
 			completedTasks = new CompletedTaskList(taskID);
 			documentUpload = new DocumentUploadAndSelector(taskID);
@@ -122,24 +122,29 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		}
 		addClassName("edit-task-component");
 	}
-
+	
 	public final Component getComponent() {
-
+		
 		name.setLabel("Task");
 		name.addClassName("edit-task-name-input");
 		nameDiv = new SecureDiv(name);
-
+		
+		ownerField.setEnabled(false);
+		ownerField.setLabel("Owner");
+		final User owner = getUser(taskAndProject.getTask().userID.getValue());
+		ownerField.setValue(owner.getUsername());
+		
 		description.setLabel("Description");
 		description.addClassName("edit-task-description");
 		descriptionDiv = new SecureDiv(description);
 		descriptionDiv.addClassName("edit-task-description");
-
+		
 		notes.addClassName("edit-task-notes");
 		notesEditor.addClassName("edit-task-notes");
 		notesDiv = new SecureDiv(notes);
-
+		
 		assignedToSelector.addClassName("edit-task-assignedto-selector");
-
+		
 		activeIndicator.setVisible(false);
 		startedIndicator.setVisible(false);
 		overdueIndicator.setVisible(false);
@@ -149,10 +154,10 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		overdueIndicator.addClassName("danger");
 		completedIndicator.addClassName("neutral");
 		oneDayMaybeIndicator.addClassName("neutral");
-
+		
 		completedDate.setVisible(false);
 		completedDate.setReadOnly(true);
-
+		
 		completeButton.addClassNames("danger", "completebutton");
 		completeButton.addClickListener((event) -> {
 			minortask().completeTaskWithCongratulations(taskAndProject.getTask());
@@ -161,26 +166,26 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		completeButton.setVisible(false);
 		Div completeButtonDiv = new Div(completeButton);
 		completeButtonDiv.addClassName("edit-task-complete-button-container");
-
+		
 		reopenButton.addClassNames("friendly", "edit-task-reopenbutton");
 		reopenButton.addClickListener((event) -> {
 			minortask().reopenTask(taskAndProject.getTask());
 			refresh();
 		});
 		reopenButton.setVisible(false);
-
+		
 		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
 		Div completedLayout = new Div(completedIndicator, reopenButton);
 		completedLayout.addClassName("completedindicator-container");
-
+		
 		Div details = new Div(
 				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
 		details.addClassName("statusindicators-container");
 		details.setSizeUndefined();
-
+		
 		dates.addClassName("edit-task-dates");
 		dates.setSizeUndefined();
-
+		
 		addSubTask.addClassName("friendly");
 		addDates.addClassName("edit-task-button");
 		addRepeat.addClassName("edit-task-button");
@@ -201,22 +206,26 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				addNotes
 		);
 		addButtons.addClassName("edit-task-addbuttons");
-
+		
 		Div extrasLayout = new Div();
 		extrasLayout.add(notesDiv);
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
-
+		
 		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv);
 		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
-
-		final SecureDiv projectAndAssignmentDiv = new SecureDiv(project, assignedToSelector);
+		
+		final SecureDiv projectAndAssignmentDiv = new SecureDiv();
+		if (!owner.getUserID().equals(getUserID())) {
+			projectAndAssignmentDiv.add(ownerField);
+		}
+		projectAndAssignmentDiv.add(project, assignedToSelector);
 		projectAndAssignmentDiv.addClassName("edit-task-projectandassignment");
-
+		
 		final SecureDiv nameAndProjectDiv = new SecureDiv(nameAndDescriptionDiv, projectAndAssignmentDiv);
 		nameAndProjectDiv.addClassName("edit-task-nameandproject");
-
+		
 		Div topLayout = new Div(
 				nameAndProjectDiv,
 				addButtons,
@@ -236,9 +245,9 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				Globals.getSpacer(),
 				completedTasks);
 		topLayout.addClassName("edit-task-contents");
-
+		
 		addToolTips();
-
+		
 		try {
 			setFieldValues();
 		} catch (SQLException | UnexpectedNumberOfRowsException ex) {
@@ -246,15 +255,15 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		}
 		return topLayout;
 	}
-
+	
 	private void addToolTips() {
 		nameDiv.setTooltipText("Label the task so that you can recognise and find it easily");
 		descriptionDiv.setTooltipText("Add more context to the task name, displayed below the task's name in lists");
 		notesEditorDiv.setTooltipText("Add random text including your thoughts, feedback, and findings or anything else you'd like to kepp");
 		notesDiv.setTooltipText("Fill this with any findings, thoughts, or conclusions you like, it'll take all the text you can write");
-
+		
 		assignedToSelector.setTooltipText("Ask someone else to do this task, note that they can refuse");
-
+		
 		addDates.setTooltipText("Add dates to have the task appear on the Today's Task list when appropriate");
 		addDocument.setTooltipText("Collect relevant files and documents");
 		addImage.setTooltipText("Add images that support this task");
@@ -262,20 +271,20 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		addPlace.setTooltipText("Include any locations that are relevant");
 		addRepeat.setTooltipText("Have a new version of this task automatically created when you complete the current one, great for those regular jobs");
 		addWebLink.setTooltipText("Collect all the websites you need");
-
+		
 		startDate.setTooltipText("Start date defines when the task will start appearing in the Today's Tasks list, and removes it from the Ideas list.");
 		preferredEndDate.setTooltipText("The date when you would like to finish the task");
 		deadlineDate.setTooltipText("The task MUST be finished on or before this date.  Deadlines will push the task higher up the Today's Task list");
-
+		
 		completeButton.setTooltipText("When you're happy it's done press this button");
 	}
-
+	
 	@Override
 	public Registration addProjectPathAlteredListener(
 			ComponentEventListener<ProjectPathAltered> listener) {
 		return addListener(ProjectPathAltered.class, listener);
 	}
-
+	
 	protected void addChangeListeners(Task task) {
 		name.addBlurListener((event) -> {
 			checkAndSaveName(event);
@@ -292,25 +301,25 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		notesEditor.addBlurListener((event) -> {
 			checkAndSaveNotesEditor();
 		});
-
+		
 		HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> changer = (HasValue.ValueChangeEvent<LocalDate> event) -> {
 			saveTask();
 		};
-
+		
 		startDate.addValueChangeListener(changer);
 		preferredEndDate.addValueChangeListener(changer);
 		deadlineDate.addValueChangeListener(changer);
-
+		
 		repeatEditor.addValueChangeListener((event) -> {
 			repeatValue = repeatEditor.getValue();
 			saveTask();
 		});
-
+		
 		repeat.addValueChangeListener((event) -> {
 			repeatValue = repeat.getValue();
 			saveTask();
 		});
-
+		
 		addDates.addClickListener((event) -> {
 			showEditor(dates);
 		});
@@ -351,7 +360,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			showEditor(null);
 		});
 	}
-
+	
 	private void checkAndSaveName(BlurNotifier.BlurEvent<PaperInput> event) {
 		try {
 			final Task task1 = getTask(taskID);
@@ -363,7 +372,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
 	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperInput> event) {
 		try {
 			final Task task1 = getTask(taskID);
@@ -374,7 +383,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
 	private void checkAndSaveNotesEditor() {
 		try {
 			final Task task1 = getTask(taskID);
@@ -388,7 +397,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		}
 		showEditor(null);
 	}
-
+	
 	private void checkAndSaveNotes() {
 		try {
 			final Task task1 = getTask(taskID);
@@ -401,7 +410,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
 	private void checkAndSaveAssignee(AbstractField.ComponentValueChangeEvent<ComboBox<User>, User> event) {
 		try {
 			final Task task1 = getTask(taskID);
@@ -424,7 +433,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
 		if (taskID != null) {
 			Task task = taskAndProject.getTask();
@@ -439,9 +448,9 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				deadlineDate.setValue(asLocalDate(task.finalDate.dateValue()));
 				repeat.setValue(task.repeatOffset.getValue());
 				repeatEditor.setValue(task.repeatOffset.getValue());
-
+				
 				notes.setVisible(!notes.getValue().isEmpty());
-
+				
 				if (task.assigneeID.isNotNull()) {
 					if (task.getAssigneeUser() != null) {
 						assignedToSelector.setValue(task.getAssigneeUser());
@@ -451,7 +460,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				} else {
 					assignedToSelector.setValue(assignedToSelector.getEmptyValue());
 				}
-
+				
 				if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 					dates.setVisible(false);
 				} else {
@@ -472,9 +481,9 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				weblinkGrid.setTaskID(taskID);
 				weblinkEditor.setTaskID(taskID);
 				documentGrid.setTaskID(taskID);
-
+				
 				showEditor(null);
-
+				
 				if (taskProject != null) {
 					LocalDate projectStart = asLocalDate(taskProject.startDate.getValue());
 					LocalDate projectEnd = asLocalDate(taskProject.finalDate.getValue());
@@ -490,16 +499,16 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 						deadlineDate.setMax(projectEnd);
 					}
 				}
-
+				
 				final Date completed = task.completionDate.dateValue();
-
+				
 				if (completed != null) {
 					completedDate.setValue(asLocalDate(completed));
 					completedDate.setVisible(true);
 					this.addClassName("completed");
 					completedIndicator.setVisible(true);
 					reopenButton.setVisible(true);
-
+					
 					name.setReadOnly(true);
 					project.setEnabled(false);
 					description.setReadOnly(true);
@@ -510,11 +519,11 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 					repeatEditor.setReadOnly(true);
 					repeat.setReadOnly(true);
 					subtasks.disableNewButton();
-
+					
 					placeGrid.setReadOnly(true);
 					weblinkGrid.setReadOnly(true);
 					documentGrid.setReadOnly(true);
-
+					
 				} else {
 					completedDate.setVisible(false);
 					completeButton.setVisible(true);
@@ -530,16 +539,16 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 						activeIndicator.setVisible(true);
 					}
 				}
-
+				
 				addChangeListeners(task);
 			}
 		}
 	}
-
+	
 	public void saveTask() {
 		try {
 			Task task = getTask(taskID);
-
+			
 			task.name.setValue(name.getValue());
 			task.description.setValue(description.getValue());
 			if (assignedToSelector.getValue() == null
@@ -553,7 +562,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
 			task.finalDate.setValue(asDate(deadlineDate.getValue()));
 			task.repeatOffset.setValue(repeatValue);
-
+			
 			try {
 				getDatabase().update(task);
 			} catch (SQLException ex) {
@@ -565,23 +574,23 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
 	public void handleEscapeButton() {
 		Globals.showTask(taskID);
 	}
-
+	
 	public final void setAsDefaultButton(Button button) {
 		button.addClickListener((event) -> {
 			saveTask();
 		});
 	}
-
+	
 	public final void setEscapeButton(Button button) {
 		button.addClickListener((event) -> {
 			handleEscapeButton();
 		});
 	}
-
+	
 	private void showEditor(Component editor) {
 		boolean editorAlreadyShowing = editor == null ? false : editor.isVisible();
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
@@ -597,7 +606,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			editor.setVisible(!editorAlreadyShowing);
 		}
 	}
-
+	
 	private void insertLinkToDocument(DocumentAddedEvent event) {
 		if (event.getValue() != null) {
 			chat("Adding document link..." + event.getSource().getClass().getSimpleName());
@@ -614,7 +623,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			chat("No Document Found!!: " + event.getSource().getClass().getSimpleName());
 		}
 	}
-
+	
 	private void addViewedDate(Task.TaskAndProject taskAndProject) {
 		TaskViews taskView = new TaskViews();
 		taskView.taskID.setValue(taskAndProject.getTask().taskID);
@@ -626,7 +635,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			sqlerror(ex);
 		}
 	}
-
+	
 	private void refresh() {
 		try {
 			setFieldValues();
