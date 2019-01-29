@@ -13,11 +13,34 @@ and open the template in the editor.
 	color: black;
 }
 
-@media all and (max-width: 900px) {
+@media all and (min-width: 600px) and (max-width: 900px) {
+	.edit-task-button{
+		padding: 0;
+		margin-left: 0; margin-right: 0;
+		font-size: small;
+	}
+
+	.edit-task-contents{
+		font-size: small;
+	}
+}
+
+@media all and (max-width: 599px) {
 	.edit-task-button{
 		padding: 0;
 		margin-left: 0; margin-right: 0;
 		font-size: x-small;
+	}
+
+	.edit-task-contents{
+		font-size: x-small;
+	}
+}
+
+@media all and (max-width:550px){
+	.edit-task-addbuttons{
+		flex-direction: column;
+		float:right;
 	}
 }
 
@@ -69,7 +92,6 @@ and open the template in the editor.
 	-webkit-flex-wrap: wrap; /* Safari 6.1+ */
 	display: flex;   
 	flex-wrap: wrap;
-	flex-direction: row;
 }
 
 .completebutton{
@@ -83,14 +105,14 @@ and open the template in the editor.
 	flex-direction: column;
 	align-content: flex-start;
 	width: 100%;
+	min-width: 200px;
+	max-width: 500px;
 }
 
 .edit-task-projectandassignment{
 	display: flex;
 	flex-direction: column;
-	/*align-content: flex-start;*/
 	align-items: flex-start;
-	flex-grow: 0;
 	border: thin dashed #CCC;
 	border-radius: 5px;
 	vertical-align: top;
@@ -101,5 +123,6 @@ and open the template in the editor.
 .edit-task-nameandproject{
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: space-between;
 }
