@@ -72,7 +72,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	CompletedTaskList completedTasks;
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
-	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline");
+	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline   ");
 	OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
 	OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
 	Period repeatValue = null;
