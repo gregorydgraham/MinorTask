@@ -21,7 +21,7 @@ authorised-banner {
 	authorised-banner a:active{color: white;font-style: oblique;}
 
 	.authorised-banner-left {
-		padding-left: 1em;
+		/*padding-left: 1px;*/
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -36,7 +36,7 @@ authorised-banner {
 		width: 50px;
 		height: 50px;
 		object-fit: cover;
-		border-radius: 25px;
+		/*border-radius: 25px;*/
 		display: inline-block;	
 	}
 
