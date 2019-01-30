@@ -13,7 +13,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author gregorygraham
  */
-public class IconWithClickHandler extends Icon implements ClickNotifier<IconWithClickHandler>, HasToolTip{
+public class IconWithClickHandler extends Icon implements /*ClickNotifier<IconWithClickHandler>,*/ HasToolTip{
 
 	public IconWithClickHandler(VaadinIcon vaadinIcon) {
 		super(vaadinIcon);

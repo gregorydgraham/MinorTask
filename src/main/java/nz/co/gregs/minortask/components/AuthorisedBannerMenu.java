@@ -46,7 +46,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 		welcomeMessage.addClassName("welcome-message");
 
-		setText("Welcome to " + Globals.getApplicationName());
+		setText("" + Globals.getApplicationName());
 
 		User user = minortask().getUser();
 		if (user != null) {
@@ -55,7 +55,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 				profileImageDiv = new SizedImageFromDocument(user.profileImage, 100);
 			}
 			profileImageDiv.setId("authorised-banner-profile-image");
-			final String welcomeUser = "Welcome to " + Globals.getApplicationName() + " @" + user.getUsername();
+			final String welcomeUser = "" + Globals.getApplicationName() + " @" + user.getUsername();
 			setText(welcomeUser);
 			
 			colleaguesButton.setId("authorised-banner-colleagues-button");

@@ -40,7 +40,6 @@ import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import static nz.co.gregs.minortask.Globals.getDatabase;
 import static nz.co.gregs.minortask.Globals.sqlerror;
 import nz.co.gregs.minortask.datamodel.*;
-import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.images.SizedImageDocumentStreamFactory;
 import nz.co.gregs.minortask.components.images.ThumbnailImageDocumentStreamFactory;
@@ -187,7 +186,11 @@ public class MinorTask extends Globals implements Serializable {
 			User rememberedUser = getRememberedUser(rememberMeCookieValue);
 			doLogin(rememberedUser, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
-		} catch (UnknownUserException | TooManyUsersException ex) {
+		} catch (UnknownUserException ex) {
+			System.out.println("CANT LOGIN AS REMEMBERED USER: " + ex.getMessage());
+			System.out.println("RETURN: false");
+			return false;
+		}  catch (TooManyUsersException ex) {
 			System.out.println("CANT LOGIN AS REMEMBERED USER: " + ex.getMessage());
 			System.out.println("RETURN: false");
 			return false;

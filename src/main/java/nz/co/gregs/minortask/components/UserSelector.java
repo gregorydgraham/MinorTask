@@ -7,7 +7,9 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.function.SerializableFunction;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Colleagues;
 import nz.co.gregs.minortask.datamodel.User;
@@ -29,6 +32,10 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 
 	public UserSelector(String label) {
 		super(label);
+	}
+
+	public final void setDataProvider(AbstractUserDataProvider dataProvider) {
+		super.setDataProvider(dataProvider, new SearchUserNameExpression());
 	}
 
 	public UserSelector(AbstractUserDataProvider provider) {
@@ -44,6 +51,16 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 				return "No Such User";
 			}
 		});
+
+	}
+
+	@Override
+	public void setValue(User value) {
+		try {
+			super.setValue(value);
+		} catch (java.lang.IllegalArgumentException exp) {
+			super.setValue(null);
+		}
 	}
 
 	public static class ColleagueSelector extends UserSelector {
@@ -139,7 +156,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 
 		@Override
 		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
-			final DBQuery dbquery = minortask().getDatabase()
+			final DBQuery dbquery = Globals.getDatabase()
 					.getDBQuery(new User())
 					.setBlankQueryAllowed(true);
 			query.getFilter().ifPresent((t) -> {
@@ -198,7 +215,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
-			final DBQuery dbquery = minortask().getDatabase().getDBQuery(exampleUser).addOptional(colleagues);
+			final DBQuery dbquery = Globals.getDatabase().getDBQuery(exampleUser).addOptional(colleagues);
 			dbquery.addCondition(// connect the user table and the colleagues table
 					exampleUser.column(exampleUser.queryUserID())
 							.isIn(
@@ -276,7 +293,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			final User exampleUser = new User();
 			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
-			final DBQuery dbquery = minortask().getDatabase().getDBQuery(exampleUser, colleagues);
+			final DBQuery dbquery = Globals.getDatabase().getDBQuery(exampleUser, colleagues);
 			dbquery.addCondition(// connect the user table and the colleagues table
 					exampleUser.column(exampleUser.queryUserID())
 							.isIn(
@@ -286,9 +303,26 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 									IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
 											.isIn(// and make sure we're looking for colleagues of the current user
 													colleagues.column(colleagues.requestor),
-													colleagues.column(colleagues.invited))));
+													colleagues.column(colleagues.invited)))
+			);
+			dbquery.setSortOrder(
+					exampleUser.column(exampleUser.queryUsername()),
+					exampleUser.column(exampleUser.queryUserID())
+			);
 			System.out.println("" + dbquery.getSQLForQuery());
 			return dbquery;
+		}
+	}
+
+	private static class SearchUserNameExpression implements SerializableFunction<String, BooleanExpression> {
+
+		public SearchUserNameExpression() {
+		}
+
+		@Override
+		public BooleanExpression apply(String t) {
+			User user = new User();
+			return user.column(user.queryUsername()).searchFor(t);
 		}
 	}
 }

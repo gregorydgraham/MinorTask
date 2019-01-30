@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
@@ -19,10 +18,8 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
 import nz.co.gregs.minortask.Globals;
 import static nz.co.gregs.minortask.Globals.getTaskExample;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
-import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
