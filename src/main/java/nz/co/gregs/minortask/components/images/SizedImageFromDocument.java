@@ -5,12 +5,13 @@
  */
 package nz.co.gregs.minortask.components.images;
 
+import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.server.StreamResource;
 import nz.co.gregs.minortask.components.upload.Document;
 
 
-public class SizedImageFromDocument extends Image{
+public class SizedImageFromDocument extends Image implements ClickNotifier<SizedImageFromDocument>{
 
 	public SizedImageFromDocument(Document doc) {
 		this(doc, 200d);

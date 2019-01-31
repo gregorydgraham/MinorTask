@@ -37,16 +37,16 @@ public class OverdueTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		if (taskID == null) {
 			Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
-//			example.userID.permittedValues(minortask().getUserID());
+//			example.userID.permittedValues(minortask().getCurrentUserID());
 			example.finalDate.permittedRangeExclusive(null, new Date());
 			example.completionDate.permittedValues((Date) null);
 			final Task task = new Task();
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
 			// add user requirement
 			query.addCondition(
-					example.column(example.userID).is(getUserID())
+					example.column(example.userID).is(getCurrentUserID())
 							.or(
-									example.column(example.assigneeID).is(getUserID())
+									example.column(example.assigneeID).is(getCurrentUserID())
 							)
 			);
 			query.addCondition(task.column(task.taskID).isNull());

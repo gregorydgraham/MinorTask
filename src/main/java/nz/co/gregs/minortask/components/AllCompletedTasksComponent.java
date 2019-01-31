@@ -107,7 +107,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		if (taskID == null) {
 			// non-recursive query is faster
 			Task example = new Task();
-			example.userID.permittedValues(getUserID());
+			example.userID.permittedValues(getCurrentUserID());
 			example.completionDate.excludedValues((Date) null);
 			example.completionDate.setSortOrderDescending();
 			final DBQuery dbTable = getDatabase().getDBQuery(example);
@@ -121,7 +121,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		} else {
 			Task example = new Task();
 			example.taskID.permittedValues(taskID);
-//			example.userID.permittedValues(getUserID());
+//			example.userID.permittedValues(getCurrentUserID());
 			DBQuery query = getDatabase().getDBQuery(example);
 			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
 			List<Task> descendants = recurse.getDescendants();

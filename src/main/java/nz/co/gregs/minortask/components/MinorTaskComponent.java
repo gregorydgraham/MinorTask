@@ -38,12 +38,12 @@ public interface MinorTaskComponent extends HasToolTip{
 		}
 	}
 
-	default Long getUserID() {
-		return minortask().getUserID();
+	default Long getCurrentUserID() {
+		return minortask().getCurrentUserID();
 	}
 
-	default User getUser() {
-		return minortask().getUser();
+	default User getCurrentUser() {
+		return minortask().getCurrentUser();
 	}
 
 	default User getUser(long userID) {
@@ -59,7 +59,7 @@ public interface MinorTaskComponent extends HasToolTip{
 	}
 
 	default List<Task> getProjectPathTasks(Long taskID) {
-		return MinorTask.getProjectPathTasks(taskID, getUserID());
+		return MinorTask.getProjectPathTasks(taskID, getCurrentUserID());
 	}
 
 	default void warning(String topic, String warning) {

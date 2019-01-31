@@ -23,13 +23,17 @@ public class SecureDiv extends Div implements RequiresLogin {
 	}
 
 	@Override
-	public void add(Component... components) {
-		if (isAccessDenied(this)) {
+	public final void add(Component... components) {
+		if (!checkForPermission()) {
 			for (Component component : components) {
 				super.add(new AccessDeniedComponent());
 			}
 		} else {
 			super.add(components);
 		}
+	}
+
+	protected boolean checkForPermission() {
+		return isLoggedIn();
 	}
 }

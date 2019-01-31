@@ -52,7 +52,7 @@ public class ColleaguesPage extends AuthorisedPage implements BeforeLeaveListene
 	@Override
 	public String getPageTitle() {
 		if (minortask().isLoggedIn()) {
-			return getUser().getUsername()+"'s Team";
+			return getCurrentUser().getUsername()+"'s Team";
 		}
 		return "Team Page";
 	}
@@ -65,7 +65,7 @@ public class ColleaguesPage extends AuthorisedPage implements BeforeLeaveListene
 	}
 
 	private void setLabels() {
-		User user = minortask().getUser();
+		User user = minortask().getCurrentUser();
 		greeting.setText("@" + user.getUsername() + "'s Team");
 	}
 

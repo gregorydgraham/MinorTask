@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Div;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.pages.UserProfilePage;
 
 /**
  *
@@ -48,22 +49,33 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 		setText("" + Globals.getApplicationName());
 
-		User user = minortask().getUser();
+		final User user = getCurrentUser();
 		if (user != null) {
-			Component profileImageDiv = new Div();
+			SecureDiv defaultImageDiv = new SecureDiv();
+			defaultImageDiv.addClickListener((event) -> {
+				minortask().showProfile();
+			});
+			Component profileImageDiv = defaultImageDiv;
+
 			if (user.profileImage != null) {
-				profileImageDiv = new SizedImageFromDocument(user.profileImage, 100);
+				SizedImageFromDocument image = new SizedImageFromDocument(user.profileImage, 100);
+				image.addClickListener((event) -> {
+					minortask().showProfile();
+				});
+				profileImageDiv = image;
 			}
+
 			profileImageDiv.setId("authorised-banner-profile-image");
-			final String welcomeUser = "" + Globals.getApplicationName() + " @" + user.getUsername();
-			setText(welcomeUser);
-			
+
+			final String welcomeUser = "@" + user.getUsername();
+			Anchor profileAnchor = new Anchor(UserProfilePage.getURL(), welcomeUser);
+
 			colleaguesButton.setId("authorised-banner-colleagues-button");
 			colleaguesButton.addClassName("authorised-banner-button");
-			
+
 			profileButton.setId("authorised-banner-profile-button");
 			profileButton.addClassName("authorised-banner-button");
-			
+
 			logoutButton.setId("authorised-banner-logout-button");
 			logoutButton.addClassName("authorised-banner-button");
 
@@ -74,7 +86,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 			right.addClassName("authorised-banner-right");
 
 			left.add(profileImageDiv, welcomeMessage);
-			right.add(colleaguesButton, profileButton, logoutButton);
+			right.add(profileAnchor, colleaguesButton, profileButton, logoutButton);
 			add(left, right);
 		}
 	}

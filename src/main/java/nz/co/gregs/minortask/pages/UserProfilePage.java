@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
@@ -72,7 +73,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	@Override
 	public String getPageTitle() {
 		if (minortask().isLoggedIn()) {
-			return "Profile: @" + getUser().getUsername();
+			return "Profile: @" + getCurrentUser().getUsername();
 		}
 		return "Profile Page";
 	}
@@ -93,7 +94,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	}
 
 	private void setValues() {
-		User user = minortask().getUser();
+		User user = minortask().getCurrentUser();
 		usernameInput.setValue(user.getUsername() == null ? "" : user.getUsername());
 		emailInput.setValue(user.getEmail() == null ? "" : user.getEmail());
 		blurb.setValue(user.getBlurb() == null ? "" : user.getBlurb());
@@ -101,7 +102,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	}
 
 	private void setLabels() {
-		User user = minortask().getUser();
+		User user = minortask().getCurrentUser();
 		usernameInput.setLabel("Username");
 		emailInput.setLabel("Email");
 		blurb.setLabel("Biography");
@@ -109,7 +110,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	}
 
 	private void setProfileImage() {
-		User user = getUser();
+		User user = getCurrentUser();
 		if (user.profileImage == null && user.getProfileImageID() != null) {
 			try {
 				List<Document> docs = getDatabase().getDBQuery(user, new Document()).getAllInstancesOf(new Document());
@@ -132,7 +133,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		System.out.println("USERNAME: " + usernameInput.getValue());
 		System.out.println("EMAIL: " + emailInput.getValue());
 		System.out.println("BLURB: " + blurb.getValue());
-		User user = getUser();
+		User user = getCurrentUser();
 		user.setUsername(usernameInput.getValue());
 		user.setEmail(emailInput.getValue());
 		user.setBlurb(blurb.getValue());
@@ -146,7 +147,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 
 	private void profileImageUploaded(DocumentAddedEvent event) {
 		final Document doc = event.getValue();
-		User user = getUser();
+		User user = getCurrentUser();
 		user.setProfileImageID(doc.documentID.getValue());
 		user.profileImage = doc;
 		try {
@@ -171,5 +172,9 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 	@Override
 	public void beforeLeave(BeforeLeaveEvent event) {
 		banner.setAllButtonsUnselected();
+	}
+
+	public static String getURL() {
+		return VaadinService.getCurrent().getRouter().getUrl(UserProfilePage.class);
 	}
 }

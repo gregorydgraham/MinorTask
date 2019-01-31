@@ -42,7 +42,7 @@ public class Task extends DBRow {
 	@DBForeignKey(Assignee.class)
 	public final DBInteger assigneeID = new DBInteger();
 	
-	@AutoFillDuringQueryIfPossible
+//	@AutoFillDuringQueryIfPossible
 	private Assignee assigneeUser;
 
 	@DBColumn

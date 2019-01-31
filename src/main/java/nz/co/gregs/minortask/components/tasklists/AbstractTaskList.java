@@ -25,6 +25,7 @@ import nz.co.gregs.minortask.components.HasToolTip;
 import nz.co.gregs.minortask.components.IconWithClickHandler;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.SecureTaskDiv;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
@@ -34,29 +35,23 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  * @author gregorygraham
  */
 @StyleSheet("styles/abstract-task-list.css")
-public abstract class AbstractTaskList extends VerticalLayout implements RequiresLogin, HasToolTip {
+public abstract class AbstractTaskList extends SecureTaskDiv implements RequiresLogin, HasToolTip {
 
 	protected final Long taskID;
 	private final Grid<Task> grid = new Grid<Task>();
 	private final Div gridDiv = new Div(grid);
 	private final Label label = new Label();
-	private List<Task> list = new ArrayList<>(0);
+//	private List<Task> list = new ArrayList<>(0);
 
 	public AbstractTaskList() {
 		this((Long) null);
 	}
 
 	public AbstractTaskList(Long taskID) {
+		super(taskID);
 		this.taskID = taskID;
 		buildComponent();
 //		this.setSpacing(false);
-		this.addClassName("tasklist");
-	}
-
-	protected AbstractTaskList(List<Task> list) {
-		this.taskID = null;
-		this.list = list;
-		buildComponent();
 		this.addClassName("tasklist");
 	}
 
@@ -67,7 +62,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		well.addClassName("well");
 		try {
 			add(getControlsAbove());
-			List<Task> allRows = getTasksToList();
+			List<Task> allRows = getPermittedTasks();
 			setLabel(allRows);
 			HorizontalLayout header = new HorizontalLayout();
 			header.addClassName("tasklist-header");
@@ -81,9 +76,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 			header.add(headerRight);
 			well.add(header);
 
-			setGridItems(allRows);
-			setGridColumns();
-			gridDiv.addClassName("task-list-grid-container");
+			setupGrid(allRows);
 			well.add(gridDiv);
 
 			Div footer = new Div();
@@ -99,7 +92,21 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		add(well);
 	}
 
-	public void setTooltipText(String text) {
+	private List<Task> getPermittedTasks() throws SQLException {
+		List<Task> permittedTasks = new ArrayList<>(0);
+		List<Task> tasks = getTasksToList();
+		if (tasks != null) {
+			tasks.forEach((t) -> {
+				if (checkForPermission(t)) {
+					permittedTasks.add(t);
+				}
+			});
+		}
+		return permittedTasks;
+	}
+
+	@Override
+	public final void setTooltipText(String text) {
 		label.addClassName("tooltip");
 		Div span = new Div(new Paragraph(text));
 		label.getElement().insertChild(0, span.getElement());
@@ -125,14 +132,20 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		return new Component[]{};
 	}
 
-	private void setGridItems(List<Task> allRows) {
-		grid.setItems();//clear it first
-		grid.setItems(allRows);
-	}
-
 	private void setLabel(List<Task> allRows) {
 		final String caption = getListCaption(allRows);
 		label.setText(caption);
+	}
+
+	private void setupGrid(List<Task> allRows) {
+		setGridColumns();
+		gridDiv.addClassName("task-list-grid-container");
+		setGridItems(allRows);
+	}
+	
+	private void setGridItems(List<Task> allRows) {
+		grid.setItems();//clear it first
+		grid.setItems(allRows);
 	}
 
 	private void setGridColumns() {
@@ -187,7 +200,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.addClassName("tasklist-subtask-count");
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
+		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 		Label label1 = new Label("" + numberOfSubTasks);
 		label1.add(icon);
 		Component wrapped = wrapInALinkToTheTask(task, label1);
@@ -198,7 +211,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private Component getSuffixComponent(Task task) {
 		SecureDiv layout = new SecureDiv();
-		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getUser()).size();
+		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 
 		final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
 		checkIcon.addClickListener((event) -> {
@@ -238,7 +251,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 	protected void refreshList() {
 		try {
 			if (thereAreRowsToShow()) {
-				List<Task> allRows = getTasksToList();
+				List<Task> allRows = getPermittedTasks();
 				setLabel(allRows);
 				setGridItems(allRows);
 			}
@@ -257,7 +270,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	private void addFavourite(Task task) {
 		try {
-			final FavouritedTasks favour = new FavouritedTasks(task, getUser());
+			final FavouritedTasks favour = new FavouritedTasks(task, getCurrentUser());
 			getDatabase().insert(favour);
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -268,7 +281,7 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 		try {
 			final FavouritedTasks favour = new FavouritedTasks();
 			favour.taskID.setValue(task.taskID);
-			favour.userID.setValue(getUserID());
+			favour.userID.setValue(getCurrentUserID());
 			getDatabase().delete(favour);
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -278,13 +291,18 @@ public abstract class AbstractTaskList extends VerticalLayout implements Require
 
 	public static abstract class PreQueried extends AbstractTaskList {
 
+		private final List<Task> list;
+
 		public PreQueried(List<Task> list) {
-			super(list);
+			super(null);
+			this.list = list;
+			buildComponent();
+			this.addClassName("tasklist");
 		}
 
 		@Override
 		protected List<Task> getTasksToList() throws SQLException {
-			return super.list;
+			return list;
 		}
 
 	}

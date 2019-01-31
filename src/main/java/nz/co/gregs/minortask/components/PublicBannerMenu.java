@@ -24,7 +24,7 @@ public class PublicBannerMenu extends HorizontalLayout implements MinorTaskCompo
 		setSizeUndefined();
 		setDefaultVerticalComponentAlignment(Alignment.START);
 
-		final long userID = minortask().getUserID();
+		final long userID = minortask().getCurrentUserID();
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
 		final Label label = new Label("Welcome to " + minortask().getApplicationName());

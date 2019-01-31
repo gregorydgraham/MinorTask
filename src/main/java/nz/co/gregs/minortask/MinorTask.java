@@ -66,13 +66,14 @@ public class MinorTask extends Globals implements Serializable {
 		return minortask;
 	}
 
-	private long userID = 0;
+	public long NOT_LOGGED_IN_USERID = 0l;
+	private long userID = NOT_LOGGED_IN_USERID;
+	private User user = null;
 	boolean notLoggedIn = true;
 	public String username = "";
 	private Location loginDestination = null;
 
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
-	private User user;
 
 	private MinorTask() {
 		super();
@@ -89,9 +90,9 @@ public class MinorTask extends Globals implements Serializable {
 			final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Assignee());
 			// add user requirement
 			query.addCondition(
-					example.column(example.userID).is(getUserID())
+					example.column(example.userID).is(getCurrentUserID())
 							.or(
-									example.column(example.assigneeID).is(getUserID())
+									example.column(example.assigneeID).is(getCurrentUserID())
 							)
 			);
 			return query.getOnlyInstanceOf(example);
@@ -105,7 +106,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	public Task.WithSortColumns getTaskWithSortColumnsExampleForTaskID(Long taskID) {
 		Task.WithSortColumns example = new Task.WithSortColumns();
-		example.userID.permittedValues(getUserID());
+		example.userID.permittedValues(getCurrentUserID());
 		example.projectID.permittedValues(taskID);
 		return example;
 	}
@@ -115,7 +116,7 @@ public class MinorTask extends Globals implements Serializable {
 	 * @throws nz.co.gregs.minortask.MinorTask.UnknownUserException
 	 * @throws nz.co.gregs.minortask.MinorTask.TooManyUsersException
 	 */
-	public void setUserID(long userID) throws UnknownUserException, TooManyUsersException {
+	private void setUserID(long userID) throws UnknownUserException, TooManyUsersException {
 		this.userID = userID;
 		User example = new User();
 		example.queryUserID().permittedValues(userID);
@@ -137,11 +138,12 @@ public class MinorTask extends Globals implements Serializable {
 	public synchronized void loginAs(User user, String password, Boolean rememberMe) throws UnknownUserException, TooManyUsersException, SQLException, IncorrectPasswordException {
 		DBPasswordHash queryPassword = user.queryPassword();
 		String oldHash = queryPassword.getValue();
-		queryPassword.checkPasswordAndUpdateHash(password);
-		if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
-			getDatabase().update(user);
+		if (queryPassword.checkPasswordAndUpdateHash(password)) {
+			if (oldHash == null ? queryPassword.getValue() != null : !oldHash.equals(queryPassword.getValue())) {
+				getDatabase().update(user);
+			}
+			doLogin(user, rememberMe, null);
 		}
-		doLogin(user, rememberMe, null);
 	}
 
 	private void doLogin(User user, boolean rememberUser, String cookieValue) throws TooManyUsersException, UnknownUserException {
@@ -165,7 +167,7 @@ public class MinorTask extends Globals implements Serializable {
 			String cookieValue = existingCookie.get().getValue();
 			if (cookieValue != null) {
 				RememberedLogin mem = new RememberedLogin();
-				mem.userid.permittedValues(getUserID());
+				mem.userid.permittedValues(getCurrentUserID());
 				mem.rememberCode.permittedValues(cookieValue);
 				try {
 					getDatabase().delete(mem);
@@ -186,11 +188,7 @@ public class MinorTask extends Globals implements Serializable {
 			User rememberedUser = getRememberedUser(rememberMeCookieValue);
 			doLogin(rememberedUser, true, rememberMeCookieValue.isPresent() ? rememberMeCookieValue.get().getValue() : null);
 			return true;
-		} catch (UnknownUserException ex) {
-			System.out.println("CANT LOGIN AS REMEMBERED USER: " + ex.getMessage());
-			System.out.println("RETURN: false");
-			return false;
-		}  catch (TooManyUsersException ex) {
+		} catch (UnknownUserException | TooManyUsersException ex) {
 			System.out.println("CANT LOGIN AS REMEMBERED USER: " + ex.getMessage());
 			System.out.println("RETURN: false");
 			return false;
@@ -229,17 +227,28 @@ public class MinorTask extends Globals implements Serializable {
 	/**
 	 * @return the userID
 	 */
-	public long getUserID() {
-		return userID;
+	public long getCurrentUserID() {
+		if (isLoggedIn()) {
+			if (user != null) {
+				return getCurrentUser().getUserID();
+			} else {
+				return userID;
+			}
+		} else {
+			return NOT_LOGGED_IN_USERID;
+		}
 	}
 
-	public User getUser() {
+	public User getCurrentUser() {
 		if (isLoggedIn()) {
 			if (user == null) {
 				User example = new User();
-				example.queryUserID().permittedValues(getUserID());
+				example.queryUserID().permittedValues(getCurrentUserID());
 				try {
-					List<User> got = getDatabase().getDBQuery(example).addOptional(new Document()).getAllInstancesOf(example);
+					List<User> got = getDatabase()
+							.getDBQuery(example)
+							.addOptional(new Document())
+							.getAllInstancesOf(example);
 					if (got.size() != 1) {
 						warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
 					} else {
@@ -314,10 +323,11 @@ public class MinorTask extends Globals implements Serializable {
 			final Task.Project projectExample = new Task.Project();
 			// avoid connecting the project to anything other than the task
 			projectExample.ignoreAllForeignKeysExceptFKsTo(example);
-			DBQuery dbQuery = getDatabase().getDBQuery(example).addOptional(projectExample, new Task.Assignee());
+			DBQuery dbQuery = getDatabase().getDBQuery(example)
+					.addOptional(projectExample, new Task.Assignee());
 			dbQuery.addCondition(
-					example.column(example.userID).is(getUserID())
-							.or(example.column(example.assigneeID).is(getUserID()))
+					example.column(example.userID).is(getCurrentUserID())
+							.or(example.column(example.assigneeID).is(getCurrentUserID()))
 			);
 			try {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
@@ -340,7 +350,7 @@ public class MinorTask extends Globals implements Serializable {
 	public Task.Project getNullProject() {
 		Task.Project project = new Task.Project();
 		project.taskID.setValue(-1);
-		project.userID.setValue(getUserID());
+		project.userID.setValue(getCurrentUserID());
 		project.name.setValue("Projects");
 		return project;
 	}
@@ -429,11 +439,9 @@ public class MinorTask extends Globals implements Serializable {
 		final DBDatabase database = getDatabase();
 		DBQuery query = database.getDBQuery(example);
 		// add user requirement
-		query.addCondition(
-				example.column(example.userID).is(getUserID())
-						.or(
-								example.column(example.assigneeID).is(getUserID())
-						)
+		query.addCondition(example.column(example.userID).is(getCurrentUserID())
+				.or(example.column(example.assigneeID).is(getCurrentUserID())
+				)
 		);
 		DBRecursiveQuery<Task> recurse = query.getDBRecursiveQuery(example.column(example.projectID), example);
 		List<Task> descendants = recurse.getDescendants();
@@ -452,7 +460,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void completeTaskWithCongratulations(Task task) {
 		if (task != null) {
-			List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
+			List<Task> subtasks = Globals.getActiveSubtasks(task, getCurrentUser());
 			for (Task subtask : subtasks) {
 				completeTaskWithCongratulations(subtask);
 			}
@@ -467,7 +475,7 @@ public class MinorTask extends Globals implements Serializable {
 			Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
 			Long projectID = task.projectID.getValue();
 			Task usersCompletedTasks = new Task();
-			usersCompletedTasks.userID.setValue(getUserID());
+			usersCompletedTasks.userID.setValue(getCurrentUserID());
 			usersCompletedTasks.completionDate.excludeNull();
 			try {
 				final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
@@ -493,7 +501,7 @@ public class MinorTask extends Globals implements Serializable {
 
 //	public void completeTask(Task task) throws Globals.InaccessibleTaskException {
 //		if (task != null) {
-//			List<Task> subtasks = Globals.getActiveSubtasks(task, getUser());
+//			List<Task> subtasks = Globals.getActiveSubtasks(task, getCurrentUser());
 //			for (Task subtask : subtasks) {
 //				completeTask(subtask);
 //			}
@@ -543,7 +551,7 @@ public class MinorTask extends Globals implements Serializable {
 	public boolean taskIsFavourited(Task task) {
 		FavouritedTasks favouritedTasks = new FavouritedTasks();
 		favouritedTasks.taskID.permittedValues(task.taskID);
-		favouritedTasks.userID.permittedValues(getUserID());
+		favouritedTasks.userID.permittedValues(getCurrentUserID());
 		try {
 			return getDatabase().get(favouritedTasks).size() > 0;
 		} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
@@ -554,7 +562,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void reopenTask(Task task) {
 		// a completed task can't be within a complete project so reopen all the tasks above it
-		List<Task> projectPathTasks = getProjectPathTasks(task.taskID.getValue(), getUserID());
+		List<Task> projectPathTasks = getProjectPathTasks(task.taskID.getValue(), getCurrentUserID());
 		projectPathTasks.forEach((projectPathTask) -> {
 			setCompletionDateToNull(projectPathTask);
 		});

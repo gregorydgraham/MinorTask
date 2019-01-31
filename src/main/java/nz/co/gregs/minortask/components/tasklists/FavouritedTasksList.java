@@ -31,7 +31,7 @@ public class FavouritedTasksList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		final FavouritedTasks favourite = new FavouritedTasks();
-		favourite.userID.permittedValues(getUserID());
+		favourite.userID.permittedValues(getCurrentUserID());
 		final Task task = new Task();
 		DBQuery query = getDatabase().getDBQuery(task, favourite);
 		query.setSortOrder(task.column(task.name).ascending());

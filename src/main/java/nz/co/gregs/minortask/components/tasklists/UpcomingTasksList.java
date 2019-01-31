@@ -48,9 +48,9 @@ public class UpcomingTasksList extends AbstractTaskList {
 			final DBQuery query = MinorTask.getDatabase().getDBQuery(example).addOptional(task);
 			// add user requirement
 			query.addCondition(
-					example.column(example.userID).is(getUserID())
+					example.column(example.userID).is(getCurrentUserID())
 							.or(
-									example.column(example.assigneeID).is(getUserID())
+									example.column(example.assigneeID).is(getCurrentUserID())
 							)
 			);
 			query.addCondition(task.column(task.taskID).isNull());

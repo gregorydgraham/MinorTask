@@ -171,7 +171,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		private final User user;
 
 		public PotentialColleagueProvider(MinorTask minorTask) {
-			this(minorTask, minorTask.getUser());
+			this(minorTask, minorTask.getCurrentUser());
 		}
 
 		public PotentialColleagueProvider(MinorTask minorTask, User currentUser) {
@@ -239,7 +239,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		private final User user;
 
 		public ColleagueProvider(MinorTask minorTask) {
-			this(minorTask, minorTask.getUser());
+			this(minorTask, minorTask.getCurrentUser());
 		}
 
 		public ColleagueProvider(MinorTask minorTask, User currentUser) {
@@ -250,7 +250,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		private final List<User> staticTeamMembers = new ArrayList<User>() {
 			{
 				add(new User()); // can be assigned to nobody
-				add(minortask().getUser()); // can be assigned to the current user
+				add(minortask().getCurrentUser()); // can be assigned to the current user
 			}
 		};
 

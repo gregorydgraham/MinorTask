@@ -35,14 +35,15 @@ public class ProjectTaskList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
+		System.out.println("nz.co.gregs.minortask.components.tasklists.ProjectTaskList.getTasksToList()");
 		final Task example = new Task();
 		example.projectID.permitOnlyNull();
 		DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getUserID())
+				example.column(example.userID).is(getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getUserID())
+								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
 		DBRecursiveQuery<Task> rquery = new DBRecursiveQuery<>(query, example.column(example.projectID));

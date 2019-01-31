@@ -22,7 +22,7 @@ public class ImageSelector extends DocumentSelector {
 	@Override
 	public Document getDocumentExampleForSelector() {
 		Document docExample = new Document();
-		docExample.userID.permittedValues(getUserID());
+		docExample.userID.permittedValues(getCurrentUserID());
 		docExample.mediaType.permittedPattern("image/%");
 		return docExample;
 	}

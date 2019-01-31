@@ -33,7 +33,7 @@ public class RecentlyViewedTasks extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		final TaskViews taskViews = new TaskViews();
-		taskViews.userID.permittedValues(getUserID());
+		taskViews.userID.permittedValues(getCurrentUserID());
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.add(GregorianCalendar.DAY_OF_YEAR, -7);
 		taskViews.lastviewed.permittedRange(cal.getTime(), null);

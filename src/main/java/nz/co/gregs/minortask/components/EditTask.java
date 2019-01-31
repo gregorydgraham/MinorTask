@@ -217,7 +217,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
 		
 		final SecureDiv projectAndAssignmentDiv = new SecureDiv();
-		if (!owner.getUserID().equals(getUserID())) {
+		if (!owner.getUserID().equals(getCurrentUserID())) {
 			projectAndAssignmentDiv.add(ownerField);
 		}
 		projectAndAssignmentDiv.add(project, assignedToSelector);
@@ -613,7 +613,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			TaskDocumentLink link = new TaskDocumentLink();
 			link.documentID.setValue(event.getValue().documentID);
 			link.taskID.setValue(taskID);
-			link.ownerID.setValue(getUserID());
+			link.ownerID.setValue(getCurrentUserID());
 			try {
 				getDatabase().insert(link);
 			} catch (SQLException ex) {
@@ -627,7 +627,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	private void addViewedDate(Task.TaskAndProject taskAndProject) {
 		TaskViews taskView = new TaskViews();
 		taskView.taskID.setValue(taskAndProject.getTask().taskID);
-		taskView.userID.setValue(getUserID());
+		taskView.userID.setValue(getCurrentUserID());
 		taskView.lastviewed.setValue(new Date());
 		try {
 			getDatabase().insert(taskView);

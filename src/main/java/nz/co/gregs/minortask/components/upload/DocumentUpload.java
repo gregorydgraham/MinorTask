@@ -56,7 +56,7 @@ public class DocumentUpload extends Div implements RequiresLogin {
 		final InputStream inputStream = buffer.getInputStream(fileName);
 		doc.documentContents.setValue(inputStream);
 //		doc.taskID.setValue(taskID);
-		doc.userID.setValue(minortask().getUserID());
+		doc.userID.setValue(minortask().getCurrentUserID());
 		System.out.println("Document: " + doc.toString());
 		try {
 			getDatabase().insert(doc);
@@ -73,7 +73,7 @@ public class DocumentUpload extends Div implements RequiresLogin {
 
 	protected Document getDocumentExampleForSelector() {
 		Document docExample = new Document();
-		docExample.userID.permittedValues(getUserID());
+		docExample.userID.permittedValues(getCurrentUserID());
 		docExample.mediaType.excludedPattern("image/%");
 		return docExample;
 	}

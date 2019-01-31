@@ -173,7 +173,7 @@ public class CreateTask extends SecureDiv implements RequiresLogin {
 
 	protected Task saveTask() {
 		Task task = new Task();
-		task.userID.setValue(minortask().getUserID());
+		task.userID.setValue(minortask().getCurrentUserID());
 		task.projectID.setValue(projectID);
 		task.name.setValue(name.getValue());
 		task.description.setValue(description.getValue());

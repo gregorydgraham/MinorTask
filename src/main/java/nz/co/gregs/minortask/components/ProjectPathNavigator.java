@@ -45,7 +45,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	protected final void buildComponent() {
 		removeAll();
 		add(getPrefixComponents());
-		List<Task> ancestors = getProjectPathTasks(getTaskID(), getUserID());
+		List<Task> ancestors = getProjectPathTasks(getTaskID(), getCurrentUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
 				//.filter((ancestor) -> (ancestor != null))

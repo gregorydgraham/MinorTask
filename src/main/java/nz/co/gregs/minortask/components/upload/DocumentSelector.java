@@ -75,7 +75,7 @@ public class DocumentSelector extends Div implements RequiresLogin {
 
 	protected Document getDocumentExampleForSelector() {
 		Document docExample = new Document();
-		docExample.userID.permittedValues(getUserID());
+		docExample.userID.permittedValues(getCurrentUserID());
 		docExample.mediaType.excludedPattern("image/%");
 		return docExample;
 	}

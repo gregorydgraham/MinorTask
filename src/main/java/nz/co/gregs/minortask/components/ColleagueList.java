@@ -105,7 +105,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		DBQuery dbQuery = getDatabase().getDBQuery()
 				.add(colleague, requesterExample, requestedExample);
 		dbQuery.addCondition(// at least one of the invite fields is the current user
-				IntegerExpression.value(getUserID())
+				IntegerExpression.value(getCurrentUserID())
 						.isIn(
 								colleague.column(colleague.requestor),
 								colleague.column(colleague.invited)
@@ -302,7 +302,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	private void inviteNewColleague(User selectedUser) {
-		Colleagues colleagueInvite = new Colleagues(getUser(), selectedUser);
+		Colleagues colleagueInvite = new Colleagues(getCurrentUser(), selectedUser);
 		try {
 			getDatabase().insert(colleagueInvite);
 			chat("Invitation sent...");
@@ -359,7 +359,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		public ColleagueListItem(MinorTask minorTask, Colleagues colleagues, User requester, User invitedUser) {
 			this(minorTask);
 			this.colleaguesRow = colleagues;
-			if (minortask.getUserID() == invitedUser.getUserID()) {
+			if (minortask.getCurrentUserID() == invitedUser.getUserID()) {
 				colleague = requester;
 				canAccept = true;
 			} else {

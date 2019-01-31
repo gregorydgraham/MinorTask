@@ -751,7 +751,7 @@ public class Globals {
 				} else {
 					Long projectID = task.projectID.getValue();
 					Task usersCompletedTasks = new Task();
-					usersCompletedTasks.userID.setValue(minortask.getUserID());
+					usersCompletedTasks.userID.setValue(minortask.getCurrentUserID());
 					usersCompletedTasks.completionDate.excludeNull();
 					try {
 						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
@@ -782,7 +782,7 @@ public class Globals {
 		public Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
 			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
 			if (taskID != null) {
-				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask.getUserID());
+				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask.getCurrentUserID());
 				for (Task subtask : subtasks) {
 					completeTask(subtask.taskID.getValue());
 				}

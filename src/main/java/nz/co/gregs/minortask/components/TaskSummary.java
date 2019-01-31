@@ -34,7 +34,7 @@ public class TaskSummary extends VerticalLayout implements RequiresLogin, ClickN
 		summary.setDefaultHorizontalComponentAlignment(Alignment.START);
 
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getUserID()).size(), icon);
+		Button arrow = new Button("" + minortask().getActiveSubtasks(task.taskID.longValue(), minortask().getCurrentUserID()).size(), icon);
 		arrow.setIconAfterText(true);
 		arrow.setSizeUndefined();
 		arrow.setHeight("100%");

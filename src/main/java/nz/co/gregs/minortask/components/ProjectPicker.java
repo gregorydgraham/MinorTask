@@ -40,7 +40,7 @@ public class ProjectPicker extends SecureDiv {
 	private Component getPickerComponent() {
 		try {
 			Task example = new Task();
-			example.userID.permittedValues(minortask().getUserID());
+			example.userID.permittedValues(minortask().getCurrentUserID());
 			example.taskID.excludedValues(taskAndProject.getTask().taskID.getValue());
 			example.name.setSortOrderAscending();
 			final DBQuery query = getDatabase().getDBQuery(example);
@@ -112,7 +112,7 @@ public class ProjectPicker extends SecureDiv {
 						final Date taskStartDate = task.startDate.getValue();
 						final Date taskDeadlineDate = task.finalDate.getValue();
 						// ensure the tree integrity by promoting any separated tasks
-						List<Task> projectPathTasks = MinorTask.getProjectPathTasks(newProjectID, minortask.getUserID());
+						List<Task> projectPathTasks = MinorTask.getProjectPathTasks(newProjectID, minortask.getCurrentUserID());
 						for (Task projectPathTask : projectPathTasks) {
 							final DBInteger projectID = projectPathTask.projectID;
 							if (taskID.equals(projectID.longValue())) {

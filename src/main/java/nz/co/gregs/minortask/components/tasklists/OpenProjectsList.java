@@ -31,16 +31,16 @@ public class OpenProjectsList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
-		final DBQuery dbTable = getDatabase().getDBQuery(example);
-		dbTable.addCondition(
+		final DBQuery query = getDatabase().getDBQuery(example);
+		query.addCondition(
 				BooleanExpression.allOf(
-						example.column(example.userID).is(getUserID()),
+						example.column(example.userID).is(getCurrentUserID()),
 						example.column(example.projectID).isNull()
 				).or(
-						example.column(example.assigneeID).is(getUserID())
+						example.column(example.assigneeID).is(getCurrentUserID())
 				)
 		);
-		dbTable.setSortOrder(
+		query.setSortOrder(
 				example.column(example.finalDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.startDate).isLessThan(DateExpression.currentDate()).descending(),
 				example.column(example.finalDate).ascending(),
@@ -48,8 +48,8 @@ public class OpenProjectsList extends AbstractTaskList {
 				example.column(example.name).ascending()
 		);
 		System.out.println("OPEN PROJECTS:");
-		System.out.println(dbTable.getSQLForQuery());
-		List<Task> tasks = dbTable.getAllInstancesOf(example);
+		System.out.println(query.getSQLForQuery());
+		List<Task> tasks = query.getAllInstancesOf(example);
 		return tasks;
 	}
 

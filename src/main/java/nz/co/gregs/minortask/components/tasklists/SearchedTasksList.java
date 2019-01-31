@@ -113,9 +113,9 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 		DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getUserID())
+				example.column(example.userID).is(getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getUserID())
+								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
 		StringExpression column = example.column(example.name);

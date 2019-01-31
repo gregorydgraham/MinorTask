@@ -39,15 +39,15 @@ public class OpenTaskList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task.WithSortColumns();
-//		example.userID.permittedValues(minortask().getUserID());
+//		example.userID.permittedValues(minortask().getCurrentUserID());
 		example.projectID.permittedValues(taskID);
 		example.completionDate.permittedValues((Date) null);
 		final DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getUserID())
+				example.column(example.userID).is(getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getUserID())
+								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
 		query.setSortOrder(

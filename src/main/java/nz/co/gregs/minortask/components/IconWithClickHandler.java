@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
@@ -13,7 +12,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author gregorygraham
  */
-public class IconWithClickHandler extends Icon implements /*ClickNotifier<IconWithClickHandler>,*/ HasToolTip{
+public class IconWithClickHandler extends Icon implements HasToolTip{
 
 	public IconWithClickHandler(VaadinIcon vaadinIcon) {
 		super(vaadinIcon);

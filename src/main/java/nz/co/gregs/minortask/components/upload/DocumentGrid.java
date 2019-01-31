@@ -82,7 +82,7 @@ public class DocumentGrid extends SecureDiv {
 		try {
 			TaskDocumentLink link = new TaskDocumentLink();
 			link.taskID.permittedValues(taskID);
-			link.ownerID.permittedValues(getUserID());
+			link.ownerID.permittedValues(getCurrentUserID());
 			Document docExample = new Document();
 			allRows = getDatabase().getDBQuery(link, docExample).getAllInstancesOf(docExample);
 			this.setVisible(!allRows.isEmpty());
@@ -97,7 +97,7 @@ public class DocumentGrid extends SecureDiv {
 			TaskDocumentLink link = new TaskDocumentLink();
 			link.documentID.permittedValues(doc.documentID);
 			link.taskID.permittedValues(taskID);
-			link.ownerID.permittedValues(getUserID());
+			link.ownerID.permittedValues(getCurrentUserID());
 			getDatabase().delete(link);
 		} catch (SQLException ex) {
 			sqlerror(ex);

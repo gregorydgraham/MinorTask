@@ -84,7 +84,7 @@ public class ColleaguesButton extends Button implements MinorTaskComponent {
 
 	public long getNumberOfPendingInvites() {
 		final Colleagues colleague = new Colleagues();
-		colleague.invited.permittedValues(getUserID());
+		colleague.invited.permittedValues(getCurrentUserID());
 		colleague.acceptanceDate.permitOnlyNull();
 		colleague.denialDate.permitOnlyNull();
 		DBQuery dbQuery

@@ -46,13 +46,13 @@ public class AllOpenTasksList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
-//		example.userID.permittedValues(minortask().getUserID());
+//		example.userID.permittedValues(minortask().getCurrentUserID());
 		final DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getUserID())
+				example.column(example.userID).is(getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getUserID())
+								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
 		if (getProjectID() == null) {
