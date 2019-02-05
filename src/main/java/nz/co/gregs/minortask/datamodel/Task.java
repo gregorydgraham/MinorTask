@@ -38,11 +38,14 @@ public class Task extends DBRow {
 	@DBForeignKey(Owner.class)
 	public final DBInteger userID = new DBInteger();
 	
+	@AutoFillDuringQueryIfPossible
+	private Owner ownerUser;
+	
 	@DBColumn
 	@DBForeignKey(Assignee.class)
 	public final DBInteger assigneeID = new DBInteger();
 	
-//	@AutoFillDuringQueryIfPossible
+	@AutoFillDuringQueryIfPossible
 	private Assignee assigneeUser;
 
 	@DBColumn
@@ -108,6 +111,10 @@ public class Task extends DBRow {
 		hash = 37 * hash + Objects.hashCode(this.finalDate);
 		hash = 37 * hash + Objects.hashCode(this.completionDate);
 		return hash;
+	}
+	
+	public Owner getOwner(){
+		return ownerUser;
 	}
 	
 	public Assignee getAssigneeUser(){
