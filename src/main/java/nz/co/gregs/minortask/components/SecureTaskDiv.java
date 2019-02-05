@@ -5,7 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,13 +35,8 @@ public class SecureTaskDiv extends SecureDiv {
 
 	protected boolean checkForPermission(Task task) {
 		if (task == null) {
-			System.out.println("nz.co.gregs.minortask.components.SecureTaskDiv.checkForPermission(): task == null");
-			System.out.println("nz.co.gregs.minortask.components.SecureTaskDiv.checkForPermission(): super.checkForPermission() == "+super.checkForPermission());
 			return super.checkForPermission();
 		} else {
-			System.out.println("nz.co.gregs.minortask.components.SecureTaskDiv.checkForPermission(): super.checkForPermission() == "+super.checkForPermission());
-			System.out.println("nz.co.gregs.minortask.components.SecureTaskDiv.checkForPermission(): Objects.equals(task.userID.getValue(), getCurrentUserID()) == "+Objects.equals(task.userID.getValue(), getCurrentUserID()));
-			System.out.println("nz.co.gregs.minortask.components.SecureTaskDiv.checkForPermission(): Objects.equals(task.assigneeID.getValue(), getCurrentUserID()) == "+Objects.equals(task.assigneeID.getValue(), getCurrentUserID()));
 			return super.checkForPermission()
 					&& (
 					Objects.equals(task.userID.getValue(), getCurrentUserID())
