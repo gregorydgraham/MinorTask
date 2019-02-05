@@ -131,7 +131,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 		
 		ownerField.setEnabled(false);
 		ownerField.setLabel("Owner");
-		final User owner = getUser(taskAndProject.getTask().userID.getValue());
+		final User owner = taskAndProject.getTask().getOwner();
 		ownerField.setValue(owner.getUsername());
 		
 		description.setLabel("Description");
