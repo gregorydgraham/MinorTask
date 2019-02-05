@@ -70,7 +70,6 @@ public class MinorTask extends Globals implements Serializable {
 	private long userID = NOT_LOGGED_IN_USERID;
 	private User user = null;
 	boolean notLoggedIn = true;
-	public String username = "";
 	private Location loginDestination = null;
 
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
@@ -87,7 +86,10 @@ public class MinorTask extends Globals implements Serializable {
 		final Task example = new Task();
 		example.taskID.permittedValues(taskID);
 		try {
-			final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Assignee());
+			final DBQuery query = getDatabase()
+					.getDBQuery(example)
+					.addOptional(new Task.Assignee())
+					.addOptional(new Task.Owner());
 			// add user requirement
 			query.addCondition(
 					example.column(example.userID).is(getCurrentUserID())
@@ -111,30 +113,6 @@ public class MinorTask extends Globals implements Serializable {
 		return example;
 	}
 
-	/**
-	 * @param userID the userID to set
-	 * @throws nz.co.gregs.minortask.MinorTask.UnknownUserException
-	 * @throws nz.co.gregs.minortask.MinorTask.TooManyUsersException
-	 */
-	private void setUserID(long userID) throws UnknownUserException, TooManyUsersException {
-		this.userID = userID;
-		User example = new User();
-		example.queryUserID().permittedValues(userID);
-		try {
-			User onlyRow = getDatabase().get(1L, example).get(0);
-			username = onlyRow.getUsername();
-		} catch (SQLException ex) {
-			error("SQL ERROR", ex.getLocalizedMessage());
-		} catch (UnexpectedNumberOfRowsException ex) {
-			error("MULTIPLE USER ERROR", "Oops! This should not have happened.\n Please contact MinorTask to get it fixed.");
-			if (ex.getActualRows() > ex.getExpectedRows()) {
-				throw new TooManyUsersException();
-			} else {
-				throw new UnknownUserException();
-			}
-		}
-	}
-
 	public synchronized void loginAs(User user, String password, Boolean rememberMe) throws UnknownUserException, TooManyUsersException, SQLException, IncorrectPasswordException {
 		DBPasswordHash queryPassword = user.queryPassword();
 		String oldHash = queryPassword.getValue();
@@ -148,17 +126,15 @@ public class MinorTask extends Globals implements Serializable {
 
 	private void doLogin(User user, boolean rememberUser, String cookieValue) throws TooManyUsersException, UnknownUserException {
 		this.notLoggedIn = false;
-		this.setUserID(user.getUserID());
+		this.userID = user.getUserID();
 		this.user = user;
 		if (rememberUser) {
 			try {
 				setRememberMeCookie(user, cookieValue);
 			} catch (SQLException ex) {
-				ex.printStackTrace();
 				sqlerror(ex);
 			}
 		}
-//		showLoginDestination();
 	}
 
 	private void removeRememberMeCookieValue() {
@@ -182,7 +158,7 @@ public class MinorTask extends Globals implements Serializable {
 		VaadinService.getCurrentResponse().addCookie(cookie);
 	}
 
-	public boolean loginAsRememberedUser() {
+	private boolean loginAsRememberedUser() {
 		try {
 			Optional<Cookie> rememberMeCookieValue = getRememberMeCookieValue();
 			User rememberedUser = getRememberedUser(rememberMeCookieValue);
@@ -199,14 +175,14 @@ public class MinorTask extends Globals implements Serializable {
 	 * @return the username
 	 */
 	public String getUsername() {
-		return username;
+		return user.getUsername();
 	}
 
 	public void logout() {
 		removeRememberMeCookieValue();
 		this.clearLoginDestination();
+		this.user = null;
 		this.userID = 0;
-		this.username = null;
 		notLoggedIn = true;
 		UI current = UI.getCurrent();
 		current.getRouter().navigate(
@@ -229,11 +205,7 @@ public class MinorTask extends Globals implements Serializable {
 	 */
 	public long getCurrentUserID() {
 		if (isLoggedIn()) {
-			if (user != null) {
-				return getCurrentUser().getUserID();
-			} else {
-				return userID;
-			}
+			return getCurrentUser().getUserID();
 		} else {
 			return NOT_LOGGED_IN_USERID;
 		}
@@ -241,28 +213,8 @@ public class MinorTask extends Globals implements Serializable {
 
 	public User getCurrentUser() {
 		if (isLoggedIn()) {
-			if (user == null) {
-				User example = new User();
-				example.queryUserID().permittedValues(getCurrentUserID());
-				try {
-					List<User> got = getDatabase()
-							.getDBQuery(example)
-							.addOptional(new Document())
-							.getAllInstancesOf(example);
-					if (got.size() != 1) {
-						warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
-					} else {
-						user = got.get(0);
-						setProfileImage(user);
-						return user;
-					}
-				} catch (SQLException ex) {
-					sqlerror(ex);
-				}
-			} else {
-				setProfileImage(user);
-				return user;
-			}
+			setProfileImage(user);
+			return user;
 		}
 		return null;
 	}
@@ -273,11 +225,10 @@ public class MinorTask extends Globals implements Serializable {
 		try {
 			List<User> got = getDatabase().getDBQuery(example).addOptional(new Document()).getAllInstancesOf(example);
 			if (got.size() != 1) {
-				warning("User Issue", "There is an issue with your account, please contact MinorTask to correct it.");
+				warning("User Issue", "There is an issue with user #" + userID + ", please contact MinorTask to correct it.");
 			} else {
-				user = got.get(0);
-				setProfileImage(user);
-				return user;
+				User foundUser = got.get(0);
+				return foundUser;
 			}
 		} catch (SQLException ex) {
 			sqlerror(ex);
@@ -298,8 +249,6 @@ public class MinorTask extends Globals implements Serializable {
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				}
-			} else {
-//				chat("image not provided");
 			}
 		}
 	}
@@ -324,11 +273,12 @@ public class MinorTask extends Globals implements Serializable {
 			// avoid connecting the project to anything other than the task
 			projectExample.ignoreAllForeignKeysExceptFKsTo(example);
 			DBQuery dbQuery = getDatabase().getDBQuery(example)
-					.addOptional(projectExample, new Task.Assignee());
+					.addOptional(projectExample, new Task.Assignee(), new Task.Owner());
 			dbQuery.addCondition(
 					example.column(example.userID).is(getCurrentUserID())
 							.or(example.column(example.assigneeID).is(getCurrentUserID()))
 			);
+			System.out.println("" + dbQuery.getSQLForQuery());
 			try {
 				List<DBQueryRow> allRows = dbQuery.getAllRows(1);
 				final DBQueryRow onlyRow = allRows.get(0);
@@ -353,27 +303,6 @@ public class MinorTask extends Globals implements Serializable {
 		project.userID.setValue(getCurrentUserID());
 		project.name.setValue("Projects");
 		return project;
-	}
-
-	private void showLoginDestination() {
-		Location dest = getLoginDestination();
-		if (dest != null) {
-			String pathWithQueryParameters = dest.getPathWithQueryParameters();
-			if (pathWithQueryParameters.isEmpty()) {
-				showOpeningPage();
-			} else {
-				UI.getCurrent().navigate(pathWithQueryParameters);
-			}
-		} else {
-			showOpeningPage();
-		}
-	}
-
-	/**
-	 * @return the loginDestination
-	 */
-	public Location getLoginDestination() {
-		return loginDestination;
 	}
 
 	public void showProfile() {
@@ -460,10 +389,11 @@ public class MinorTask extends Globals implements Serializable {
 
 	public void completeTaskWithCongratulations(Task task) {
 		if (task != null) {
-			List<Task> subtasks = Globals.getActiveSubtasks(task, getCurrentUser());
-			for (Task subtask : subtasks) {
+			Globals
+					.getActiveSubtasks(task, getCurrentUser())
+					.forEach((subtask) -> {
 				completeTaskWithCongratulations(subtask);
-			}
+			});
 			task.completionDate.setValue(new Date());
 			try {
 				final DBDatabase database = Globals.getDatabase();
@@ -499,22 +429,6 @@ public class MinorTask extends Globals implements Serializable {
 		}
 	}
 
-//	public void completeTask(Task task) throws Globals.InaccessibleTaskException {
-//		if (task != null) {
-//			List<Task> subtasks = Globals.getActiveSubtasks(task, getCurrentUser());
-//			for (Task subtask : subtasks) {
-//				completeTask(subtask);
-//			}
-//			task.completionDate.setValue(new Date());
-//			try {
-//				final DBDatabase database = Globals.getDatabase();
-//				DBActionList update = database.update(task);
-//				repeatTask(task);
-//			} catch (SQLException ex) {
-//				Globals.sqlerror(ex);
-//			}
-//		}
-//	}
 	public void repeatTask(Task task) {
 		if (task.repeatOffset.isNotNull()) {
 			Period value = task.repeatOffset.getValue();
