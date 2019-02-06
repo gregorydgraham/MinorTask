@@ -27,6 +27,10 @@ public class SecureTaskDiv extends SecureDiv {
 	public SecureTaskDiv(Task task) {
 		this.task = task;
 	}
+	
+	public Task getTask(){
+		return task;
+	}
 
 	@Override
 	protected boolean checkForPermission() {
@@ -37,10 +41,12 @@ public class SecureTaskDiv extends SecureDiv {
 		if (task == null) {
 			return super.checkForPermission();
 		} else {
+			final Long userID = task.userID.getValue();
+			final Long assigneeID = task.assigneeID.getValue();
 			return super.checkForPermission()
 					&& (
-					Objects.equals(task.userID.getValue(), getCurrentUserID())
-					|| Objects.equals(task.assigneeID.getValue(), getCurrentUserID())
+					Objects.equals(userID, getCurrentUserID())
+					|| Objects.equals(assigneeID, getCurrentUserID())
 					);
 		}
 	}
