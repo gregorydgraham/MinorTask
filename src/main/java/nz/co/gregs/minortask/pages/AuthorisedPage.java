@@ -12,7 +12,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
-import com.vaadin.flow.router.Location;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
@@ -40,8 +39,6 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 	@Override
 	public final void beforeEnter(BeforeEnterEvent event) {
 		System.out.println("BEFORE ENTER MINORTASKPAGE");
-		Location location = MinorTask.getCurrentLocation();
-		minortask().setLoginDestination(location);
 		if (!minortask().isLoggedIn()) {
 			setLoginComponents();
 		} else {
@@ -54,7 +51,6 @@ public abstract class AuthorisedPage extends Div implements MinorTaskComponent, 
 	}
 
 	public void setComponents() {
-		minortask().setLoginDestination(MinorTask.getCurrentLocation());
 		removeAll();
 		add(new MinorTaskTemplate());
 		final Component internalComponent = getInternalComponent();

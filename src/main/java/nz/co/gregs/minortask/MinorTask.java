@@ -5,13 +5,11 @@
  */
 package nz.co.gregs.minortask;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
@@ -68,9 +66,8 @@ public class MinorTask extends Globals implements Serializable {
 
 	public long NOT_LOGGED_IN_USERID = 0l;
 	private long userID = NOT_LOGGED_IN_USERID;
-	private User user = null;
+	private User loggedInUser = null;
 	boolean notLoggedIn = true;
-	private Location loginDestination = null;
 
 	static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MinorTask.class);
 
@@ -127,7 +124,7 @@ public class MinorTask extends Globals implements Serializable {
 	private void doLogin(User user, boolean rememberUser, String cookieValue) throws TooManyUsersException, UnknownUserException {
 		this.notLoggedIn = false;
 		this.userID = user.getUserID();
-		this.user = user;
+		this.loggedInUser = user;
 		if (rememberUser) {
 			try {
 				setRememberMeCookie(user, cookieValue);
@@ -175,13 +172,12 @@ public class MinorTask extends Globals implements Serializable {
 	 * @return the username
 	 */
 	public String getUsername() {
-		return user.getUsername();
+		return loggedInUser.getUsername();
 	}
 
 	public void logout() {
 		removeRememberMeCookieValue();
-		this.clearLoginDestination();
-		this.user = null;
+		this.loggedInUser = null;
 		this.userID = 0;
 		notLoggedIn = true;
 		UI current = UI.getCurrent();
@@ -213,8 +209,8 @@ public class MinorTask extends Globals implements Serializable {
 
 	public User getCurrentUser() {
 		if (isLoggedIn()) {
-			setProfileImage(user);
-			return user;
+			setProfileImage(loggedInUser);
+			return loggedInUser;
 		}
 		return null;
 	}
@@ -251,18 +247,6 @@ public class MinorTask extends Globals implements Serializable {
 				}
 			}
 		}
-	}
-
-	public void clearLoginDestination() {
-		this.loginDestination = null;
-	}
-
-	public void setLoginDestination(Location location) {
-		this.loginDestination = location;
-	}
-
-	public void setLoginDestination(Class<? extends Component> aClass) {
-		setLoginDestination(getLocation(aClass));
 	}
 
 	public Task.TaskAndProject getTaskAndProject(Long taskID) throws InaccessibleTaskException {

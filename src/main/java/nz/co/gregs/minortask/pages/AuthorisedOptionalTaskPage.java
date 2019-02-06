@@ -11,7 +11,6 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.FooterMenu;
@@ -37,7 +36,6 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
-		minortask().setLoginDestination(MinorTask.getCurrentLocation());
 		removeAll();
 		add(new MinorTaskTemplate());
 		taskTabs = new TaskTabs(this, taskID);
@@ -50,10 +48,8 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		}
 		ProjectPathNavigator projectPath = new ProjectPathNavigator(this.getClass(), taskID);
 		if (internalComponent instanceof ProjectPathChanger) {
-//			chat("adding path change listener");
 			ProjectPathChanger ppc = (ProjectPathChanger) internalComponent;
 			ppc.addProjectPathAlteredListener((evt) -> {
-//				chat("path changed...");
 				projectPath.refresh();
 			});
 		}

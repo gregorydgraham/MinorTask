@@ -19,7 +19,6 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.User;
-import nz.co.gregs.minortask.pages.ProjectsLayout;
 
 /**
  *
@@ -42,7 +41,6 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 	public SignupComponent(String username, String password) {
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
-		minortask().setLoginDestination(ProjectsLayout.class);
 		add(getComponent());
 	}
 
