@@ -33,7 +33,6 @@ and open the template in the editor.
 	top: 95%;
 	left: 50%;
 	margin-left: -60px;
-	opacity: 0.9;
 }
 
 .tooltip .tooltiptext::after {
@@ -48,5 +47,28 @@ and open the template in the editor.
 }
 
 .tooltip:hover .tooltiptext {
-	visibility: visible;
+	animation: fadeinandout 3s;
+}
+
+@keyframes fadeinandout {
+	0% {
+		opacity: 0;
+		visibility: visible;
+	}
+	5% {
+		opacity: 1;
+		visibility: visible;
+	}
+	95% {
+		opacity: 1;
+		visibility: visible;
+	}
+	99%{
+		opacity: 0;
+		visibility: visible;
+	}
+	100%{
+		opacity: 0;
+		visibility: hidden;
+	}
 }
