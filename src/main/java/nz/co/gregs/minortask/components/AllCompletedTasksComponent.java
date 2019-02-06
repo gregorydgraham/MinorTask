@@ -21,7 +21,6 @@ import nz.co.gregs.minortask.datamodel.Task;
 //@Tag("all-completed-task-list")
 public class AllCompletedTasksComponent extends Div implements MinorTaskComponent {
 
-	private List<Task> allTasks = new ArrayList<>();
 	private ArrayList<Task> today;
 	private ArrayList<Task> week;
 	private ArrayList<Task> month;
@@ -37,7 +36,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		this.taskID = parameter;
 		try {
 			addClassName("all-completed-tasks-component");
-			this.allTasks = getTasksToList();
+			List<Task> allTasks = getTasksToList();
 
 			splitTasks(allTasks);
 
@@ -109,7 +108,6 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			Task example = new Task();
 			example.userID.permittedValues(getCurrentUserID());
 			example.completionDate.excludedValues((Date) null);
-			example.completionDate.setSortOrderDescending();
 			final DBQuery dbTable = getDatabase().getDBQuery(example);
 			dbTable.setSortOrder(
 					example.column(example.completionDate).descending(),
@@ -120,15 +118,21 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			return tasks;
 		} else {
 			Task example = new Task();
+			example.userID.permittedValues(getCurrentUserID());
 			example.taskID.permittedValues(taskID);
-//			example.userID.permittedValues(getCurrentUserID());
 			DBQuery query = getDatabase().getDBQuery(example);
+			query.setSortOrder(
+					example.column(example.completionDate).descending(),
+					example.column(example.name).ascending(),
+					example.column(example.taskID).ascending()
+			);
 			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
 			List<Task> descendants = recurse.getDescendants();
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {
 				return t.completionDate.getValue() != null && !t.taskID.getValue().equals(taskID);
 			}).forEach(tasks::add);
+			System.out.println("ALL COMPLETED TASKS FOUND: "+tasks.size());
 			return tasks;
 		}
 	}
@@ -144,7 +148,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		Date startOfWeek = getStartOfThisWeek();
 		Date startOfMonth = getStartOfThisMonth();
 		Date startOfYear = getStartOfThisYear();
-		for (Task task : tasksToList) {
+		tasksToList.forEach((task) -> {
 			if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfToday)) {
 				today.add(task);
 			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfWeek)) {
@@ -156,7 +160,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			} else {
 				others.add(task);
 			}
-		}
+		});
 	}
 
 	public static class TodaysCompletedTasksList extends AbstractTaskList.PreQueried {

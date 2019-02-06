@@ -248,7 +248,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 		return anchor;
 	}
 
-	protected void refreshList() {
+	protected final void refreshList() {
 		try {
 			if (thereAreRowsToShow()) {
 				List<Task> allRows = getPermittedTasks();
@@ -296,12 +296,11 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 		public PreQueried(List<Task> list) {
 			super(null);
 			this.list = list;
-			buildComponent();
-			this.addClassName("tasklist");
+			refreshList();
 		}
 
 		@Override
-		protected List<Task> getTasksToList() throws SQLException {
+		protected final List<Task> getTasksToList() throws SQLException {
 			return list;
 		}
 
