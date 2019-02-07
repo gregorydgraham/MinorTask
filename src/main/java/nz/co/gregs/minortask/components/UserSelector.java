@@ -27,19 +27,22 @@ import nz.co.gregs.minortask.datamodel.User;
 public class UserSelector extends ComboBox<User> implements RequiresLogin {
 
 	public UserSelector() {
-		setDataProvider(new UserProvider(minortask()));
+		this("");
+	}
+
+	public UserSelector(AbstractUserDataProvider provider) {
+		this("");
+		setDataProvider(provider);
+	}
+
+	public UserSelector(String label, AbstractUserDataProvider provider) {
+		this(label);
+		setDataProvider(provider);
 	}
 
 	public UserSelector(String label) {
 		super(label);
-	}
-
-	public final void setDataProvider(AbstractUserDataProvider dataProvider) {
-		super.setDataProvider(dataProvider, new SearchUserNameExpression());
-	}
-
-	public UserSelector(AbstractUserDataProvider provider) {
-		setDataProvider(provider);
+		setDataProvider(new UserProvider(minortask()));
 		setItemLabelGenerator((item) -> {
 			if (item != null) {
 				if (item.queryUsername().isNotNull()) {
@@ -51,7 +54,10 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 				return "No Such User";
 			}
 		});
+	}
 
+	public final void setDataProvider(AbstractUserDataProvider dataProvider) {
+		super.setDataProvider(dataProvider, new SearchUserNameExpression());
 	}
 
 	@Override
@@ -140,7 +146,9 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 				DBQuery dbquery = getDBQuery(example, query);
 				System.out.println("" + dbquery.getSQLForQuery());
 				List<User> listOfUsers = dbquery.getAllInstancesOf(example);
-				return listOfUsers.stream();
+				return listOfUsers.stream()
+						.skip(query.getOffset())
+						.limit(query.getLimit());
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -171,7 +179,8 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		private final User user;
 
 		public PotentialColleagueProvider(MinorTask minorTask) {
-			this(minorTask, minorTask.getCurrentUser());
+			super(minorTask);
+			user = minorTask.getCurrentUser();
 		}
 
 		public PotentialColleagueProvider(MinorTask minorTask, User currentUser) {
@@ -187,22 +196,23 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 				example.queryUsername().setSortOrderAscending();
 				DBQuery dbquery = getDBQuery(example, query);
 				List<User> listOfUsers = dbquery.getAllInstancesOf(example);
-				listOfUsers.forEach((t) -> {
-					listOfColleagues.add(t);
-				});
+				listOfColleagues.addAll(listOfUsers);
+//				listOfUsers.forEach((t) -> {
+//					listOfColleagues.add(t);
+//				});
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			return listOfColleagues.stream();
+			return listOfColleagues.stream().skip(query.getOffset()).limit(query.getLimit());
 		}
 
 		@Override
 		public int sizeInBackEnd(Query<User, BooleanExpression> query) {
 			try {
 				User example = new User();
-				example.queryUsername().setSortOrderAscending();
+//				example.queryUsername().setSortOrderAscending();
 				DBQuery dbquery = getDBQuery(example, query);
-				dbquery.count();
+				return dbquery.count().intValue();
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -229,7 +239,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			dbquery.addCondition( // But we only want the outer rows where we don't find a connection
 					colleagues.column(colleagues.requestor).isNull()
 			);
-			System.out.println("" + dbquery.getSQLForQuery());
+			System.out.println("POTENTIAL COLLEAGUES QUERY: " + dbquery.getSQLForQuery());
 			return dbquery;
 		}
 	}
@@ -270,7 +280,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			return listOfColleagues.stream();
+			return listOfColleagues.stream().skip(query.getOffset()).limit(query.getLimit());
 		}
 
 		@Override
