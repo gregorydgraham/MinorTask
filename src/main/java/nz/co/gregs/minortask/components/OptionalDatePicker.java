@@ -19,30 +19,22 @@ import java.time.LocalDate;
 public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDatePicker, LocalDate> implements HasToolTip {
 
 	private final DatePicker input = new DatePicker();
-	private final Checkbox enabler = new Checkbox(false);
 	private LocalDate previousValue = null;
 
 	public OptionalDatePicker(String label) {
 		this((LocalDate) null);
-		enabler.setLabel(label);
+		input.setLabel(label);
 	}
 
 	public OptionalDatePicker(LocalDate defaultValue) {
 		super(defaultValue);
-		
+
 		input.addValueChangeListener((event) -> {
 			setModelValue(getValue(), true);
 		});
-		
-		enabler.addValueChangeListener((event) -> {
-			toggleDateField(event);
-			setModelValue(getValue(), true);
-		});
-
-		input.setEnabled(enabler.getValue());
 
 		final Div content = getContent();
-		content.add(enabler, input);
+		content.add(input);
 		content.addClassName("optional-date-picker");
 	}
 
@@ -72,20 +64,11 @@ public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDate
 
 	@Override
 	public LocalDate getValue() {
-		if (enabler.getValue()) {
-			return input.getValue();
-		} else {
-			return null;
-		}
+		return input.getValue();
 	}
 
 	@Override
 	public void setValue(LocalDate value) {
-		if (value == null) {
-			enabler.setValue(Boolean.FALSE);
-		} else {
-			enabler.setValue(Boolean.TRUE);
-		}
 		super.setValue(value);
 	}
 
@@ -96,14 +79,12 @@ public class OptionalDatePicker extends AbstractCompositeField<Div, OptionalDate
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		enabler.setReadOnly(readOnly);
 		input.setReadOnly(readOnly);
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		enabler.setEnabled(enabled);
 		input.setEnabled(enabled);
 	}
 }
