@@ -45,16 +45,19 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 	public ColleagueList(Long taskID) {
 		this.taskID = taskID;
-		buildComponent();
-		this.setSpacing(false);
-		this.addClassName("colleaguelist");
+		_init();
 	}
 
 	protected ColleagueList(List<ColleagueListItem> list) {
 		this.taskID = null;
 		this.list = list;
-		buildComponent();
+		_init();
+	}
+
+	private void _init() {
 		this.addClassName("colleaguelist");
+		buildComponent();
+		refreshList();
 	}
 
 	public final void buildComponent() {
@@ -62,10 +65,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		well.addClassName(getListClassName());
 		well.setSpacing(false);
 		well.addClassName("well");
-		try {
 			add(getControlsAbove());
-			List<ColleagueListItem> allRows = getColleaguesToList();
-			setLabel(allRows);
 			HorizontalLayout header = new HorizontalLayout();
 			header.addClassName("colleaguelist-header");
 			header.add(label);
@@ -78,14 +78,10 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 			header.add(headerRight);
 			well.add(header);
 
-			setGridItems(allRows);
 			setGridColumns();
 			well.add(grid);
 
 			well.add(getFooter());
-		} catch (SQLException ex) {
-			MinorTask.sqlerror(ex);
-		}
 		add(well);
 	}
 
@@ -243,13 +239,14 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		return layout;
 	}
 
-	protected void refreshList() {
+	protected final void refreshList() {
 		try {
+			List<ColleagueListItem> allRows = new ArrayList<>();
 			if (thereAreRowsToShow()) {
-				List<ColleagueListItem> allRows = getColleaguesToList();
-				setLabel(allRows);
-				setGridItems(allRows);
+				allRows = getColleaguesToList();
 			}
+			setLabel(allRows);
+			setGridItems(allRows);
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
