@@ -164,9 +164,9 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 	private Component getDescriptionComponent(ColleagueListItem source) {
 		Div name = new Div();
-		name.setText(source.getColleague().getUsername());
+		name.setText(source.getOtherUser().getUsername());
 		Div desc = new Div();
-		desc.setText(source.getColleague().getBlurb());
+		desc.setText(source.getOtherUser().getBlurb());
 
 		name.setSizeFull();
 		name.addClassNames("colleaguelist-name");
@@ -342,7 +342,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 	public static class ColleagueListItem {
 
-		private User colleague;
+		private User otherUser;
 		private boolean accepted;
 		private boolean canAccept;
 		private Colleagues colleaguesRow;
@@ -357,10 +357,10 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 			this(minorTask);
 			this.colleaguesRow = colleagues;
 			if (minortask.getCurrentUserID() == invitedUser.getUserID()) {
-				colleague = requester;
+				otherUser = requester;
 				canAccept = true;
 			} else {
-				colleague = invitedUser;
+				otherUser = invitedUser;
 				canAccept = false;
 			}
 			accepted = colleagues.acceptanceDate.isNotNull();
@@ -372,8 +372,8 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 			return colleaguesRow;
 		}
 
-		public User getColleague() {
-			return colleague;
+		public User getOtherUser() {
+			return otherUser;
 		}
 
 		public boolean hasAcceptedInvitation() {
