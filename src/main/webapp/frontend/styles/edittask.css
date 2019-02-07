@@ -119,6 +119,18 @@ and open the template in the editor.
 	margin-left: 2px;
 	padding: 2px;
 }
+@media all and (max-width:730px){
+	.edit-task-projectandassignment{
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		border: thin dashed #CCC;
+		border-radius: 5px;
+		vertical-align: top;
+		margin-left: 2px;
+		padding: 2px;
+	}
+}
 
 .edit-task-nameandproject{
 	display: flex;
