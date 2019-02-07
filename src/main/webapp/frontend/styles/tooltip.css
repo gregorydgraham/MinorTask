@@ -9,9 +9,8 @@ and open the template in the editor.
 */
 
 .tooltip {
-  position: relative;
-  display: inline-block;
-  /*border-bottom: 1px dotted antiquewhite;*/
+	position: relative;
+	display: inline-block;
 }
 
 .tooltip .tooltiptext {
