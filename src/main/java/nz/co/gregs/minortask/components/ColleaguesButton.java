@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -26,34 +25,14 @@ public class ColleaguesButton extends Button implements MinorTaskComponent {
 
 	private Label inviteLabel;
 	String defaultText = "";
-	Icon defaultIcon = new Icon(VaadinIcon.USERS);
-
-	public ColleaguesButton(Long invites) {
-		super();
-		init_(defaultText, defaultIcon);
-	}
+	IconWithToolTip defaultIcon = new IconWithToolTip(VaadinIcon.USERS, "Your Team");
 
 	public ColleaguesButton() {
 		super();
 		init_(defaultText, defaultIcon);
 	}
 
-	public ColleaguesButton(String text) {
-		super(new Label(text));
-		init_(text, defaultIcon);
-	}
-
-	public ColleaguesButton(Icon icon) {
-		super(icon);
-		init_(defaultText, icon);
-	}
-
-	public ColleaguesButton(String text, Icon icon) {
-		super(text, icon);
-		init_(text, icon);
-	}
-
-	private void init_(String text, Icon icon) {
+	private void init_(String text, IconWithToolTip icon) {
 		addClassName("colleagues-button");
 		addClickListener((event) -> {
 			minortask().showColleagues();
@@ -72,10 +51,9 @@ public class ColleaguesButton extends Button implements MinorTaskComponent {
 		}
 	}
 
-	private void handleIcon(Icon icon) {
+	private void handleIcon(IconWithToolTip icon) {
 		icon.addClassName("colleagues-button-icon");
 		setIcon(icon);
-
 	}
 
 	private void handleText(String text) {

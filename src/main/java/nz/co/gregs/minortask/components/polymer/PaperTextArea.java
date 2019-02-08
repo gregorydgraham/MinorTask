@@ -22,6 +22,13 @@ public class PaperTextArea extends AbstractSinglePropertyField<PaperTextArea, St
 	private PaperTextArea(String propertyName, String defaultValue, boolean acceptNullValues) {
 		super(propertyName, defaultValue, acceptNullValues);
 	}
+	public PaperTextArea(String label) {
+		this(label, "");
+	} 
+	public PaperTextArea(String label, String value) {
+		this("value", value, false);
+		setLabel(label);
+	} 
 	public PaperTextArea() {
 		this("value", "", false);
 	} 
@@ -48,7 +55,7 @@ public class PaperTextArea extends AbstractSinglePropertyField<PaperTextArea, St
 		return getElement().getProperty("value", "");
 	}
 
-	public void setLabel(String val) {
+	public final void setLabel(String val) {
 		getElement().setProperty("label", val);
 	}
 

@@ -48,7 +48,6 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 		List<Task> ancestors = getProjectPathTasks(getTaskID(), getCurrentUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
-				//.filter((ancestor) -> (ancestor != null))
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
@@ -64,7 +63,6 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	public void refresh() {
-//		chat("refreshing path..."); 
 		buildComponent();
 	}
 
@@ -95,33 +93,29 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	}
 
 	private Component[] getPrefixComponents() {
-		IconWithClickHandler search = new IconWithClickHandler(VaadinIcon.SEARCH);
+		IconWithToolTip search = new IconWithToolTip(VaadinIcon.SEARCH, "Search");
 		search.addClickListener((event) -> {
 			Globals.showSearchPage();
 		});
 		search.addClassName("navigator-task-search");
-		search.setTooltipText("Find that task the quick way");
 
-		IconWithClickHandler today = new IconWithClickHandler(VaadinIcon.TIMER);
+		IconWithToolTip today = new IconWithToolTip(VaadinIcon.TIMER, "Today's Tasks");
 		today.addClickListener((event) -> {
 			Globals.showTodaysTasks();
 		});
 		today.addClassName("navigator-task-today");
-		search.setTooltipText("All of tasks you could work on today");
 
-		IconWithClickHandler recent = new IconWithClickHandler(VaadinIcon.CLOCK);
+		IconWithToolTip recent = new IconWithToolTip(VaadinIcon.CLOCK, "Recently Viewed");
 		recent.addClickListener((event) -> {
 			Globals.showRecentsPage();
 		});
 		recent.addClassName("navigator-task-recents");
-		search.setTooltipText("See the tasks you've looked at recently");
 
-		IconWithClickHandler favourites = new IconWithClickHandler(VaadinIcon.HEART);
+		IconWithToolTip favourites = new IconWithToolTip(VaadinIcon.HEART, "Favourited");
 		favourites.addClickListener((event) -> {
 			Globals.showFavouritesPage();
 		});
 		favourites.addClassName("navigator-task-favourites");
-		search.setTooltipText("Your favourite tasks collected together");
 
 		return new Component[]{search, today, recent, favourites};
 	}

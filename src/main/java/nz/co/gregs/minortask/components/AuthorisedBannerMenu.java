@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.components;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -27,8 +26,8 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 	ColleaguesButton colleaguesButton = new ColleaguesButton();
-	Button profileButton = new ProfileButton();
-	Button logoutButton = new LogoutButton();
+	ProfileButton profileButton = new ProfileButton();
+	LogoutButton logoutButton = new LogoutButton();
 
 	public AuthorisedBannerMenu() {
 		super();

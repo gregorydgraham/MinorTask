@@ -148,7 +148,7 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
-		final IconWithClickHandler icon = new IconWithClickHandler(VaadinIcon.USER);
+		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.USER);
 		icon.addClassName("colleaguelist-entry-prefix");
 		if (source.hasDeclined()) {
 			icon.addClassName("colleaguelist-entry-declined");

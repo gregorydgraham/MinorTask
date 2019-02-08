@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip;
-import nz.co.gregs.minortask.components.IconWithClickHandler;
+import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureTaskDiv;
@@ -157,7 +157,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 	}
 
 	private Component getPrefixComponent(Task task) {
-		final IconWithClickHandler heart = new IconWithClickHandler(VaadinIcon.HEART);
+		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
 		heart.addClassName("tasklist-entry-prefix");
 		if (minortask().taskIsFavourited(task)) {
 			heart.addClickListener((event) -> {
@@ -213,7 +213,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 		SecureDiv layout = new SecureDiv();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 
-		final IconWithClickHandler checkIcon = new IconWithClickHandler(VaadinIcon.CHECK);
+		final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK);
 		checkIcon.addClickListener((event) -> {
 			if (task.completionDate.isNull()) {
 				minortask().completeTaskWithCongratulations(task);

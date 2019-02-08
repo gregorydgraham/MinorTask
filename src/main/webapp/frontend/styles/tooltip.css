@@ -13,6 +13,40 @@ and open the template in the editor.
 	display: inline-block;
 }
 
+@keyframes fadeinandout {
+	0% {
+		opacity: 0;
+		visibility: visible;
+	}
+	5% {
+		opacity: 1;
+		visibility: visible;
+	}
+	95% {
+		opacity: 1;
+		visibility: visible;
+	}
+	99%{
+		opacity: 0;
+		visibility: visible;
+	}
+	100%{
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+@keyframes fadein {
+	0% {
+		opacity: 0;
+		visibility: visible;
+	}
+	100% {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
 .tooltip .tooltiptext {
 	visibility: hidden;
 	width: 15em;
@@ -49,25 +83,39 @@ and open the template in the editor.
 	animation: fadeinandout 3s;
 }
 
-@keyframes fadeinandout {
-	0% {
-		opacity: 0;
-		visibility: visible;
-	}
-	5% {
-		opacity: 1;
-		visibility: visible;
-	}
-	95% {
-		opacity: 1;
-		visibility: visible;
-	}
-	99%{
-		opacity: 0;
-		visibility: visible;
-	}
-	100%{
-		opacity: 0;
-		visibility: hidden;
-	}
+.tooltip .icontooltiptext {
+	position: absolute;
+	visibility: hidden;
+	max-width: 15em;
+	min-width: 10em;
+	height: auto;
+	white-space:normal;
+	word-wrap: break-word;
+	border:thin solid bisque;
+	background-color: antiquewhite;
+	color: #333333;
+	text-align: center;
+	font-size: small;
+	font-weight: normal;
+	border-radius: 6px;
+	/*border-top-left-radius: 0;*/
+	padding: 0;/*5px 0;*/
+	z-index: 1;
+	top: 95%;
+	/*left: -2em;*/
+}
+
+.tooltip .icontooltiptext::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -50%;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent bisque transparent;
+}
+
+.tooltip:hover .icontooltiptext {
+	animation: fadeinandout 3s;
 }

@@ -5,61 +5,28 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
  *
  * @author gregorygraham
  */
-public class ProfileButton extends Button implements MinorTaskComponent {
+public class ProfileButton extends SecureSpan {//Button implements MinorTaskComponent {
 
 	public ProfileButton() {
 		super();
 		init_();
 	}
-
-	public ProfileButton(String text) {
-		super(text);
-		init_();
-	}
-
-	public ProfileButton(Component icon) {
-		super(icon);
-		init_();
-	}
-
-	public ProfileButton(String text, Component icon) {
-		super(text, icon);
-		init_();
-	}
-
-	public ProfileButton(String text, ComponentEventListener<ClickEvent<Button>> clickListener) {
-		super(text, clickListener);
-		init_();
-	}
-
-	public ProfileButton(Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
-		super(icon, clickListener);
-		init_();
-	}
-
-	public ProfileButton(String text, Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
-		super(text, icon, clickListener);
-		init_();
-	}
-
+	
 	private void init_() {
-		Icon userIcon = new Icon(VaadinIcon.USER_CARD);
-		setIcon(userIcon);
 		addClassName("profile-button");
-		addClickListener((event) -> {
+
+		IconWithToolTip profile = new IconWithToolTip(VaadinIcon.USER_CARD, "Profile & Settings");
+		profile.addClickListener((event) -> {
 			minortask().showProfile();
 		});
+
+		add(profile);
 	}
 
 }
