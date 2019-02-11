@@ -10,12 +10,11 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+//import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+//import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,11 +31,12 @@ import nz.co.gregs.minortask.datamodel.User;
  * @author gregorygraham
  */
 @StyleSheet("styles/colleague-list.css")
-public class ColleagueList extends VerticalLayout implements RequiresLogin {
+public class ColleagueList extends SecureDiv implements RequiresLogin {
 
 	protected final Long taskID;
-	private final Grid<ColleagueListItem> grid = new Grid<ColleagueListItem>();
+//	private final Grid<ColleagueListItem> grid = new Grid<ColleagueListItem>();
 	private final Label label = new Label();
+	private final Div gridDiv = new Div();
 	private List<ColleagueListItem> list = new ArrayList<>(0);
 
 	public ColleagueList() {
@@ -61,27 +61,30 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	public final void buildComponent() {
-		VerticalLayout well = new VerticalLayout();
+		SecureSpan well = new SecureSpan();
 		well.addClassName(getListClassName());
-		well.setSpacing(false);
+//		well.setSpacing(false);
 		well.addClassName("well");
-			add(getControlsAbove());
-			HorizontalLayout header = new HorizontalLayout();
-			header.addClassName("colleaguelist-header");
-			header.add(label);
-			Div headerRight = new Div();
-			headerRight.addClassName("right");
-			final Component[] headerExtras = getHeaderExtras();
-			if (headerExtras.length > 0) {
-				headerRight.add(headerExtras);
-			}
-			header.add(headerRight);
-			well.add(header);
+		add(getControlsAbove());
+		SecureSpan header = new SecureSpan();
+		header.addClassName("colleaguelist-header");
+		header.add(label);
+		Div headerRight = new Div();
+		headerRight.addClassName("right");
+		final Component[] headerExtras = getHeaderExtras();
+		if (headerExtras.length > 0) {
+			headerRight.add(headerExtras);
+		}
+		header.add(headerRight);
+		well.add(header);
 
-			setGridColumns();
-			well.add(grid);
+//		setGridColumns();
+//		well.add(grid);
 
-			well.add(getFooter());
+		gridDiv.addClassName("colleaguelist-grid");
+		well.add(gridDiv);
+
+		well.add(getFooter());
 		add(well);
 	}
 
@@ -131,8 +134,18 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	private void setGridItems(List<ColleagueListItem> allRows) {
-		grid.setItems();//clear it first
-		grid.setItems(allRows);
+		allRows
+				.forEach((t) -> {
+					Div div = new Div();
+					div.add(
+							getPrefixComponent(t),
+							getDescriptionComponent(t),
+							getSuffixComponent(t)
+					);
+					gridDiv.add(div);
+				});
+//		grid.setItems();//clear it first
+//		grid.setItems(allRows);
 	}
 
 	private void setLabel(List<ColleagueListItem> allRows) {
@@ -140,12 +153,12 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		label.setText(caption);
 	}
 
-	private void setGridColumns() {
-		grid.setHeightByRows(true);
-		grid.addComponentColumn((ColleagueListItem source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
-		grid.addComponentColumn((ColleagueListItem source) -> getDescriptionComponent(source)).setFlexGrow(20);
-		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("30em").setFlexGrow(0);
-	}
+//	private void setGridColumns() {
+//		grid.setHeightByRows(true);
+//		grid.addComponentColumn((ColleagueListItem source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
+//		grid.addComponentColumn((ColleagueListItem source) -> getDescriptionComponent(source)).setFlexGrow(20);
+//		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("30em").setFlexGrow(0);
+//	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
 		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.USER);
@@ -163,9 +176,9 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 	}
 
 	private Component getDescriptionComponent(ColleagueListItem source) {
-		Div name = new Div();
+		SecureSpan name = new SecureSpan();
 		name.setText(source.getOtherUser().getUsername());
-		Div desc = new Div();
+		SecureSpan desc = new SecureSpan();
 		desc.setText(source.getOtherUser().getBlurb());
 
 		name.setSizeFull();
@@ -173,13 +186,15 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 		desc.setSizeFull();
 		desc.addClassNames("colleaguelist-description");
 
-		final Div summary = new Div(name, desc);
+		final SecureSpan summary = new SecureSpan(name, desc);
+		summary.addClassName("colleaguelist-entry-summary");
 
 		return summary;
 	}
 
 	private Component getSuffixComponent(ColleagueListItem item) {
-		HorizontalLayout layout = new HorizontalLayout();
+		SecureSpan layout = new SecureSpan();
+		layout.addClassName("colleaguelist-entry-suffix");
 		final Label statusLabel = new Label();
 		statusLabel.addClassName("colleaguelist-status-label");
 		layout.add(statusLabel);
@@ -266,13 +281,13 @@ public class ColleagueList extends VerticalLayout implements RequiresLogin {
 
 		UserSelector potentialColleagueSelector = new UserSelector.PotentialColleagueSelector();
 
-		Div contentDiv = new Div(potentialColleagueSelector);
-		contentDiv.addClassName("colleague-list-content-div");
+		Div contntDiv = new Div(potentialColleagueSelector);
+		contntDiv.addClassName("colleague-list-content-div");
 
 		Div buttonDiv = new Div(cancelButton, inviteButton);
-		contentDiv.addClassName("colleague-list-button-div");
+		contntDiv.addClassName("colleague-list-button-div");
 
-		Dialog dialog = new Dialog(contentDiv, buttonDiv);
+		Dialog dialog = new Dialog(contntDiv, buttonDiv);
 		dialog.setCloseOnEsc(true);
 		dialog.setCloseOnOutsideClick(true);
 

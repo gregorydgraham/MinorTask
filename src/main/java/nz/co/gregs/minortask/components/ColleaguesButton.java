@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.datamodel.Colleagues;
  * @author gregorygraham
  */
 @StyleSheet("styles/colleagues-button.css")
-public class ColleaguesButton extends Button implements MinorTaskComponent {
+public class ColleaguesButton extends SecureSpan {
 
 	private Label inviteLabel;
 	String defaultText = "";
@@ -47,13 +47,13 @@ public class ColleaguesButton extends Button implements MinorTaskComponent {
 		if (pending > 0) {
 			inviteLabel = new Label("" + pending);
 			inviteLabel.addClassName("colleague-button-invites");
-			addToSuffix(inviteLabel);
+			add(inviteLabel);
 		}
 	}
 
 	private void handleIcon(IconWithToolTip icon) {
 		icon.addClassName("colleagues-button-icon");
-		setIcon(icon);
+		add(icon);
 	}
 
 	private void handleText(String text) {

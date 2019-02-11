@@ -32,6 +32,21 @@ and open the template in the editor.
 	color: red;
 }
 
+.colleaguelist-grid div{
+	display: flex;
+	flex-direction: row;
+	align-content: space-between;
+	width: 100%;
+}
+
+.colleaguelist-grid{
+	display: flex;
+	flex-direction: column;
+	align-content: space-between;
+	align-items: flex-start;
+	width: 100%;
+}
+
 vaadin-grid-cell-content{
 	padding: 1px;
 	padding-bottom: 5px;
