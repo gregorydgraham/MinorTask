@@ -1,0 +1,48 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 12/02/2019, 12:15:29 PM
+    Author     : gregorygraham
+*/
+.weblink-component{}
+
+.weblink-grid{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.weblink-grid-entry{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.weblink-grid-entry-suffix{}
+
+.weblink-grid-entry-prefix{
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: center;
+	flex-basis: content;
+	padding-right: 3px;
+	min-width: 10em;
+}
+
+.weblink-grid-entry-prefix-icon{
+	height:24px;
+	width: 24px;
+	object-fit: contain;
+}
+
+.weblink-grid-entry-summary{
+	width: 100%;
+}
+
+.weblink-grid-entry-summary .vaadin-text-field{
+	width: 100%;
+}

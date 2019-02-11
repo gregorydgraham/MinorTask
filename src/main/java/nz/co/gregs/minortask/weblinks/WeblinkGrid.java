@@ -6,15 +6,15 @@
 package nz.co.gregs.minortask.weblinks;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,10 +24,12 @@ import nz.co.gregs.minortask.components.SecureDiv;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/weblink-grid.css")
 public class WeblinkGrid extends SecureDiv {
 
 	private Long taskID;
-	private final Grid<Weblink> grid = new Grid<Weblink>();
+	private final Div gridDiv = new Div();
+//	private final Grid<Weblink> grid = new Grid<Weblink>();
 	private List<Weblink> allRows;
 
 	public WeblinkGrid() {
@@ -43,48 +45,59 @@ public class WeblinkGrid extends SecureDiv {
 	private void makeComponent() {
 		removeAll();
 		setSizeUndefined();
-		grid.addClassName("weblink-grid");
-		grid.setHeightByRows(true);
-		
+		gridDiv.addClassName("weblink-grid");
+//		gridDiv.setHeightByRows(true);
+
 		setItems();
-		
-		grid.addComponentColumn((source) -> getAnchorComponent(source)
-		).setFlexGrow(20);
-		grid.addComponentColumn((source) -> getDescriptionComponent(source)
-		).setFlexGrow(20);
-		grid.addComponentColumn((source) -> getRemoveComponent(source));
-		add(grid);
+
+//		gridDiv.addComponentColumn((source) -> getAnchorComponent(source)
+//		).setFlexGrow(20);
+//		gridDiv.addComponentColumn((source) -> getDescriptionComponent(source)
+//		).setFlexGrow(20);
+//		gridDiv.addComponentColumn((source) -> getRemoveComponent(source));
+		add(gridDiv);
 	}
 
-	private Button getRemoveComponent(Weblink source) {
+	private Span getSuffixComponent(Weblink source) {
+		final Span layout = new Span();
+		layout.addClassName("weblink-grid-entry-suffix");
+
 		final Button button = new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source));
 		button.setEnabled(this.isEnabled() && !this.isReadOnly());
-		return button;
-	}
+		layout.add(button);
 
-	private Component getAnchorComponent(Weblink source) {
-		Component icon = new Div(new Icon(VaadinIcon.BOOKMARK_O));
-		String iconURL = source.iconURL.getValue();
-		if (iconURL != null && !iconURL.isEmpty()) {
-			System.out.println("URL VALUE: \"" + iconURL + "\"");
-			icon = new Image(iconURL, "");
-		}
-
-		HorizontalLayout layout = new HorizontalLayout();
-		Anchor iconAnchor = new Anchor(source.webURL.getValue(), "");
-		iconAnchor.setTarget("_blank");
-		iconAnchor.add(icon);
-		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue().replaceAll("http[s]*://", ""));
-		urlAnchor.setTarget("_blank");
-		layout.add(iconAnchor, urlAnchor);
-		layout.setMargin(false);
-		layout.setPadding(false);
-		layout.setSpacing(false);
 		return layout;
 	}
 
-	private Component getDescriptionComponent(Weblink source) {
-		VerticalLayout layout = new VerticalLayout();
+	private Span getPrefixComponent(Weblink source) {
+		Span layout = new Span();
+		layout.addClassName("weblink-grid-entry-prefix");
+
+		Span iconSpan = new Span();
+		String iconURL = source.iconURL.getValue();
+		Component icon = new Icon(VaadinIcon.BOOKMARK_O);
+		if (iconURL != null && !iconURL.isEmpty()) {
+//			System.out.println("URL VALUE: \"" + iconURL + "\"");
+			icon = new Image(iconURL, "");
+		}
+		((HasStyle)icon).addClassName("weblink-grid-entry-prefix-icon");
+		iconSpan.add(icon);
+
+		Anchor iconAnchor = new Anchor(source.webURL.getValue(), "");
+		iconAnchor.setTarget("_blank");
+		iconAnchor.add(iconSpan);
+		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue().replaceAll("http[s]*://", ""));
+		urlAnchor.setTarget("_blank");
+		layout.add(iconAnchor, urlAnchor);
+//		layout.setMargin(false);
+//		layout.setPadding(false);
+//		layout.setSpacing(false);
+		return layout;
+	}
+
+	private Span getSummaryComponent(Weblink source) {
+		Span layout = new Span();
+		layout.addClassName("weblink-grid-entry-summary");
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue("Important Location"),
@@ -92,9 +105,9 @@ public class WeblinkGrid extends SecureDiv {
 					updateDescription(source, event.getValue());
 				});
 		layout.add(component);
-		layout.setMargin(false);
-		layout.setPadding(false);
-		layout.setSpacing(false);
+//		layout.setMargin(false);
+//		layout.setPadding(false);
+//		layout.setSpacing(false);
 		return layout;
 	}
 
@@ -103,8 +116,16 @@ public class WeblinkGrid extends SecureDiv {
 			Weblink example = new Weblink();
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
-			grid.setItems(allRows);
-			this.setVisible(!allRows.isEmpty()); 
+//			gridDiv.setItems(allRows);
+			allRows.forEach((source) -> {
+				Div gridEntry = new Div();
+				gridEntry.addClassName("weblink-grid-entry");
+				gridEntry.add(getPrefixComponent(source));
+				gridEntry.add(getSummaryComponent(source));
+				gridEntry.add(getSuffixComponent(source));
+				gridDiv.add(gridEntry);
+			});
+			this.setVisible(!allRows.isEmpty());
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -134,7 +155,7 @@ public class WeblinkGrid extends SecureDiv {
 	}
 
 	public void setReadOnly(boolean readonly) {
-		grid.setEnabled(!readonly);
+		gridDiv.setEnabled(!readonly);
 	}
 
 	@Override
