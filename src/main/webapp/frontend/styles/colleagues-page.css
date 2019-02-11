@@ -8,6 +8,10 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 
+#colleagues-contents{
+	padding-left: 3px;
+}
+
 #user-profile-banner {
 	width:100%; 
 	display: flex; 

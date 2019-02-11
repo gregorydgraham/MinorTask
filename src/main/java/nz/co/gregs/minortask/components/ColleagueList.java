@@ -34,7 +34,6 @@ import nz.co.gregs.minortask.datamodel.User;
 public class ColleagueList extends SecureDiv implements RequiresLogin {
 
 	protected final Long taskID;
-//	private final Grid<ColleagueListItem> grid = new Grid<ColleagueListItem>();
 	private final Label label = new Label();
 	private final Div gridDiv = new Div();
 	private List<ColleagueListItem> list = new ArrayList<>(0);
@@ -63,7 +62,6 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 	public final void buildComponent() {
 		SecureSpan well = new SecureSpan();
 		well.addClassName(getListClassName());
-//		well.setSpacing(false);
 		well.addClassName("well");
 		add(getControlsAbove());
 		SecureSpan header = new SecureSpan();
@@ -77,9 +75,6 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 		}
 		header.add(headerRight);
 		well.add(header);
-
-//		setGridColumns();
-//		well.add(grid);
 
 		gridDiv.addClassName("colleaguelist-grid");
 		well.add(gridDiv);
@@ -142,23 +137,15 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 							getDescriptionComponent(t),
 							getSuffixComponent(t)
 					);
+					div.addClassName("colleaguelist-entry");
 					gridDiv.add(div);
 				});
-//		grid.setItems();//clear it first
-//		grid.setItems(allRows);
 	}
 
 	private void setLabel(List<ColleagueListItem> allRows) {
 		final String caption = getListCaption(allRows);
 		label.setText(caption);
 	}
-
-//	private void setGridColumns() {
-//		grid.setHeightByRows(true);
-//		grid.addComponentColumn((ColleagueListItem source) -> getPrefixComponent(source)).setWidth("2em").setFlexGrow(0);
-//		grid.addComponentColumn((ColleagueListItem source) -> getDescriptionComponent(source)).setFlexGrow(20);
-//		grid.addComponentColumn((ColleagueListItem source) -> getSuffixComponent(source)).setWidth("30em").setFlexGrow(0);
-//	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
 		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.USER);

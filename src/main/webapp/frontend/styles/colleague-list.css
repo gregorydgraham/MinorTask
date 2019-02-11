@@ -9,34 +9,77 @@ and open the template in the editor.
 */
 .colleaguelist-status-label{
 	align-self: center;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 .colleaguelist-entry-declined{
 	color: red;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 .colleaguelist-entry-invited{
 	color: lightgray;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 .colleaguelist-entry-canaccept{
 	color: #ffcc00;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 .colleaguelist-entry-accepted{
 	color: limegreen;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 .colleaguelist-acceptbutton{
 	color: limegreen;
+	margin-right: 3px;
+}
+
+.colleaguelist-declinebutton{
+	color: red;
+	margin-right: 3px;
 }
 
 .colleaguelist-rescindbutton{
 	color: red;
+	margin-right: 3px;
 }
 
-.colleaguelist-grid div{
+.colleaguelist-ejectbutton{
+	color: maroon;
+	margin-right: 3px;
+}
+
+.colleaguelist-entry{
 	display: flex;
 	flex-direction: row;
 	align-content: space-between;
+	align-items: center;
 	width: 100%;
+	border-left: thin solid #CCC;
+	border-bottom: thin solid #CCC;
+	border-right: thin solid #CCC;
+}
+
+.colleaguelist-entry-prefix{
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.colleaguelist-entry-summary{
+	width: 100%;
+}
+
+.colleaguelist-entry-suffix{
+	padding-left: 3px;
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: center;
 }
 
 .colleaguelist-grid{
@@ -45,85 +88,6 @@ and open the template in the editor.
 	align-content: space-between;
 	align-items: flex-start;
 	width: 100%;
-}
-
-vaadin-grid-cell-content{
-	padding: 1px;
-	padding-bottom: 5px;
-	width: auto;
-} 
-vaadin-grid td{
-	padding: 1px;
-	width: auto;
-}
-
-.tasklist{
-	background-color: #e5e5e5;
-	box-shadow: inset 0 0 6px darkgrey, 0 0 0 black;
-	border-radius: 5px;
-	width: 100%;
-}
-
-@media all and (max-width: 900px) {
-	.tasklist{
-		padding-left: 0;padding-right:0;
-		margin-left: 0; margin-right: 0;
-		border-radius: 0;
-	}
-}
-
-.tasklist-header{
-	display: flex;
-	justify-content: space-between;
-}
-
-.tasklist-name{
-	white-space: normal;
-}
-
-.tasklist-description{
-	white-space: normal;
-	font-size: smaller;
-}
-
-.tasklist-project.tasklist-complete-tick{
-	display: none;
-}
-
-.tasklist-subtask-count{
-	width: 3em;
-}
-
-.tasklist-entry-prefix{
-	/*width: 2em;*/
-}
-
-.tasklist-entry-suffix{
-	/*width: 2em;*/
-}
-
-.tasklist-complete-tick{
-	background-color: lightgray; 
-	color: white; 
-	border-radius: 4px;
-	font-size: smaller;
-}
-
-.tasklist-reopen-tick{
-	background-color: transparent; 
-	color: limegreen; 
-	border-radius: 4px;
-	font-size: smaller;
-}
-.favourited-task-heart{
-	background-color: transparent; 
-	color: red; 
-}
-.normal-task-heart{
-	background-color: transparent; 
-	color: lightgray; 
-}
-.edit-task-complete-button-container {
-	display: flex;
-	flex-direction: row-reverse;
+	max-width: 400px;
+	border-top: thin solid #CCC;
 }
