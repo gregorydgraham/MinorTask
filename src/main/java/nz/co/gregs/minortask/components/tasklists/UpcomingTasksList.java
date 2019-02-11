@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -37,10 +38,10 @@ public class UpcomingTasksList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		LocalDate nowLocalDate = LocalDate.now();
-		Date now = asDate(nowLocalDate);
+		Date now = Globals.asDate(nowLocalDate);
 		final LocalDate plusDays = nowLocalDate.plusDays(DAYS_AHEAD);
-		Date threeDaysHence = asDate(plusDays);
-		if (taskID == null) {
+		Date threeDaysHence = Globals.asDate(plusDays);
+		if (getTaskID() == null) {
 			Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
 			example.startDate.permittedRange(now, threeDaysHence);
 			example.completionDate.permitOnlyNull();
@@ -64,11 +65,11 @@ public class UpcomingTasksList extends AbstractTaskList {
 			List<Task> tasks = query.getAllInstancesOf(example);
 			return tasks;
 		} else {
-			List<Task> descendants = minortask().getTasksOfProject(taskID);
+			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {
 				return t.completionDate.getValue() == null
-						&& !t.taskID.getValue().equals(taskID)
+						&& !t.taskID.getValue().equals(getTaskID())
 						&& t.startDate.getValue() != null
 						&& t.startDate.getValue().after(now)
 						&& t.startDate.getValue().before(threeDaysHence);

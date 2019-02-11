@@ -11,6 +11,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.AddTaskButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -31,10 +32,10 @@ public class OpenProjectsList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
-		final DBQuery query = getDatabase().getDBQuery(example);
+		final DBQuery query = Globals.getDatabase().getDBQuery(example);
 		query.addCondition(
 				BooleanExpression.allOf(
-						example.column(example.userID).is(getCurrentUserID()),
+						example.column(example.userID).is(minortask().getCurrentUserID()),
 						example.column(example.projectID).isNull()
 				).or(
 						example.column(example.assigneeID).is(getCurrentUserID())

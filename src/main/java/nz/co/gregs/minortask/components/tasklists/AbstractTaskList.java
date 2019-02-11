@@ -7,24 +7,21 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.components.HasToolTip;
+import nz.co.gregs.minortask.components.HasToolTip.Position;
 import nz.co.gregs.minortask.components.IconWithToolTip;
-import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.components.SecureTaskDiv;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -35,13 +32,10 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  * @author gregorygraham
  */
 @StyleSheet("styles/abstract-task-list.css")
-public abstract class AbstractTaskList extends SecureTaskDiv implements RequiresLogin, HasToolTip {
+public abstract class AbstractTaskList extends SecureTaskDiv {
 
-	protected final Long taskID;
-	private final Grid<Task> grid = new Grid<Task>();
-	private final Div gridDiv = new Div(grid);
-	private final Label label = new Label();
-//	private List<Task> list = new ArrayList<>(0);
+	private final Div gridDiv = new Div();
+	private final SecureDiv label = new SecureDiv();
 
 	public AbstractTaskList() {
 		this((Long) null);
@@ -49,22 +43,19 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 
 	public AbstractTaskList(Long taskID) {
 		super(taskID);
-		this.taskID = taskID;
 		buildComponent();
-//		this.setSpacing(false);
 		this.addClassName("tasklist");
 	}
 
 	public final void buildComponent() {
-		VerticalLayout well = new VerticalLayout();
+		Div well = new Div();
 		well.addClassName(getListClassName());
-		well.setSpacing(false);
-		well.addClassName("well");
+		well.addClassName("tasklist-well");
 		try {
 			add(getControlsAbove());
 			List<Task> allRows = getPermittedTasks();
 			setLabel(allRows);
-			HorizontalLayout header = new HorizontalLayout();
+			Div header = new Div();
 			header.addClassName("tasklist-header");
 			header.add(label);
 			Div headerRight = new Div();
@@ -84,7 +75,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 			if (footerExtras.length > 0) {
 				footer.add(footerExtras);
 			}
-			footer.addClassNames(getListClassName(), "footer", getListClassName() + "-footer");
+			footer.addClassNames(getListClassName(), "tasklist-footer", getListClassName() + "-footer");
 			well.add(footer);
 		} catch (SQLException ex) {
 			MinorTask.sqlerror(ex);
@@ -107,15 +98,17 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 
 	@Override
 	public final void setTooltipText(String text) {
-		label.addClassName("tooltip");
-		Div span = new Div(new Paragraph(text));
-		label.getElement().insertChild(0, span.getElement());
-		span.addClassName("tooltiptext");
+		label.setTooltipText(text);
+	}
 
-		gridDiv.addClassName("tooltip");
-		Div span2 = new Div(new Paragraph(text));
-		gridDiv.getElement().insertChild(0, span2.getElement());
-		span2.addClassName("tooltiptext");
+	@Override
+	public void setTooltipText(String text, Position posn) {
+		label.setTooltipText(text, posn);
+	}
+
+	@Override
+	public void setToolTipPosition(Position posn) {
+		label.setToolTipPosition(posn);
 	}
 
 	protected abstract String getListClassName();
@@ -134,26 +127,29 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 
 	private void setLabel(List<Task> allRows) {
 		final String caption = getListCaption(allRows);
-		label.setText(caption);
+		label.removeAll();
+		label.add(new Label(caption));
 	}
 
 	private void setupGrid(List<Task> allRows) {
-		setGridColumns();
 		gridDiv.addClassName("task-list-grid-container");
 		setGridItems(allRows);
 	}
-	
-	private void setGridItems(List<Task> allRows) {
-		grid.setItems();//clear it first
-		grid.setItems(allRows);
-	}
 
-	private void setGridColumns() {
-		grid.setHeightByRows(true);
-		grid.addComponentColumn((Task source) -> getPrefixComponent(source)).setWidth("30px").setFlexGrow(0);
-		grid.addComponentColumn((Task source) -> getDescriptionComponent(source)).setFlexGrow(20);
-		grid.addComponentColumn((Task source) -> getSubTaskNumberComponent(source)).setWidth("4em");
-		grid.addComponentColumn((Task source) -> getSuffixComponent(source)).setWidth("50px").setFlexGrow(0);
+	private void setGridItems(List<Task> allRows) {
+		gridDiv.removeAll();
+		allRows.forEach(
+				(t) -> {
+					final Div div = new Div(
+							getPrefixComponent(t),
+							getDescriptionComponent(t),
+							getSubTaskNumberComponent(t),
+							getSuffixComponent(t)
+					);
+					div.addClassName("tasklist-grid-row");
+					gridDiv.add(div);
+				}
+		);
 	}
 
 	private Component getPrefixComponent(Task task) {
@@ -178,9 +174,9 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 	}
 
 	private Component getDescriptionComponent(Task task) {
-		Div name = new Div();
+		SecureSpan name = new SecureSpan();
 		name.setText(task.name.getValue());
-		Div desc = new Div();
+		SecureSpan desc = new SecureSpan();
 		desc.setText(task.description.getValue());
 
 		name.setSizeFull();
@@ -188,29 +184,34 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 		desc.setSizeFull();
 		desc.addClassNames("tasklist-description");
 
-		final Div summary = new Div(name, desc);
+		final SecureSpan summary = new SecureSpan(name, desc);
 
-		Anchor anchor = wrapInALinkToTheTask(task, summary);
+		SecureSpan anchor = new SecureSpan(summary);
 		anchor.addClassName("tasklist-entry-summary");
+		anchor.addClickListener((event) -> {
+			Globals.showTask(task.taskID.getValue());
+		});
 
 		return anchor;
 	}
 
 	private Component getSubTaskNumberComponent(Task task) {
-		HorizontalLayout layout = new HorizontalLayout();
+		SecureSpan layout = new SecureSpan();
 		layout.addClassName("tasklist-subtask-count");
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 		Label label1 = new Label("" + numberOfSubTasks);
 		label1.add(icon);
-		Component wrapped = wrapInALinkToTheTask(task, label1);
+		SecureSpan wrapped = new SecureSpan(label1);
 		layout.add(wrapped);
-
+		layout.addClickListener((event) -> {
+			Globals.showTask(task.taskID.getValue());
+		});
 		return layout;
 	}
 
 	private Component getSuffixComponent(Task task) {
-		SecureDiv layout = new SecureDiv();
+		SecureSpan layout = new SecureSpan();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 
 		final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK);
@@ -256,7 +257,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 				setGridItems(allRows);
 			}
 		} catch (SQLException ex) {
-			sqlerror(ex);
+			Globals.sqlerror(ex);
 		}
 	}
 
@@ -270,10 +271,10 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 
 	private void addFavourite(Task task) {
 		try {
-			final FavouritedTasks favour = new FavouritedTasks(task, getCurrentUser());
-			getDatabase().insert(favour);
+			final FavouritedTasks favour = new FavouritedTasks(task, minortask().getCurrentUser());
+			Globals.getDatabase().insert(favour);
 		} catch (SQLException ex) {
-			sqlerror(ex);
+			Globals.sqlerror(ex);
 		}
 	}
 
@@ -281,10 +282,10 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements Requires
 		try {
 			final FavouritedTasks favour = new FavouritedTasks();
 			favour.taskID.setValue(task.taskID);
-			favour.userID.setValue(getCurrentUserID());
-			getDatabase().delete(favour);
+			favour.userID.setValue(minortask().getCurrentUserID());
+			Globals.getDatabase().delete(favour);
 		} catch (SQLException ex) {
-			sqlerror(ex);
+			Globals.sqlerror(ex);
 
 		}
 	}

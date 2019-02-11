@@ -49,4 +49,7 @@ authorised-banner {
 		/*color: #0099cc;*/
 		color: white;
 		background-color: cadetblue;
+		width: 46px;
+		padding-left: 9px;
+		padding-right: 9px;
 	}

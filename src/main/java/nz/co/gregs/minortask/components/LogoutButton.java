@@ -21,7 +21,7 @@ public class LogoutButton extends SecureSpan {
 	private void init_() {
 		addClassName("logout-button");
 
-		IconWithToolTip unlock = new IconWithToolTip(VaadinIcon.UNLOCK, "Logout");
+		IconWithToolTip unlock = new IconWithToolTip(VaadinIcon.UNLOCK, "Logout", Position.BOTTOM_LEFT);
 		unlock.addClickListener((event) -> {
 			minortask().logout();
 		});

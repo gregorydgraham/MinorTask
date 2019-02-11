@@ -37,6 +37,7 @@ import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import static nz.co.gregs.minortask.Globals.getDatabase;
 import static nz.co.gregs.minortask.Globals.sqlerror;
+import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.datamodel.*;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.images.SizedImageDocumentStreamFactory;

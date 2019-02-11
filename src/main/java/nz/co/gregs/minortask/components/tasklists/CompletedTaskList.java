@@ -22,7 +22,7 @@ public class CompletedTaskList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 //		example.userID.permittedValues(minortask().getCurrentUserID());
-		example.projectID.permittedValues(taskID);
+		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
 		final DBQuery query = getDatabase().getDBQuery(example);

@@ -22,7 +22,7 @@ public class TodaysTasksList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		if (taskID == null) {
+		if (getTaskID() == null) {
 			Task.Project example = new Task.Project();
 			example.startDate.permittedRangeInclusive(null, new Date());
 			example.completionDate.permitOnlyNull();
@@ -46,12 +46,12 @@ public class TodaysTasksList extends AbstractTaskList {
 			List<Task> tasks = query.getAllInstancesOf(new Task.Project());
 			return tasks;
 		} else {
-			List<Task> descendants = minortask().getTasksOfProject(taskID);
+			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
 			List<Task> tasks = new ArrayList<>();
 			final Date now = new Date();
 			descendants.stream().filter((t) -> {
 				return t.completionDate.getValue() == null
-						&& !t.taskID.getValue().equals(taskID)
+						&& !t.taskID.getValue().equals(getTaskID())
 						&& t.startDate.getValue() != null
 						&& t.startDate.getValue().before(now);
 			}).forEach(tasks::add);

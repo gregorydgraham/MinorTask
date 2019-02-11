@@ -21,7 +21,7 @@ public class ProfileButton extends SecureSpan {//Button implements MinorTaskComp
 	private void init_() {
 		addClassName("profile-button");
 
-		IconWithToolTip profile = new IconWithToolTip(VaadinIcon.USER_CARD, "Profile & Settings");
+		IconWithToolTip profile = new IconWithToolTip(VaadinIcon.USER_CARD, "Profile & Settings", Position.BOTTOM_LEFT);
 		profile.addClickListener((event) -> {
 			minortask().showProfile();
 		});

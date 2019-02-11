@@ -34,8 +34,8 @@ public class IdeasList extends AbstractTaskList {
 
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
-		System.out.println("TASKID: "+taskID);
-		if (taskID == null) {
+		System.out.println("TASKID: "+getTaskID());
+		if (getTaskID() == null) {
 			Task.Project example = new Task.Project();
 //			example.userID.permittedValues(getCurrentUserID());
 			example.startDate.permitOnlyNull();
@@ -56,14 +56,14 @@ public class IdeasList extends AbstractTaskList {
 			List<Task> tasks = query.getAllInstancesOf(example);
 			return tasks;
 		} else {
-			List<Task> descendants = minortask().getTasksOfProject(taskID);
+			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {
 				return t.completionDate.getValue() == null 
 						&& t.startDate.getValue()==null
 						&& t.preferredDate.getValue()==null
 						&& t.finalDate.getValue()==null
-						&& !t.taskID.getValue().equals(taskID);
+						&& !t.taskID.getValue().equals(getTaskID());
 			}).forEach(tasks::add);
 			return tasks;
 		}

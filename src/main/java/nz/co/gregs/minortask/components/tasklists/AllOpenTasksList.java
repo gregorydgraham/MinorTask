@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class AllOpenTasksList extends AbstractTaskList {
@@ -39,7 +40,7 @@ public class AllOpenTasksList extends AbstractTaskList {
 	}
 
 	Long getProjectID() {
-		return taskID;
+		return getTaskID();
 	}
 
 	@Override
@@ -47,12 +48,12 @@ public class AllOpenTasksList extends AbstractTaskList {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
 //		example.userID.permittedValues(minortask().getCurrentUserID());
-		final DBQuery query = getDatabase().getDBQuery(example);
+		final DBQuery query = Globals.getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getCurrentUserID())
+				example.column(example.userID).is(minortask().getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getCurrentUserID())
+								example.column(example.assigneeID).is(minortask().getCurrentUserID())
 						)
 		);
 		if (getProjectID() == null) {
@@ -60,7 +61,7 @@ public class AllOpenTasksList extends AbstractTaskList {
 			return list;
 		} else {
 			example.taskID.permittedValues(getProjectID());
-			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
+			DBRecursiveQuery<Task> recurse = Globals.getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
 			List<Task> descendants = recurse.getDescendants();
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {

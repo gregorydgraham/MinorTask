@@ -9,13 +9,34 @@ and open the template in the editor.
 */
 
 vaadin-grid-cell-content{
-	padding: 1px;
-	padding-bottom: 5px;
-	width: auto;
+	width: 100%;
+	height: 100%;
 } 
-vaadin-grid td{
-	padding: 1px;
-	width: auto;
+
+flow-component-renderer{
+	width: 100%;
+	height: 100%;
+	min-height: 36px;
+	min-width: 36px;
+}
+
+.tasklist-well{
+	width: 100%;
+}
+
+.tasklist-grid-row{
+	cursor: pointer;
+	vertical-align: top;
+	display: flex;
+	flex-direction: row;
+	align-content: space-between;
+	align-items: center;
+	width: calc(100% - 2px);
+	font-size: 16px;
+	background-color: white;
+	border-bottom: thin solid #e5e5e5;
+	border-left: thin solid #e5e5e5;
+	border-right: thin solid #e5e5e5;
 }
 
 .task-list-grid-container{
@@ -63,6 +84,7 @@ vaadin-grid td{
 
 .tasklist-name{
 	white-space: normal;
+	display: block;
 }
 
 .tasklist-description{
@@ -70,8 +92,14 @@ vaadin-grid td{
 	font-size: smaller;
 }
 
+.tasklist-entry-summary{
+	display: inline-block;
+	width: 100%;
+}
+
 .tasklist-project.tasklist-complete-tick{
-	display: none;
+	/*display: none;*/
+	opacity: 0;
 }
 
 .tasklist-subtask-count{
@@ -79,11 +107,13 @@ vaadin-grid td{
 }
 
 .tasklist-entry-prefix{
-	/*width: 2em;*/
+	padding: 3px;
 }
 
 .tasklist-entry-suffix{
-	/*width: 2em;*/
+}
+
+.tasklist-footer{
 }
 
 .tasklist-complete-tick{
@@ -91,6 +121,10 @@ vaadin-grid td{
 	color: white; 
 	border-radius: 4px;
 	font-size: smaller;
+	height: 36px;
+	min-height: 36px;
+	width: 36px;
+	min-width: 36px;
 }
 
 .tasklist-reopen-tick{
@@ -110,4 +144,5 @@ vaadin-grid td{
 .edit-task-complete-button-container {
 	display: flex;
 	flex-direction: row-reverse;
+	height: 100%;
 }

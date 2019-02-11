@@ -13,6 +13,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.components.AddTaskButton;
+import nz.co.gregs.minortask.components.HasToolTip.Position;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @StyleSheet("styles/open-task-list.css")
@@ -40,7 +41,7 @@ public class OpenTaskList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task.WithSortColumns();
 //		example.userID.permittedValues(minortask().getCurrentUserID());
-		example.projectID.permittedValues(taskID);
+		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permittedValues((Date) null);
 		final DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
@@ -66,7 +67,8 @@ public class OpenTaskList extends AbstractTaskList {
 	 */
 	public final AddTaskButton getNewTaskButton() {
 		if (newTaskButton == null) {
-			newTaskButton = new AddTaskButton(taskID);
+			newTaskButton = new AddTaskButton(getTaskID());
+			newTaskButton.setToolTipPosition(Position.BOTTOM_LEFT);
 		}
 		return newTaskButton;
 	}

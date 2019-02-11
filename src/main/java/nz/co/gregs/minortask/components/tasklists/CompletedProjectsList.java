@@ -8,6 +8,9 @@ package nz.co.gregs.minortask.components.tasklists;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
+import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
@@ -22,15 +25,15 @@ public class CompletedProjectsList extends AbstractTaskList {
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task();
 //		example.userID.permittedValues(minortask().getCurrentUserID());
-		example.projectID.permittedValues(taskID);
+		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
 		final DBQuery query = getDatabase().getDBQuery(example);
 		// add user requirement
 		query.addCondition(
-				example.column(example.userID).is(getCurrentUserID())
+				example.column(example.userID).is(minortask().getCurrentUserID())
 						.or(
-								example.column(example.assigneeID).is(getCurrentUserID())
+								example.column(example.assigneeID).is(minortask().getCurrentUserID())
 						)
 		);
 		query.setSortOrder(

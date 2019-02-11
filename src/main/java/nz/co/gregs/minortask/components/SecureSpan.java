@@ -17,7 +17,7 @@ public class SecureSpan extends Span implements RequiresLogin {
 	public SecureSpan() {
 	}
 
-	SecureSpan(Component... components) {
+	public SecureSpan(Component... components) {
 		super();
 		add(components);
 	}

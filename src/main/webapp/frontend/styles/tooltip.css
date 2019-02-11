@@ -48,74 +48,76 @@ and open the template in the editor.
 }
 
 .tooltip .tooltiptext {
-	visibility: hidden;
-	width: 15em;
+	visibility: hidden;	
+	opacity: 0;
+	max-width: 15em;
+	min-width: 10em;
 	height: auto;
 	white-space:normal;
 	word-wrap: break-word;
-	border:thin solid bisque;
-	background-color: antiquewhite;
+	border:thin solid cadetblue;
+	background-color: white;
 	color: #333333;
 	text-align: center;
 	font-size: small;
 	font-weight: normal;
 	border-radius: 6px;
-	padding: 0;/*5px 0;*/
-	position: absolute;
+	padding: 0;
 	z-index: 1;
-	top: 95%;
-	left: 50%;
-	margin-left: -60px;
 }
 
 .tooltip .tooltiptext::after {
 	content: "";
-	position: absolute;
-	bottom: 100%;
-	left: 50%;
-	margin-left: -6em;
-	border-width: 10px;
-	border-style: solid;
-	border-color: transparent transparent bisque transparent;
 }
 
 .tooltip:hover .tooltiptext {
 	animation: fadeinandout 3s;
 }
 
-.tooltip .icontooltiptext {
+.tooltipposn-bottom-centre {
 	position: absolute;
-	visibility: hidden;
-	max-width: 15em;
-	min-width: 10em;
-	height: auto;
-	white-space:normal;
-	word-wrap: break-word;
-	border:thin solid bisque;
-	background-color: antiquewhite;
-	color: #333333;
-	text-align: center;
-	font-size: small;
-	font-weight: normal;
-	border-radius: 6px;
-	/*border-top-left-radius: 0;*/
-	padding: 0;/*5px 0;*/
-	z-index: 1;
-	top: 95%;
-	/*left: -2em;*/
+	top: 90%;
+	left: 50%;
+	margin-left: -60px;
 }
 
-.tooltip .icontooltiptext::after {
-	content: "";
+.tooltipposn-bottom-right {
 	position: absolute;
-	bottom: 100%;
-	left: 50%;
-	margin-left: -50%;
+	top: 90%;
+}
+
+.tooltipposn-bottom-left {
+	position: absolute;
+	top: 2em;
+	right: 10%;
+}
+
+.tooltip .tooltipposn-bottom-centre::after {
+	position: absolute;
+	top: -20px;
+	left: 25%;
+	margin-left: 10%;
 	border-width: 10px;
 	border-style: solid;
-	border-color: transparent transparent bisque transparent;
+	border-color: transparent transparent cadetblue transparent;
 }
 
-.tooltip:hover .icontooltiptext {
-	animation: fadeinandout 3s;
+.tooltip .tooltipposn-bottom-right::after {
+	position: absolute;
+	top: -20px;
+	left: 15px;
+	margin-left: -1em;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent cadetblue transparent;
+}
+
+.tooltip .tooltipposn-bottom-left::after {
+	position: absolute;
+	top: -20px;
+	right: 15px;
+	margin-right: -1em;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent white transparent;
 }

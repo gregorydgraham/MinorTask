@@ -5,8 +5,6 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
@@ -14,28 +12,29 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author gregorygraham
  */
-public class IconWithToolTip extends SecureDiv {
+public class IconWithToolTip extends SecureSpan {
 
 	public IconWithToolTip(VaadinIcon vaadinIcon) {
-		_init(vaadinIcon, null);
+		_init(vaadinIcon, null, Position.BOTTOM_RIGHT);
 	}
 
 	public IconWithToolTip(VaadinIcon vaadinIcon, String tooltip) {
-		_init(vaadinIcon, tooltip);
+		_init(vaadinIcon, tooltip, Position.BOTTOM_RIGHT);
 	}
 
-	private void _init(VaadinIcon vaadinIcon, String tooltip) {
+	public IconWithToolTip(VaadinIcon vaadinIcon, String tooltip, Position posn) {
+		_init(vaadinIcon, tooltip, posn);
+	}
+
+	private void _init(VaadinIcon vaadinIcon, String tooltip, Position posn) {
 		this.add(new Icon(vaadinIcon));
 		if (tooltip != null) {
-			setTooltipText(tooltip);
+			setTooltipText(tooltip, posn);
 		}
 	}
 	
 	@Override
 	public void setTooltipText(String text) {
-		this.addClassName("tooltip");
-		Div span = new Div(new Paragraph(text));
-		getElement().insertChild(0, span.getElement());
-		span.addClassName("icontooltiptext");
+		setTooltipText(text, Position.BOTTOM_RIGHT);
 	}
 }

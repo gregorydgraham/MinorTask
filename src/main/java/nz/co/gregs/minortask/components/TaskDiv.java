@@ -5,26 +5,29 @@
  */
 package nz.co.gregs.minortask.components;
 
-import java.util.Objects;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.User;
 
-public class SecureTaskDiv extends SecureDiv {
+public class TaskDiv extends VerticalLayout {
 
 	private Task task;
 
-	public SecureTaskDiv(Long taskid) {
+	public TaskDiv(Long taskid) {
 		try {
-			this.task = getTask(taskid);
+			this.task = MinorTask.getMinorTask().getTask(taskid);
 		} catch (Globals.InaccessibleTaskException ex) {
-			Logger.getLogger(SecureTaskDiv.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(TaskDiv.class.getName()).log(Level.SEVERE, null, ex);
 			this.task = null;
 		}
 	}
 
-	public SecureTaskDiv(Task task) {
+	public TaskDiv(Task task) {
 		this.task = task;
 	}
 	
@@ -36,23 +39,33 @@ public class SecureTaskDiv extends SecureDiv {
 		return task==null? null: task.taskID.longValue();
 	}
 
-	@Override
+//	@Override
 	protected boolean checkForPermission() {
 		return checkForPermission(task);
 	}
 
 	protected boolean checkForPermission(Task task) {
 		if (task == null) {
-			return super.checkForPermission();
+			return true;
 		} else {
-			final Long userID = task.userID.getValue();
-			final Long assigneeID = task.assigneeID.getValue();
-			return super.checkForPermission()
-					&& (
-					Objects.equals(userID, getCurrentUserID())
-					|| Objects.equals(assigneeID, getCurrentUserID())
-					);
+			return true;
 		}
+	}
+
+	protected MinorTask minortask() {
+		return MinorTask.getMinorTask();
+	}
+
+	protected DBDatabase getDatabase() {
+		return Globals.getDatabase();
+	}
+	
+	protected User getCurrentUser(){
+		return minortask().getCurrentUser();
+	}
+	
+	protected long getCurrentUserID(){
+		return minortask().getCurrentUserID();
 	}
 
 }

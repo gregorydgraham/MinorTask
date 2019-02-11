@@ -25,7 +25,7 @@ public class ColleaguesButton extends Button implements MinorTaskComponent {
 
 	private Label inviteLabel;
 	String defaultText = "";
-	IconWithToolTip defaultIcon = new IconWithToolTip(VaadinIcon.USERS, "Your Team");
+	IconWithToolTip defaultIcon = new IconWithToolTip(VaadinIcon.USERS, "Your Team", Position.BOTTOM_LEFT);
 
 	public ColleaguesButton() {
 		super();
