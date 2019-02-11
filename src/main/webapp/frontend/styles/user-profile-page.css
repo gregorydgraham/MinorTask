@@ -35,4 +35,5 @@ image-upload{
 #user-profile-contents{
 	display:flex;
 	flex-direction: column;
+	padding-left: 3px;
 }
