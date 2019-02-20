@@ -14,24 +14,29 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
  *
  * @author gregorygraham
  */
-public class PlaceGrid extends SecureDiv {
+public class OpenStreetMapPlaceGrid extends SecureDiv {
 
 	private Long taskID;
 	private final Div grid = new Div();
-	private List<Place> allRows;
 
-	public PlaceGrid() {
+	public OpenStreetMapPlaceGrid(Long taskID) {
+		this.taskID = taskID;
+		makeComponent();
+	}
+	
+	public OpenStreetMapPlaceGrid(Long taskID, List<OpenStreetMapPlace> places) {
+		this(taskID);
+		setItems(places);
 	}
 
 	public void setTaskID(Long taskID) {
@@ -44,11 +49,10 @@ public class PlaceGrid extends SecureDiv {
 		removeAll();
 		addClassName("place-grid");
 		add(grid);
-		setItems();
 	}
 
 	private Span getSuffixComponent(Place source) {
-		return new Span(new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source)));
+		return new Span(new Button("Add", new Icon(VaadinIcon.PLUS_CIRCLE), (event) -> addSelectedLocation(source)));
 	}
 
 	private Span getPrefixComponent(Place source) {
@@ -71,9 +75,6 @@ public class PlaceGrid extends SecureDiv {
 					"View");
 			anchor2.setTarget("_blank");
 			layout.add(anchor, anchor2);
-//			layout.setMargin(false);
-//			layout.setPadding(false);
-//			layout.setSpacing(false);
 			return layout;
 		} else {
 			return new Span(icon);
@@ -82,62 +83,52 @@ public class PlaceGrid extends SecureDiv {
 
 	private Span getSummaryComponent(Place source) {
 		Span layout = new Span();
-		Span label = new Span(source.displayName.getValueWithDefaultValue("Location"));
+		Label label = new Label(source.displayName.getValueWithDefaultValue("Location"));
 		TextField component = new TextField(
 				"",
-				source.description.getValueWithDefaultValue("Important Location"),
-				(event) -> {
-					updateDescription(source, event.getValue());
-				});
+				source.description.getValueWithDefaultValue("Important Location"));
 		layout.add(label, component);
-//		layout.setMargin(false);
-//		layout.setPadding(false);
-//		layout.setSpacing(false);
 		return layout;
 	}
 
-	public void refresh() {
-		setItems();
-	}
-
-	private void setItems() {
-		try {
-			Place example = new Place();
-			example.taskID.permittedValues(this.taskID);
-			allRows = getDatabase().getDBTable(example).getAllRows();
-			this.setVisible(!allRows.isEmpty());
-			allRows.forEach((source) -> {
-				Div gridEntry = new Div();
-				gridEntry.add(getPrefixComponent(source));
-				gridEntry.add(getSummaryComponent(source)
-				);
-				gridEntry.add(getSuffixComponent(source));
-				grid.add(gridEntry);
-			});
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-	}
-
-	private void removePlace(Place locn) {
-		try {
-			getDatabase().delete(locn);
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-		setItems();
-	}
-
-	private void updateDescription(Place source, String value) {
-		source.description.setValue(value);
-		try {
-			getDatabase().update(source);
-			minortask().chat("Saved");
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-	}
+//	private void updateDescription(Place source, String value) {
+//		source.description.setValue(value);
+//		try {
+//			getDatabase().update(source);
+//			MinorTask.chat("Saved");
+//		} catch (SQLException ex) {
+//			sqlerror(ex);
+//		}
+//	}
 
 	public void setReadOnly(boolean b) {
+	}
+
+	private void addSelectedLocation(Place location) {
+		try {
+			getDatabase().insert(location);
+		} catch (SQLException ex) {
+			sqlerror(ex);
+		}
+
+// Ultimately we need to inform our listeners that there is a new location
+		fireEvent(new PlaceAddedEvent(this, true));
+	}
+
+	void clear() {
+		grid.removeAll();
+	}
+
+	final void setItems(List<OpenStreetMapPlace> places) {
+		places.forEach((source) -> {
+			Div gridEntry = new Div();
+			final Place place = new Place(taskID, source);
+			System.out.println(""+place);
+			gridEntry.add(getPrefixComponent(place));
+			gridEntry.add(getSummaryComponent(place)
+			);
+			gridEntry.add(getSuffixComponent(place));
+			grid.add(gridEntry);
+		});
 	}
 }

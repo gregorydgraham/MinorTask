@@ -16,12 +16,7 @@ public class SecureTaskDiv extends SecureDiv {
 	private Task task;
 
 	public SecureTaskDiv(Long taskid) {
-		try {
-			this.task = getTask(taskid);
-		} catch (Globals.InaccessibleTaskException ex) {
-			Logger.getLogger(SecureTaskDiv.class.getName()).log(Level.SEVERE, null, ex);
-			this.task = null;
-		}
+		setTask(taskid);
 	}
 
 	public SecureTaskDiv(Task task) {
@@ -34,6 +29,15 @@ public class SecureTaskDiv extends SecureDiv {
 
 	public Long getTaskID(){
 		return task==null? null: task.taskID.longValue();
+	}
+
+	public void setTask(Long id){
+		try {
+			this.task = getTask(id);
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(SecureTaskDiv.class.getName()).log(Level.SEVERE, null, ex);
+			this.task = null;
+		}
 	}
 
 	@Override

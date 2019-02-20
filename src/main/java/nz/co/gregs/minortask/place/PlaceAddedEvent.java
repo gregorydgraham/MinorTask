@@ -11,9 +11,9 @@ import com.vaadin.flow.component.ComponentEvent;
  *
  * @author gregorygraham
  */
-public class PlaceAddedEvent extends ComponentEvent<PlaceSearchComponent> {
+public class PlaceAddedEvent extends ComponentEvent<OpenStreetMapPlaceGrid> {
 
-	public PlaceAddedEvent(PlaceSearchComponent source, boolean fromClient) {
+	public PlaceAddedEvent(OpenStreetMapPlaceGrid source, boolean fromClient) {
 		super(source, fromClient);
 	}
 }

@@ -51,7 +51,7 @@ import org.joda.time.Period;
  * @author gregorygraham
  */
 @StyleSheet("styles/edittask.css")
-public class EditTask extends SecureDiv implements ProjectPathChanger {
+public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 	PaperInput name = new PaperInput();
 	TextField ownerField = new TextField("User");
@@ -92,30 +92,31 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	DocumentUploadAndSelector documentUpload;
 	ImageUploadAndSelector imageUpload;
 	PlaceGrid placeGrid = new PlaceGrid();
-	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
+	PlaceSearchComponent placeSearcher = new PlaceSearchComponent(getTaskID());
 	Label activeIndicator = new Label("Active");
 	Label startedIndicator = new Label("Started");
 	Label overdueIndicator = new Label("Overdue");
 	Label oneDayMaybeIndicator = new Label("One Day Maybe");
 	Label completedIndicator = new Label("COMPLETED");
-	private final Long taskID;
+//	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
 	private SecureDiv nameDiv;
 	private SecureDiv descriptionDiv;
 	private SecureDiv notesDiv;
 
 	public EditTask(Long currentTask) {
-		this.taskID = currentTask;
+		super(currentTask);
+//		this.taskID = currentTask;
 		try {
 
-			taskAndProject = getTaskAndProject(taskID);
-			project = new ProjectPicker(taskID);
+			taskAndProject = getTaskAndProject(getTaskID());
+			project = new ProjectPicker(getTaskID());
 
-			subtasks = new OpenTaskList(taskID);
-			completedTasks = new CompletedTaskList(taskID);
-			documentUpload = new DocumentUploadAndSelector(taskID);
-			imageUpload = new ImageUploadAndSelector(taskID);
-			add(currentTask != null ? getComponent() : new RootTaskComponent(taskID));
+			subtasks = new OpenTaskList(getTaskID());
+			completedTasks = new CompletedTaskList(getTaskID());
+			documentUpload = new DocumentUploadAndSelector(getTaskID());
+			imageUpload = new ImageUploadAndSelector(getTaskID());
+			add(currentTask != null ? getComponent() : new RootTaskComponent(getTaskID()));
 			addViewedDate(taskAndProject);
 		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
@@ -363,7 +364,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	private void checkAndSaveName(BlurNotifier.BlurEvent<PaperInput> event) {
 		try {
-			final Task task1 = getTask(taskID);
+			final Task task1 = getTask(getTaskID());
 			if (!event.getSource().getValue().equals(task1.name.getValue())) {
 				saveTask();
 				fireEvent(new ProjectPathAltered(this, task1, false));
@@ -375,7 +376,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperInput> event) {
 		try {
-			final Task task1 = getTask(taskID);
+			final Task task1 = getTask(getTaskID());
 			if (!event.getSource().getValue().equals(task1.description.getValue())) {
 				saveTask();
 			}
@@ -386,21 +387,21 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	private void checkAndSaveNotesEditor() {
 		try {
-			final Task task1 = getTask(taskID);
+			final Task task1 = getTask(getTaskID());
 			if (!notesEditor.getValue().equals(task1.notes.stringValue())) {
 				notes.setValue(notesEditor.getValue());
 				notes.setVisible(!notes.getValue().isEmpty());
 				saveTask();
 			}
 		} catch (Globals.InaccessibleTaskException ex) {
-			error("Inaccessible Task " + taskID, ex);
+			error("Inaccessible Task " + getTaskID(), ex);
 		}
 		showEditor(null);
 	}
 
 	private void checkAndSaveNotes() {
 		try {
-			final Task task1 = getTask(taskID);
+			final Task task1 = getTask(getTaskID());
 			if (!notes.getValue().equals(task1.notes.stringValue())) {
 				notesEditor.setValue(notes.getValue());
 				saveTask();
@@ -413,7 +414,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 
 	private void checkAndSaveAssignee(AbstractField.ComponentValueChangeEvent<ComboBox<User>, User> event) {
 		try {
-			final Task task1 = getTask(taskID);
+			final Task task1 = getTask(getTaskID());
 			final User sourceValue = event.getSource().getValue();
 			if (sourceValue != null) {
 				final Long sourceUserID = sourceValue.getUserID();
@@ -435,7 +436,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	}
 
 	public void setFieldValues() throws SQLException, UnexpectedNumberOfRowsException {
-		if (taskID != null) {
+		if (getTaskID() != null) {
 			Task task = taskAndProject.getTask();
 			Task.Project taskProject = taskAndProject.getProject();
 			if (task != null) {
@@ -473,14 +474,14 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 					repeat.setVisible(false);
 					addRepeat.setVisible(true);
 				}
-				addSubTask.setTaskID(taskID);
-				documentUpload.setTaskID(taskID);
-				imageUpload.setTaskID(taskID);
-				placeGrid.setTaskID(taskID);
-				placeSearcher.setTaskID(taskID);
-				weblinkGrid.setTaskID(taskID);
-				weblinkEditor.setTaskID(taskID);
-				documentGrid.setTaskID(taskID);
+				addSubTask.setTaskID(getTaskID());
+				documentUpload.setTaskID(getTaskID());
+				imageUpload.setTaskID(getTaskID());
+				placeGrid.setTaskID(getTaskID());
+				placeSearcher.setTaskID(getTaskID());
+				weblinkGrid.setTaskID(getTaskID());
+				weblinkEditor.setTaskID(getTaskID());
+				documentGrid.setTaskID(getTaskID());
 
 				showEditor(null);
 
@@ -546,8 +547,8 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 	}
 
 	public void saveTask() {
-		try {
-			Task task = getTask(taskID);
+//		try {
+			Task task = getTask();
 
 			task.name.setValue(name.getValue());
 			task.description.setValue(description.getValue());
@@ -570,13 +571,13 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 				Globals.sqlerror(ex);
 			}
 			Globals.savedNotice();
-		} catch (Globals.InaccessibleTaskException ex) {
-			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-		}
+//		} catch (Globals.InaccessibleTaskException ex) {
+//			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+//		}
 	}
 
 	public void handleEscapeButton() {
-		Globals.showTask(taskID);
+		Globals.showTask(getTaskID());
 	}
 
 	public final void setAsDefaultButton(Button button) {
@@ -612,7 +613,7 @@ public class EditTask extends SecureDiv implements ProjectPathChanger {
 			chat("Adding document link..." + event.getSource().getClass().getSimpleName());
 			TaskDocumentLink link = new TaskDocumentLink();
 			link.documentID.setValue(event.getValue().documentID);
-			link.taskID.setValue(taskID);
+			link.taskID.setValue(getTaskID());
 			link.ownerID.setValue(getCurrentUserID());
 			try {
 				getDatabase().insert(link);

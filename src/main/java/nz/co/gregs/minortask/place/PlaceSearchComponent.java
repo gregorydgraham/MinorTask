@@ -8,7 +8,6 @@ package nz.co.gregs.minortask.place;
 import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.io.IOException;
@@ -19,17 +18,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.HasDefaultButton;
-import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.SecureTaskDiv;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,31 +38,23 @@ import org.xml.sax.SAXException;
  *
  * @author gregorygraham
  */
-public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton {
+public class PlaceSearchComponent extends SecureTaskDiv implements HasDefaultButton {
 
-	private Long taskID;
-	TextField locationText = new TextField("", "", "address to search for...");
-	Button searchButton = new Button("Search For Location...");
-	Button addButton = new Button("Add");
-	PlacesBox comboBox = new PlacesBox();
+	TextField locationText = new TextField("", "Lambton", "address to search for...");
+	Button searchButton = new Button("Search OpenStreetMap...");
+	OpenStreetMapPlaceGrid placeGrid = new OpenStreetMapPlaceGrid(getTaskID());
 	private Registration defaultRegistration;
 
-	public PlaceSearchComponent() {
-		super();
+	public PlaceSearchComponent(Long taskID) {
+		super(taskID);
 		addClassName("place-search-component");
 
 		add(locationText);
 		add(searchButton);
-		add(comboBox);
-		add(addButton);
+		add(placeGrid);
 
 		searchButton.addClickListener((event) -> {
 			searchForLocation(locationText.getValue());
-			comboBox.setOpened(true);
-			comboBox.focus();
-		});
-		addButton.addClickListener((event) -> {
-			addSelectedLocation();
 		});
 		locationText.addValueChangeListener((event) -> {
 			searchForLocation(event.getSource().getValue());
@@ -73,8 +63,6 @@ public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton 
 			if (locationText.isEnabled() && !locationText.isReadOnly()) {
 				defaultRegistration = setAsDefaultButton(searchButton, (keyEvent) -> {
 					searchForLocation(locationText.getValue());
-					comboBox.setOpened(true);
-					comboBox.focus();
 				});
 			}
 		});
@@ -83,39 +71,15 @@ public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton 
 				removeAsDefaultButton(searchButton, defaultRegistration);
 			}
 		});
-		comboBox.addValueChangeListener((event) -> {
-			defaultRegistration = setAsDefaultButton(addButton, (keyEvent) -> {
-				addSelectedLocation();
-			});
-		});
-		comboBox.addBlurListener((event) -> {
-			if (defaultRegistration != null) {
-				removeAsDefaultButton(addButton, defaultRegistration);
-			}
-		});
 	}
 
-	public void setTaskID(Long taskID) {
-		this.taskID = taskID;
-	}
-
-	private void addSelectedLocation() {
-		OpenStreetMapPlace place = comboBox.getValue();
-		Place location = new Place(this.taskID, place);
-		try {
-			getDatabase().insert(location);
-		} catch (SQLException ex) {
-			sqlerror(ex);
-		}
-
-// Ultimately we need to inform our listeners that there is a new location
-		fireEvent(new PlaceAddedEvent(this, true));
+	public final void setTaskID(Long taskID) {
+		setTask(taskID);
 	}
 
 	private void searchForLocation(String searchString) {
 		try {
-			comboBox.setToEmptyList();
-//			String searchString = event.getSource().getValue();
+			placeGrid.clear();
 			StringBuilder url = new StringBuilder("https://nominatim.openstreetmap.org/search?q=");
 			String charset = "UTF-8";
 			String encodedSearchString = URLEncoder.encode(searchString, charset);
@@ -127,6 +91,11 @@ public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton 
 			urlConnection.setUseCaches(false);
 			urlConnection.setRequestProperty("accept-charset", charset);
 			urlConnection.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+			urlConnection.setRequestProperty("referer", Globals.getApplicationURL());
+			System.out.println("REQUEST: " + urlConnection.toString());
+			urlConnection.getHeaderFields().entrySet().forEach((t) -> {
+				System.out.println("HEADER: " + t.getKey() + ": " + t.getValue());
+			});
 
 			try (InputStream is = urlConnection.getInputStream()) {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -148,11 +117,15 @@ public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton 
 					System.out.println("PLACENODES: " + placeNodes);
 					if (placeNodes != null) {
 						System.out.println("PLACENODES: " + placeNodes.getLength());
+						List<OpenStreetMapPlace> places = new ArrayList<>();
 						for (int i = 0; i < placeNodes.getLength(); i++) {
-							OpenStreetMapPlace place = new OpenStreetMapPlace((Element) placeNodes.item(i));
+							final Element element = (Element) placeNodes.item(i);
+							System.out.println("PROCESSING: " + element.getTextContent());
+							OpenStreetMapPlace place = new OpenStreetMapPlace(element);
 							System.out.println(place.toCompleteString());
-							this.comboBox.addPlace(place);
+							places.add(place);
 						}
+						this.placeGrid.setItems(places);
 					}
 				}
 			}
@@ -178,42 +151,7 @@ public class PlaceSearchComponent extends SecureDiv implements HasDefaultButton 
 
 	public void setReadOnly(boolean b) {
 		locationText.setReadOnly(b);
-		comboBox.setReadOnly(b);
-
-		addButton.setEnabled(!b);
+		placeGrid.setReadOnly(b);
 		searchButton.setEnabled(!b);
-	}
-
-	private static class PlacesBox extends ComboBox<OpenStreetMapPlace> {
-
-		List<OpenStreetMapPlace> placesList = new ArrayList<>();
-
-		public PlacesBox() {
-			super();
-		}
-
-		private void refreshList() {
-			super.setItems(placesList);
-		}
-
-		@Override
-		public void setItems(Collection<OpenStreetMapPlace> items) {
-			placesList.addAll(items);
-			refreshList();
-		}
-
-		public void addPlace(OpenStreetMapPlace place) {
-			placesList.add(place);
-			refreshList();
-		}
-
-		public void addPlaces(Collection<OpenStreetMapPlace> places) {
-			this.setItems(places);
-		}
-
-		private void setToEmptyList() {
-			this.placesList.clear();
-			refreshList();
-		}
 	}
 }
