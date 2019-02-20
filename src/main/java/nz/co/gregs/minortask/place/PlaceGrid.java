@@ -10,12 +10,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
@@ -71,9 +68,6 @@ public class PlaceGrid extends SecureDiv {
 					"View");
 			anchor2.setTarget("_blank");
 			layout.add(anchor, anchor2);
-//			layout.setMargin(false);
-//			layout.setPadding(false);
-//			layout.setSpacing(false);
 			return layout;
 		} else {
 			return new Span(icon);
@@ -90,9 +84,6 @@ public class PlaceGrid extends SecureDiv {
 					updateDescription(source, event.getValue());
 				});
 		layout.add(label, component);
-//		layout.setMargin(false);
-//		layout.setPadding(false);
-//		layout.setSpacing(false);
 		return layout;
 	}
 

@@ -17,7 +17,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
@@ -90,16 +89,6 @@ public class OpenStreetMapPlaceGrid extends SecureDiv {
 		layout.add(label, component);
 		return layout;
 	}
-
-//	private void updateDescription(Place source, String value) {
-//		source.description.setValue(value);
-//		try {
-//			getDatabase().update(source);
-//			MinorTask.chat("Saved");
-//		} catch (SQLException ex) {
-//			sqlerror(ex);
-//		}
-//	}
 
 	public void setReadOnly(boolean b) {
 	}
