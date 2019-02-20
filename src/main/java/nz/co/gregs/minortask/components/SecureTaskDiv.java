@@ -23,15 +23,15 @@ public class SecureTaskDiv extends SecureDiv {
 		this.task = task;
 	}
 	
-	public Task getTask(){
+	public final Task getTask(){
 		return task;
 	}
 
-	public Long getTaskID(){
+	public final Long getTaskID(){
 		return task==null? null: task.taskID.longValue();
 	}
 
-	public void setTask(Long id){
+	public final void setTask(Long id){
 		try {
 			this.task = getTask(id);
 		} catch (Globals.InaccessibleTaskException ex) {
