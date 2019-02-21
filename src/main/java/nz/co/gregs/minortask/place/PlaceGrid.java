@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.polymer.Details;
 
 /**
  *
@@ -87,14 +88,15 @@ public class PlaceGrid extends SecureDiv {
 		layout.addClassName("place-grid-entry-summary");
 		Div label = new Div(new Span(source.displayName.getValueWithDefaultValue("Location")));
 		label.addClassName("place-grid-entry-prefix-label");
-		TextField component = new TextField(
+		TextField description = new TextField(
 				"",
-				source.description.getValueWithDefaultValue("Important Location"),
+				source.description.getValueWithDefaultValue(source.displayName.getValueWithDefaultValue("Location")),
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
-		component.addClassName("place-grid-entry-prefix-description");
-		layout.add(label, component);
+		description.addClassName("place-grid-entry-prefix-description");
+		final Details details = new Details(source.displayName.getValueWithDefaultValue("Location").substring(0, 20)+"...", label);
+		layout.add(description, details);
 		return layout;
 	}
 
