@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.place;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -25,6 +26,7 @@ import nz.co.gregs.minortask.components.SecureDiv;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/place-grid.css")
 public class PlaceGrid extends SecureDiv {
 
 	private Long taskID;
@@ -49,10 +51,14 @@ public class PlaceGrid extends SecureDiv {
 	}
 
 	private Span getSuffixComponent(Place source) {
-		return new Span(new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source)));
+		final Span span = new Span(new Button(new Icon(VaadinIcon.TRASH), (event) -> removePlace(source)));
+		span.addClassName("place-grid-entry-suffix");
+		return span;
 	}
 
 	private Span getPrefixComponent(Place source) {
+		Span layout = new Span();
+		layout.addClassName("place-grid-entry-prefix");
 		Component icon = new Icon(VaadinIcon.MAP_MARKER);
 		String value = source.iconURL.getValue();
 		if (value != null && !value.isEmpty()) {
@@ -61,31 +67,33 @@ public class PlaceGrid extends SecureDiv {
 		}
 
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
-			Span layout = new Span();
 			final String url = "https://www.openstreetmap.org"
-					+"/search?query="+source.displayName.getValue("Unknown location").replaceAll(",", "%2c").replaceAll(" ", "%20")
-					+"#map="+source.osmID.stringValue()+"/" + source.latitude.getValue() + "%2c" + source.longitude.getValue();
-			Anchor anchor = new Anchor(url,	"");
+					+ "/search?query=" + source.displayName.getValue("Unknown location").replaceAll(",", "%2c").replaceAll(" ", "%20")
+					+ "#map=" + source.osmID.stringValue() + "/" + source.latitude.getValue() + "%2c" + source.longitude.getValue();
+			Anchor anchor = new Anchor(url, "");
 			anchor.setTarget("_blank");
 			anchor.add(icon);
 			Anchor anchor2 = new Anchor(url, "View");
 			anchor2.setTarget("_blank");
 			layout.add(anchor, anchor2);
-			return layout;
 		} else {
-			return new Span(icon);
+			layout.add(icon);
 		}
+		return layout;
 	}
 
 	private Span getSummaryComponent(Place source) {
 		Span layout = new Span();
+		layout.addClassName("place-grid-entry-summary");
 		Div label = new Div(new Span(source.displayName.getValueWithDefaultValue("Location")));
+		label.addClassName("place-grid-entry-prefix-label");
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue("Important Location"),
 				(event) -> {
 					updateDescription(source, event.getValue());
 				});
+		component.addClassName("place-grid-entry-prefix-description");
 		layout.add(label, component);
 		return layout;
 	}
@@ -103,9 +111,9 @@ public class PlaceGrid extends SecureDiv {
 			this.setVisible(!allRows.isEmpty());
 			allRows.forEach((source) -> {
 				Div gridEntry = new Div();
+				gridEntry.addClassName("place-grid-entry");
 				gridEntry.add(getPrefixComponent(source));
-				gridEntry.add(getSummaryComponent(source)
-				);
+				gridEntry.add(getSummaryComponent(source));
 				gridEntry.add(getSuffixComponent(source));
 				grid.add(gridEntry);
 			});

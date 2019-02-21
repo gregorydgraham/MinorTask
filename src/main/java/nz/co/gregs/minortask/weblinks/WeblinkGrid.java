@@ -29,7 +29,6 @@ public class WeblinkGrid extends SecureDiv {
 
 	private Long taskID;
 	private final Div gridDiv = new Div();
-//	private final Grid<Weblink> grid = new Grid<Weblink>();
 	private List<Weblink> allRows;
 
 	public WeblinkGrid() {
@@ -46,15 +45,9 @@ public class WeblinkGrid extends SecureDiv {
 		removeAll();
 		setSizeUndefined();
 		gridDiv.addClassName("weblink-grid");
-//		gridDiv.setHeightByRows(true);
 
 		setItems();
 
-//		gridDiv.addComponentColumn((source) -> getAnchorComponent(source)
-//		).setFlexGrow(20);
-//		gridDiv.addComponentColumn((source) -> getDescriptionComponent(source)
-//		).setFlexGrow(20);
-//		gridDiv.addComponentColumn((source) -> getRemoveComponent(source));
 		add(gridDiv);
 	}
 
@@ -77,7 +70,6 @@ public class WeblinkGrid extends SecureDiv {
 		String iconURL = source.iconURL.getValue();
 		Component icon = new Icon(VaadinIcon.BOOKMARK_O);
 		if (iconURL != null && !iconURL.isEmpty()) {
-//			System.out.println("URL VALUE: \"" + iconURL + "\"");
 			icon = new Image(iconURL, "");
 		}
 		((HasStyle)icon).addClassName("weblink-grid-entry-prefix-icon");
@@ -89,9 +81,6 @@ public class WeblinkGrid extends SecureDiv {
 		Anchor urlAnchor = new Anchor(source.webURL.getValue(), source.webURL.getValue().replaceAll("http[s]*://", ""));
 		urlAnchor.setTarget("_blank");
 		layout.add(iconAnchor, urlAnchor);
-//		layout.setMargin(false);
-//		layout.setPadding(false);
-//		layout.setSpacing(false);
 		return layout;
 	}
 
@@ -105,9 +94,6 @@ public class WeblinkGrid extends SecureDiv {
 					updateDescription(source, event.getValue());
 				});
 		layout.add(component);
-//		layout.setMargin(false);
-//		layout.setPadding(false);
-//		layout.setSpacing(false);
 		return layout;
 	}
 
@@ -116,7 +102,6 @@ public class WeblinkGrid extends SecureDiv {
 			Weblink example = new Weblink();
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
-//			gridDiv.setItems(allRows);
 			allRows.forEach((source) -> {
 				Div gridEntry = new Div();
 				gridEntry.addClassName("weblink-grid-entry");

@@ -1,0 +1,58 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 12/02/2019, 12:15:29 PM
+    Author     : gregorygraham
+*/
+.place-component{}
+
+.place-grid{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.place-grid-entry{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+
+.place-grid-entry-prefix{
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: center;
+	flex-basis: content;
+	padding-right: 3px;
+	min-width: 10em;
+	border-bottom: thin solid #CCC;
+}
+
+.place-grid-entry-summary{
+	width: 100%;
+	border-bottom: thin solid #CCC;
+}
+
+.place-grid-entry-suffix{
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: center;
+	padding-left: 3px;
+	border-bottom: thin solid #CCC;
+}
+
+.place-grid-entry-prefix-icon{
+	height:24px;
+	width: 24px;
+	object-fit: contain;
+}
+
+.place-grid-entry-summary vaadin-text-field{
+	width: 99%;
+}
