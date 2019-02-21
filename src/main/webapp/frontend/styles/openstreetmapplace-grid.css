@@ -7,22 +7,22 @@ and open the template in the editor.
     Created on : 12/02/2019, 12:15:29 PM
     Author     : gregorygraham
 */
-.place-component{}
+.openstreetmapplace-component{}
 
-.place-grid{
+.openstreetmapplace-grid{
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 }
 
-.place-grid-entry{
+.openstreetmapplace-grid-entry{
 	display: flex;
 	flex-direction: row;
 	width: 100%;
 }
 
 
-.place-grid-entry-prefix{
+.openstreetmapplace-grid-entry-prefix{
 	display: flex;
 	flex-direction: row;
 	align-content: flex-start;
@@ -33,7 +33,7 @@ and open the template in the editor.
 	border-bottom: thin solid #CCC;
 }
 
-.place-grid-entry-summary{
+.openstreetmapplace-grid-entry-summary{
 	display: flex;
 	flex-direction: column;
 	align-content: center;
@@ -43,7 +43,7 @@ and open the template in the editor.
 	border-bottom: thin solid #CCC;
 }
 
-.place-grid-entry-suffix{
+.openstreetmapplace-grid-entry-suffix{
 	display: flex;
 	flex-direction: row;
 	align-content: flex-start;
@@ -52,12 +52,12 @@ and open the template in the editor.
 	border-bottom: thin solid #CCC;
 }
 
-.place-grid-entry-prefix-icon{
+.openstreetmapplace-grid-entry-prefix-icon{
 	height:24px;
 	width: 24px;
 	object-fit: contain;
 }
 
-.place-grid-entry-summary vaadin-text-field{
+.openstreetmapplace-grid-entry-summary vaadin-text-field{
 	width: 99%;
 }
