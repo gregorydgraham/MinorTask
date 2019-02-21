@@ -71,6 +71,9 @@ public class PlaceSearchComponent extends SecureTaskDiv implements HasDefaultBut
 				removeAsDefaultButton(searchButton, defaultRegistration);
 			}
 		});
+		placeGrid.addPlaceAddedListener((event) -> {
+			fireEvent(event);
+		});
 	}
 
 	public final void setTaskID(Long taskID) {
@@ -144,7 +147,7 @@ public class PlaceSearchComponent extends SecureTaskDiv implements HasDefaultBut
 		return builder.parse(is);
 	}
 
-	public Registration addLocationAddedListener(
+	public Registration addPlaceAddedListener(
 			ComponentEventListener<PlaceAddedEvent> listener) {
 		return addListener(PlaceAddedEvent.class, listener);
 	}
