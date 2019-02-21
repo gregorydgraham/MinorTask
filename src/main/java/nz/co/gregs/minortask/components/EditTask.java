@@ -143,9 +143,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		descriptionDiv.addClassName("edit-task-description");
 
 		notes.addClassName("edit-task-notes");
-//		notes.setSizeFull();
 		notesEditor.addClassName("edit-task-notes");
-//		notesEditor.setSizeFull();
 		notesDiv = new SecureDiv(notes);
 
 		assignedToSelector.addClassName("edit-task-assignedto-selector");
