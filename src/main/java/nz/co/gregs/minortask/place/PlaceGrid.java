@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.place;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -14,8 +15,10 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.util.List;
+import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.SecureDiv;
 
 /**
@@ -29,6 +32,7 @@ public class PlaceGrid extends SecureDiv {
 	private List<Place> allRows;
 
 	public PlaceGrid() {
+		addClassName("place-grid");
 	}
 
 	public void setTaskID(Long taskID) {
@@ -39,7 +43,7 @@ public class PlaceGrid extends SecureDiv {
 	@SuppressWarnings("unchecked")
 	private void makeComponent() {
 		removeAll();
-		addClassName("place-grid");
+		grid.removeAll();
 		add(grid);
 		setItems();
 	}
@@ -58,14 +62,13 @@ public class PlaceGrid extends SecureDiv {
 
 		if (source.latitude.isNotNull() && source.longitude.isNotNull()) {
 			Span layout = new Span();
-			Anchor anchor = new Anchor("https://www.openstreetmap.org"
-					+ "/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
-					"");
+			final String url = "https://www.openstreetmap.org"
+					+"/search?query="+source.displayName.getValue("Unknown location").replaceAll(",", "%2c").replaceAll(" ", "%20")
+					+"#map="+source.osmID.stringValue()+"/" + source.latitude.getValue() + "%2c" + source.longitude.getValue();
+			Anchor anchor = new Anchor(url,	"");
 			anchor.setTarget("_blank");
 			anchor.add(icon);
-			Anchor anchor2 = new Anchor("https://www.openstreetmap.org"
-					+ "/directions?from=&to=" + source.latitude.getValue() + "%2c" + source.longitude.getValue(),
-					"View");
+			Anchor anchor2 = new Anchor(url, "View");
 			anchor2.setTarget("_blank");
 			layout.add(anchor, anchor2);
 			return layout;
@@ -76,7 +79,7 @@ public class PlaceGrid extends SecureDiv {
 
 	private Span getSummaryComponent(Place source) {
 		Span layout = new Span();
-		Span label = new Span(source.displayName.getValueWithDefaultValue("Location"));
+		Div label = new Div(new Span(source.displayName.getValueWithDefaultValue("Location")));
 		TextField component = new TextField(
 				"",
 				source.description.getValueWithDefaultValue("Important Location"),
@@ -93,6 +96,7 @@ public class PlaceGrid extends SecureDiv {
 
 	private void setItems() {
 		try {
+			grid.removeAll();
 			Place example = new Place();
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
@@ -113,6 +117,7 @@ public class PlaceGrid extends SecureDiv {
 	private void removePlace(Place locn) {
 		try {
 			getDatabase().delete(locn);
+			fireEvent(new PlaceRemovedEvent(this, true));
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -123,12 +128,17 @@ public class PlaceGrid extends SecureDiv {
 		source.description.setValue(value);
 		try {
 			getDatabase().update(source);
-			minortask().chat("Saved");
+			MinorTask.chat("Saved");
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
 	}
 
 	public void setReadOnly(boolean b) {
+	}
+
+	public Registration addPlaceRemovedListener(
+			ComponentEventListener<PlaceRemovedEvent> listener) {
+		return addListener(PlaceRemovedEvent.class, listener);
 	}
 }
