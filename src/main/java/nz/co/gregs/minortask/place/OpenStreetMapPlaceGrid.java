@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.place;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -15,6 +16,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.components.SecureDiv;
@@ -96,12 +98,13 @@ public class OpenStreetMapPlaceGrid extends SecureDiv {
 	private void addSelectedLocation(Place location) {
 		try {
 			getDatabase().insert(location);
+			grid.removeAll();
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
 
 // Ultimately we need to inform our listeners that there is a new location
-		fireEvent(new PlaceAddedEvent(this, true));
+		fireEvent(new PlaceAddedEvent(this, false));
 	}
 
 	void clear() {
@@ -119,5 +122,10 @@ public class OpenStreetMapPlaceGrid extends SecureDiv {
 			gridEntry.add(getSuffixComponent(place));
 			grid.add(gridEntry);
 		});
+	}
+
+	public Registration addPlaceAddedListener(
+			ComponentEventListener<PlaceAddedEvent> listener) {
+		return addListener(PlaceAddedEvent.class, listener);
 	}
 }
