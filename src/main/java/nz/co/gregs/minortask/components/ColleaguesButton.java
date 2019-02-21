@@ -14,7 +14,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.datamodel.Colleagues;
+import nz.co.gregs.minortask.components.colleagues.Colleagues;
 
 /**
  *

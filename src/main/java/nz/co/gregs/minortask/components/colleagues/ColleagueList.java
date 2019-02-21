@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.colleagues;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
@@ -23,7 +23,11 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.datamodel.Colleagues;
+import nz.co.gregs.minortask.components.IconWithToolTip;
+import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.UserSelector;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**
@@ -129,6 +133,7 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 	}
 
 	private void setGridItems(List<ColleagueListItem> allRows) {
+		gridDiv.removeAll();
 		allRows
 				.forEach((t) -> {
 					Div div = new Div();
@@ -342,57 +347,5 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 		refreshList();
 	}
 
-	public static class ColleagueListItem {
-
-		private User otherUser;
-		private boolean accepted;
-		private boolean canAccept;
-		private Colleagues colleaguesRow;
-		private boolean declined;
-		private MinorTask minortask;
-
-		public ColleagueListItem(MinorTask minortask) {
-			this.minortask = minortask;
-		}
-
-		public ColleagueListItem(MinorTask minorTask, Colleagues colleagues, User requester, User invitedUser) {
-			this(minorTask);
-			this.colleaguesRow = colleagues;
-			if (minortask.getCurrentUserID() == invitedUser.getUserID()) {
-				otherUser = requester;
-				canAccept = true;
-			} else {
-				otherUser = invitedUser;
-				canAccept = false;
-			}
-			accepted = colleagues.acceptanceDate.isNotNull();
-			declined = colleagues.denialDate.isNotNull();
-			System.out.println("ColleagueListItem");
-		}
-
-		public Colleagues getColleaguesRow() {
-			return colleaguesRow;
-		}
-
-		public User getOtherUser() {
-			return otherUser;
-		}
-
-		public boolean hasAcceptedInvitation() {
-			return accepted && !hasDeclined();
-		}
-
-		public boolean isInvited() {
-			return !accepted && !hasDeclined();
-		}
-
-		public boolean canAccept() {
-			return canAccept;
-		}
-
-		public boolean hasDeclined() {
-			return declined;
-		}
-	}
 
 }

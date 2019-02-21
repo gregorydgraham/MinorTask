@@ -13,7 +13,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
-import nz.co.gregs.minortask.components.ColleagueList;
+import nz.co.gregs.minortask.components.colleagues.ColleagueList;
 import nz.co.gregs.minortask.datamodel.User;
 
 /**

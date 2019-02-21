@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.datamodel;
+package nz.co.gregs.minortask.components.colleagues;
 
 import java.util.Date;
 import nz.co.gregs.dbvolution.DBRow;
@@ -13,6 +13,7 @@ import nz.co.gregs.dbvolution.annotations.DBPrimaryKey;
 import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *

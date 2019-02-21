@@ -69,7 +69,7 @@ import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.components.upload.Document;
-import nz.co.gregs.minortask.datamodel.Colleagues;
+import nz.co.gregs.minortask.components.colleagues.Colleagues;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
 import nz.co.gregs.minortask.pages.FavouriteTasksPage;
@@ -545,7 +545,7 @@ public class Globals {
 					String dcsFactory = "bean/DatabaseConnectionSettings";
 					int index = 0;
 					String thisFactory = dcsFactory;
-					DatabaseConnectionSettings settings = null;
+					DatabaseConnectionSettings settings;
 					try {
 						do {
 							settings = (DatabaseConnectionSettings) envCtx.lookup(thisFactory);
@@ -562,9 +562,9 @@ public class Globals {
 							index++;
 							thisFactory = dcsFactory + index;
 						} while (settings != null);
-					} catch (NameNotFoundException ex) {
+					} catch (NullPointerException | NameNotFoundException ex) {
 						debug("Stopped at index " + index);
-					} catch (Exception ex) {
+					} catch (NamingException ex) {
 						System.out.println("" + ex.getClass().getSimpleName() + ": " + ex.getMessage());
 //						ex.printStackTrace();
 						debug("Stopped at index " + index);

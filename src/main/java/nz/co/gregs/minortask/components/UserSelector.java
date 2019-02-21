@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.function.SerializableFunction;
 import java.sql.SQLException;
@@ -21,7 +20,7 @@ import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
-import nz.co.gregs.minortask.datamodel.Colleagues;
+import nz.co.gregs.minortask.components.colleagues.Colleagues;
 import nz.co.gregs.minortask.datamodel.User;
 
 public class UserSelector extends ComboBox<User> implements RequiresLogin {
