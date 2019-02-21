@@ -7,10 +7,18 @@ and open the template in the editor.
     Created on : 16/11/2018, 11:43:51 AM
     Author     : gregorygraham
 */
-
+:root{
+	/*--vaadin-text-field-default-width: 40em;*/
+}
 .edit-task-button{
 	background-color: #ccffcc; /*#0099cc;;*/
 	color: black;
+}
+
+@media all and (min-width: 901px) {
+	.edit-task-notes{
+		--vaadin-text-field-default-width: 40em;
+	}
 }
 
 @media all and (min-width: 600px) and (max-width: 900px) {
@@ -23,6 +31,10 @@ and open the template in the editor.
 	.edit-task-contents{
 		font-size: small;
 	}
+
+	.edit-task-notes{
+		--vaadin-text-field-default-width: 25em;
+	}
 }
 
 @media all and (max-width: 599px) {
@@ -34,6 +46,10 @@ and open the template in the editor.
 
 	.edit-task-contents{
 		font-size: x-small;
+	}
+
+	.edit-task-notes{
+		--vaadin-text-field-default-width: 15em;
 	}
 }
 
@@ -76,7 +92,13 @@ and open the template in the editor.
 }
 
 .edit-task-notes{
+	max-width:100%;
 	width:100%;
+}
+
+div.vaadin-text-area-container {
+	width: 100%;
+	border: thin solid green;
 }
 
 .edit-task-dates{ 
