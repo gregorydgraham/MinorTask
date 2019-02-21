@@ -42,6 +42,8 @@ import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.place.PlaceAddedEvent;
+import nz.co.gregs.minortask.place.PlaceRemovedEvent;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 import org.joda.time.Period;
@@ -346,7 +348,11 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		addPlace.addClickListener((event) -> {
 			showEditor(placeSearcher);
 		});
-		placeSearcher.addLocationAddedListener((event) -> {
+		placeSearcher.addPlaceAddedListener((event) -> {
+			placeGrid.refresh();
+			showEditor(null);
+		});
+		placeGrid.addPlaceRemovedListener((event) -> {
 			placeGrid.refresh();
 			showEditor(null);
 		});
