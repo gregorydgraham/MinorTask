@@ -41,13 +41,24 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 	public LoginComponent(String username, String password) {
 		super();
+		addClassName("minortask-login");
 		USERNAME_FIELD = new TextField("Your Name");
 		PASSWORD_FIELD = new PasswordField("Password");
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
 		setSizeUndefined();
+
 		add(getComponent());
-		addClassName("minortask-login");
+
+		USERNAME_FIELD.focus();
+		Optional<Cookie> cookie = Globals.getLastUsernameCookieValue();
+		if (cookie.isPresent()) {
+			System.out.println("nz.co.gregs.minortask.components.LoginComponent.getComponent(): " + cookie.get().getValue());
+			USERNAME_FIELD.setValue(cookie.get().getValue());
+			PASSWORD_FIELD.focus();
+		} else {
+			System.out.println("NO LAST USER FOUND");
+		}
 	}
 
 	private Component getComponent() {
@@ -85,16 +96,6 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 				PASSWORD_FIELD,
 				LoginButtons,
 				buttons);
-		USERNAME_FIELD.focus();
-
-		Optional<Cookie> cookie = Globals.getLastUsernameCookieValue();
-		if (cookie.isPresent()) {
-			System.out.println("nz.co.gregs.minortask.components.LoginComponent.getComponent(): " + cookie.get().getValue());
-			USERNAME_FIELD.setValue(cookie.get().getValue());
-			PASSWORD_FIELD.focus();
-		}else{
-			System.out.println("NO LAST USER FOUND");
-		}
 
 		return loginPanel;
 	}
@@ -117,7 +118,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 					case 1:
 						User user = users.get(0);
 						minortask().loginAs(user, password, rememberMeValue);
-						if(minortask().isLoggedIn()){
+						if (minortask().isLoggedIn()) {
 							showDestination();
 						}
 						break;
@@ -150,7 +151,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	}
 
 	private void showDestination() {
-		if (destination!=null){
+		if (destination != null) {
 			Globals.showLocation(destination);
 		}
 	}
