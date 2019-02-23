@@ -90,29 +90,43 @@ public class OpenTaskList extends AbstractTaskList {
 	}
 
 	private void addNewMinorTask() {
+		newAddButton.setVisible(false);
 		Div footer = getFooter();
 		Span span = new Span();
 		span.addClassName("opentasks-newminortask");
 		
 		final TextField textArea = new TextField();
 		textArea.setPlaceholder("Task Name");
-		textArea.addBlurListener((event) -> {
-			createNewMinorTaskFromName(textArea.getValue());
-//			footer.remove(span);
-		});
 		textArea.setSizeFull();
+		final Button saveButton = new Button("Save");
+		saveButton.addClassName("save");
+		saveButton.setSizeUndefined();
+		saveButton.addClickListener((event) -> {
+			footer.remove(span);
+			createNewMinorTaskFromName(textArea.getValue());
+		});
+		final Button cancelButton = new Button("Cancel");
+		cancelButton.addClassName("cancel");
+		cancelButton.setSizeUndefined();
+		cancelButton.addClickListener((event) -> {
+			footer.remove(span);
+			cancelCreateNewMinorTask();
+		});
 
-		span.add(textArea, new Icon(VaadinIcon.DOWNLOAD));
+		span.add(textArea, saveButton, cancelButton);
 		footer.add(span);
 		textArea.focus();
 	}
 
 	private void createNewMinorTaskFromName(String name) {
+		newAddButton.setVisible(true);
 		if (name != null && !name.isEmpty()) {
 			Task task = new Task();
 			task.name.setValue(name);
 			task.userID.setValue(getCurrentUserID());
 			task.projectID.setValue(getTaskID());
+			task.startDate.setValue(new Date());;
+			task.finalDate.setValue(getTask().finalDate.getValue());
 			try {
 				getDatabase().insert(task);
 			} catch (SQLException ex) {
@@ -125,5 +139,9 @@ public class OpenTaskList extends AbstractTaskList {
 
 	public void disableNewButton() {
 		newAddButton.setEnabled(false);
+	}
+
+	private void cancelCreateNewMinorTask() {
+		newAddButton.setVisible(true);
 	}
 }
