@@ -44,13 +44,13 @@ public class LostPasswordComponent extends VerticalLayout implements MinorTaskCo
 	public LostPasswordComponent(String username) {
 		USERNAME_FIELD.setValue(username);
 		add(getComponent());
+		USERNAME_FIELD.focus();
 	}
 
 	private Component getComponent() {
 		VerticalLayout layout = new VerticalLayout();
 
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		USERNAME_FIELD.focus();
 
 		Button resetPassword = new Button("Reset My Password Please");
 		setAsDefaultButton(resetPassword);
