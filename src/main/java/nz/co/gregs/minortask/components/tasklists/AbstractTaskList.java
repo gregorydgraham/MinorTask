@@ -36,6 +36,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 
 	private final Div gridDiv = new Div();
 	private final SecureDiv label = new SecureDiv();
+	private Div footer = new Div();
 
 	public AbstractTaskList() {
 		this((Long) null);
@@ -43,6 +44,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 
 	public AbstractTaskList(Long taskID) {
 		super(taskID);
+		setupTaskList();
 		buildComponent();
 		this.addClassName("tasklist");
 	}
@@ -70,7 +72,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 			setupGrid(allRows);
 			well.add(gridDiv);
 
-			Div footer = new Div();
+			footer.removeAll();
 			final Component[] footerExtras = getFooterExtras();
 			if (footerExtras.length > 0) {
 				footer.add(footerExtras);
@@ -241,13 +243,13 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		return layout;
 	}
 
-	private Anchor wrapInALinkToTheTask(final Task task, final Component summary) {
-		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
-				task.taskID.getValue());
-		Anchor anchor = new Anchor(url, "");
-		anchor.add(summary);
-		return anchor;
-	}
+//	private Anchor wrapInALinkToTheTask(final Task task, final Component summary) {
+//		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
+//				task.taskID.getValue());
+//		Anchor anchor = new Anchor(url, "");
+//		anchor.add(summary);
+//		return anchor;
+//	}
 
 	protected final void refreshList() {
 		try {
@@ -288,6 +290,13 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 			Globals.sqlerror(ex);
 
 		}
+	}
+
+	protected void setupTaskList() {
+	}
+
+	protected Div getFooter() {
+		return footer;
 	}
 
 	public static abstract class PreQueried extends AbstractTaskList {

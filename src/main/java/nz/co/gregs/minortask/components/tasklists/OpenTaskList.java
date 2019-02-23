@@ -6,25 +6,34 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
-import nz.co.gregs.minortask.components.AddTaskButton;
-import nz.co.gregs.minortask.components.HasToolTip.Position;
+import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @StyleSheet("styles/open-task-list.css")
 public class OpenTaskList extends AbstractTaskList {
 
-	private AddTaskButton newTaskButton;
+	private Button newAddButton;
 
 	public OpenTaskList(Long taskID) {
 		super(taskID);
-		newTaskButton = new AddTaskButton(taskID);
 		setTooltipText("All the tasks that are still be done");
+	}
+
+	@Override
+	protected void setupTaskList() {
+		setupAddButton();
 	}
 
 	@Override
@@ -40,7 +49,6 @@ public class OpenTaskList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		Task example = new Task.WithSortColumns();
-//		example.userID.permittedValues(minortask().getCurrentUserID());
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permittedValues((Date) null);
 		final DBQuery query = getDatabase().getDBQuery(example);
@@ -62,24 +70,60 @@ public class OpenTaskList extends AbstractTaskList {
 		return tasks;
 	}
 
-	/**
-	 * @return the newTaskButton
-	 */
-	public final AddTaskButton getNewTaskButton() {
-		if (newTaskButton == null) {
-			newTaskButton = new AddTaskButton(getTaskID());
-			newTaskButton.setToolTipPosition(Position.BOTTOM_LEFT);
-		}
-		return newTaskButton;
-	}
-
 	@Override
 	protected Component[] getFooterExtras() {
-		return new Component[]{getNewTaskButton()};
+		SecureSpan span = new SecureSpan();
+		span.add(newAddButton);
+		span.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
+		return new Component[]{span};
+	}
+
+	private void setupAddButton() {
+		newAddButton = new Button();
+		newAddButton.addClassName("opentasks-addminortaskbutton");
+		newAddButton.setIcon(new Icon(VaadinIcon.PLUS_CIRCLE_O));
+		newAddButton.setText("Add MinorTask");
+		newAddButton.addClassNames("addtaskbutton");
+		newAddButton.addClickListener((event) -> {
+			addNewMinorTask();
+		});
+	}
+
+	private void addNewMinorTask() {
+		Div footer = getFooter();
+		Span span = new Span();
+		span.addClassName("opentasks-newminortask");
+		
+		final TextField textArea = new TextField();
+		textArea.setPlaceholder("Task Name");
+		textArea.addBlurListener((event) -> {
+			createNewMinorTaskFromName(textArea.getValue());
+//			footer.remove(span);
+		});
+		textArea.setSizeFull();
+
+		span.add(textArea, new Icon(VaadinIcon.DOWNLOAD));
+		footer.add(span);
+		textArea.focus();
+	}
+
+	private void createNewMinorTaskFromName(String name) {
+		if (name != null && !name.isEmpty()) {
+			Task task = new Task();
+			task.name.setValue(name);
+			task.userID.setValue(getCurrentUserID());
+			task.projectID.setValue(getTaskID());
+			try {
+				getDatabase().insert(task);
+			} catch (SQLException ex) {
+				sqlerror(ex);
+			}finally{
+				this.refreshList();
+			}
+		}
 	}
 
 	public void disableNewButton() {
-		this.getNewTaskButton().setEnabled(false);
+		newAddButton.setEnabled(false);
 	}
-
 }

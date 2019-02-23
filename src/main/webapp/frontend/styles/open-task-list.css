@@ -12,4 +12,13 @@ and open the template in the editor.
 	width: 100%;
 	display: flex;
 	flex-direction: row-reverse;
+	align-items: center;
+}
+
+.opentasks-newminortask{
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	align-items: center;
 }

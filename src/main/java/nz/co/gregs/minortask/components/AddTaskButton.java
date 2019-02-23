@@ -16,7 +16,7 @@ public class AddTaskButton extends SecureButton {
 
 //	final Button newTaskButton;
 	private Long originatingTaskID = null;
-	private static final String DEFAULT_LABEL = "+ Add Subtask";
+	private static final String DEFAULT_LABEL = "+ Add MinorTask";
 
 	public AddTaskButton() {
 		this(null, DEFAULT_LABEL);

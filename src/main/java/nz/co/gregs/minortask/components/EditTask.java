@@ -15,6 +15,7 @@ import nz.co.gregs.minortask.weblinks.WeblinkGrid;
 import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -105,6 +106,8 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	private SecureDiv nameDiv;
 	private SecureDiv descriptionDiv;
 	private SecureDiv notesDiv;
+	private SecureDiv addButtons;
+	private Div buttonsAndEditors;
 
 	public EditTask(Long currentTask) {
 		super(currentTask);
@@ -197,7 +200,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		addPlace.addClassName("edit-task-button");
 		addWebLink.addClassName("edit-task-button");
 		addNotes.addClassName("edit-task-button");
-		final SecureDiv addButtons = new SecureDiv();
+		addButtons = new SecureDiv();
 		addButtons.add(
 				addSubTask,
 				addDates,
@@ -209,6 +212,17 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				addNotes
 		);
 		addButtons.addClassName("edit-task-addbuttons");
+
+		buttonsAndEditors = new Div();
+		buttonsAndEditors.addClassName("edit-task-editors");
+		buttonsAndEditors.add(
+				addButtons,
+				repeatEditor,
+				placeSearcher,
+				weblinkEditor,
+				notesEditorDiv,
+				documentUpload,
+				imageUpload);
 
 		Div extrasLayout = new Div();
 		extrasLayout.add(notesDiv);
@@ -222,7 +236,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		final SecureDiv projectAndAssignmentDiv = new SecureDiv();
 		projectAndAssignmentDiv.add(ownerField, project, assignedToSelector);
 		projectAndAssignmentDiv.addClassName("edit-task-projectandassignment");
-		
+
 		final Details projectAndAssignmentDetails = new Details("Ownership & Assignment");
 		projectAndAssignmentDetails.add(projectAndAssignmentDiv);
 
@@ -231,13 +245,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 		Div topLayout = new Div(
 				nameAndProjectDiv,
-				addButtons,
-				repeatEditor,
-				placeSearcher,
-				weblinkEditor,
-				notesEditorDiv,
-				documentUpload,
-				imageUpload,
+				buttonsAndEditors,
 				repeat,
 				dates,
 				subtasks,
@@ -554,29 +562,29 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 	public void saveTask() {
 //		try {
-			Task task = getTask();
+		Task task = getTask();
 
-			task.name.setValue(name.getValue());
-			task.description.setValue(description.getValue());
-			if (assignedToSelector.getValue() == null
-					|| Objects.equal(assignedToSelector.getEmptyValue(), assignedToSelector.getValue())) {
-				task.assigneeID.setValueToNull();
-			} else {
-				task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
-			}
-			task.notes.setValue(notes.getValue());
-			task.startDate.setValue(asDate(startDate.getValue()));
-			task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
-			task.finalDate.setValue(asDate(deadlineDate.getValue()));
-			task.repeatOffset.setValue(repeatValue);
+		task.name.setValue(name.getValue());
+		task.description.setValue(description.getValue());
+		if (assignedToSelector.getValue() == null
+				|| Objects.equal(assignedToSelector.getEmptyValue(), assignedToSelector.getValue())) {
+			task.assigneeID.setValueToNull();
+		} else {
+			task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
+		}
+		task.notes.setValue(notes.getValue());
+		task.startDate.setValue(asDate(startDate.getValue()));
+		task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
+		task.finalDate.setValue(asDate(deadlineDate.getValue()));
+		task.repeatOffset.setValue(repeatValue);
 
-			try {
-				getDatabase().update(task);
-			} catch (SQLException ex) {
-				Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
-				Globals.sqlerror(ex);
-			}
-			Globals.savedNotice();
+		try {
+			getDatabase().update(task);
+		} catch (SQLException ex) {
+			Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
+			Globals.sqlerror(ex);
+		}
+		Globals.savedNotice();
 //		} catch (Globals.InaccessibleTaskException ex) {
 //			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
 //		}
@@ -611,6 +619,12 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		notesEditorDiv.setVisible(false);
 		if (editor != null) {
 			editor.setVisible(!editorAlreadyShowing);
+			if (editor instanceof Focusable) {
+				((Focusable) editor).focus();
+			}
+			buttonsAndEditors.addClassName("open");
+		} else {
+			buttonsAndEditors.removeClassName("open");
 		}
 	}
 

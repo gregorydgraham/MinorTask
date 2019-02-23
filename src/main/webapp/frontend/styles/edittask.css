@@ -160,3 +160,23 @@ div.vaadin-text-area-container {
 	flex-wrap: wrap;
 	justify-content: space-between;
 }
+
+.edit-task-editors{
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	background-color: inherit;
+	border: 0;
+	border-radius: 0;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.edit-task-editors.open{
+	background-color: #efe;
+	border: thin solid #cfc;
+	border-radius: 10px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
