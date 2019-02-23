@@ -42,6 +42,7 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 		USERNAME_FIELD.setValue(username);
 		PASSWORD_FIELD.setValue(password);
 		add(getComponent());
+		USERNAME_FIELD.focus();
 	}
 
 	private Component getComponent() {
@@ -49,7 +50,6 @@ public class SignupComponent extends VerticalLayout implements MinorTaskComponen
 
 		REPEAT_PASSWORD_FIELD.clear();
 		USERNAME_FIELD.setRequiredIndicatorVisible(true);
-		USERNAME_FIELD.focus();
 		EMAIL_FIELD.setRequiredIndicatorVisible(true);
 		PASSWORD_FIELD.setRequiredIndicatorVisible(true);
 		REPEAT_PASSWORD_FIELD.setRequiredIndicatorVisible(true);
