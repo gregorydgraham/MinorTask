@@ -7,12 +7,10 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.server.VaadinService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +21,9 @@ import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.components.SecureTaskDiv;
+import nz.co.gregs.minortask.components.task.SecureTaskSpan;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
-import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -36,7 +34,8 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 
 	private final Div gridDiv = new Div();
 	private final SecureDiv label = new SecureDiv();
-	private Div footer = new Div();
+	private final Div footer = new Div();
+	private final Div header = new Div();
 
 	public AbstractTaskList() {
 		this((Long) null);
@@ -57,7 +56,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 			add(getControlsAbove());
 			List<Task> allRows = getPermittedTasks();
 			setLabel(allRows);
-			Div header = new Div();
+			header.removeAll();
 			header.addClassName("tasklist-header");
 			header.add(label);
 			Div headerRight = new Div();
@@ -297,6 +296,10 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 
 	protected Div getFooter() {
 		return footer;
+	}
+
+	protected Div getHeader() {
+		return header;
 	}
 
 	public static abstract class PreQueried extends AbstractTaskList {

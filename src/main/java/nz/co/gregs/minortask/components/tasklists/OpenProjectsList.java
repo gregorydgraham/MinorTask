@@ -5,27 +5,43 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import nz.co.gregs.minortask.components.task.CreateTaskInline;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.components.AddTaskButton;
+import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/open-projects-list.css")
 public class OpenProjectsList extends AbstractTaskList {
 
-	private AddTaskButton newTaskButton = null;
+	private Button addButton;
+	private CreateTaskInline createTask;
 
 	public OpenProjectsList() {
 		super();
 		setTooltipText("Start a project to include your tasks");
+	}
+
+	@Override
+	protected void setupTaskList() {
+		setupAddButton();
+		createTask = new CreateTaskInline(getTask());
+		createTask.addCreateTaskListener((event) -> {
+			refreshList();
+		});
 	}
 
 	@Override
@@ -60,8 +76,11 @@ public class OpenProjectsList extends AbstractTaskList {
 	}
 
 	@Override
-	protected Component[] getHeaderExtras() {
-		return new Component[]{getNewTaskButton()};
+	protected Component[] getFooterExtras() {
+		SecureSpan span = new SecureSpan();
+		span.add(addButton);
+		span.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
+		return new Component[]{span};
 	}
 
 	@Override
@@ -69,19 +88,18 @@ public class OpenProjectsList extends AbstractTaskList {
 		return "openprojectslist";
 	}
 
-	/**
-	 * @return the newTaskButton
-	 */
-	public final AddTaskButton getNewTaskButton() {
-		if (newTaskButton == null) {
-			newTaskButton = new AddTaskButton("Add Project...");
-			newTaskButton.addClassNames("small", "openprojectslist-addproject");
-		}
-		return newTaskButton;
+	private void setupAddButton() {
+		addButton = new Button();
+		addButton.addClassName("openprojects-addminortaskbutton");
+		addButton.setIcon(new Icon(VaadinIcon.PLUS_CIRCLE_O));
+		addButton.setText("Add MinorTask");
+		addButton.addClassNames("addtaskbutton");
+		addButton.addClickListener((event) -> {
+			createTask.addNewMinorTask(getFooter(), addButton);
+		});
 	}
 
 	public void disableNewButton() {
-		this.getNewTaskButton().setEnabled(false);
+		addButton.setEnabled(false);
 	}
-
 }

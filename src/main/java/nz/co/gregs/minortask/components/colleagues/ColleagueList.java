@@ -27,6 +27,7 @@ import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.task.SecureTaskSpan;
 import nz.co.gregs.minortask.components.UserSelector;
 import nz.co.gregs.minortask.datamodel.User;
 
