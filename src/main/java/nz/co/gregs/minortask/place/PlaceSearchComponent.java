@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.HasDefaultButton;
-import nz.co.gregs.minortask.components.SecureTaskDiv;
+import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,10 +74,6 @@ public class PlaceSearchComponent extends SecureTaskDiv implements HasDefaultBut
 		placeGrid.addPlaceAddedListener((event) -> {
 			fireEvent(event);
 		});
-	}
-
-	public final void setTaskID(Long taskID) {
-		setTask(taskID);
 	}
 
 	private void searchForLocation(String searchString) {

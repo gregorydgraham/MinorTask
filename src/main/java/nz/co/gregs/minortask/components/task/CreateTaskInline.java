@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
@@ -20,20 +20,21 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/createtaskinline.css")
 public class CreateTaskInline extends SecureTaskSpan {
-
-	public CreateTaskInline(Long taskid) {
-		super(taskid);
-	}
 
 	public CreateTaskInline(Task task) {
 		super(task);
+		setClassName();
 	}
 
-	public void addNewMinorTask(HtmlContainer container, Component instigator) {
-		instigator.setVisible(false);
-		Span span = new Span();
-		span.addClassName("openprojects-newminortask");
+	private void setClassName() {
+		addClassName("createtaskinline");
+	}
+
+	public void addNewMinorTask(HtmlContainer container, Component replaceComponent) {
+		container.remove(replaceComponent);
+		this.removeAll();
 
 		final TextField textArea = new TextField();
 		textArea.setPlaceholder("Project Name");
@@ -42,24 +43,25 @@ public class CreateTaskInline extends SecureTaskSpan {
 		saveButton.addClassName("save");
 		saveButton.setSizeUndefined();
 		saveButton.addClickListener((event) -> {
-			container.remove(span);
-			createNewMinorTaskFromName(textArea.getValue(), instigator);
+			container.remove(this);
+			container.add(replaceComponent);
+			createNewMinorTaskFromName(textArea.getValue());
 		});
 		final Button cancelButton = new Button("Cancel");
 		cancelButton.addClassName("cancel");
 		cancelButton.setSizeUndefined();
 		cancelButton.addClickListener((event) -> {
-			container.remove(span);
-			cancelCreateNewMinorTask(instigator);
+			container.remove(this);
+			container.add(replaceComponent);
+			cancelCreateNewMinorTask();
 		});
 
-		span.add(textArea, saveButton, cancelButton);
-		container.add(span);
+		this.add(textArea, saveButton, cancelButton);
+		container.add(this);
 		textArea.focus();
 	}
 
-	private void createNewMinorTaskFromName(String name, Component instigator) {
-		instigator.setVisible(true);
+	private void createNewMinorTaskFromName(String name) {
 		if (name != null && !name.isEmpty()) {
 			Task task = new Task();
 			task.name.setValue(name);
@@ -79,8 +81,7 @@ public class CreateTaskInline extends SecureTaskSpan {
 		}
 	}
 
-	private void cancelCreateNewMinorTask(Component instigator) {
-		instigator.setVisible(true);
+	private void cancelCreateNewMinorTask() {
 	}
 
 	public Registration addCreateTaskListener(ComponentEventListener<TaskCreatedEvent> listener) {

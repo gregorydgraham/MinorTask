@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import com.google.common.base.Objects;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.BlurNotifier;
@@ -43,8 +44,6 @@ import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.datamodel.User;
-import nz.co.gregs.minortask.place.PlaceAddedEvent;
-import nz.co.gregs.minortask.place.PlaceRemovedEvent;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
 import nz.co.gregs.minortask.weblinks.WeblinkEditorComponent;
 import org.joda.time.Period;
@@ -61,7 +60,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	PaperInput description = new PaperInput();
 	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
 	TextArea notes = new TextArea("Notes");
-	AddTaskButton addSubTask = new AddTaskButton();
 	SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
 	SecureButton addRepeat = new SecureButton("Repeat", new Icon(VaadinIcon.TIME_FORWARD));
 	SecureButton addPlace = new SecureButton("Place", new Icon(VaadinIcon.MAP_MARKER));
@@ -101,7 +99,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	Label overdueIndicator = new Label("Overdue");
 	Label oneDayMaybeIndicator = new Label("One Day Maybe");
 	Label completedIndicator = new Label("COMPLETED");
-//	private final Long taskID;
 	private Task.TaskAndProject taskAndProject;
 	private SecureDiv nameDiv;
 	private SecureDiv descriptionDiv;
@@ -111,7 +108,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 	public EditTask(Long currentTask) {
 		super(currentTask);
-//		this.taskID = currentTask;
 		try {
 
 			taskAndProject = getTaskAndProject(getTaskID());
@@ -192,7 +188,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		dates.addClassName("edit-task-dates");
 		dates.setSizeUndefined();
 
-		addSubTask.addClassName("friendly");
 		addDates.addClassName("edit-task-button");
 		addRepeat.addClassName("edit-task-button");
 		addDocument.addClassName("edit-task-button");
@@ -202,7 +197,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		addNotes.addClassName("edit-task-button");
 		addButtons = new SecureDiv();
 		addButtons.add(
-				addSubTask,
 				addDates,
 				addRepeat,
 				addDocument,
@@ -488,7 +482,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 					repeat.setVisible(false);
 					addRepeat.setVisible(true);
 				}
-				addSubTask.setTaskID(getTaskID());
 				documentUpload.setTaskID(getTaskID());
 				imageUpload.setTaskID(getTaskID());
 				placeGrid.setTaskID(getTaskID());
@@ -561,7 +554,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	}
 
 	public void saveTask() {
-//		try {
 		Task task = getTask();
 
 		task.name.setValue(name.getValue());
@@ -585,9 +577,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 			Globals.sqlerror(ex);
 		}
 		Globals.savedNotice();
-//		} catch (Globals.InaccessibleTaskException ex) {
-//			Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-//		}
 	}
 
 	public void handleEscapeButton() {

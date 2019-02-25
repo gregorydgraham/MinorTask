@@ -20,8 +20,7 @@ import nz.co.gregs.minortask.components.HasToolTip.Position;
 import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
-import nz.co.gregs.minortask.components.SecureTaskDiv;
-import nz.co.gregs.minortask.components.task.SecureTaskSpan;
+import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 

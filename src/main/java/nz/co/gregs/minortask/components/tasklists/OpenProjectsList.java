@@ -29,6 +29,7 @@ public class OpenProjectsList extends AbstractTaskList {
 
 	private Button addButton;
 	private CreateTaskInline createTask;
+	private SecureSpan footerContents;
 
 	public OpenProjectsList() {
 		super();
@@ -77,10 +78,10 @@ public class OpenProjectsList extends AbstractTaskList {
 
 	@Override
 	protected Component[] getFooterExtras() {
-		SecureSpan span = new SecureSpan();
-		span.add(addButton);
-		span.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
-		return new Component[]{span};
+		footerContents = new SecureSpan();
+		footerContents.add(addButton);
+		footerContents.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
+		return new Component[]{footerContents};
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class OpenProjectsList extends AbstractTaskList {
 		addButton.setText("Add MinorTask");
 		addButton.addClassNames("addtaskbutton");
 		addButton.addClickListener((event) -> {
-			createTask.addNewMinorTask(getFooter(), addButton);
+			createTask.addNewMinorTask(getFooter(), footerContents);
 		});
 	}
 

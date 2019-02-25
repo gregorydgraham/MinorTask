@@ -12,7 +12,7 @@ import com.vaadin.flow.component.html.Div;
  *
  * @author gregorygraham
  */
-public class SecureDiv extends Div implements RequiresLogin {
+public class SecureDiv extends Div implements RequiresPermission {
 
 	public SecureDiv() {
 	}
@@ -31,9 +31,5 @@ public class SecureDiv extends Div implements RequiresLogin {
 		} else {
 			super.add(components);
 		}
-	}
-
-	protected boolean checkForPermission() {
-		return isLoggedIn();
 	}
 }

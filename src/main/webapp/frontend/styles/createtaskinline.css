@@ -1,0 +1,35 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 25/02/2019, 6:05:24 PM
+    Author     : gregorygraham
+*/
+
+.createtaskinline{
+	background-color: white;
+	width: 100%;
+	padding-left: 2px;
+	padding-right: 2px;
+	display: flex;
+	flex-direction: row;
+	align-content: space-between;
+	align-items: center;
+	box-shadow: 0 0 5px 1px #999;
+}
+
+.createtaskinline vaadin-button{
+	width: 10em;
+	padding-left: 3px;
+}
+
+.save {
+	background-color: #09c;
+	color: white;
+}
+.cancel {
+	background-color: #cccccc;
+	color: black;
+}

@@ -12,7 +12,7 @@ import com.vaadin.flow.component.html.Span;
  *
  * @author gregorygraham
  */
-public class SecureSpan extends Span implements RequiresLogin {
+public class SecureSpan extends Span implements RequiresPermission {
 
 	public SecureSpan() {
 	}
@@ -31,9 +31,5 @@ public class SecureSpan extends Span implements RequiresLogin {
 		} else {
 			super.add(components);
 		}
-	}
-
-	protected boolean checkForPermission() {
-		return isLoggedIn();
 	}
 }

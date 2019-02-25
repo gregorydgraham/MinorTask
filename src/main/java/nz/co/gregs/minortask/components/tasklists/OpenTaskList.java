@@ -24,6 +24,7 @@ public class OpenTaskList extends AbstractTaskList {
 
 	private Button addButton;
 	private CreateTaskInline createTaskSpan;
+	private SecureSpan footerContents;
 
 	public OpenTaskList(Long taskID) {
 		super(taskID);
@@ -75,10 +76,10 @@ public class OpenTaskList extends AbstractTaskList {
 
 	@Override
 	protected Component[] getFooterExtras() {
-		SecureSpan span = new SecureSpan();
-		span.add(addButton);
-		span.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
-		return new Component[]{span};
+		footerContents = new SecureSpan();
+		footerContents.add(addButton);
+		footerContents.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
+		return new Component[]{footerContents};
 	}
 
 	private void setupAddButton() {
@@ -88,63 +89,11 @@ public class OpenTaskList extends AbstractTaskList {
 		addButton.setText("Add MinorTask");
 		addButton.addClassNames("addtaskbutton");
 		addButton.addClickListener((event) -> {
-			createTaskSpan.addNewMinorTask(getFooter(), addButton);
+			createTaskSpan.addNewMinorTask(getFooter(), footerContents);
 		});
 	}
-
-//	private void addNewMinorTask() {
-//		addButton.setVisible(false);
-//		Div footer = getFooter();
-//		Span span = new Span();
-//		span.addClassName("opentasks-newminortask");
-//		
-//		final TextField textArea = new TextField();
-//		textArea.setPlaceholder("Task Name");
-//		textArea.setSizeFull();
-//		final Button saveButton = new Button("Save");
-//		saveButton.addClassName("save");
-//		saveButton.setSizeUndefined();
-//		saveButton.addClickListener((event) -> {
-//			footer.remove(span);
-//			createNewMinorTaskFromName(textArea.getValue());
-//		});
-//		final Button cancelButton = new Button("Cancel");
-//		cancelButton.addClassName("cancel");
-//		cancelButton.setSizeUndefined();
-//		cancelButton.addClickListener((event) -> {
-//			footer.remove(span);
-//			cancelCreateNewMinorTask();
-//		});
-//
-//		span.add(textArea, saveButton, cancelButton);
-//		footer.add(span);
-//		textArea.focus();
-//	}
-
-//	private void createNewMinorTaskFromName(String name) {
-//		addButton.setVisible(true);
-//		if (name != null && !name.isEmpty()) {
-//			Task task = new Task();
-//			task.name.setValue(name);
-//			task.userID.setValue(getCurrentUserID());
-//			task.projectID.setValue(getTaskID());
-//			task.startDate.setValue(new Date());;
-//			task.finalDate.setValue(getTask().finalDate.getValue());
-//			try {
-//				getDatabase().insert(task);
-//			} catch (SQLException ex) {
-//				sqlerror(ex);
-//			}finally{
-//				this.refreshList();
-//			}
-//		}
-//	}
 
 	public void disableNewButton() {
 		addButton.setEnabled(false);
 	}
-
-//	private void cancelCreateNewMinorTask() {
-//		addButton.setVisible(true);
-//	}
 }

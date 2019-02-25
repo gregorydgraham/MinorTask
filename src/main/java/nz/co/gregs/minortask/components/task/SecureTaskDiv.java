@@ -5,32 +5,28 @@
  */
 package nz.co.gregs.minortask.components.task;
 
-import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.datamodel.Task;
 
-/**
- *
- * @author gregorygraham
- */
-public class SecureTaskSpan extends SecureSpan implements HasTask{
-	
+public class SecureTaskDiv extends SecureDiv implements HasTask {
+
 	private Task task;
 
-	public SecureTaskSpan(Long taskid) {
+	public SecureTaskDiv(Long taskid) {
 		setTask(taskid);
 	}
 
-	public SecureTaskSpan(Task task) {
+	public SecureTaskDiv(Task task) {
 		setTask(task);
 	}
-	
+
 	@Override
-	public final Task getTask(){
+	public final Task getTask() {
 		return task;
 	}
-	
+
 	@Override
-	public final void setTask(Task newTask){
-		task = newTask;
+	public final void setTask(Task newTask) {
+		this.task = newTask;
 	}
 }

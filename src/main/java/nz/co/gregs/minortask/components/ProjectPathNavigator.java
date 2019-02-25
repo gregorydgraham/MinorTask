@@ -51,15 +51,6 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 				.forEachOrdered((ancestor) -> {
 					add(getButtonForTaskID(ancestor));
 				});
-		final AddTaskButton addTaskButton;
-		if (getTaskID() == null) {
-			addTaskButton = new AddTaskButton("Add Project...");
-		} else {
-			addTaskButton = new AddTaskButton(getTaskID());
-		}
-		addTaskButton.addClassNames("small", "projectpath");
-		addTaskButton.getElement().setAttribute("theme", "small");
-		add(addTaskButton);
 	}
 
 	public void refresh() {
