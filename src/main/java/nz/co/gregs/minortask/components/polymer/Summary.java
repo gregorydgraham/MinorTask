@@ -8,15 +8,15 @@ package nz.co.gregs.minortask.components.polymer;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Label;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("summary")
-public class Summary extends Component implements HasComponents, HasStyle{
+public class Summary extends Component implements HasComponents, HasStyle, HasText{
 
 	private Summary() {
 		super();
@@ -24,11 +24,17 @@ public class Summary extends Component implements HasComponents, HasStyle{
 
 	public Summary(String text) {
 		this();
-		add(new Label(text));
+		setText(text);
 	}
 
 	public Summary(Component... components) {
 		this();
+		add(components);
+	}
+
+	public Summary(String text, Component... components) {
+		this();
+		setText(text);
 		add(components);
 	}
 }
