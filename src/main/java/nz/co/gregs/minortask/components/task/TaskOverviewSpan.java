@@ -10,6 +10,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.polymer.Details;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -59,6 +61,15 @@ public class TaskOverviewSpan extends SecureTaskSpan {
 	private void setDetails(Details details) {
 		final Task task = getTask();
 		if (task != null) {
+			Long projectID = task.projectID.getValue();
+			if (projectID != null) {
+				try {
+					details.add(new Div(new Span("Part Of: " + minortask().getTask(projectID).name.getValue())));
+				} catch (Globals.InaccessibleTaskException ex) {
+					// I don't care, if they can't see we won't add it.
+				}
+			}
+
 			final Task.Owner owner = task.getOwner();
 			if (owner != null) {
 				details.add(new Div(new Span("Owner: " + owner.getUsername())));
