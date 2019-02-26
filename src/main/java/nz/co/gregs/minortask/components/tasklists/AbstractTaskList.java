@@ -21,6 +21,7 @@ import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
+import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -174,25 +175,26 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 	}
 
 	private Component getDescriptionComponent(Task task) {
-		SecureSpan name = new SecureSpan();
-		name.setText(task.name.getValue());
-		SecureSpan desc = new SecureSpan();
-		desc.setText(task.description.getValue());
-
-		name.setSizeFull();
-		name.addClassNames("tasklist-name");
-		desc.setSizeFull();
-		desc.addClassNames("tasklist-description");
-
-		final SecureSpan summary = new SecureSpan(name, desc);
-
-		SecureSpan anchor = new SecureSpan(summary);
-		anchor.addClassName("tasklist-entry-summary");
-		anchor.addClickListener((event) -> {
-			Globals.showTask(task.taskID.getValue());
-		});
-
-		return anchor;
+		return new TaskOverviewSpan(task);
+//		SecureSpan name = new SecureSpan();
+//		name.setText(task.name.getValue());
+//		SecureSpan desc = new SecureSpan();
+//		desc.setText(task.description.getValue());
+//
+//		name.setSizeFull();
+//		name.addClassNames("tasklist-name");
+//		desc.setSizeFull();
+//		desc.addClassNames("tasklist-description");
+//
+//		final SecureSpan summary = new SecureSpan(name, desc);
+//
+//		SecureSpan anchor = new SecureSpan(summary);
+//		anchor.addClassName("tasklist-entry-summary");
+//		anchor.addClickListener((event) -> {
+//			Globals.showTask(task.taskID.getValue());
+//		});
+//
+//		return anchor;
 	}
 
 	private Component getSubTaskNumberComponent(Task task) {
