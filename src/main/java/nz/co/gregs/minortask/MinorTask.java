@@ -379,11 +379,11 @@ public class MinorTask extends Globals implements Serializable {
 					.forEach((subtask) -> {
 				completeTaskWithCongratulations(subtask);
 			});
+			repeatTask(task);
 			task.completionDate.setValue(new Date());
 			try {
 				final DBDatabase database = Globals.getDatabase();
 				DBActionList update = database.update(task);
-				repeatTask(task);
 			} catch (SQLException ex) {
 				Globals.sqlerror(ex);
 			}
@@ -474,6 +474,14 @@ public class MinorTask extends Globals implements Serializable {
 			Globals.getDatabase().update(projectPathTask);
 		} catch (SQLException ex) {
 			Globals.sqlerror(ex);
+		}
+	}
+
+	public void deleteTask(Task task) {
+		try {
+			getDatabase().delete(task);
+		} catch (SQLException ex) {
+			sqlerror(ex);
 		}
 	}
 }

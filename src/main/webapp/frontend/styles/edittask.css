@@ -116,7 +116,21 @@ div.vaadin-text-area-container {
 	flex-wrap: wrap;
 }
 
+.edit-task-complete-button-container{
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+	align-content: flex-end;
+	align-items: center
+}
+
 .completebutton{
+	background-color: red; 
+	color: white; 
+	border-radius: 4px;
+}
+
+.edit-task-deletebutton{
 	background-color: red; 
 	color: white; 
 	border-radius: 4px;
