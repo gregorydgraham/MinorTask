@@ -190,15 +190,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		Div completeButtonDiv = new Div(reopenButton, deleteButton, completeButton);
 		completeButtonDiv.addClassName("edit-task-complete-button-container");
 
-//		completedIndicator.getStyle().set("padding", "0").set("margin-left", "0").set("margin-right", "0").set("margin-bottom", "0");
-//		Div completedLayout = new Div(completedIndicator, deleteButton, reopenButton);
-//		completedLayout.addClassName("completedindicator-container");
-
-//		Div details = new Div(
-//				activeIndicator, startedIndicator, overdueIndicator, completedLayout);
-//		details.addClassName("statusindicators-container");
-//		details.setSizeUndefined();
-
 		dates.addClassName("edit-task-dates");
 		dates.setSizeUndefined();
 
@@ -260,8 +251,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				extrasLayout,
 				Globals.getSpacer(),
 				completeButtonDiv,
-//				deleteButton,
-//				reopenButton,
 				Globals.getSpacer(),
 				completedTasks);
 		topLayout.addClassName("edit-task-contents");
@@ -533,9 +522,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 					completeButton.setVisible(false);
 					deleteButton.setVisible(true);
 					reopenButton.setVisible(true);
-//					completeButton.addClassName("invisible");
-//					deleteButton.removeClassName("invisible");
-//					reopenButton.removeClassName("invisible");
 
 					name.setReadOnly(true);
 					project.setEnabled(false);
@@ -557,8 +543,6 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 					completeButton.setVisible(true);
 					deleteButton.setVisible(false);
 					reopenButton.setVisible(false);
-//					deleteButton.addClassName("invisible");
-//					reopenButton.addClassName("invisible");
 					final Date now = new Date();
 					if (task.startDate.dateValue() == null && task.finalDate.dateValue() == null) {
 						oneDayMaybeIndicator.setVisible(true);
