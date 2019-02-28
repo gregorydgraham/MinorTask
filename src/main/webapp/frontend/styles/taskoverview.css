@@ -22,6 +22,15 @@ and open the template in the editor.
 	width: 100%;
 }
 
+@media all and (max-width: 600px) {
+	.taskoverview-all{
+		flex-direction: column;
+		/*justify-content: space-between;*/
+		align-items: flex-end;
+		/*width: 100%;*/
+	}
+}
+
 .taskoverview-summary{
 	display: flex;
 	flex-direction: column;

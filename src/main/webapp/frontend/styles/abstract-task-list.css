@@ -104,6 +104,8 @@ flow-component-renderer{
 
 .tasklist-subtask-count{
 	width: 3em;
+	display: inline-block;
+	align-items: baseline;
 }
 
 .tasklist-entry-prefix{
