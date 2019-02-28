@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
@@ -15,6 +16,7 @@ import nz.co.gregs.minortask.pages.*;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/tasktabs.css")
 public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 	private TaskTabs(Tab tab, Long taskID) {
