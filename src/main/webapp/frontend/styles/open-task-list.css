@@ -14,3 +14,18 @@ and open the template in the editor.
 	flex-direction: row-reverse;
 	align-items: center;
 }
+
+.addtaskbutton{
+	background-color: limegreen;
+	color: white;
+	padding-right: 3px;
+}
+
+@media all and (max-width: 900px) {
+	.addtaskbutton{
+		padding: 0;
+		margin-left: 0; margin-right: 0;
+		font-size: x-small;
+		font-weight: bold;
+	}
+}

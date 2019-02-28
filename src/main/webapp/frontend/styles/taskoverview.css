@@ -16,20 +16,20 @@ and open the template in the editor.
 
 .taskoverview-all{
 	display: flex;
-	flex-direction: row;
+	/*flex-direction: row;*/
+	flex-direction: column;
 	justify-content: space-between;
-	align-items: flex-start;
+	/*align-items: flex-start;*/
+	align-items: flex-end;
 	width: 100%;
 }
 
-@media all and (max-width: 600px) {
+/*@media all and (max-width: 600px) {
 	.taskoverview-all{
 		flex-direction: column;
-		/*justify-content: space-between;*/
 		align-items: flex-end;
-		/*width: 100%;*/
 	}
-}
+}*/
 
 .taskoverview-summary{
 	display: flex;
@@ -40,18 +40,20 @@ and open the template in the editor.
 }
 
 .taskoverview-name{
+	color: cadetblue;
 	white-space: normal;
 	display: block;
 }
 
 .taskoverview-description{
+	color: #666666;
 	white-space: normal;
 	font-size: smaller;
 }
 
 .taskoverview details{
 	font-size: smaller;
-	/*color: gray;*/
+	color: gray;
 	margin-right: 5px;
 	min-width:5em;
 }
