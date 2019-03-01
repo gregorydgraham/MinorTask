@@ -11,8 +11,23 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBReport;
+import nz.co.gregs.dbvolution.annotations.DBColumn;
+import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBNumber;
+import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
+import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
+import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
+import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
+import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.pages.UserProfilePage;
 
@@ -50,6 +65,19 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 		final User user = getCurrentUser();
 		if (user != null) {
+
+			Label counts = new Label("Tasks: ??/##");
+			TaskCounts taskCounts = new TaskCounts();
+			try {
+				final Task.Owner owner = new Task.Owner();
+				owner.queryUserID().permittedValues(user.getUserID());
+				List<TaskCounts> got = getDatabase().get(taskCounts, owner);
+				final TaskCounts gotFirst = got.get(0);
+				counts = new Label("Velocity: "+gotFirst.velocity.stringValue()+" Tasks: " + gotFirst.completed.stringValue() + "/" + gotFirst.created.stringValue());
+			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException | NoAvailableDatabaseException ex) {
+				sqlerror(ex);
+			}
+
 			SecureDiv defaultImageDiv = new SecureDiv();
 			defaultImageDiv.addClickListener((event) -> {
 				minortask().showProfile();
@@ -85,7 +113,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 			right.addClassName("authorised-banner-right");
 
 			left.add(profileImageDiv, welcomeMessage);
-			right.add(profileAnchor, colleaguesButton, profileButton, logoutButton);
+			right.add(new Div(new Div(profileAnchor, colleaguesButton, profileButton, logoutButton), counts));
 			add(left, right);
 		}
 	}
@@ -115,6 +143,36 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 
 	public void setLogoutButtonSelected() {
 		logoutButton.addClassName("authorised-banner-selected-button");
+	}
+
+	public static class TaskCounts extends DBReport {
+
+		Task.Owner user = new Task.Owner();
+		Task task = new Task();
+
+		@DBColumn
+		public DBInteger created = new DBInteger(task.column(task.taskID).count());
+
+		@DBColumn
+		public DBInteger completed = new DBInteger(
+				task.column(task.completionDate)
+						.isNotNull()
+						.ifThenElse(1, 0)
+						.sum()
+		);
+
+		@DBColumn
+		public DBNumber velocity = new DBNumber(
+				task.column(task.completionDate)
+						.isNotNull()
+						.and(
+								task.column(task.completionDate)
+										.isGreaterThanOrEqual(DateExpression.currentDate().addDays(-30))
+						)
+						.ifThenElse(1, 0)
+						.sum()
+						.dividedBy(30)
+		);
 	}
 
 }
