@@ -12,11 +12,8 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.DBReport;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
@@ -67,12 +64,12 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		if (user != null) {
 			
 			Label counts = new Label("Tasks: ??/##");
-			TaskCounts taskCounts = new TaskCounts();
+			OwnerStatistics taskCounts = new OwnerStatistics();
 			try {
 				final Task.Owner owner = new Task.Owner();
 				owner.queryUserID().permittedValues(user.getUserID());
-				List<TaskCounts> got = getDatabase().get(taskCounts, owner);
-				final TaskCounts gotFirst = got.get(0);
+				List<OwnerStatistics> got = getDatabase().get(taskCounts, owner);
+				final OwnerStatistics gotFirst = got.get(0);
 				counts = new Label("Velocity: " + gotFirst.velocity.stringValue() + " Tasks: " + gotFirst.completed.stringValue() + "/" + gotFirst.created.stringValue());
 			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException | NoAvailableDatabaseException ex) {
 				sqlerror(ex);
@@ -145,7 +142,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 		logoutButton.addClassName("authorised-banner-selected-button");
 	}
 	
-	public static class TaskCounts extends DBReport {
+	public static class OwnerStatistics extends DBReport {
 		
 		Task.Owner user = new Task.Owner();
 		Task task = new Task();
