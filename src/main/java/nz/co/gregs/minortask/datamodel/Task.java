@@ -37,14 +37,14 @@ public class Task extends DBRow {
 	@DBColumn
 	@DBForeignKey(Owner.class)
 	public final DBInteger userID = new DBInteger();
-	
+
 	@AutoFillDuringQueryIfPossible
 	private Owner ownerUser;
-	
+
 	@DBColumn
 	@DBForeignKey(Assignee.class)
 	public final DBInteger assigneeID = new DBInteger();
-	
+
 	@AutoFillDuringQueryIfPossible
 	private Assignee assigneeUser;
 
@@ -75,6 +75,15 @@ public class Task extends DBRow {
 
 	@DBColumn
 	public final DBDateRepeat repeatOffset = new DBDateRepeat();
+
+	@DBColumn
+	public final DBDate createdDate = new DBDate()
+			.setDefaultInsertValue(DateExpression.currentDate());
+
+	@DBColumn
+	public final DBDate modifiedDate = new DBDate()
+			.setDefaultInsertValue(DateExpression.currentDate())
+			.setDefaultUpdateValue(DateExpression.currentDate());
 
 	@Override
 	public String toString() {
@@ -112,18 +121,20 @@ public class Task extends DBRow {
 		hash = 37 * hash + Objects.hashCode(this.completionDate);
 		return hash;
 	}
-	
-	public Owner getOwner(){
+
+	public Owner getOwner() {
 		return ownerUser;
 	}
-	
-	public Assignee getAssigneeUser(){
+
+	public Assignee getAssigneeUser() {
 		return assigneeUser;
 	}
-	
-	public static class Owner extends User{}
 
-	public static class Assignee extends User{}
+	public static class Owner extends User {
+	}
+
+	public static class Assignee extends User {
+	}
 
 	/**
 	 *
