@@ -195,3 +195,18 @@ div.vaadin-text-area-container {
 	padding-left: 2px;
 	padding-right: 2px;
 }
+
+.tasksandsidebar{    
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.tasksdiv{
+	width:100%;
+}
+
+.sidebar{
+	display: inline-block;
+	width: 100%;
+}

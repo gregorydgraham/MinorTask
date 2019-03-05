@@ -28,6 +28,7 @@ public class OpenTaskList extends AbstractTaskList {
 
 	public OpenTaskList(Long taskID) {
 		super(taskID);
+		this.addClassName("opentaskslist");
 		setTooltipText("All the tasks that are still be done");
 	}
 

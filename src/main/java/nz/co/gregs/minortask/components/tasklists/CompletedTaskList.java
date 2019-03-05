@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -52,4 +54,8 @@ public class CompletedTaskList extends AbstractTaskList {
 		return "" + tasks.size() + " Completed Tasks";
 	}
 
+	@Override
+	protected Component getSubTaskNumberComponent(Task task) {
+		return new Span();
+	}
 }

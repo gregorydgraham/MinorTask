@@ -197,7 +197,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 //		return anchor;
 	}
 
-	private Component getSubTaskNumberComponent(Task task) {
+	protected Component getSubTaskNumberComponent(Task task) {
 		SecureSpan layout = new SecureSpan();
 		layout.addClassName("tasklist-subtask-count");
 		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
@@ -212,7 +212,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		return layout;
 	}
 
-	private Component getSuffixComponent(Task task) {
+	protected Component getSuffixComponent(Task task) {
 		SecureSpan layout = new SecureSpan();
 		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
 
@@ -242,14 +242,6 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		layout.addClassName("tasklist-entry-suffix");
 		return layout;
 	}
-
-//	private Anchor wrapInALinkToTheTask(final Task task, final Component summary) {
-//		String url = VaadinService.getCurrent().getRouter().getUrl(TaskEditorLayout.class,
-//				task.taskID.getValue());
-//		Anchor anchor = new Anchor(url, "");
-//		anchor.add(summary);
-//		return anchor;
-//	}
 
 	protected final void refreshList() {
 		try {

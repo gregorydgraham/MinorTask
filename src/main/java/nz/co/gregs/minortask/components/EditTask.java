@@ -9,6 +9,7 @@ import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import com.google.common.base.Objects;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.BlurNotifier;
+import com.vaadin.flow.component.BlurNotifier.BlurEvent;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.components.upload.DocumentGrid;
@@ -23,6 +24,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -33,12 +35,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nz.co.gregs.dbvolution.DBReport;
-import nz.co.gregs.dbvolution.annotations.DBColumn;
-import nz.co.gregs.dbvolution.datatypes.DBInteger;
-import nz.co.gregs.dbvolution.datatypes.DBNumber;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
-import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.ClarityAndProgress;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.polymer.Details;
@@ -64,7 +61,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 	PaperInput name = new PaperInput();
 	TextField ownerField = new TextField("User");
-	PaperTextArea description = new PaperTextArea();
+	TextArea description = new TextArea();
 	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
 	TextArea notes = new TextArea("Notes");
 	SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
@@ -193,7 +190,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 			Globals.showTask(taskAndProject.getProject().taskID.getValue());
 		});
 		deleteButton.setVisible(false);
-		
+
 		Div completeButtonDiv = new Div(reopenButton, deleteButton, completeButton);
 		completeButtonDiv.addClassName("edit-task-complete-button-container");
 
@@ -231,17 +228,13 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				imageUpload);
 
 		Div extrasLayout = new Div();
-		extrasLayout.add(notesDiv);
-		extrasLayout.add(placeGrid);
-		extrasLayout.add(documentGrid);
-		extrasLayout.add(weblinkGrid);
-		
-		final ClarityAndProgress clarity = new ClarityAndProgress(getTask());
-		
-		Label clarityLabel = new Label("Clarity: Absolute "+clarity.getAbsoluteClarity()+" Recent "+clarity.getRecentClarity()+" Delta +"+(Math.round(clarity.getDeltaClarity()*100)/100)+"%");
-		Label progressLabel = new Label("Progress: Absolute "+clarity.getAbsoluteProgress()+" Recent "+clarity.getRecentProgress()+" Delta +"+(Math.round(clarity.getDeltaProgress()*100)/100)+"%");
+		extrasLayout.add(repeat, dates, notesDiv, placeGrid, documentGrid, weblinkGrid);
 
-		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv, clarityLabel, progressLabel);
+		final ClarityAndProgress clarity = new ClarityAndProgress(getTask());
+
+		Label clarityLabel = new Label("Clarity: " +clarity.getDeltaClarity()+" Progress: " + clarity.getDeltaProgress());
+
+		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv, clarityLabel);
 		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
 
 		final SecureDiv projectAndAssignmentDiv = new SecureDiv();
@@ -254,17 +247,25 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		final SecureDiv nameAndProjectDiv = new SecureDiv(nameAndDescriptionDiv, projectAndAssignmentDetails);
 		nameAndProjectDiv.addClassName("edit-task-nameandproject");
 
+		final Div tasksDiv = new Div(
+				subtasks,
+				Globals.getSpacer(),
+				completeButtonDiv,
+				Globals.getSpacer()
+		);
+		tasksDiv.addClassName("tasksdiv");
+		
+		Div sidebar = new Div(completedTasks);
+		sidebar.addClassName("sidebar");
+		
+		final Span tasksAndSideBar = new Span(tasksDiv, sidebar);
+		tasksAndSideBar.addClassName("tasksandsidebar");
+
 		Div topLayout = new Div(
 				nameAndProjectDiv,
 				buttonsAndEditors,
-				repeat,
-				dates,
-				subtasks,
 				extrasLayout,
-				Globals.getSpacer(),
-				completeButtonDiv,
-				Globals.getSpacer(),
-				completedTasks);
+				tasksAndSideBar);
 		topLayout.addClassName("edit-task-contents");
 
 		addToolTips();
@@ -398,7 +399,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		}
 	}
 
-	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperTextArea> event) {
+	private void checkAndSaveDescription(BlurEvent<TextArea> event) {
 		try {
 			final Task task1 = getTask(getTaskID());
 			if (!event.getSource().getValue().equals(task1.description.getValue())) {

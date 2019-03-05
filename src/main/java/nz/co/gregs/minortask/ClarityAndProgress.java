@@ -74,8 +74,8 @@ public class ClarityAndProgress {
 	/**
 	 * @return the deltaClarity
 	 */
-	public Double getDeltaClarity() {
-		return deltaClarity*100;
+	public String getDeltaClarity() {
+		return "+" + (Math.round((deltaClarity*100) * 100) / 100) + "%";
 	}
 
 	/**
@@ -88,8 +88,8 @@ public class ClarityAndProgress {
 	/**
 	 * @return the deltaProgress
 	 */
-	public Double getDeltaProgress() {
-		return deltaProgress*100;
+	public String getDeltaProgress() {
+		return "+" + (Math.round((deltaProgress*100) * 100) / 100) + "%";
 	}
 
 	/**
