@@ -58,7 +58,7 @@ public class ClarityAndProgress {
 					.count();
 			System.out.println("Math.round((" + recentClarity + " / " + absoluteClarity + ") * 100)");
 			deltaClarity = (0.0d + recentClarity) / absoluteClarity;
-			deltaProgress = (0.0d + recentProgress) / absoluteProgress;
+			deltaProgress = (0.0d + recentProgress) / absoluteClarity;
 		} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 			Globals.sqlerror(ex);
 		}
