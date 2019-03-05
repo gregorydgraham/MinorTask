@@ -130,5 +130,4 @@ and open the template in the editor.
 .edit-task-complete-button-container {
 	display: flex;
 	flex-direction: row-reverse;
-	height: 100%;
 }
