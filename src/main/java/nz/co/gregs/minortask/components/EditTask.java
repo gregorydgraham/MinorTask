@@ -33,9 +33,16 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nz.co.gregs.dbvolution.DBReport;
+import nz.co.gregs.dbvolution.annotations.DBColumn;
+import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBNumber;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.dbvolution.expressions.DateExpression;
+import nz.co.gregs.minortask.ClarityAndProgress;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.polymer.Details;
+import nz.co.gregs.minortask.components.polymer.PaperTextArea;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
@@ -57,7 +64,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 	PaperInput name = new PaperInput();
 	TextField ownerField = new TextField("User");
-	PaperInput description = new PaperInput();
+	PaperTextArea description = new PaperTextArea();
 	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
 	TextArea notes = new TextArea("Notes");
 	SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
@@ -228,8 +235,13 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		extrasLayout.add(placeGrid);
 		extrasLayout.add(documentGrid);
 		extrasLayout.add(weblinkGrid);
+		
+		final ClarityAndProgress clarity = new ClarityAndProgress(getTask());
+		
+		Label clarityLabel = new Label("Clarity: Absolute "+clarity.getAbsoluteClarity()+" Recent "+clarity.getRecentClarity()+" Delta +"+(Math.round(clarity.getDeltaClarity()*100)/100)+"%");
+		Label progressLabel = new Label("Progress: Absolute "+clarity.getAbsoluteProgress()+" Recent "+clarity.getRecentProgress()+" Delta +"+(Math.round(clarity.getDeltaProgress()*100)/100)+"%");
 
-		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv);
+		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv, clarityLabel, progressLabel);
 		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
 
 		final SecureDiv projectAndAssignmentDiv = new SecureDiv();
@@ -386,7 +398,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		}
 	}
 
-	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperInput> event) {
+	private void checkAndSaveDescription(BlurNotifier.BlurEvent<PaperTextArea> event) {
 		try {
 			final Task task1 = getTask(getTaskID());
 			if (!event.getSource().getValue().equals(task1.description.getValue())) {

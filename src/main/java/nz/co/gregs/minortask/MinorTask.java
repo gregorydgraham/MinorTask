@@ -376,8 +376,8 @@ public class MinorTask extends Globals implements Serializable {
 			Globals
 					.getActiveSubtasks(task, getCurrentUser())
 					.forEach((subtask) -> {
-				completeTaskWithCongratulations(subtask);
-			});
+						completeTaskWithCongratulations(subtask);
+					});
 			repeatTask(task);
 			task.completionDate.setValue(new Date());
 			try {
