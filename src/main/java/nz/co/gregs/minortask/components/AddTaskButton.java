@@ -5,12 +5,11 @@
  */
 package nz.co.gregs.minortask.components;
 
-import nz.co.gregs.minortask.MinorTask;
-
 /**
  *
  * @author gregorygraham
  */
+@Deprecated
 //@Tag("add-task-button")
 public class AddTaskButton extends SecureButton {
 
@@ -45,7 +44,7 @@ public class AddTaskButton extends SecureButton {
 	public final void buildComponent() {
 		addClassNames("addtaskbutton");
 		addClickListener((event) -> {
-			MinorTask.showTaskCreation(originatingTaskID);
+//			MinorTask.showTaskCreation(originatingTaskID);
 		});
 	}
 

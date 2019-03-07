@@ -23,6 +23,7 @@ import nz.co.gregs.minortask.datamodel.*;
  * @author gregorygraham
  */
 //@Tag("createtask")
+@Deprecated
 public class CreateTask extends SecureDiv implements RequiresLogin {
 
 	TextField name = new TextField("Name");

@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask;
 
+import nz.co.gregs.minortask.components.changes.Changes;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
@@ -431,6 +432,7 @@ public class MinorTask extends Globals implements Serializable {
 			copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
 			try {
 				getDatabase().insert(copy);
+				getDatabase().insert(new Changes(loggedInUser, copy));
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}

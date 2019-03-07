@@ -9,11 +9,12 @@ and open the template in the editor.
 */
 
 
-.tasklist{
+.changelist{
 	background-color: #e5e5e5;
 	box-shadow: inset 0 0 6px darkgrey, 0 0 0 black;
 	border-radius: 5px;
 	width: 100%;
+	max-width: 250px;
 	display: flex;
 	flex-basis: auto;
 	flex-direction: column;
@@ -22,18 +23,18 @@ and open the template in the editor.
 }
 
 @media all and (max-width: 900px) {
-	.tasklist{
+	.changelist{
 		padding-left: 0;padding-right:0;
 		margin-left: 0; margin-right: 0;
 		border-radius: 0;
 	}
 }
 
-.tasklist-well{
+.changelist-well{
 	width: 100%;
 }
 
-.tasklist-grid-row{
+.changelist-grid-row{
 	cursor: pointer;
 	vertical-align: top;
 	display: flex;
@@ -42,6 +43,7 @@ and open the template in the editor.
 	align-items: center;
 	width: calc(100% - 1em);
 	max-width: 900px;
+	font-size: x-small;
 	background-color: white;
 	border-left: thin solid #e5e5e5;
 	border-right: thin solid #e5e5e5;
@@ -59,60 +61,61 @@ and open the template in the editor.
 	align-self: center;
 }
 
-.tasklist-header{
+.changelist-header{
 	display: flex;
 	justify-content: space-between;
 	margin-left: 2px;
 }
 
-.tasklist-name{
+.changelist-name{
 	white-space: normal;
 	display: block;
 }
 
-.tasklist-description{
+.changelist-description{
 	white-space: normal;
 	font-size: smaller;
 }
 
-.tasklist-entry-summary{
+.changelist-entry-summary{
 	display: inline-block;
 	width: 100%;
 }
 
-.tasklist-project.tasklist-complete-tick{
+.changelist-project.changelist-complete-tick{
 	/*display: none;*/
 	opacity: 0;
 }
 
-.tasklist-subtask-count{
+.changelist-subtask-count{
 	width: 3em;
 	display: inline-block;
 	align-items: baseline;
 }
 
-.tasklist-entry-prefix{
+.changelist-entry-prefix{
 	padding: 3px;
 }
 
-.tasklist-entry-suffix{
+.changelist-entry-suffix{
 	padding-right: 3px;
 }
 
-.tasklist-footer{
+.changelist-footer{
 }
 
-.tasklist-complete-tick{
+.changelist-complete-tick{
 	background-color: lightgray; 
 	color: white; 
 	border-radius: 4px;
+	font-size: smaller;
 	height: 36px;
 	min-height: 36px;
 	width: 36px;
 	min-width: 36px;
 }
 
-.tasklist-reopen-tick{
+.changelist-reopen-tick{
 	background-color: transparent; 
 	color: limegreen; 
 	border-radius: 4px;
@@ -125,8 +128,4 @@ and open the template in the editor.
 .normal-task-heart{
 	background-color: transparent; 
 	color: lightgray; 
-}
-.edit-task-complete-button-container {
-	display: flex;
-	flex-direction: row-reverse;
 }

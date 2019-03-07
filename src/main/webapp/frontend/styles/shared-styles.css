@@ -63,8 +63,9 @@ upcoming-task-list{
 	padding-left: 0;
 	padding-right:0;
 	background-color: white;
-	display: flex;
-	flex-direction: column;
+	/*	display: flex;
+		flex-direction: column;*/
+	justify-content: space-between;
 }
 
 #minortask-internal{

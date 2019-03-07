@@ -16,6 +16,7 @@ import com.vaadin.flow.shared.Registration;
 import java.io.InputStream;
 import java.sql.SQLException;
 import nz.co.gregs.minortask.components.RequiresLogin;
+import nz.co.gregs.minortask.components.changes.Changes;
 
 /**
  *
@@ -60,6 +61,7 @@ public class DocumentUpload extends Div implements RequiresLogin {
 		System.out.println("Document: " + doc.toString());
 		try {
 			getDatabase().insert(doc);
+			getDatabase().insert(new Changes(getCurrentUser(), doc));
 			fireEvent(new DocumentAddedEvent(this, doc, false));
 		} catch (SQLException ex) {
 			sqlerror(ex);

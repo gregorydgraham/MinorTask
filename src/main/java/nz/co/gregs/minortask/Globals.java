@@ -79,7 +79,6 @@ import nz.co.gregs.minortask.pages.ProjectsLayout;
 import nz.co.gregs.minortask.pages.RecentTasksPage;
 import nz.co.gregs.minortask.pages.SearchForTaskPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
-import nz.co.gregs.minortask.pages.TaskCreatorLayout;
 import nz.co.gregs.minortask.pages.TaskEditorLayout;
 import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 import org.joda.time.Chronology;
@@ -298,9 +297,9 @@ public class Globals {
 		return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 
-	public static void showTaskCreation(Long taskID) {
-		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
-	}
+//	public static void showTaskCreation(Long taskID) {
+//		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
+//	}
 
 	public static void showLocation(Location dest) {
 		if (dest != null) {

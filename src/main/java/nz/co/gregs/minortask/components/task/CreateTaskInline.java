@@ -15,6 +15,7 @@ import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.util.Date;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.components.changes.Changes;
 
 /**
  *
@@ -73,6 +74,7 @@ public class CreateTaskInline extends SecureTaskSpan {
 			}
 			try {
 				getDatabase().insert(task);
+				getDatabase().insert(new Changes(getCurrentUser(), task));
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			} finally {

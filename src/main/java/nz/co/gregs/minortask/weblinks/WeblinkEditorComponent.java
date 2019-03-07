@@ -10,11 +10,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.changes.Changes;
 import org.apache.commons.validator.routines.UrlValidator;
 
 /**
@@ -82,18 +85,18 @@ public class WeblinkEditorComponent extends SecureDiv implements  HasDefaultButt
 		weblink.taskID.setValue(taskID);
 		weblink.webURL.setValue(locationText.getValue());
 		weblink.description.setValue(descriptionText.getValue());
-		String iconURL = "";
 		String[] bits = locationText.getValue().split("/");
 		for (String bit : bits) {
 			System.out.println("BIT: " + bit);
 		}
-		iconURL = bits[0] + "//" + bits[2] + "/favicon.ico";
+		String iconURL = bits[0] + "//" + bits[2] + "/favicon.ico";
 		if (urlExists(iconURL)) {
 			weblink.iconURL.setValue(iconURL);
 		}
 		try {
 			getDatabase().insert(weblink);
-		} catch (SQLException ex) {
+			getDatabase().insert(new Changes(getCurrentUser(), getTask(taskID), weblink));
+		} catch (SQLException | Globals.InaccessibleTaskException ex) {
 			sqlerror(ex);
 		}
 
@@ -129,7 +132,7 @@ public class WeblinkEditorComponent extends SecureDiv implements  HasDefaultButt
 			HttpURLConnection huc = (HttpURLConnection) u.openConnection();
 			huc.setRequestMethod("HEAD");
 			return (huc.getResponseCode() == HttpURLConnection.HTTP_OK);
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			return false;
 		}
 	}

@@ -21,6 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.changes.Changes;
 
 /**
  *
@@ -112,6 +113,7 @@ public class OpenStreetMapPlaceGrid extends SecureDiv {
 	private void addSelectedLocation(Place location) {
 		try {
 			getDatabase().insert(location);
+			getDatabase().insert(new Changes(getCurrentUser(), location));
 			grid.removeAll();
 		} catch (SQLException ex) {
 			sqlerror(ex);

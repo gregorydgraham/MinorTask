@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import nz.co.gregs.minortask.components.Sidebar;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -13,26 +14,27 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
+import nz.co.gregs.minortask.components.FlexBox;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.components.TaskTabs;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
-	
+
 	TaskTabs taskTabs;
-	
+
 	@Override
 	protected final Component getInternalComponent() {
 		return new AccessDeniedComponent();
 	}
-	
+
 	protected abstract Component getInternalComponent(Long parameter);
-	
+
 	@Override
 	public final void setComponents() {
 	}
-	
+
 	@Override
 	public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
 		taskID = parameter;
@@ -53,16 +55,20 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
-		Div internalComponentHolder
-				= new Div(
-						banner,
-						projectPath,
-						taskTabs,
-						internalComponent
+		FlexBox internalComponentHolder
+				= new FlexBox(
+						new Div(),
+						new Div(
+								projectPath,
+								taskTabs,
+								internalComponent
+						),
+						new Sidebar()
 				);
 		internalComponentHolder.addClassName("minortask-internal");
 		Div verticalLayout = new Div(internalComponentHolder);
 		verticalLayout.addClassName("minortask-internal-container");
+		add(banner);
 		add(verticalLayout);
 		add(new FooterMenu());
 	}

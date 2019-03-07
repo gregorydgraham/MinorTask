@@ -39,13 +39,13 @@ import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.minortask.ClarityAndProgress;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.polymer.Details;
-import nz.co.gregs.minortask.components.polymer.PaperTextArea;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
 import nz.co.gregs.minortask.components.upload.DocumentUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.ImageUploadAndSelector;
 import nz.co.gregs.minortask.components.upload.TaskDocumentLink;
+import nz.co.gregs.minortask.components.changes.Changes;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.place.PlaceSearchComponent;
@@ -232,7 +232,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 
 		final ClarityAndProgress clarity = new ClarityAndProgress(getTask());
 
-		Label clarityLabel = new Label("Clarity: " +clarity.getDeltaClarity()+" Progress: " + clarity.getDeltaProgress());
+		Label clarityLabel = new Label("Clarity: " + clarity.getDeltaClarity() + " Progress: " + clarity.getDeltaProgress());
 
 		final SecureDiv nameAndDescriptionDiv = new SecureDiv(nameDiv, descriptionDiv, clarityLabel);
 		nameAndDescriptionDiv.addClassName("edit-task-nameanddescription");
@@ -254,11 +254,11 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				Globals.getSpacer()
 		);
 		tasksDiv.addClassName("tasksdiv");
-		
-		Div sidebar = new Div(completedTasks);
-		sidebar.addClassName("sidebar");
-		
-		final Span tasksAndSideBar = new Span(tasksDiv, sidebar);
+
+//		Div sidebar = new Div(completedTasks, Globals.getSpacer(), new ChangesList());
+//		sidebar.addClassName("sidebar");
+
+		final Span tasksAndSideBar = new Span(tasksDiv);
 		tasksAndSideBar.addClassName("tasksandsidebar");
 
 		Div topLayout = new Div(
@@ -584,17 +584,19 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 		} else {
 			task.assigneeID.setValue(assignedToSelector.getValue().getUserID());
 		}
-		task.notes.setValue(notes.getValue());
+		if (!notes.getValue().equals(task.notes.stringValue())) {
+			task.notes.setValue(notes.getValue());
+		}
 		task.startDate.setValue(asDate(startDate.getValue()));
 		task.preferredDate.setValue(asDate(preferredEndDate.getValue()));
 		task.finalDate.setValue(asDate(deadlineDate.getValue()));
 		task.repeatOffset.setValue(repeatValue);
 
 		try {
+			getDatabase().insert(Changes.getChanges(getCurrentUser(), task));
 			getDatabase().update(task);
 		} catch (SQLException ex) {
-			Logger.getLogger(CreateTask.class.getName()).log(Level.SEVERE, null, ex);
-			Globals.sqlerror(ex);
+			sqlerror(ex);
 		}
 		Globals.savedNotice();
 	}
@@ -646,6 +648,15 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 			link.ownerID.setValue(getCurrentUserID());
 			try {
 				getDatabase().insert(link);
+				getDatabase().insert(new Changes(
+						getCurrentUser(),
+						getTask(),
+						"Document",
+						"no file",
+						event.getValue().filename.getValue(),
+						"Connected File: " + event.getValue().filename.getValue()
+				)
+				);
 			} catch (SQLException ex) {
 				sqlerror(ex);
 			}

@@ -22,6 +22,7 @@ import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
+import nz.co.gregs.minortask.components.changes.Changes;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -153,7 +154,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		);
 	}
 
-	private Component getPrefixComponent(Task task) {
+	protected Component getPrefixComponent(Task task) {
 		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
 		heart.addClassName("tasklist-entry-prefix");
 		if (minortask().taskIsFavourited(task)) {
@@ -174,27 +175,8 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		return heart;
 	}
 
-	private Component getDescriptionComponent(Task task) {
+	protected Component getDescriptionComponent(Task task) {
 		return new TaskOverviewSpan(task);
-//		SecureSpan name = new SecureSpan();
-//		name.setText(task.name.getValue());
-//		SecureSpan desc = new SecureSpan();
-//		desc.setText(task.description.getValue());
-//
-//		name.setSizeFull();
-//		name.addClassNames("tasklist-name");
-//		desc.setSizeFull();
-//		desc.addClassNames("tasklist-description");
-//
-//		final SecureSpan summary = new SecureSpan(name, desc);
-//
-//		SecureSpan anchor = new SecureSpan(summary);
-//		anchor.addClassName("tasklist-entry-summary");
-//		anchor.addClickListener((event) -> {
-//			Globals.showTask(task.taskID.getValue());
-//		});
-//
-//		return anchor;
 	}
 
 	protected Component getSubTaskNumberComponent(Task task) {
@@ -267,6 +249,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks(task, minortask().getCurrentUser());
 			Globals.getDatabase().insert(favour);
+			getDatabase().insert(new Changes(getCurrentUser(), task, "Added "+task.name.getValue()+" to Favourites"));
 		} catch (SQLException ex) {
 			Globals.sqlerror(ex);
 		}
