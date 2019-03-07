@@ -19,6 +19,7 @@ public class FlexBox extends Span implements RequiresPermission {
 	public FlexBox() {
 		getStyle().set("display", "flex");
 		getStyle().set("flex-direction", "row");
+		getStyle().set("flex-wrap", "wrap");
 	}
 
 	public FlexBox(Component... components) {

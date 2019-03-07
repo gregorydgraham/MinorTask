@@ -55,14 +55,16 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
+		final Div taskSection = new Div(
+				projectPath,
+				taskTabs,
+				internalComponent
+		);
+		taskSection.addClassName("minortask-tasksection");
 		FlexBox internalComponentHolder
 				= new FlexBox(
-						new Div(),
-						new Div(
-								projectPath,
-								taskTabs,
-								internalComponent
-						),
+						//						Globals.getSpacer(),
+						taskSection,
 						new Sidebar()
 				);
 		internalComponentHolder.addClassName("minortask-internal");

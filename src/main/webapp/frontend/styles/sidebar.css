@@ -8,13 +8,40 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 
-.sidebar{
-	display:none;
-	max-width: 200px;
-	width: 100%;
+sidebar{
+	/*display:inline-block;*/
+	/*display:inline-block;*/
+	/*max-width: 200px;*/
+	/*min-width: 15em;*/
+	width: 20em;
 	font-size: xx-small;
 }
 
-@media all and (max-width: 950px) {
-    .sidebar { display: none; }
+@media all and (max-device-width: 600px) {
+	sidebar { display: none;}
+}
+
+@media all and (min-device-width: 601px) {
+	sidebar { display: inline-block;}
+}
+/*@media all and (min-width: 600px) {
+	.sidebar { display: inline-block; }
+}*/
+
+sidebar .tasklist{
+	background-color: white;
+	box-shadow: none;
+}
+
+sidebar .tasklist-grid-row{
+	box-shadow: 0 0 2px darkgrey;
+}
+
+sidebar .changelist{
+	background-color: white;
+	box-shadow: none;
+}
+
+sidebar .changelist-grid-row{
+	box-shadow: 0 0 2px darkgrey;
 }
