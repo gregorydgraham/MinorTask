@@ -79,7 +79,7 @@ public class OpenTaskList extends AbstractTaskList {
 	protected Component[] getFooterExtras() {
 		footerContents = new SecureSpan();
 		footerContents.add(addButton);
-		footerContents.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_LEFT);
+		footerContents.setTooltipText("Add a new minor task to advance this project", Position.BOTTOM_RIGHT);
 		return new Component[]{footerContents};
 	}
 
