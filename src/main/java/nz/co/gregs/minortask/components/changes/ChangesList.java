@@ -119,9 +119,12 @@ public class ChangesList extends SecureDiv {
 		Changes changes = new Changes();
 		changes.userid.permittedValues(getCurrentUser().getUserID());
 		DBTable<Changes> query = getDatabase().getDBTable(changes);
-		query.setSortOrder(changes.column(changes.createdDate).descending());
+		query.setSortOrder(
+				changes.column(changes.createdDate).descending(),
+				changes.column(changes.changeID).descending()
+		);
 		query.setPageSize(20);
-		System.out.println("CHANGES: "+query.getSQLForQuery());
+		System.out.println("CHANGES: " + query.getSQLForQuery());
 		return query.getPage(0);
 	}
 
