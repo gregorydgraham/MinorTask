@@ -6,13 +6,14 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@Tag("completed-task-list")
+@StyleSheet("styles/completed-task-list.css")
 public class CompletedTaskList extends AbstractTaskList {
 
 	public CompletedTaskList(Long taskID) {

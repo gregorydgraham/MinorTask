@@ -47,6 +47,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		setupTaskList();
 		buildComponent();
 		this.addClassName("tasklist");
+		this.addClassName(this.getListClassName());
 	}
 
 	public final void buildComponent() {
