@@ -252,20 +252,19 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				Globals.getSpacer(),
 				completeButtonDiv,
 				Globals.getSpacer(),
-				 new CompletedTaskList(getTaskID())
+				new CompletedTaskList(getTaskID())
 		);
 		tasksDiv.addClassName("tasksdiv");
 
-//		Div sidebar = new Div(completedTasks, Globals.getSpacer(), new ChangesList());
-//		sidebar.addClassName("sidebar");
-		final Span tasksAndSideBar = new Span(tasksDiv);
-		tasksAndSideBar.addClassName("tasksandsidebar");
-
-		Div topLayout = new Div(
-				nameAndProjectDiv,
-				buttonsAndEditors,
-				extrasLayout,
-				tasksAndSideBar);
+		FlexBox topLayout = new FlexBox(
+				Globals.getSpacer(),
+				new Div(
+						nameAndProjectDiv,
+						buttonsAndEditors,
+						extrasLayout,
+						tasksDiv),
+				Globals.getSpacer()
+		);
 		topLayout.addClassName("edit-task-contents");
 
 		addToolTips();
