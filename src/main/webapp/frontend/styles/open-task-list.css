@@ -8,8 +8,8 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 .opentaskslist{
-/*	min-width: 350px;
-	max-width: 600px;*/
+	background: white;
+	box-shadow: none;
 }
 
 .opentasks-footer {
@@ -21,6 +21,34 @@ and open the template in the editor.
 	padding-right: 5px;
 }
 
+.opentaskslist .tasklist-grid-row{
+	border: 0;
+	margin-bottom: 3px;
+	background-color: #e5ffe5;
+	color: white;
+}
+
+.opentaskslist .normal-task-heart{
+	color: white;
+	opacity: 1;
+}
+
+.opentaskslist .taskoverview-name {
+    color: black;
+}
+
+.opentaskslist .taskoverview-description {
+    color: black;
+}
+
+.opentaskslist .tasklist-complete-tick{
+	background-color: transparent;
+	color: white;
+	opacity: 1;
+}
+.opentaskslist .tasklist-subtask-count {
+    color: black;
+}
 .addtaskbutton{
 	background-color: limegreen;
 	color: white;
@@ -31,7 +59,7 @@ and open the template in the editor.
 	.addtaskbutton{
 		padding: 0;
 		margin-left: 0; margin-right: 0;
-		font-size: x-small;
-		font-weight: bold;
+		font-size: small;
+		/*font-weight: bold;*/
 	}
 }

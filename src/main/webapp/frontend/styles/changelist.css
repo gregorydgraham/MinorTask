@@ -43,7 +43,7 @@ and open the template in the editor.
 	align-items: center;
 	width: calc(100% - 1em);
 	max-width: 900px;
-	font-size: x-small;
+	color: cadetblue;
 	background-color: white;
 	border-left: thin solid #e5e5e5;
 	border-right: thin solid #e5e5e5;
@@ -53,13 +53,13 @@ and open the template in the editor.
 	margin-bottom: 1px;
 }
 
-.task-list-grid-container{
+/*.task-list-grid-container{
 	align-items: center;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	align-self: center;
-}
+}*/
 
 .changelist-header{
 	display: flex;
@@ -74,7 +74,7 @@ and open the template in the editor.
 
 .changelist-description{
 	white-space: normal;
-	font-size: smaller;
+	font-size: small;
 }
 
 .changelist-entry-summary{
@@ -82,10 +82,15 @@ and open the template in the editor.
 	width: 100%;
 }
 
-.changelist-project.changelist-complete-tick{
-	/*display: none;*/
-	opacity: 0;
+.changelist-change-taskname{
+	font-weight: bold;
 }
+
+/*.changelist-project.changelist-complete-tick{
+	display: none;
+	opacity: 0;
+	color: blueviolet;
+}*/
 
 .changelist-subtask-count{
 	width: 3em;
@@ -95,6 +100,10 @@ and open the template in the editor.
 
 .changelist-entry-prefix{
 	padding: 3px;
+	color: limegreen;
+}
+.changelist-grid-row iron-icon{
+	opacity:0.5;
 }
 
 .changelist-entry-suffix{
@@ -121,11 +130,11 @@ and open the template in the editor.
 	border-radius: 4px;
 	font-size: smaller;
 }
-.favourited-task-heart{
+/*.favourited-task-heart{
 	background-color: transparent; 
 	color: red; 
 }
 .normal-task-heart{
 	background-color: transparent; 
 	color: lightgray; 
-}
+}*/

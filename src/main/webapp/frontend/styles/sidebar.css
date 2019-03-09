@@ -14,7 +14,7 @@ sidebar{
 	/*max-width: 200px;*/
 	/*min-width: 15em;*/
 	width: 20em;
-	font-size: xx-small;
+	font-size: small;
 }
 
 @media all and (max-device-width: 600px) {

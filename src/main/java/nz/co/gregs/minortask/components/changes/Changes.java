@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.components.changes;
 import java.util.List;
 import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBRow;
+import nz.co.gregs.dbvolution.annotations.AutoFillDuringQueryIfPossible;
 import nz.co.gregs.dbvolution.annotations.DBAutoIncrement;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.annotations.DBForeignKey;
@@ -62,6 +63,9 @@ public class Changes extends DBRow {
 	@DBColumn
 	@DBForeignKey(Task.class)
 	DBInteger taskid = new DBInteger();
+	
+	@AutoFillDuringQueryIfPossible
+	Task task;
 
 	@DBColumn
 	@DBForeignKey(Document.class)

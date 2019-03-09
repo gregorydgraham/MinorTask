@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components.changes;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -14,13 +15,15 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import nz.co.gregs.dbvolution.DBTable;
+import java.util.stream.Collectors;
+import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip.Position;
 import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
@@ -118,14 +121,17 @@ public class ChangesList extends SecureDiv {
 	protected List<Changes> getChangesToList() throws SQLException {
 		Changes changes = new Changes();
 		changes.userid.permittedValues(getCurrentUser().getUserID());
-		DBTable<Changes> query = getDatabase().getDBTable(changes);
+		DBQuery query = getDatabase().getDBQuery(changes, new Task());
 		query.setSortOrder(
 				changes.column(changes.createdDate).descending(),
 				changes.column(changes.changeID).descending()
 		);
 		query.setPageSize(20);
 		System.out.println("CHANGES: " + query.getSQLForQuery());
-		return query.getPage(0);
+		return query.getPage(0)
+				.stream()
+				.map((t) -> t.get(changes))
+				.collect(Collectors.toList());
 	}
 
 	protected Component[] getFooterExtras() {
@@ -169,14 +175,18 @@ public class ChangesList extends SecureDiv {
 	}
 
 	private Component getDescriptionComponent(Changes change) {
+		HtmlContainer name = new Span();
 		final Span desc = new Span(change.description.getValue());
 		if (change.taskid.isNotNull()) {
+			name = new Div(new Span(change.task.name.getValue()));
 			desc.addClickListener((event) -> {
 				MinorTask.showTask(change.taskid.getValue());
 			});
 			desc.getStyle().set("cursor", "pointer");
 		}
-		return desc;
+		name.addClassName("changelist-change-taskname");
+		desc.addClassName("changelist-change-description");
+		return new Div(name, desc);
 	}
 
 	protected Component getSuffixComponent(Changes change) {
