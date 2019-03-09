@@ -29,8 +29,8 @@ and open the template in the editor.
 }
 
 .opentaskslist .normal-task-heart{
-	color: white;
-	opacity: 1;
+	color: black;
+	opacity: 0.1;
 }
 
 .opentaskslist .taskoverview-name {
@@ -43,8 +43,8 @@ and open the template in the editor.
 
 .opentaskslist .tasklist-complete-tick{
 	background-color: transparent;
-	color: white;
-	opacity: 1;
+	color: black;
+	opacity: 0.1;
 }
 .opentaskslist .tasklist-subtask-count {
     color: black;
