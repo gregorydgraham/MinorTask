@@ -8,9 +8,6 @@ package nz.co.gregs.minortask.components.tasklists;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
