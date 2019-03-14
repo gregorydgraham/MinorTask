@@ -93,7 +93,7 @@ public class OpenProjectsList extends AbstractTaskList {
 		addButton = new Button();
 		addButton.addClassName("openprojects-addminortaskbutton");
 		addButton.setIcon(new Icon(VaadinIcon.PLUS_CIRCLE_O));
-		addButton.setText("Add MinorTask");
+		addButton.setText("Add MinorTask Project");
 		addButton.addClassNames("addtaskbutton");
 		addButton.addClickListener((event) -> {
 			createTask.addNewMinorTask(getFooter(), footerContents);
