@@ -23,9 +23,10 @@ and open the template in the editor.
 
 .opentaskslist .tasklist-grid-row{
 	border: 0;
-	margin-bottom: 3px;
-	background-color: #e5ffe5;
-	color: white;
+	margin-bottom: 5px;
+	/*background-color: #e5ffe5;*/
+	/*color: white;*/
+	box-shadow: 0 1px 6px darkgrey;
 }
 
 .opentaskslist .normal-task-heart{

@@ -9,8 +9,15 @@ and open the template in the editor.
 */
 
 .openprojectslist.tasklist-footer {
-	width: 100%;
+	width: calc(100% - 10px);
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	align-items: center;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.openprojects-addminortaskbutton{
+	background-color: limegreen;
+	color: white;
 }
