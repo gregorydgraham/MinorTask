@@ -25,24 +25,27 @@ import org.joda.time.format.PeriodFormat;
 @StyleSheet("styles/taskoverview.css")
 public class TaskOverviewSpan extends SecureTaskSpan {
 
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd, YYYY");
-
-	;
+	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd, YYYY");
 
 	public TaskOverviewSpan(Task task) {
 		super(task);
 
 		Span name = new Span();
 		name.setText(task.name.getValue());
-		name.setSizeFull();
 		name.addClassNames("taskoverview-name");
+
+		Span project = createProjectSpan(task);
+
+		Div topDiv = new Div(name, project);
+		topDiv.setSizeUndefined();
+		topDiv.addClassName("taskoverview-nameandproject");
 
 		Span desc = new Span();
 		desc.setText(task.description.getValue());
 		desc.setSizeFull();
 		desc.addClassNames("taskoverview-description");
 
-		Span summary = new Span(name, desc);
+		Span summary = new Span(topDiv, desc);
 		summary.addClickListener((event) -> {
 			Globals.showTask(task.taskID.getValue());
 		});
@@ -56,6 +59,22 @@ public class TaskOverviewSpan extends SecureTaskSpan {
 
 		this.add(span);
 		this.addClassName("taskoverview");
+	}
+
+	protected final Span createProjectSpan(Task task) {
+		Span project = new Span();
+		project.setSizeUndefined();
+		if (task.projectID.isNotNull()) {
+			Long taskProjectID = null;
+			taskProjectID = task.projectID.getValue();
+			try {
+				project.setText(getTask(taskProjectID).name.getValue());
+			} catch (Globals.InaccessibleTaskException ex) {
+				Logger.getLogger(TaskOverviewSpan.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		project.addClassNames("taskoverview-project");
+		return project;
 	}
 
 	private void setDetails(Details details) {

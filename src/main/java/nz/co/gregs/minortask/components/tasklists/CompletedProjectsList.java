@@ -5,12 +5,13 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@Tag("completed-task-list")
+@StyleSheet("style/completed-projects-list.css")
 public class CompletedProjectsList extends AbstractTaskList {
 
 	public CompletedProjectsList() {
