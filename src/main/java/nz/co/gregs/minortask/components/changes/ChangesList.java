@@ -24,6 +24,7 @@ import nz.co.gregs.minortask.components.IconWithToolTip;
 import nz.co.gregs.minortask.components.SecureDiv;
 import nz.co.gregs.minortask.components.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
@@ -120,18 +121,23 @@ public class ChangesList extends SecureDiv {
 
 	protected List<Changes> getChangesToList() throws SQLException {
 		Changes changes = new Changes();
-		changes.userid.permittedValues(getCurrentUser().getUserID());
-		DBQuery query = getDatabase().getDBQuery(changes, new Task());
-		query.setSortOrder(
-				changes.column(changes.createdDate).descending(),
-				changes.column(changes.changeID).descending()
-		);
-		query.setPageSize(20);
-		System.out.println("CHANGES: " + query.getSQLForQuery());
-		return query.getPage(0)
-				.stream()
-				.map((t) -> t.get(changes))
-				.collect(Collectors.toList());
+		final User currentUser = getCurrentUser();
+		if (currentUser != null) {
+			changes.userid.permittedValues(currentUser.getUserID());
+			DBQuery query = getDatabase().getDBQuery(changes, new Task());
+			query.setSortOrder(
+					changes.column(changes.createdDate).descending(),
+					changes.column(changes.changeID).descending()
+			);
+			query.setPageSize(20);
+			System.out.println("CHANGES: " + query.getSQLForQuery());
+			return query.getPage(0)
+					.stream()
+					.map((t) -> t.get(changes))
+					.collect(Collectors.toList());
+		} else {
+			return new ArrayList<>();
+		}
 	}
 
 	protected Component[] getFooterExtras() {
