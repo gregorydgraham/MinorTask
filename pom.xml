@@ -44,6 +44,14 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>JCenter Cache Repo</id>
+			<url>http://oss.jfrog.org/artifactory/jcenter-cache/</url>
+		</repository>
+		<repository>
+			<id>Spring Libs Repo</id>
+			<url>http://repo.spring.io/libs-release/</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -87,7 +95,6 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-core</artifactId>
-			<version>${vaadin.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.code.findbugs</groupId>
@@ -146,6 +153,17 @@
 			<groupId>org.webjars.bowergithub.polymerelements</groupId>
 			<artifactId>paper-input</artifactId>
 			<version>2.2.3</version>
+		</dependency>
+		<!--		<dependency>
+			 used to get kitten images from Reddit 
+			<groupId>net.dean.jraw</groupId>
+			<artifactId>JRAW</artifactId>
+			<version>1.1.0</version>
+		</dependency>-->
+		<dependency>
+			<groupId>net.dean.jraw</groupId>
+			<artifactId>JRAW</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 	</dependencies>
 
