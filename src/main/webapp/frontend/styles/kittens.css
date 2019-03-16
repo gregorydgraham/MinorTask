@@ -24,7 +24,7 @@ kittens a{
 
 kittens img{
 	max-width: 200px;
-	transition: transform .5s ease;
+	transition: transform .5s ease, max-width .5s ease, opacity .5s ease, filter .5s ease;
 }
 
 /* [2] Transition property for smooth transformation of images */
@@ -34,4 +34,15 @@ kittens img{
 /* [3] Finally, transforming the image when container gets hovered */
 kittens img:hover {
 	transform: scale(2);
+	z-index: 1;
+}
+
+kittens img .disappear {
+	transform: scale(2);
+	opacity: 0;
+}
+
+kittens img .appear {
+	filter: blur(8px);
+	opacity: 0;
 }
