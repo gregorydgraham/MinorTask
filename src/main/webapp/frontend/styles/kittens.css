@@ -33,5 +33,5 @@ kittens img{
 
 /* [3] Finally, transforming the image when container gets hovered */
 kittens img:hover {
-	transform: scale(1.5);
+	transform: scale(2);
 }
