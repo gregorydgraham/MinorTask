@@ -68,7 +68,7 @@ public class Kittens extends MinortaskPage {
 		DefaultPaginator<Submission> kittensReddit = redditClient
 				.subreddits("kittens", "Otters")//, "awww", "Otters", "puppies")
 				.posts()
-				.sorting(SubredditSort.NEW)
+				.sorting(SubredditSort.HOT)
 				.limit(100)
 				.build();
 
