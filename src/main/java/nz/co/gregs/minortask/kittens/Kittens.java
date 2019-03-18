@@ -5,15 +5,21 @@
  */
 package nz.co.gregs.minortask.kittens;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -38,9 +44,23 @@ import nz.co.gregs.minortask.pages.MinortaskPage;
 @StyleSheet("frontend://styles/kittens.css")
 public class Kittens extends MinortaskPage {
 
+	private final KittenBox[] components;
+//	static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+//	ChangeKitten changeKitten = new ChangeKitten(this);
+
 	public Kittens() {
 		this.addClassName("kitten");
-		add(getKittenImagesFromReddit());
+		components = getKittenImagesFromReddit();
+		add(components);
+//		this.addAttachListener((event) -> {
+//			changeKitten.start(executor);
+//			this.getUI().get().addDetachListener((detach) -> {
+//				changeKitten.stop();
+//			});
+//		});
+//		this.addDetachListener((event) -> {
+//			changeKitten.stop();
+//		});
 	}
 
 	protected static Image[] getKittenImages() {
@@ -51,7 +71,7 @@ public class Kittens extends MinortaskPage {
 			"kitten")};
 	}
 
-	protected static Component[] getKittenImagesFromReddit() {
+	public static KittenBox[] getKittenImagesFromReddit() {
 		UserAgent userAgent = new UserAgent("bot", "nz.co.gregs.minortask.kittens", "v0.1", "gregorydgraham");
 // Create our credentials
 		Credentials credentials = Credentials.script(
@@ -72,21 +92,20 @@ public class Kittens extends MinortaskPage {
 				.limit(100)
 				.build();
 
-		List<Component> images = new ArrayList<>();
+		List<Image> images = new ArrayList<>();
 		kittensReddit
 				.next()
 				.stream()
-//				.peek((s) -> {
-//					System.out.println("" + s.getTitle());
-//					System.out.println("" + s.getUrl());
-//				})
 				.filter((s) -> (!s.isSelfPost() && (s.getUrl().endsWith(".jpg") || s.getUrl().endsWith(".png"))))
 				.forEachOrdered((s) -> {
-//					System.out.println("ADDING: " + s.getUrl());
 					final Image image = new Image(s.getUrl(), s.getUrl());
 					images.add(image);
 				});
-		return images.toArray(new Component[]{});
+		List<KittenBox> boxes = images
+				.stream()
+				.map((s) -> new KittenBox(s))
+				.collect(Collectors.toList());
+		return boxes.toArray(new KittenBox[]{});
 	}
 
 	public static String getFromEnv(String envReference) {
@@ -104,4 +123,77 @@ public class Kittens extends MinortaskPage {
 		return envValue;
 	}
 
+	private static class ChangeKitten implements Runnable {
+
+//		private final UI ui;
+		private final Kittens view;
+		private boolean keepGoing = true;
+		private ScheduledExecutorService executor;
+		private ScheduledFuture<?> schedule;
+
+		public ChangeKitten(Kittens view) {
+//			this.ui = ui;
+			this.view = view;
+
+		}
+
+		@Override
+		public void run() {
+			//only run once as we're going to use an executor
+			if (keepGoing()) {
+				view.getUI().get().access(() -> {
+					// Do the changes to the page
+					System.out.println("CHANGE KITTEN " + (new Date()));
+					KittenBox[] comps = view.components;
+					int random = new Double(Math.random() * comps.length).intValue();
+					KittenBox target = comps[random];
+					if (target != null) {
+						// do something
+					}
+				});
+			} else {
+				this.stop();
+			}
+		}
+
+		public synchronized void start(ScheduledExecutorService executor) {
+			if (schedule != null) {
+				this.stop();
+			}
+			keepGoing = true;
+			this.executor = executor;
+			this.schedule = this.executor.scheduleWithFixedDelay(this, 10, 10, TimeUnit.SECONDS);
+		}
+
+		private synchronized void stop() {
+			keepGoing = false;
+//			remove from the executor
+			if (schedule != null) {
+				schedule.cancel(false);
+				schedule = null;
+			}
+		}
+
+		private boolean keepGoing() {
+			return keepGoing && view.getUI().isPresent();
+		}
+	}
+
+	@Tag("kittenbox")
+	public static class KittenBox extends Span {
+
+		private Image frontImage;
+
+		public KittenBox(Image front) {
+			makeFrontAndBack(front);
+			add(front);
+			addClassName("kittenbox");
+		}
+
+		private void makeFrontAndBack(Image front) {
+			frontImage = front;
+			frontImage.getElement().getClassList().remove("back");
+			frontImage.getElement().getClassList().add("front");
+		}
+	}
 }
