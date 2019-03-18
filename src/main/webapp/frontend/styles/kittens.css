@@ -23,26 +23,57 @@ kittens a{
 }
 
 kittens img{
-	max-width: 200px;
+	width: 200px;
+	height: 200px;
+    object-fit: cover;
 	transition: transform .5s ease, max-width .5s ease, opacity .5s ease, filter .5s ease;
+	border-radius: 5px;
 }
 
-/* [2] Transition property for smooth transformation of images */
-.img-hover-zoom img {
-}
-
-/* [3] Finally, transforming the image when container gets hovered */
 kittens img:hover {
 	transform: scale(2);
+	z-index: 2;
+	object-fit: contain;
+	border-radius: 5px;
+}
+
+.finish {
+	transform: scale(2);
+	opacity: 0;
 	z-index: 1;
 }
 
-kittens img .disappear {
-	transform: scale(2);
+.start {
+	filter: blur(8px);
 	opacity: 0;
 }
 
-kittens img .appear {
+.kittenbox {
+	position: relative;
+	top:0;
+	left:0;
+	background-color: rgba(200, 200, 200, 0.3);
+}
+
+.front{
+	z-index: 1;
+	position: relative;
+	left:0;
+	top:0;
+}
+
+.back{
+	position: absolute;
+	left:0;
+	top:0;
 	filter: blur(8px);
 	opacity: 0;
+}
+
+/*.front:hover{
+	transform: scale(2);
+	opacity: 0;
+}*/
+
+.back:hover{
 }
