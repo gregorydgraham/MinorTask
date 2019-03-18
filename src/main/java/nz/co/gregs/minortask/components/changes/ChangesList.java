@@ -21,8 +21,8 @@ import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip.Position;
 import nz.co.gregs.minortask.components.IconWithToolTip;
-import nz.co.gregs.minortask.components.SecureDiv;
-import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.generic.SecureDiv;
+import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 

@@ -5,7 +5,7 @@
  */
 package nz.co.gregs.minortask.components.task;
 
-import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.datamodel.Task;
 
 public class SecureTaskDiv extends SecureDiv implements HasTask {

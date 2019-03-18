@@ -16,7 +16,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.HasDefaultButton;
-import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.changes.Changes;
 import org.apache.commons.validator.routines.UrlValidator;
 

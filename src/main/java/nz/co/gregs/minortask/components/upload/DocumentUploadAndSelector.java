@@ -8,7 +8,7 @@ package nz.co.gregs.minortask.components.upload;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.shared.Registration;
-import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.generic.SecureDiv;
 
 /**
  *

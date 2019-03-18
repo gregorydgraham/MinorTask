@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.generic.SecureDiv;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;

@@ -3,22 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.generic;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.html.Span;
+import nz.co.gregs.minortask.components.AccessDeniedComponent;
+import nz.co.gregs.minortask.components.RequiresPermission;
 
 /**
  *
  * @author gregorygraham
  */
-public class SecureDiv extends Div implements RequiresPermission {
+@Tag("flexcolumn")
+public class FlexColumn extends Span implements RequiresPermission {
 
-	public SecureDiv() {
+	public FlexColumn() {
+		getStyle().set("display", "flex");
+		getStyle().set("flex-direction", "column");
 	}
 
-	SecureDiv(Component... components) {
-		super();
+	public FlexColumn(Component... components) {
+		this();
 		add(components);
 	}
 

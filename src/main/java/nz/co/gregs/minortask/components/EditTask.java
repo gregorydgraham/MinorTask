@@ -5,6 +5,9 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.generic.SecureDiv;
+import nz.co.gregs.minortask.components.generic.FlexColumn;
+import nz.co.gregs.minortask.components.generic.FlexBox;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import com.google.common.base.Objects;
 import com.vaadin.flow.component.AbstractField;
@@ -24,7 +27,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextArea;

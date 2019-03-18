@@ -5,7 +5,7 @@
  */
 package nz.co.gregs.minortask.components.task;
 
-import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**

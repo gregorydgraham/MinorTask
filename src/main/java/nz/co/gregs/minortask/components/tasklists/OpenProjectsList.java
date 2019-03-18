@@ -17,7 +17,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**

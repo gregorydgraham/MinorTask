@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
-import nz.co.gregs.minortask.components.SecureSpan;
+import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.components.task.CreateTaskInline;
 import nz.co.gregs.minortask.datamodel.Task;
 

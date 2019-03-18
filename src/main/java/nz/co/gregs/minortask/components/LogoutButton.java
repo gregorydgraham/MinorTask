@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.generic.SecureSpan;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**

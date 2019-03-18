@@ -14,7 +14,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.FlexBox;
+import nz.co.gregs.minortask.components.generic.FlexBox;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
@@ -55,11 +55,13 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
-		final Div taskSection = new Div(
+		final Div taskComponents = new Div(
 				projectPath,
 				taskTabs,
-				internalComponent
-		);
+				internalComponent);
+		taskComponents.addClassName("minortask-taskcomponents");
+		final Div taskSection = new Div(
+				taskComponents);
 		taskSection.addClassName("minortask-tasksection");
 		FlexBox internalComponentHolder
 				= new FlexBox(

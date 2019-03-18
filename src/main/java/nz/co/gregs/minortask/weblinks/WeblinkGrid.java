@@ -18,7 +18,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
 import java.sql.SQLException;
 import java.util.List;
-import nz.co.gregs.minortask.components.SecureDiv;
+import nz.co.gregs.minortask.components.generic.SecureDiv;
 
 /**
  *

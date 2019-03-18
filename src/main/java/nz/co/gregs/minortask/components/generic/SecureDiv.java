@@ -3,27 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.generic;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.Div;
+import nz.co.gregs.minortask.components.AccessDeniedComponent;
+import nz.co.gregs.minortask.components.RequiresPermission;
 
 /**
  *
  * @author gregorygraham
  */
-@Tag("flexbox")
-public class FlexBox extends Span implements RequiresPermission {
+public class SecureDiv extends Div implements RequiresPermission {
 
-	public FlexBox() {
-		getStyle().set("display", "flex");
-		getStyle().set("flex-direction", "row");
-		getStyle().set("flex-wrap", "wrap");
+	public SecureDiv() {
 	}
 
-	public FlexBox(Component... components) {
-		this();
+	public SecureDiv(Component... components) {
+		super();
 		add(components);
 	}
 
