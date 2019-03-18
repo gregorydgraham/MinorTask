@@ -48,7 +48,7 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 		selectDuration.setItems(DAYS, WEEKS, MONTHS, YEARS);
 		selectDuration.setValue(DAYS);
 
-		this.getContent().addClassName("daterepeat-editor");
+		new Div(this.getContent()).addClassName("daterepeat-editor");
 		enabler.addClassName("daterepeat-editor-enabler");
 		input.addClassName("daterepeat-editor-input");
 
@@ -73,7 +73,7 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 			setModelValue(this.getCurrentPeriod(), false);
 		});
 
-		this.getContent().add(enabler, input, selectDuration);
+		new Div(this.getContent()).add(enabler, input, selectDuration);
 	}
 
 	public final void setLabel(String label) {

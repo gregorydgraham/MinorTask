@@ -1,0 +1,39 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15/03/2019, 11:28:21 AM
+    Author     : gregorygraham
+*/
+
+task-banner{
+	max-width: 100%;
+	width: 100%;
+	min-width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	align-items: center;
+	justify-content: space-around;
+	background-color: cadetblue;
+	color: white;
+}
+
+task-banner label.name{
+	font-size: xx-large;
+	font-weight: bold;
+}
+
+task-banner label.description{
+	font-size: larger;
+}
+
+task-banner .project-path-navigator{
+	color: white;
+}	
+
+task-banner .project-path-navigator vaadin-button{
+	background-color: #0099cc;
+}

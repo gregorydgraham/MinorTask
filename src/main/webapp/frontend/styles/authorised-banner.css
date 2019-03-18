@@ -10,15 +10,15 @@ and open the template in the editor.
 
 authorised-banner {
 	width: 100%;
-	background-color: cadetblue;
-	color:white;
+	background-color: whitesmoke;
+	color:gray;
 	display: flex;
 	justify-content: space-between
 }
 
-	authorised-banner a{color: white;}
-	authorised-banner a:hover{color: white;font-weight: bold;}
-	authorised-banner a:active{color: white;font-style: oblique;}
+	authorised-banner a{color: gray;}
+	authorised-banner a:hover{color: gray;font-weight: bold;}
+	authorised-banner a:active{color: gray;font-style: oblique;}
 
 	.authorised-banner-left {
 		/*padding-left: 1px;*/
@@ -38,17 +38,18 @@ authorised-banner {
 		object-fit: cover;
 		/*border-radius: 25px;*/
 		display: inline-block;	
+		border-bottom-left-radius: 5px;
 	}
 
 	.authorised-banner-selected-button{
-		background-color: white;
-		color: cadetblue;
+		background-color: gray;
+		color: white;
 	}
 
 	.authorised-banner-button{
 		/*color: #0099cc;*/
-		color: white;
-		background-color: cadetblue;
+		color: gray;
+		background-color: white;
 		width: 46px;
 		padding-left: 9px;
 		padding-right: 9px;

@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.pages;
 import nz.co.gregs.minortask.components.Sidebar;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -18,6 +19,7 @@ import nz.co.gregs.minortask.components.generic.FlexBox;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
+import nz.co.gregs.minortask.components.TaskBanner;
 import nz.co.gregs.minortask.components.TaskTabs;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
@@ -40,14 +42,20 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		taskID = parameter;
 		removeAll();
 		add(new MinorTaskTemplate());
+
+		final TaskBanner taskBanner = new TaskBanner(taskID);
+		taskBanner.addClassName("minortask-taskbanner");
+
 		taskTabs = new TaskTabs(this, taskID);
 		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
+
 		Component internalComponent;
 		if (minortask().isLoggedIn()) {
 			internalComponent = getInternalComponent(parameter);
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
+
 		ProjectPathNavigator projectPath = new ProjectPathNavigator(this.getClass(), taskID);
 		if (internalComponent instanceof ProjectPathChanger) {
 			ProjectPathChanger ppc = (ProjectPathChanger) internalComponent;
@@ -55,23 +63,20 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
-		final Div taskComponents = new Div(
-				projectPath,
-				taskTabs,
-				internalComponent);
-		taskComponents.addClassName("minortask-taskcomponents");
-		final Div taskSection = new Div(
-				taskComponents);
-		taskSection.addClassName("minortask-tasksection");
-		FlexBox internalComponentHolder
-				= new FlexBox(
-						//						Globals.getSpacer(),
-						taskSection,
-						new Sidebar()
-				);
+		final Div besideTheSidebar = new  Div(taskTabs, internalComponent);
+		besideTheSidebar.addClassName("minortask-taskcomponents");
+		final Div underTheBanner = new Div(besideTheSidebar, new Sidebar());
+		underTheBanner.addClassName("minortask-underthebanner");
+
+		final Div taskComponents = new Div(taskBanner, underTheBanner);
+		taskComponents.addClassName("minortask-tasksection");
+
+		FlexBox internalComponentHolder = new FlexBox(taskComponents);
 		internalComponentHolder.addClassName("minortask-internal");
+
 		Div verticalLayout = new Div(internalComponentHolder);
 		verticalLayout.addClassName("minortask-internal-container");
+
 		add(banner);
 		add(verticalLayout);
 		add(new FooterMenu());

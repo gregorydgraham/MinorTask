@@ -21,7 +21,7 @@ public class RootTaskComponent extends SecureDiv {
 	public RootTaskComponent(Long taskID) {
 		super();
 		add(taskID == null ? getComponent() : new EditTask(taskID));
-		this.setWidth("100%");
+//		this.setWidth("100%");
 		addClassName("root-task-component");
 	}
 

@@ -8,37 +8,11 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 
-.project-path-navigator{
-	padding-left:3px;
-}
 
-.navigator-task-search{
-	color: cadetblue;
-	padding-right: 2px;
-}
-
-.navigator-task-recents{
-	color: cadetblue;
-	padding-right: 2px;
-}
-
-.navigator-task-today{
-	color: cadetblue;
-	padding-right: 2px;
-}
-
-.navigator-task-projects{
-	color: cadetblue;
-	padding-right: 2px;
-}
-
-.navigator-task-favourites{
-	color: cadetblue;
-	padding-right: 2px;
-}
-
-vaadin-button.project-path{
+vaadin-button.projectpath{
 	margin-right: 3px;
+	background-color: #09C;
+	color: white;
 }
 
 @media all and (max-width: 900px) {
@@ -47,4 +21,8 @@ vaadin-button.project-path{
 		margin-left: 0; margin-right: 0;
 		font-size: x-small;
 	}
+}
+
+.project-path{
+	background-color: inherit;
 }

@@ -12,6 +12,9 @@ public class SecureTaskDiv extends SecureDiv implements HasTask {
 
 	private Task task;
 
+	public SecureTaskDiv() {
+	}
+
 	public SecureTaskDiv(Long taskid) {
 		setTask(taskid);
 	}

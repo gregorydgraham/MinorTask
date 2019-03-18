@@ -82,8 +82,7 @@ public class DatabaseComponent extends Div {
 			}
 
 			for (RegularProcess regProc : database.getRegularProcessors()) {
-				regularProcessorsDiv.add(
-						new Div(
+				regularProcessorsDiv.add(new Div(
 								new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
 								new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
 								new Div(new Label("Next Processing: " + regProc.getNextRuntime()))

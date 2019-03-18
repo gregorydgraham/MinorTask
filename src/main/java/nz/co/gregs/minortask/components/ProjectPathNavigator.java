@@ -5,21 +5,19 @@
  */
 package nz.co.gregs.minortask.components;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
-import nz.co.gregs.minortask.Globals;
 import static nz.co.gregs.minortask.Globals.getTaskExample;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
+import nz.co.gregs.minortask.pages.TaskEditorLayout;
 
 /**
  *
@@ -32,7 +30,11 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	private final Class<? extends AuthorisedOptionalTaskPage> targetPage;
 
 	public ProjectPathNavigator() {
-		this(null, null);
+		this(null);
+	}
+
+	public ProjectPathNavigator(Long taskID) {
+		this(TaskEditorLayout.class, taskID);
 	}
 
 	public ProjectPathNavigator(Class<? extends AuthorisedOptionalTaskPage> targetPage, Long taskID) {
@@ -44,7 +46,7 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 
 	protected final void buildComponent() {
 		removeAll();
-		add(getPrefixComponents());
+//		add(new QuickLinks());
 		List<Task> ancestors = getProjectPathTasks(getTaskID(), getCurrentUserID());
 		Collections.reverse(ancestors);
 		ancestors.stream()
@@ -81,33 +83,5 @@ public class ProjectPathNavigator extends Div implements MinorTaskComponent, Req
 	 */
 	public Long getTaskID() {
 		return taskID;
-	}
-
-	private Component[] getPrefixComponents() {
-		IconWithToolTip search = new IconWithToolTip(VaadinIcon.SEARCH, "Search");
-		search.addClickListener((event) -> {
-			Globals.showSearchPage();
-		});
-		search.addClassName("navigator-task-search");
-
-		IconWithToolTip today = new IconWithToolTip(VaadinIcon.TIMER, "Today's Tasks");
-		today.addClickListener((event) -> {
-			Globals.showTodaysTasks();
-		});
-		today.addClassName("navigator-task-today");
-
-		IconWithToolTip recent = new IconWithToolTip(VaadinIcon.CLOCK, "Recently Viewed");
-		recent.addClickListener((event) -> {
-			Globals.showRecentsPage();
-		});
-		recent.addClassName("navigator-task-recents");
-
-		IconWithToolTip favourites = new IconWithToolTip(VaadinIcon.HEART, "Favourited");
-		favourites.addClickListener((event) -> {
-			Globals.showFavouritesPage();
-		});
-		favourites.addClassName("navigator-task-favourites");
-
-		return new Component[]{search, today, recent, favourites};
 	}
 }
