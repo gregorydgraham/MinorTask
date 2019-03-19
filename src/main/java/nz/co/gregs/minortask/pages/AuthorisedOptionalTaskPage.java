@@ -63,12 +63,28 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
-		final Div besideTheSidebar = new  Div(taskTabs, internalComponent);
-		besideTheSidebar.addClassName("minortask-taskcomponents");
-		final Div underTheBanner = new Div(besideTheSidebar, new Sidebar());
-		underTheBanner.addClassName("minortask-underthebanner");
+		final Div topLeft = new  Div(taskBanner);
+		topLeft.addClassName("minortask-topleft");
+		
+		final Div topRightSpacer = new Div();
+		topRightSpacer.addClassName("minortask-topright-spacer");
+		
+		final Div topRight = new  Div(topRightSpacer);
+		topRight.addClassName("minortask-topright");
+		
+		final Div top = new Div(topLeft, topRight);
+		top.addClassName("minortask-top");
+		
+		final Div bottomLeft = new  Div(taskTabs, internalComponent);
+		bottomLeft.addClassName("minortask-taskcomponents");
+		
+		final Div bottomRight = new  Div(new Sidebar());
+		bottomRight.addClassName("minortask-bottomright");
+		
+		final Div bottom = new Div(bottomLeft, bottomRight);
+		bottom.addClassName("minortask-underthebanner");
 
-		final Div taskComponents = new Div(taskBanner, underTheBanner);
+		final Div taskComponents = new Div(top, bottom);
 		taskComponents.addClassName("minortask-tasksection");
 
 		FlexBox internalComponentHolder = new FlexBox(taskComponents);

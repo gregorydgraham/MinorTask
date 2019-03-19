@@ -93,11 +93,39 @@
 			margin-right:  0px;
 			background-color: white;
 			background-image: none; 
+		}    
+
+		.minortask-top{
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			min-width: 100%;
+			background-color: cadetblue;
+		} 
+
+		.minortask-topleft{
+			width: 100%;
 		}
 
 		.minortask-login {
 			background-color: white;
 			align-items: flex-start;
+		}
+
+		.minortask-topright{
+			width: 20em;
+			font-size: small;
+			flex-grow: 0;
+		}
+
+		.minortask-topright-spacer{
+			width: 20em;
+			font-size: small;
+			flex-grow: 0;
+		}
+
+		@media all and (max-device-width: 600px) {
+			.minortask-topright-spacer { display: none;}
 		}
 
 		range-datepicker{
