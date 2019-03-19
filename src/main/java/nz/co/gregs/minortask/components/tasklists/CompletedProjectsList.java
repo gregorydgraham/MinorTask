@@ -11,7 +11,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@StyleSheet("style/completed-projects-list.css")
+@StyleSheet("styles/completed-projects-list.css")
 public class CompletedProjectsList extends AbstractTaskList {
 
 	public CompletedProjectsList() {

@@ -31,4 +31,20 @@
 			nz.co.gregs.dbvolution.databases.DBDatabaseCluster
 		</resource-env-ref-type>
 	</resource-env-ref>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+	<servlet>
+		<servlet-name>minortask</servlet-name>
+		<servlet-class>
+			com.vaadin.server.VaadinServlet
+		</servlet-class>
+		
+		<init-param>
+			<param-name>closeIdleSessions</param-name>
+			<param-value>enabled</param-value>
+		</init-param>
+	</servlet>
 </web-app>
