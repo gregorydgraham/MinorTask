@@ -31,7 +31,7 @@ import nz.co.gregs.minortask.components.upload.ImageUpload;
  *
  * @author gregorygraham
  */
-@Route(value = "profile", layout = MinortaskPage.class)
+//@Route(value = "profile", layout = MinortaskPage.class)
 @Tag("user-profile")
 @StyleSheet("styles/user-profile-page.css")
 public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListener {
@@ -174,7 +174,7 @@ public class UserProfilePage extends AuthorisedPage implements BeforeLeaveListen
 		banner.setAllButtonsUnselected();
 	}
 
-	public static String getURL() {
-		return VaadinService.getCurrent().getRouter().getUrl(UserProfilePage.class);
-	}
+//	public static String getURL() {
+//		return VaadinService.getCurrent().getRouter().getUrl(UserProfilePage.class);
+//	}
 }

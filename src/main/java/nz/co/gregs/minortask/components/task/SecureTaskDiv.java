@@ -15,21 +15,13 @@ public class SecureTaskDiv extends SecureDiv implements HasTask {
 	public SecureTaskDiv() {
 	}
 
-	public SecureTaskDiv(Long taskid) {
-		setTask(taskid);
-	}
-
-	public SecureTaskDiv(Task task) {
-		setTask(task);
-	}
-
 	@Override
 	public final Task getTask() {
 		return task;
 	}
 
 	@Override
-	public final void setTask(Task newTask) {
+	public void setTask(Task newTask) {
 		this.task = newTask;
 	}
 }

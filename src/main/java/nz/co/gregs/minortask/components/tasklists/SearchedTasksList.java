@@ -38,7 +38,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			includeDescriptionOption.setValue(true);
 			includeDescriptionOption.setLabel("Search Description");
 			includeDescriptionOption.addValueChangeListener((event) -> {
-				refreshList();
+				refresh();
 			});
 		}
 		return includeDescriptionOption;
@@ -50,7 +50,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			includeCompletedTasksOption.setValue(false);
 			includeCompletedTasksOption.setLabel("Include Completed Tasks");
 			includeCompletedTasksOption.addValueChangeListener((event) -> {
-				refreshList();
+				refresh();
 			});
 		}
 		return includeCompletedTasksOption;
@@ -63,7 +63,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 			searchField.setValueChangeMode(ValueChangeMode.EAGER);
 			searchField.addValueChangeListener((event) -> {
 				searchFor = event.getValue();
-				refreshList();
+				refresh();
 			});
 			searchField.setAutofocus(true);
 		}
@@ -154,11 +154,11 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	protected Component[] getControlsAbove() {
 		Button searchButton = new Button("Search");
 		searchButton.addClickListener((event) -> {
-			refreshList();
+			refresh();
 		});
 		setAsDefaultButton(
 				searchButton,
-				(event) -> refreshList()
+				(event) -> refresh()
 		);
 		HorizontalLayout controls = new HorizontalLayout(new Component[]{
 			getIncludeDescriptionOption(),

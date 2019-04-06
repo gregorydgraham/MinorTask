@@ -101,6 +101,7 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	}
 
 	public void handleDefaultButton() {
+		System.out.println("nz.co.gregs.minortask.components.LoginComponent.handleDefaultButton()");
 		StringBuilder warningBuffer = new StringBuilder();
 		final String username = USERNAME_FIELD.getValue().trim();
 		final String password = PASSWORD_FIELD.getValue();
@@ -113,10 +114,12 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 			try {
 				final DBDatabase database = MinorTask.getDatabase();
 				final DBQuery query = database.getDBQuery(example).addOptional(new Document());
+				System.out.println("" + query.getSQLForQuery());
 				List<User> users = query.getAllInstancesOf(example);
 				switch (users.size()) {
 					case 1:
 						User user = users.get(0);
+						System.out.println("User: " + user);
 						minortask().loginAs(user, password, rememberMeValue);
 						if (minortask().isLoggedIn()) {
 							showDestination();

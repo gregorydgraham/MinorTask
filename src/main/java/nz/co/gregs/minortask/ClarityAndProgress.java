@@ -35,9 +35,11 @@ public class ClarityAndProgress {
 	}
 
 	protected final void generateValues() {
-		Task task1 = getTask();
-		DBQuery primingQuery = Globals.getDatabase().getDBQuery(task1);
-		DBRecursiveQuery<Task> recQuery = Globals.getDatabase().getDBRecursiveQuery(primingQuery, task1.column(task1.projectID), task1);
+		Task example = new Task();
+		Task currentTask = getTask();
+		example.taskID.permittedValues(currentTask==null?null:currentTask.taskID.getValue());
+		DBQuery primingQuery = Globals.getDatabase().getDBQuery(example);
+		DBRecursiveQuery<Task> recQuery = Globals.getDatabase().getDBRecursiveQuery(primingQuery, example.column(example.projectID), example);
 		try {
 			List<Task> descendants = recQuery.getDescendants();
 			absoluteClarity = descendants.size();

@@ -7,19 +7,29 @@ package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
+import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.tasklists.SearchedTasksList;
+import nz.co.gregs.minortask.MinorTaskEventListener;
 
-@Route(value="search", layout=MinortaskPage.class)
-public class SearchForTaskPage extends AuthorisedPage {
+//@Route(value="search", layout=MinortaskPage.class)
+public class SearchForTaskPage extends AuthorisedPage implements MinorTaskEventListener{
 
 	@Override
 	public Component getInternalComponent() {
-		return new SearchedTasksList();
+		final SearchedTasksList searchedTasksList = new SearchedTasksList();
+		searchedTasksList.addMinorTaskEventListener(this);
+		return searchedTasksList;
 	}
 
 	@Override
 	public String getPageTitle() {
 		return "MinorTask: Search";
+	}
+
+	@Override
+	public void handleMinorTaskEvent(MinorTaskEvent event) {
+			Globals.showTask(event.getTask());
 	}
 	
 }

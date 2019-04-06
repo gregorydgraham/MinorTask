@@ -22,7 +22,7 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.IntegerExpression;
-import nz.co.gregs.minortask.components.IconWithToolTip;
+import nz.co.gregs.minortask.components.banner.IconWithToolTip;
 import nz.co.gregs.minortask.components.RequiresLogin;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.generic.SecureSpan;

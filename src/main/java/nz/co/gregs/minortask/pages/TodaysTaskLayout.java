@@ -6,20 +6,20 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.tasklists.TodaysTasksList;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
-@Route(value="today", layout = MinortaskPage.class)
+//@Route(value="today", layout = MinortaskPage.class)
 public class TodaysTaskLayout extends AuthorisedOptionalTaskPage{
 
 	@Override
-	protected Component getInternalComponent(Long taskID) {
-		return new TodaysTasksList(taskID);
+	protected Component getInternalComponent(Task task) {
+		return new TodaysTasksList(task);
 	}
 
 	@Override

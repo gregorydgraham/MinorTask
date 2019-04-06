@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.banner;
 
+import com.vaadin.flow.component.Tag;
 import nz.co.gregs.minortask.components.generic.SecureSpan;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,13 +16,17 @@ import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.colleagues.Colleagues;
+import nz.co.gregs.minortask.MinorTaskViews;
+import nz.co.gregs.minortask.MinorTaskEvent;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
  * @author gregorygraham
  */
+@Tag("colleague-button")
 @StyleSheet("styles/colleagues-button.css")
-public class ColleaguesButton extends SecureSpan {
+public class ColleaguesButton extends SecureSpan implements MinorTaskEventNotifier {
 
 	private Label inviteLabel;
 	String defaultText = "";
@@ -36,7 +40,8 @@ public class ColleaguesButton extends SecureSpan {
 	private void init_(String text, IconWithToolTip icon) {
 		addClassName("colleagues-button");
 		addClickListener((event) -> {
-			minortask().showColleagues();
+			fireEvent(new MinorTaskEvent(this, MinorTaskViews.COLLEAGUES, true));
+//			minortask().showColleagues();
 		});
 		handleText(text);
 		handleIcon(icon);

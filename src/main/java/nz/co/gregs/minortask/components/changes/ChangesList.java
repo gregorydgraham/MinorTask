@@ -6,11 +6,9 @@
 package nz.co.gregs.minortask.components.changes;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,18 +18,21 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip.Position;
-import nz.co.gregs.minortask.components.IconWithToolTip;
+import nz.co.gregs.minortask.components.banner.IconWithToolTip;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
+import nz.co.gregs.minortask.MinorTaskEventListener;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
  * @author gregorygraham
  */
 @StyleSheet("styles/changelist.css")
-public class ChangesList extends SecureDiv {
+public class ChangesList extends SecureDiv implements MinorTaskEventListener, MinorTaskEventNotifier{
 
 	private final Div gridDiv = new Div();
 	private final SecureDiv label = new SecureDiv();
@@ -129,7 +130,7 @@ public class ChangesList extends SecureDiv {
 					changes.column(changes.createdDate).descending(),
 					changes.column(changes.changeID).descending()
 			);
-			query.setPageSize(20);
+			query.setPageSize(10);
 			System.out.println("CHANGES: " + query.getSQLForQuery());
 			return query.getPage(0)
 					.stream()
@@ -181,18 +182,9 @@ public class ChangesList extends SecureDiv {
 	}
 
 	private Component getDescriptionComponent(Changes change) {
-		HtmlContainer name = new Span();
-		final Span desc = new Span(change.description.getValue());
-		if (change.taskid.isNotNull()) {
-			name = new Div(new Span(change.task.name.getValue()));
-			desc.addClickListener((event) -> {
-				MinorTask.showTask(change.taskid.getValue());
-			});
-			desc.getStyle().set("cursor", "pointer");
-		}
-		name.addClassName("changelist-change-taskname");
-		desc.addClassName("changelist-change-description");
-		return new Div(name, desc);
+		final ChangeDescriptionDiv desc = new ChangeDescriptionDiv(change);
+		desc.addMinorTaskEventListener(this);
+		return desc;
 	}
 
 	protected Component getSuffixComponent(Changes change) {
@@ -201,16 +193,20 @@ public class ChangesList extends SecureDiv {
 		return layout;
 	}
 
-	protected final void refreshList() {
-		try {
-			if (thereAreRowsToShow()) {
-				List<Changes> allRows = getPermittedChanges();
-				setLabel(allRows);
-				setGridItems(allRows);
-			}
-		} catch (SQLException ex) {
-			Globals.sqlerror(ex);
-		}
+	public final void refresh() {
+		this.getUI().ifPresent((t) -> {
+			t.access(() -> {
+				try {
+					if (thereAreRowsToShow()) {
+						List<Changes> allRows = getPermittedChanges();
+						setLabel(allRows);
+						setGridItems(allRows);
+					}
+				} catch (SQLException ex) {
+					Globals.sqlerror(ex);
+				}
+			});
+		});
 	}
 
 	protected Component[] getControlsAbove() {
@@ -232,6 +228,16 @@ public class ChangesList extends SecureDiv {
 		return header;
 	}
 
+	@Override
+	public void handleMinorTaskEvent(MinorTaskEvent event) {
+		fireEvent(event);
+	}
+
+//	@Override
+//	public List<TaskMoveListener> getTaskMoveHandlers() {
+//		return taskMoveHandlers;
+//	}
+
 	public static abstract class PreQueried extends ChangesList {
 
 		private final List<Changes> list;
@@ -239,7 +245,7 @@ public class ChangesList extends SecureDiv {
 		public PreQueried(List<Changes> list) {
 			super();
 			this.list = list;
-			refreshList();
+			refresh();
 		}
 
 		@Override

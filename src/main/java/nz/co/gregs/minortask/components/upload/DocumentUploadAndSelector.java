@@ -9,6 +9,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.shared.Registration;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
@@ -39,6 +40,10 @@ public class DocumentUploadAndSelector extends SecureDiv {
 
 	public final void setTaskID(Long id) {
 		this.taskID = id;
+	}
+
+	public final void setTask(Task task) {
+		this.taskID = task!=null?task.taskID.getValue():null;
 	}
 
 	public Registration addDocumentAddedListener(

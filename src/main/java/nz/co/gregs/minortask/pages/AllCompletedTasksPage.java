@@ -8,12 +8,13 @@ package nz.co.gregs.minortask.pages;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.AllCompletedTasksComponent;
+import nz.co.gregs.minortask.datamodel.Task;
 
-@Route(value="complete", layout = MinortaskPage.class)
+//@Route(value="complete", layout = MinortaskPage.class)
 public class AllCompletedTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override
-	protected Component getInternalComponent(Long parameter) {
+	protected Component getInternalComponent(Task parameter) {
 		return new AllCompletedTasksComponent(parameter);
 	}
 

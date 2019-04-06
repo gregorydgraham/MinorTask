@@ -26,14 +26,14 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	private ArrayList<Task> month;
 	private ArrayList<Task> others;
 	private ArrayList<Task> year;
-	private Long taskID = null;
+	private Task task = null;
 
 	public AllCompletedTasksComponent() {
 		this(null);
 	}
 
-	public AllCompletedTasksComponent(Long parameter) {
-		this.taskID = parameter;
+	public AllCompletedTasksComponent(Task parameter) {
+		this.task = parameter;
 		try {
 			addClassName("all-completed-tasks-component");
 			List<Task> allTasks = getTasksToList();
@@ -103,7 +103,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 	}
 
 	protected final List<Task> getTasksToList() throws SQLException {
-		if (taskID == null) {
+		if (task == null) {
 			// non-recursive query is faster
 			Task example = new Task();
 			example.userID.permittedValues(getCurrentUserID());
@@ -119,7 +119,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		} else {
 			Task example = new Task();
 			example.userID.permittedValues(getCurrentUserID());
-			example.taskID.permittedValues(taskID);
+			example.taskID.permittedValues(task==null?null:task.taskID.getValue());
 			DBQuery query = getDatabase().getDBQuery(example);
 			query.setSortOrder(
 					example.column(example.completionDate).descending(),
@@ -130,7 +130,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 			List<Task> descendants = recurse.getDescendants();
 			List<Task> tasks = new ArrayList<>();
 			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() != null && !t.taskID.getValue().equals(taskID);
+				return t.completionDate.getValue() != null && !t.taskID.getValue().equals(task.taskID.getValue());
 			}).forEach(tasks::add);
 			System.out.println("ALL COMPLETED TASKS FOUND: "+tasks.size());
 			return tasks;
@@ -148,17 +148,17 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		Date startOfWeek = getStartOfThisWeek();
 		Date startOfMonth = getStartOfThisMonth();
 		Date startOfYear = getStartOfThisYear();
-		tasksToList.forEach((task) -> {
-			if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfToday)) {
-				today.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfWeek)) {
-				week.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfMonth)) {
-				month.add(task);
-			} else if (task.completionDate.getValue() != null && task.completionDate.getValue().after(startOfYear)) {
-				year.add(task);
+		tasksToList.forEach((t) -> {
+			if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfToday)) {
+				today.add(t);
+			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfWeek)) {
+				week.add(t);
+			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfMonth)) {
+				month.add(t);
+			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfYear)) {
+				year.add(t);
 			} else {
-				others.add(task);
+				others.add(t);
 			}
 		});
 	}

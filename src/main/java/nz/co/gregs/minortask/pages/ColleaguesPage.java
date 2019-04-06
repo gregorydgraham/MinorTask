@@ -5,77 +5,74 @@
  */
 package nz.co.gregs.minortask.pages;
 
+import nz.co.gregs.minortask.components.colleagues.ColleaguesDiv;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveListener;
 import com.vaadin.flow.router.Route;
-import nz.co.gregs.minortask.components.colleagues.ColleagueList;
-import nz.co.gregs.minortask.datamodel.User;
 
 /**
  *
  * @author gregorygraham
  */
-@Route(value = "colleagues", layout = MinortaskPage.class)
-@Tag("colleagues")
+//@Route(value = "colleagues", layout = MinortaskPage.class)
+//@Tag("colleagues")
 @StyleSheet("styles/colleagues-page.css")
 public class ColleaguesPage extends AuthorisedPage implements BeforeLeaveListener {
 
-	private final H2 greeting = new H2();
-	private final ColleagueList colleagueList = new ColleagueList();
-
 	public ColleaguesPage() {
 		super();
+		banner.setColleaguesButtonSelected();
 	}
 
 	@Override
 	protected Component getInternalComponent() {
-		setValues();
-		setLabels();
-		setStyles();
-		addListeners();
-
-		Div component = new Div();
-		component.setId("colleagues-contents");
-		component.add(
-				greeting,
-				colleagueList
-		);
-
-		return component;
+		return new ColleaguesDiv();
+//		setValues();
+//		setLabels();
+//		setStyles();
+//		addListeners();
+//
+//		ColleaguesDiv component = new ColleaguesDiv();
+//		component.setId("colleagues-contents");
+//		component.add(
+//				greeting,
+//				colleagueList
+//		);
+//
+//		return component;
 	}
 
 	@Override
 	public String getPageTitle() {
 		if (minortask().isLoggedIn()) {
-			return getCurrentUser().getUsername()+"'s Team";
+			return getCurrentUser().getUsername() + "'s Team";
 		}
 		return "Team Page";
 	}
 
-	private void addListeners() {
-		
-	}
+//	private void addListeners() {
+//
+//	}
 
-	private void setValues() {
-	}
+//	private void setValues() {
+//	}
 
-	private void setLabels() {
-		User user = minortask().getCurrentUser();
-		greeting.setText("@" + user.getUsername() + "'s Team");
-	}
+//	private void setLabels() {
+//		User user = minortask().getCurrentUser();
+//		greeting.setText("@" + user.getUsername() + "'s Team");
+//	}
 
-	private void setStyles() {
-		banner.setProfileButtonSelected();
-		greeting.setId("user-colleagues-greeting");
-	}
+//	private void setStyles() {
+//		banner.setProfileButtonSelected();
+//		greeting.setId("user-colleagues-greeting");
+//	}
 
 	@Override
 	public void beforeLeave(BeforeLeaveEvent event) {
 		banner.setAllButtonsUnselected();
 	}
+
 }

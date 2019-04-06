@@ -17,7 +17,7 @@ import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.place.PlaceGrid;
 import nz.co.gregs.minortask.components.upload.DocumentGrid;
 import nz.co.gregs.minortask.weblinks.WeblinkGrid;
-import nz.co.gregs.minortask.components.tasklists.CompletedTaskList;
+import nz.co.gregs.minortask.components.tasklists.CompletedTasksList;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Focusable;
@@ -78,7 +78,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	SecureButton deleteButton = new SecureButton("Delete Completely");
 	ProjectPicker project;
 	OpenTaskList subtasks;
-	CompletedTaskList completedTasks;
+	CompletedTasksList completedTasks;
 	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline Date");
@@ -113,18 +113,19 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 	private SecureDiv addButtons;
 	private Div buttonsAndEditors;
 
-	public EditTask(Long currentTask) {
-		super(currentTask);
+	public EditTask(Task currentTask) {
+		super();
+		setTask(currentTask);
 		try {
 
 			taskAndProject = getTaskAndProject(getTaskID());
 			project = new ProjectPicker(getTaskID());
 
-			subtasks = new OpenTaskList(getTaskID());
-			completedTasks = new CompletedTaskList(getTaskID());
+			subtasks = new OpenTaskList(getTask());
+			completedTasks = new CompletedTasksList(getTask());
 			documentUpload = new DocumentUploadAndSelector(getTaskID());
 			imageUpload = new ImageUploadAndSelector(getTaskID());
-			add(currentTask != null ? getComponent() : new RootTaskComponent(getTaskID()));
+			add(currentTask != null ? getComponent() : new RootTaskComponent(getTask()));
 			addViewedDate(taskAndProject);
 		} catch (Globals.InaccessibleTaskException ex) {
 			add(new AccessDeniedComponent());
@@ -254,7 +255,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				Globals.getSpacer(),
 				completeButtonDiv,
 				Globals.getSpacer(),
-				new CompletedTaskList(getTaskID())
+				new CompletedTasksList(getTask())
 		);
 		tasksDiv.addClassName("tasksdiv");
 
@@ -466,6 +467,8 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 			Task task = taskAndProject.getTask();
 			Task.Project taskProject = taskAndProject.getProject();
 			if (task != null) {
+				subtasks.setTask(task);
+				completedTasks.setTask(task);
 				name.setValue(task.name.stringValue());
 				description.setValue(task.description.toString());
 				notes.setValue(task.notes.stringValue());
@@ -503,7 +506,7 @@ public class EditTask extends SecureTaskDiv implements ProjectPathChanger {
 				documentUpload.setTaskID(getTaskID());
 				imageUpload.setTaskID(getTaskID());
 				placeGrid.setTaskID(getTaskID());
-				placeSearcher.setTaskID(getTaskID());
+				placeSearcher.setTask(task);
 				weblinkGrid.setTaskID(getTaskID());
 				weblinkEditor.setTaskID(getTaskID());
 				documentGrid.setTaskID(getTaskID());

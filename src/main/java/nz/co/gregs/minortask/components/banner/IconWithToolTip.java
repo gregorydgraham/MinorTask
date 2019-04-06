@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.banner;
 
 import nz.co.gregs.minortask.components.generic.SecureSpan;
 import com.vaadin.flow.component.icon.Icon;

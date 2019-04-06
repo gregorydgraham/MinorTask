@@ -34,7 +34,7 @@ public interface MinorTaskComponent extends HasToolTip{
 			return minortask().getTask(taskID);
 		} catch (Globals.InaccessibleTaskException ex) {
 			error("Inaccessible Task " + taskID, ex);
-			throw ex;
+			return null;
 		}
 	}
 
@@ -80,6 +80,10 @@ public interface MinorTaskComponent extends HasToolTip{
 
 	default void sqlerror(Exception ex) {
 		MinorTask.sqlerror(ex);
+	}
+
+	default public Task.TaskAndProject getTaskAndProject(Task task) throws MinorTask.InaccessibleTaskException {
+		return minortask().getTaskAndProject(task);
 	}
 
 	default public Task.TaskAndProject getTaskAndProject(Long taskID) throws MinorTask.InaccessibleTaskException {

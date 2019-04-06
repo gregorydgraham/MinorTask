@@ -38,13 +38,16 @@ public class LoginPage extends Div implements HasUrlParameter<String>, BeforeEnt
 	private MinorTask minortask = MinorTask.getMinorTask();
 
 	public LoginPage() {
-		this(Globals.getLocation(TodaysTaskLayout.class));
+		this(Globals.getOpeningLocation());
+//		this(Globals.getLocation(MinorTaskLayout.class));
 	}
+
 
 	public LoginPage(Location location) {
 		try {
 			add(getLoginPageContents());
 			loginComponent.setDestination(location);
+			System.out.println("nz.co.gregs.minortask.pages.LoginPage.<init>(): "+location);
 			MinorTask.chatAboutUsers();
 		} catch (Exception ex) {
 		}

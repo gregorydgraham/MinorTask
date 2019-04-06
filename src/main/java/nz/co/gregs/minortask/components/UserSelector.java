@@ -300,20 +300,22 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			Colleagues colleagues = new Colleagues();
 			colleagues.acceptanceDate.permitOnlyNotNull();
 			final User exampleUser = new User();
-			exampleUser.queryUserID().excludedValues(user.getUserID());
 			colleagues.ignoreAllForeignKeys();
 			final DBQuery dbquery = Globals.getDatabase().getDBQuery(exampleUser, colleagues);
-			dbquery.addCondition(// connect the user table and the colleagues table
-					exampleUser.column(exampleUser.queryUserID())
-							.isIn(
-									colleagues.column(colleagues.requestor),
-									colleagues.column(colleagues.invited))
-							.and(
-									IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
-											.isIn(// and make sure we're looking for colleagues of the current user
-													colleagues.column(colleagues.requestor),
-													colleagues.column(colleagues.invited)))
-			);
+			if (user != null) {
+				exampleUser.queryUserID().excludedValues(user.getUserID());
+				dbquery.addCondition(// connect the user table and the colleagues table
+						exampleUser.column(exampleUser.queryUserID())
+								.isIn(
+										colleagues.column(colleagues.requestor),
+										colleagues.column(colleagues.invited))
+								.and(
+										IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
+												.isIn(// and make sure we're looking for colleagues of the current user
+														colleagues.column(colleagues.requestor),
+														colleagues.column(colleagues.invited)))
+				);
+			}
 			dbquery.setSortOrder(
 					exampleUser.column(exampleUser.queryUsername()),
 					exampleUser.column(exampleUser.queryUserID())

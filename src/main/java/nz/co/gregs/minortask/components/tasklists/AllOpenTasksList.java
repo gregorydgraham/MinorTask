@@ -20,8 +20,8 @@ public class AllOpenTasksList extends AbstractTaskList {
 		setToolTip();
 	}
 
-	public AllOpenTasksList(Long projectID) {
-		super(projectID);
+	public AllOpenTasksList(Task project) {
+		super(project);
 		setToolTip();
 	}
 

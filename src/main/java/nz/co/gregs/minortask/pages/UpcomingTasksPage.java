@@ -6,16 +6,16 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.UpcomingTasksList;
+import nz.co.gregs.minortask.datamodel.Task;
 
 
-@Route(value="upcoming", layout = MinortaskPage.class)
+//@Route(value="upcoming", layout = MinortaskPage.class)
 public class UpcomingTasksPage extends AuthorisedOptionalTaskPage{
 
 	@Override
-	public Component getInternalComponent(Long taskID) {
-		return new UpcomingTasksList(taskID);
+	public Component getInternalComponent(Task task) {
+		return new UpcomingTasksList(task);
 	}
 
 	@Override

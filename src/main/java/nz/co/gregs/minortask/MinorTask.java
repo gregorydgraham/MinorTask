@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
@@ -485,4 +487,18 @@ public class MinorTask extends Globals implements Serializable {
 			sqlerror(ex);
 		}
 	}
+
+	public static ScheduledFuture runAsync(Runnable runnable) {
+		ScheduledFuture<?> schedule = getExecutor().schedule(runnable, 500, TimeUnit.MILLISECONDS);
+		return schedule;
+	}
+
+	public Task.TaskAndProject getTaskAndProject(Task task) throws InaccessibleTaskException {
+		if (task == null || task.taskID.getValue() == null) {
+			return new Task.TaskAndProject(null, null);
+		} else {
+			return getTaskAndProject(task.taskID.getValue());
+		}
+	}
+
 }

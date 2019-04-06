@@ -7,13 +7,13 @@ package nz.co.gregs.minortask.pages;
 
 import nz.co.gregs.minortask.components.tasklists.IdeasList;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
+import nz.co.gregs.minortask.datamodel.Task;
 
-@Route(value="ideas", layout = MinortaskPage.class)
+//@Route(value = "ideas", layout = MinortaskPage.class)
 public class IdeasPage extends AuthorisedOptionalTaskPage {
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
+	public Component getInternalComponent(Task parameter) {
 		return new IdeasList(parameter);
 	}
 

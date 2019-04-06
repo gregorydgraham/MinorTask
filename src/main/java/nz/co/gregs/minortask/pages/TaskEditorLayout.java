@@ -6,7 +6,6 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.components.RootTaskComponent;
@@ -16,7 +15,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-@Route(value = "task", layout = MinortaskPushPage.class)
+//@Route(value = "task", layout = MinortaskPushPage.class)
 public class TaskEditorLayout extends AuthorisedOptionalTaskPage {
 
 	public TaskEditorLayout() {
@@ -24,7 +23,7 @@ public class TaskEditorLayout extends AuthorisedOptionalTaskPage {
 	}
 
 	@Override
-	public Component getInternalComponent(Long parameter) {
+	public Component getInternalComponent(Task parameter) {
 		if (parameter == null) {
 			return new RootTaskComponent(null);
 		} else {

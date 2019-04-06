@@ -17,21 +17,24 @@ import java.util.List;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip.Position;
-import nz.co.gregs.minortask.components.IconWithToolTip;
+import nz.co.gregs.minortask.components.banner.IconWithToolTip;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
 import nz.co.gregs.minortask.components.changes.Changes;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
+import nz.co.gregs.minortask.MinorTaskEventListener;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
  * @author gregorygraham
  */
 @StyleSheet("styles/abstract-task-list.css")
-public abstract class AbstractTaskList extends SecureTaskDiv {
+public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTaskEventListener, MinorTaskEventNotifier {
 
 	private final Div gridDiv = new Div();
 	private final SecureDiv label = new SecureDiv();
@@ -39,50 +42,57 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 	private final Div header = new Div();
 
 	public AbstractTaskList() {
-		this((Long) null);
+		this((Task) null);
 	}
 
-	public AbstractTaskList(Long taskID) {
-		super(taskID);
+	public AbstractTaskList(long taskID) {
+		super();
 		setupTaskList();
 		buildComponent();
 		this.addClassName("tasklist");
 		this.addClassName(this.getListClassName());
+		this.addAttachListener((event) -> refresh());
+	}
+
+	public AbstractTaskList(Task task) {
+		super();
+		setTask(task);
+		setupTaskList();
+		buildComponent();
+		this.addClassName("tasklist");
+		this.addClassName(this.getListClassName());
+		this.addAttachListener((event) -> refresh());
 	}
 
 	public final void buildComponent() {
 		Div well = new Div();
 		well.addClassName(getListClassName());
 		well.addClassName("tasklist-well");
-		try {
-			add(getControlsAbove());
-			List<Task> allRows = getPermittedTasks();
-			setLabel(allRows);
-			header.removeAll();
-			header.addClassName("tasklist-header");
-			header.add(label);
-			Div headerRight = new Div();
-			headerRight.addClassName("right");
-			final Component[] headerExtras = getHeaderExtras();
-			if (headerExtras.length > 0) {
-				headerRight.add(headerExtras);
-			}
-			header.add(headerRight);
-			well.add(header);
-
-			setupGrid(allRows);
-			well.add(gridDiv);
-
-			footer.removeAll();
-			final Component[] footerExtras = getFooterExtras();
-			if (footerExtras.length > 0) {
-				footer.add(footerExtras);
-			}
-			footer.addClassNames(getListClassName(), "tasklist-footer", getListClassName() + "-footer");
-			well.add(footer);
-		} catch (SQLException ex) {
-			MinorTask.sqlerror(ex);
+		add(getControlsAbove());
+		List<Task> allRows = new ArrayList<Task>();
+		setLabel(allRows);
+		header.removeAll();
+		header.addClassName("tasklist-header");
+		header.add(label);
+		Div headerRight = new Div();
+		headerRight.addClassName("right");
+		final Component[] headerExtras = getHeaderExtras();
+		if (headerExtras.length > 0) {
+			headerRight.add(headerExtras);
 		}
+		header.add(headerRight);
+		well.add(header);
+
+		setupGrid(allRows);
+		well.add(gridDiv);
+
+		footer.removeAll();
+		final Component[] footerExtras = getFooterExtras();
+		if (footerExtras.length > 0) {
+			footer.add(footerExtras);
+		}
+		footer.addClassNames(getListClassName(), "tasklist-footer", getListClassName() + "-footer");
+		well.add(footer);
 		add(well);
 	}
 
@@ -177,7 +187,9 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 	}
 
 	protected Component getDescriptionComponent(Task task) {
-		return new TaskOverviewSpan(task);
+		final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(task);
+		taskOverviewSpan.addMinorTaskEventListener(this);
+		return taskOverviewSpan;
 	}
 
 	protected Component getSubTaskNumberComponent(Task task) {
@@ -226,16 +238,26 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		return layout;
 	}
 
-	protected final void refreshList() {
-		try {
-			if (thereAreRowsToShow()) {
-				List<Task> allRows = getPermittedTasks();
-				setLabel(allRows);
-				setGridItems(allRows);
-			}
-		} catch (SQLException ex) {
-			Globals.sqlerror(ex);
-		}
+	public final void refresh() {
+		this.getUI().ifPresent((t) -> {
+			t.access(() -> {
+				try {
+					if (thereAreRowsToShow()) {
+						List<Task> allRows = getPermittedTasks();
+						setLabel(allRows);
+						setGridItems(allRows);
+					}
+				} catch (SQLException ex) {
+					Globals.sqlerror(ex);
+				}
+			});
+		});
+	}
+
+	@Override
+	public void setTask(Task newTask) {
+		super.setTask(newTask);
+		refresh();
 	}
 
 	protected Component[] getControlsAbove() {
@@ -250,7 +272,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		try {
 			final FavouritedTasks favour = new FavouritedTasks(task, minortask().getCurrentUser());
 			Globals.getDatabase().insert(favour);
-			getDatabase().insert(new Changes(getCurrentUser(), task, "Added "+task.name.getValue()+" to Favourites"));
+			getDatabase().insert(new Changes(getCurrentUser(), task, "Added " + task.name.getValue() + " to Favourites"));
 		} catch (SQLException ex) {
 			Globals.sqlerror(ex);
 		}
@@ -279,6 +301,11 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		return header;
 	}
 
+	@Override
+	public void handleMinorTaskEvent(MinorTaskEvent event) {
+		fireEvent(event);
+	}
+
 	public static abstract class PreQueried extends AbstractTaskList {
 
 		private final List<Task> list;
@@ -286,7 +313,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv {
 		public PreQueried(List<Task> list) {
 			super(null);
 			this.list = list;
-			refreshList();
+			refresh();
 		}
 
 		@Override

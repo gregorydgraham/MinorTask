@@ -5,7 +5,7 @@
  */
 package nz.co.gregs.minortask.pages;
 
-import nz.co.gregs.minortask.components.Sidebar;
+import nz.co.gregs.minortask.components.task.editor.Sidebar;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
@@ -13,6 +13,9 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.generic.FlexBox;
@@ -21,6 +24,7 @@ import nz.co.gregs.minortask.components.ProjectPathChanger;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
 import nz.co.gregs.minortask.components.TaskBanner;
 import nz.co.gregs.minortask.components.TaskTabs;
+import nz.co.gregs.minortask.datamodel.Task;
 
 public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implements HasUrlParameter<Long> {
 
@@ -31,7 +35,7 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		return new AccessDeniedComponent();
 	}
 
-	protected abstract Component getInternalComponent(Long parameter);
+	protected abstract Component getInternalComponent(Task parameter);
 
 	@Override
 	public final void setComponents() {
@@ -43,15 +47,26 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 		removeAll();
 		add(new MinorTaskTemplate());
 
-		final TaskBanner taskBanner = new TaskBanner(taskID);
-		taskBanner.addClassName("minortask-taskbanner");
+		final TaskBanner taskBanner = new TaskBanner();
+
+		try {
+			Task task = getTask(parameter);
+			taskBanner.setTask(task);
+			taskBanner.addClassName("minortask-taskbanner");
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(AuthorisedOptionalTaskPage.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
 		taskTabs = new TaskTabs(this, taskID);
 		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 
 		Component internalComponent;
 		if (minortask().isLoggedIn()) {
-			internalComponent = getInternalComponent(parameter);
+			try {
+				internalComponent = getInternalComponent(getTask(parameter));
+			} catch (Globals.InaccessibleTaskException ex) {
+				internalComponent = new AccessDeniedComponent();
+			}
 		} else {
 			internalComponent = new AccessDeniedComponent();
 		}
@@ -63,24 +78,24 @@ public abstract class AuthorisedOptionalTaskPage extends AuthorisedPage implemen
 				projectPath.refresh();
 			});
 		}
-		final Div topLeft = new  Div(taskBanner);
+		final Div topLeft = new Div(taskBanner);
 		topLeft.addClassName("minortask-topleft");
-		
+
 		final Div topRightSpacer = new Div();
 		topRightSpacer.addClassName("minortask-topright-spacer");
-		
-		final Div topRight = new  Div(topRightSpacer);
+
+		final Div topRight = new Div(topRightSpacer);
 		topRight.addClassName("minortask-topright");
-		
+
 		final Div top = new Div(topLeft, topRight);
 		top.addClassName("minortask-top");
-		
-		final Div bottomLeft = new  Div(taskTabs, internalComponent);
+
+		final Div bottomLeft = new Div(taskTabs, internalComponent);
 		bottomLeft.addClassName("minortask-taskcomponents");
-		
-		final Div bottomRight = new  Div(new Sidebar());
+
+		final Div bottomRight = new Div(new Sidebar());
 		bottomRight.addClassName("minortask-bottomright");
-		
+
 		final Div bottom = new Div(bottomLeft, bottomRight);
 		bottom.addClassName("minortask-underthebanner");
 

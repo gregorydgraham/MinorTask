@@ -6,14 +6,14 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.RootTaskComponent;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
-@Route(value="projects", layout = MinortaskPage.class)
+//@Route(value="projects", layout = MinortaskPage.class)
 public class ProjectsLayout extends AuthorisedOptionalTaskPage{
 
 	@Override
@@ -22,7 +22,7 @@ public class ProjectsLayout extends AuthorisedOptionalTaskPage{
 	}
 
 	@Override
-	protected Component getInternalComponent(Long parameter) {
+	protected Component getInternalComponent(Task parameter) {
 		return new RootTaskComponent(null);
 	}
 

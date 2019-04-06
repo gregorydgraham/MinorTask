@@ -5,25 +5,29 @@
  */
 package nz.co.gregs.minortask.components.task;
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.shared.Registration;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nz.co.gregs.minortask.Globals;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.polymer.Details;
 import nz.co.gregs.minortask.datamodel.Task;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
  * @author gregorygraham
  */
 @StyleSheet("styles/taskoverview.css")
-public class TaskOverviewSpan extends SecureTaskSpan {
+public class TaskOverviewSpan extends SecureTaskSpan implements MinorTaskEventNotifier{
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd, YYYY");
 
@@ -47,7 +51,8 @@ public class TaskOverviewSpan extends SecureTaskSpan {
 
 		Span summary = new Span(topDiv, desc);
 		summary.addClickListener((event) -> {
-			Globals.showTask(task.taskID.getValue());
+//			Globals.showTask(task.taskID.getValue());
+			fireEvent(new MinorTaskEvent(this, task, false));
 		});
 		summary.addClassName("taskoverview-summary");
 
@@ -65,8 +70,7 @@ public class TaskOverviewSpan extends SecureTaskSpan {
 		Span project = new Span();
 		project.setSizeUndefined();
 		if (task.projectID.isNotNull()) {
-			Long taskProjectID = null;
-			taskProjectID = task.projectID.getValue();
+			Long taskProjectID = task.projectID.getValue();
 			try {
 				project.setText(getTask(taskProjectID).name.getValue());
 			} catch (Globals.InaccessibleTaskException ex) {
@@ -133,5 +137,10 @@ public class TaskOverviewSpan extends SecureTaskSpan {
 				}
 			}
 		}
+	}
+
+	public Registration addTaskMoveListener(
+			ComponentEventListener<MinorTaskEvent> listener) {
+		return addListener(MinorTaskEvent.class, listener);
 	}
 }

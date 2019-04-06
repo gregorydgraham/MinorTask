@@ -11,6 +11,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import nz.co.gregs.minortask.components.tasklists.CompletedProjectsList;
 import nz.co.gregs.minortask.components.tasklists.OpenProjectsList;
+import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
@@ -18,7 +19,7 @@ import nz.co.gregs.minortask.components.tasklists.OpenProjectsList;
  */
 public class RootTaskComponent extends SecureDiv {
 
-	public RootTaskComponent(Long taskID) {
+	public RootTaskComponent(Task taskID) {
 		super();
 		add(taskID == null ? getComponent() : new EditTask(taskID));
 		addClassName("root-task-component");

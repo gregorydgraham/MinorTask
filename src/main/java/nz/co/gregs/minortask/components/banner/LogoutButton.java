@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.banner;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
 import nz.co.gregs.minortask.components.generic.SecureSpan;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/logout-button.css")
 public class LogoutButton extends SecureSpan {
 
 	public LogoutButton() {

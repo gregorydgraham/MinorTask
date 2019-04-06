@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.tabs.*;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.shared.Registration;
+import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.pages.*;
 
 /**
@@ -19,10 +20,12 @@ import nz.co.gregs.minortask.pages.*;
 @StyleSheet("styles/tasktabs.css")
 public class TaskTabs extends Tabs implements MinorTaskComponent {
 
+	private Registration addSelectedChangeListener;
+
 	private TaskTabs(Tab tab, Long taskID) {
 		super(MinorTaskTab.getTabArray());
 		setSelectedTab(tab);
-		addSelectedChangeListener((e) -> {
+		addSelectedChangeListener = addSelectedChangeListener((e) -> {
 			tabClicked(e, taskID);
 		});
 		addClassName("minortask-tabs");
@@ -60,6 +63,19 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 		MinorTaskTab.moveTo(selectedTab, taskID);
 	}
 
+	public void setTask(Long taskID) {
+		if (addSelectedChangeListener != null) {
+			addSelectedChangeListener.remove();
+		}
+		addSelectedChangeListener = addSelectedChangeListener((e) -> {
+			tabClicked(e, taskID);
+		});
+	}
+
+	public void setTask(Task task) {
+		setTask(task==null?null:task.taskID.getValue());
+	}
+
 	public static class MinorTaskTab extends Tab {
 
 		private static void moveTo(Tab selectedTab, Long taskID) {
@@ -83,9 +99,9 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 			return 0;
 		}
 
-		protected final Class<? extends AuthorisedOptionalTaskPage> destinationComponent;
+		protected final Class<? extends Component> destinationComponent;
 
-		<C extends AuthorisedOptionalTaskPage> MinorTaskTab(String label, Class<C> destination) {
+		<C extends Component> MinorTaskTab(String label, Class<C> destination) {
 			super(label);
 			this.destinationComponent = destination;
 		}
@@ -96,7 +112,7 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 
 		public static MinorTaskTab[] getTabArray() {
 			return new MinorTaskTab[]{
-				new MinorTaskTab("Details", TaskEditorLayout.class),
+				new MinorTaskTab("Details", MinorTaskLayout.class),
 				new MinorTaskTab("Today", TodaysTaskLayout.class),
 				new MinorTaskTab("Upcoming", UpcomingTasksPage.class),
 				new MinorTaskTab("Overdue", OverdueTasksPage.class),
@@ -106,7 +122,6 @@ public class TaskTabs extends Tabs implements MinorTaskComponent {
 			};
 
 		}
-
 
 		public static Tab getTabForPage(Component page) {
 			Class<? extends Component> pageClass = page.getClass();

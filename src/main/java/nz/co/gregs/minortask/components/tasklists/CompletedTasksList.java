@@ -14,10 +14,15 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @StyleSheet("styles/completed-task-list.css")
-public class CompletedTaskList extends AbstractTaskList {
+public class CompletedTasksList extends AbstractTaskList {
 
-	public CompletedTaskList(Long taskID) {
-		super(taskID);
+	public CompletedTasksList(Task task) {
+		super(task);
+		setTooltipText("When you complete a task it will be moved to here, so you can see your progress");
+	}
+
+	public CompletedTasksList() {
+		super();
 		setTooltipText("When you complete a task it will be moved to here, so you can see your progress");
 	}
 

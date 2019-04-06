@@ -51,14 +51,14 @@ and open the template in the editor.
 	color: cadetblue;
 	white-space: normal;
 	display: block;
-	width: available;
+	width: inherit;
 }
 
 .taskoverview-project{
 	color: darkgray;
 	white-space: normal;
 	display: block;
-	width: fit-content;
+	width: min-content;
 	padding-right: 1em;
 }
 

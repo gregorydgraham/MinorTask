@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +64,7 @@ import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.dbvolution.utility.RegularProcess;
-import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
+import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
@@ -72,6 +73,7 @@ import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.colleagues.Colleagues;
 import nz.co.gregs.minortask.pages.AuthorisedPage;
 import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
+import nz.co.gregs.minortask.pages.MinorTaskLayout;
 import nz.co.gregs.minortask.pages.FavouriteTasksPage;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
@@ -79,7 +81,6 @@ import nz.co.gregs.minortask.pages.ProjectsLayout;
 import nz.co.gregs.minortask.pages.RecentTasksPage;
 import nz.co.gregs.minortask.pages.SearchForTaskPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
-import nz.co.gregs.minortask.pages.TaskEditorLayout;
 import nz.co.gregs.minortask.pages.TodaysTaskLayout;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
@@ -98,6 +99,7 @@ public class Globals {
 	public static final String EMAIL_CONFIG_CONTEXT_VAR = "MinorTaskEmailConfigFilename";
 	private static DBDatabase database = null;
 	private static boolean databaseSetup = false;
+	private static final ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(3);
 
 	public static Date asDate(LocalDate localDate) {
 		return localDate == null ? null : Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -217,7 +219,6 @@ public class Globals {
 				} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
 					sqlerror(ex);
 				} catch (UnexpectedNumberOfRowsException ex) {
-//					sqlerror(ex);
 					if (ex.getActualRows() == 0) {
 						throw new UnknownUserException();
 					} else {
@@ -256,7 +257,7 @@ public class Globals {
 		if (secondsOffset > 0) {
 			cookie.setMaxAge(secondsOffset);
 		}
-//		cookie.setPath(VaadinService.getCurrentRequest().getContextPath());
+		
 		cookie.setHttpOnly(true);
 		cookie.setDomain(getApplicationURL().replaceAll("http[s]*://", "").replaceAll(":[0-9]*/*.*", ""));
 		System.out.println("SET COOKIE: " + cookie.getName() + ":" + cookie.getValue() + " - " + cookie.getDomain());
@@ -297,12 +298,9 @@ public class Globals {
 		return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 
-//	public static void showTaskCreation(Long taskID) {
-//		UI.getCurrent().navigate(TaskCreatorLayout.class, taskID);
-//	}
-
 	public static void showLocation(Location dest) {
 		if (dest != null) {
+			System.out.println("nz.co.gregs.minortask.Globals.showLocation(): "+dest);
 			String pathWithQueryParameters = dest.getPathWithQueryParameters();
 			if (pathWithQueryParameters.isEmpty()) {
 				showOpeningPage();
@@ -321,7 +319,7 @@ public class Globals {
 	}
 
 	public static void showOpeningPage() {
-		showTodaysTasks();
+		UI.getCurrent().navigate(MinorTaskLayout.class);
 	}
 
 	public static void showProjects() {
@@ -332,7 +330,7 @@ public class Globals {
 		if (taskID == null) {
 			showProjects();
 		} else {
-			showPage(TaskEditorLayout.class, taskID);
+			UI.getCurrent().navigate(MinorTaskLayout.class, taskID);
 		}
 	}
 
@@ -533,7 +531,6 @@ public class Globals {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) envCtx.lookup("DBDatabaseCluster");
-//				cluster.setPrintSQLBeforeExecuting(true);
 				System.out.println("CLUSTER: " + cluster);
 				DBDatabase readyDatabase = null;
 				try {
@@ -693,12 +690,20 @@ public class Globals {
 		showPage(FavouriteTasksPage.class);
 	}
 
-	static void showTask(Task task) {
+	public static void showTask(Task task) {
 		if (task == null) {
 			showProjects();
 		} else {
 			showTask(task.taskID.getValue());
 		}
+	}
+
+	protected static ScheduledThreadPoolExecutor getExecutor() {
+		return EXECUTOR;
+	}
+
+	public static Location getOpeningLocation() {
+		return new Location("today");
 	}
 
 	public static class InaccessibleTaskException extends Exception {
@@ -869,10 +874,7 @@ public class Globals {
 
 		@Override
 		public String process() {
-//			removeOldColleagues();
 			return cleanupRememberedLogins();
-
-//			moveOldDocumentLinksToNewLinkTable();
 		}
 
 		private String cleanupRememberedLogins() {

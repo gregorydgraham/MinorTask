@@ -22,6 +22,16 @@ public class ImageUploadAndSelector extends SecureDiv {
 	protected ImageSelector selector = new ImageSelector();
 	protected Long taskID;
 
+	public ImageUploadAndSelector() {
+		uploader.addDocumentAddedListener((event) -> {
+			handleDocumentEvent(event);
+		});
+		selector.addDocumentAddedListener((event) -> {
+			handleDocumentEvent(event);
+		});
+		add(uploader);
+		add(selector);
+	}
 	public ImageUploadAndSelector(Long taskID) {
 		this.setTaskID(taskID);
 		uploader.addDocumentAddedListener((event) -> {

@@ -8,12 +8,13 @@ package nz.co.gregs.minortask.pages;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import nz.co.gregs.minortask.components.tasklists.AllOpenTasksList;
+import nz.co.gregs.minortask.datamodel.Task;
 
-@Route(value="open", layout = MinortaskPage.class)
+//@Route(value="open", layout = MinortaskPage.class)
 public class AllOpenTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override
-	protected Component getInternalComponent(Long parameter) {
+	protected Component getInternalComponent(Task parameter) {
 		return new AllOpenTasksList(parameter);
 	}
 

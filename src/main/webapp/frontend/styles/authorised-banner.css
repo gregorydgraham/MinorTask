@@ -10,47 +10,50 @@ and open the template in the editor.
 
 authorised-banner {
 	width: 100%;
+	height:50px;
 	background-color: whitesmoke;
 	color:gray;
 	display: flex;
 	justify-content: space-between
 }
 
-	authorised-banner a{color: gray;}
-	authorised-banner a:hover{color: gray;font-weight: bold;}
-	authorised-banner a:active{color: gray;font-style: oblique;}
+authorised-banner a{color: gray;}
+authorised-banner a:hover{color: gray;font-weight: bold;}
+authorised-banner a:active{color: gray;font-style: oblique;}
 
-	.authorised-banner-left {
-		/*padding-left: 1px;*/
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		align-content: center;
-		vertical-align: central;
-	}
+.authorised-banner-left {
+	/*padding-left: 1px;*/
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	align-content: center;
+	vertical-align: central;
+}
 
-	.authorised-banner-right{
-	}
+.authorised-banner-right{    
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
 
-	#authorised-banner-profile-image{
-		width: 50px;
-		height: 50px;
-		object-fit: cover;
-		/*border-radius: 25px;*/
-		display: inline-block;	
-		border-bottom-left-radius: 5px;
-	}
+#authorised-banner-profile-image{
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	/*border-radius: 25px;*/
+	display: inline-block;	
+	border-bottom-left-radius: 5px;
+}
 
-	.authorised-banner-selected-button{
-		background-color: gray;
-		color: white;
-	}
+.authorised-banner-selected-button{
+	background-color: gray;
+	color: white;
+}
 
-	.authorised-banner-button{
-		/*color: #0099cc;*/
-		color: gray;
-		background-color: white;
-		width: 46px;
-		padding-left: 9px;
-		padding-right: 9px;
-	}
+.authorised-banner-button{
+	/*color: #0099cc;*/
+	color: gray;
+	width: 46px;
+	padding-left: 9px;
+	padding-right: 9px;
+}

@@ -7,13 +7,13 @@ package nz.co.gregs.minortask.pages;
 
 import nz.co.gregs.minortask.components.tasklists.OverdueTasksList;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
+import nz.co.gregs.minortask.datamodel.Task;
 
-@Route(value="overdue", layout = MinortaskPage.class)
+//@Route(value = "overdue", layout = MinortaskPage.class)
 public class OverdueTasksPage extends AuthorisedOptionalTaskPage {
 
 	@Override
-	public Component getInternalComponent(Long taskID) {
+	public Component getInternalComponent(Task taskID) {
 		return new OverdueTasksList(taskID);
 	}
 
@@ -21,6 +21,5 @@ public class OverdueTasksPage extends AuthorisedOptionalTaskPage {
 	public String getPageTitle() {
 		return "MinorTask: Overdue";
 	}
-
 
 }

@@ -71,7 +71,7 @@ and open the template in the editor.
 }
 
 .tooltip:hover .tooltiptext {
-	animation: fadeinandout 3s;
+	/*animation: fadeinandout 3s;*/
 }
 
 .tooltipposn-bottom-centre {

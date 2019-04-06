@@ -41,7 +41,7 @@ public class OpenProjectsList extends AbstractTaskList {
 		setupAddButton();
 		createTask = new CreateTaskInline(getTask());
 		createTask.addCreateTaskListener((event) -> {
-			refreshList();
+			refresh();
 		});
 	}
 

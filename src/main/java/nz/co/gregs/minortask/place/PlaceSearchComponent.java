@@ -46,7 +46,16 @@ public class PlaceSearchComponent extends SecureTaskDiv implements HasDefaultBut
 	private Registration defaultRegistration;
 
 	public PlaceSearchComponent(Long taskID) {
-		super(taskID);
+		this();
+		try {
+			setTask(getTask(taskID));
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(PlaceSearchComponent.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public PlaceSearchComponent() {
+		
 		addClassName("place-search-component");
 
 		add(locationText);

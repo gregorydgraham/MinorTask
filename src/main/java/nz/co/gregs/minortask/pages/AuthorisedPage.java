@@ -14,7 +14,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.MinorTaskTemplate;
-import nz.co.gregs.minortask.components.AuthorisedBannerMenu;
+import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
 import nz.co.gregs.minortask.components.ProjectPathNavigator;
@@ -24,7 +24,7 @@ import nz.co.gregs.minortask.components.ProjectPathNavigator;
  * @author gregorygraham
  */
 @HtmlImport("frontend://styles/shared-styles.html")
-@StyleSheet("frontend://styles/authorised-page.css")
+@StyleSheet("styles/authorised-page.css")
 public abstract class AuthorisedPage extends Div implements MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle {
 
 	protected Long taskID = null;

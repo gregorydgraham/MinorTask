@@ -5,12 +5,15 @@
  */
 package nz.co.gregs.minortask.components;
 
+import nz.co.gregs.minortask.components.task.editor.ProjectNavigator;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Label;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import nz.co.gregs.minortask.datamodel.Task;
-import nz.co.gregs.minortask.pages.TaskEditorLayout;
+import nz.co.gregs.minortask.MinorTaskEventListener;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
@@ -18,34 +21,58 @@ import nz.co.gregs.minortask.pages.TaskEditorLayout;
  */
 @Tag("task-banner")
 @StyleSheet("styles/task-banner.css")
-public class TaskBanner extends SecureTaskDiv {
+public class TaskBanner extends SecureTaskDiv implements MinorTaskEventListener, MinorTaskEventNotifier{
+
+	private Label nameLabel;
+	private Label descriptionLabel;
+	private ProjectNavigator projectPathNavigator;
 
 	public TaskBanner() {
 		super();
-	}
-
-	public TaskBanner(Long taskid) {
-		super(taskid);
-		initComponents();
-	}
-
-	public TaskBanner(Task task) {
-		super(task);
 		initComponents();
 	}
 
 	private void initComponents() {
 		addClassName("taskbanner");
-		Label nameLabel = new Label("Projects");
+		nameLabel = new Label("Projects");
 		nameLabel.addClassName("name");
-		Label descriptionLabel = new Label("");
+		descriptionLabel = new Label("");
 		descriptionLabel.addClassName("description");
+		
+		projectPathNavigator = new ProjectNavigator();
+		add(nameLabel, descriptionLabel, projectPathNavigator);
+	}
+
+//	@Override
+//	public void setTask(Task newTask) {
+//		super.setTask(newTask);
+//		final Task task = getTask();
+//		if (task != null) {
+//			nameLabel.setText(task.name.getValue(""));
+//			descriptionLabel.setText(task.description.getValue(""));
+//		}
+//		projectPathNavigator.setTask(newTask);
+//	}
+
+	@Override
+	public void setTask(Task newTask) {
+		super.setTask(newTask);
 		final Task task = getTask();
 		if (task != null) {
 			nameLabel.setText(task.name.getValue(""));
 			descriptionLabel.setText(task.description.getValue(""));
+		}else{
+			nameLabel.setText("Projects");
+			descriptionLabel.setText("All Your Plans");
 		}
-		final ProjectPathNavigator projectPathNavigator = new ProjectPathNavigator(TaskEditorLayout.class, getTaskID());
-		add(nameLabel, descriptionLabel, projectPathNavigator);
+		projectPathNavigator.setTask(newTask);
 	}
+
+	@Override
+	public void handleMinorTaskEvent(MinorTaskEvent event) {
+		fireEvent(event);
+		
+	}
+
+	
 }

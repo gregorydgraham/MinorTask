@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.banner;
 
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import com.vaadin.flow.component.Component;
@@ -25,9 +25,11 @@ import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
+import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
-import nz.co.gregs.minortask.pages.UserProfilePage;
+import nz.co.gregs.minortask.MinorTaskEventListener;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 
 /**
  *
@@ -35,35 +37,37 @@ import nz.co.gregs.minortask.pages.UserProfilePage;
  */
 @Tag("authorised-banner")
 @StyleSheet("styles/authorised-banner.css")
-public class AuthorisedBannerMenu extends SecureDiv implements HasText {
-	
+public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTaskEventListener, MinorTaskEventNotifier {
+
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
-	ColleaguesButton colleaguesButton = new ColleaguesButton();
-	ProfileButton profileButton = new ProfileButton();
-	LogoutButton logoutButton = new LogoutButton();
-	
+	final QuickLinks quickLinks = new QuickLinks();
+	final UserLinks userLinks = new UserLinks();
+
 	public AuthorisedBannerMenu() {
 		super();
 		buildComponent();
 		this.addClassName("authorised-banner");
 		this.setId(getStaticID());
 	}
-	
+
 	@Override
 	public final void setId(String id) {
 		super.setId(id);
 	}
-	
+
 	public final void buildComponent() {
 		setSizeUndefined();
-		
+
 		welcomeMessage.addClassName("welcome-message");
-		
+
+		quickLinks.addMinorTaskEventListener(this);
+		userLinks.addMinorTaskEventListener(this);
+
 		setText("" + Globals.getApplicationName());
-		
+
 		final User user = getCurrentUser();
 		if (user != null) {
-			
+
 			Label counts = new Label("Tasks: ??/##");
 			OwnerStatistics taskCounts = new OwnerStatistics();
 			try {
@@ -75,13 +79,13 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException | NoAvailableDatabaseException ex) {
 				sqlerror(ex);
 			}
-			
+
 			SecureDiv defaultImageDiv = new SecureDiv();
 			defaultImageDiv.addClickListener((event) -> {
 				minortask().showProfile();
 			});
 			Component profileImageDiv = defaultImageDiv;
-			
+
 			if (user.profileImage != null) {
 				SizedImageFromDocument image = new SizedImageFromDocument(user.profileImage, 100);
 				image.addClickListener((event) -> {
@@ -89,69 +93,65 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 				});
 				profileImageDiv = image;
 			}
-			
+
 			profileImageDiv.setId("authorised-banner-profile-image");
-			
-			final String welcomeUser = "@" + user.getUsername();
-			Anchor profileAnchor = new Anchor(UserProfilePage.getURL(), welcomeUser);
-			
-			colleaguesButton.setId("authorised-banner-colleagues-button");
-			colleaguesButton.addClassName("authorised-banner-button");
-			
-			profileButton.setId("authorised-banner-profile-button");
-			profileButton.addClassName("authorised-banner-button");
-			
-			logoutButton.setId("authorised-banner-logout-button");
-			logoutButton.addClassName("authorised-banner-button");
-			
+
 			Div left = new Div();
 			left.addClassName("authorised-banner-left");
-			
+
 			Div right = new Div();
 			right.addClassName("authorised-banner-right");
-			
-			left.add(profileImageDiv, new QuickLinks());
-			Div centre = new Div(welcomeMessage, profileAnchor);
-			right.add(new Div(new Div(colleaguesButton, profileButton, logoutButton), counts));
+
+			left.add(profileImageDiv, quickLinks);
+			Div centre = new Div(welcomeMessage);
+			right.add(userLinks, counts);
 			add(left, centre, right);
 		}
 	}
-	
+
 	public static String getStaticID() {
 		return "authorised_banner_id";
 	}
-	
+
 	@Override
 	public String getText() {
 		return welcomeMessage.getText();
 	}
-	
+
 	@Override
 	public void setText(String text) {
 		welcomeMessage.setText(text);
 	}
-	
+
 	public void setAllButtonsUnselected() {
-		profileButton.removeClassName("authorised-banner-selected-button");
-		logoutButton.removeClassName("authorised-banner-selected-button");
+		userLinks.setAllButtonsUnselected();
 	}
-	
+
 	public void setProfileButtonSelected() {
-		profileButton.addClassName("authorised-banner-selected-button");
+		userLinks.setProfileButtonSelected();
 	}
-	
+
+	public void setColleaguesButtonSelected() {
+		userLinks.setColleaguesButtonSelected();
+	}
+
 	public void setLogoutButtonSelected() {
-		logoutButton.addClassName("authorised-banner-selected-button");
+		userLinks.setLogoutButtonSelected();
 	}
-	
+
+	@Override
+	public void handleMinorTaskEvent(MinorTaskEvent event) {
+		fireEvent(event);
+	}
+
 	public static class OwnerStatistics extends DBReport {
-		
+
 		Task.Owner user = new Task.Owner();
 		Task task = new Task();
-		
+
 		@DBColumn
 		public DBInteger created = new DBInteger(task.column(task.taskID).count());
-		
+
 		@DBColumn
 		public DBInteger completed = new DBInteger(
 				task.column(task.completionDate)
@@ -159,7 +159,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 						.ifThenElse(1, 0)
 						.sum()
 		);
-		
+
 		@DBColumn
 		public DBNumber velocity = new DBNumber(
 				task.column(task.completionDate)
@@ -174,5 +174,5 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText {
 						.round(2)
 		);
 	}
-	
+
 }

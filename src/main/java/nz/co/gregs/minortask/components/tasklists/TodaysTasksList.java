@@ -12,11 +12,20 @@ import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-//@Tag("todays-task-list")
 public class TodaysTasksList extends AbstractTaskList {
 
-	public TodaysTasksList(Long taskID) {
+	public TodaysTasksList(long taskID) {
 		super(taskID);
+		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
+	}
+
+	public TodaysTasksList(Task task) {
+		super(task);
+		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
+	}
+
+	public TodaysTasksList() {
+		super();
 		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
 	}
 

@@ -16,5 +16,8 @@ and open the template in the editor.
 	position: relative;
 	top:-8px;
 	font-size: small;
-	
+}
+
+colleague-button{
+	cursor: pointer;
 }

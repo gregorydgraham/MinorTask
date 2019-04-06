@@ -1,0 +1,288 @@
+.main-layout {
+			padding: 0;
+			margin: 0;
+			/*			margin-left:  5px;
+						margin-right: 2px;*/
+			border:  0;
+		}
+
+		html{
+			background-attachment: fixed;
+			background-size: cover;
+			background-position-x: center;
+			background-color: white;
+		}
+
+		html{
+		}
+		body{
+			padding:0;
+			margin:0;
+			width: 100%;
+		}
+
+		/*		.background-1{background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);}
+				.background-2{background-image: url(images/cloudy-mountains.jpg), url(frontend/styles/images/cloudy-mountains.jpg);}
+				.background-3{background-image: url(images/coast.jpg), url(frontend/styles/images/coast.jpg);}
+				.background-4{background-image: url(images/fall.jpg), url(frontend/styles/images/fall.jpg);}
+				.background-5{background-image: url(images/flying-bird.jpg), url(frontend/styles/images/flying-bird.jpg);}
+				.background-6{background-image: url(images/green-river.jpg), url(frontend/styles/images/green-river.jpg);}
+				.background-7{background-image: url(images/heaphy.jpg), url(frontend/styles/images/heaphy.jpg);}*/
+
+		body>vaadin-vertical-layout {
+			padding: 0;
+			margin:0;
+		}
+
+		body>vaadin-vertical-layout>vaadin-vertical-layout {
+			margin: 0;
+			padding:0;
+			background-color: white;
+		}
+
+		vaadin-vertical-layout{
+		}
+
+		vaadin-tabs{
+		}
+
+		upcoming-task-list{
+		}
+
+		.minortask-page{
+			padding:0;
+			margin:0;
+			border-radius: 0;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.minortask-internal{
+			padding-left: 0;
+			padding-right:0;
+			background-color: white;
+			justify-content: space-between;
+		}
+
+		.minortask-tasksection{    
+			max-width: 100%;
+			flex-grow: 1;
+		}
+
+		.minortask-taskcomponents{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			flex-grow: 8;
+		}
+
+		.minortask-editorcontents{
+			max-width:50em;
+		}
+
+		.minortask-underthebanner{
+			display: flex;
+			justify-items: center;
+			align-items: flex-start;
+		}
+
+		#minortask-internal{
+			padding-left: 0px;
+			margin-left:  0px;
+			padding-right: 0px;
+			margin-right:  0px;
+			background-color: white;
+			background-image: none; 
+		}    
+
+		.minortask-top{
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			min-width: 100%;
+			background-color: cadetblue;
+		} 
+
+		.minortask-topleft{
+			width: 100%;
+		}
+
+		.minortask-login {
+			background-color: white;
+			align-items: flex-start;
+		}
+
+		.minortask-topright{
+			width: 20em;
+			font-size: small;
+			flex-grow: 0;
+		}
+
+		.minortask-topright-spacer{
+			width: 20em;
+			font-size: small;
+			flex-grow: 0;
+		}
+
+		@media all and (max-device-width: 600px) {
+			.minortask-topright-spacer { display: none;}
+		}
+
+		range-datepicker{
+		}
+
+		paper-input{
+			width: 100%;
+		}
+
+		.login-panel {
+			background-color: white;
+			max-width:30%;
+			min-width: 20em;
+			align-self: flex-start;
+		}
+
+		.login-button {
+			align-self: center;
+		}
+
+		.dates-component{ 
+			display: -webkit-flex; /* Safari */
+			-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+			display: flex;   
+			flex-wrap: wrap;
+			padding-top: 5px;
+		}
+
+		.optional-date-picker{
+			padding:0;
+			display: block;
+		}
+
+		.public-banner{
+			width: 100%;
+			background-color: cadetblue;
+			margin: 0;
+			font-size: x-large;
+			color: white;
+		}
+
+		.public-banner label{
+			padding: 10px;
+		}
+
+		.place-search-component{
+			display: block;
+		}
+
+		.place-search-component vaadin-text-field{
+			margin-right: 0.5em;
+			width: 30em;
+			max-width: 40%;
+		}
+
+		.place-search-component vaadin-button{
+			margin-right: 0.5em;
+		}
+
+		.place-search-component vaadin-combo-box{
+			margin-right: 0.5em;
+			width: 20em;
+			max-width: 25%;
+		}
+
+		.tiny{font-size: smaller;}
+
+		.cluster-states {font-size: smaller;}
+
+		.defaultbutton{
+			background-color: #3399ff;
+			color:#eeeeee;
+			border-radius: 4px;
+		}
+
+		.completebutton{
+			background-color: red; 
+			color: white; 
+			border-radius: 4px;
+		}
+
+		.card{
+			background-color: white;
+			box-shadow: 0 0 6px darkgray;
+			border-radius: 4px;
+		}
+		.image_description{
+			font-size: smaller;
+		}
+
+		.all-completed-tasks-component{
+		}
+
+		.vaadin-text-field-container [part="input-field"] {
+			background-color: inherit;
+		}
+
+		.friendly{
+			align-items:center;
+			align-self:auto;
+			background-color:limegreen;
+			color: white;
+			display:inline-flex;
+			flex-basis:auto;
+			flex-direction:	row;
+			flex-wrap:nowrap;
+			justify-content:center;
+			text-align:center;
+			text-shadow:none;
+			padding-bottom:2px;
+			padding-left:7px;
+			padding-right:7px;
+			padding-top:1px;
+			margin-right:2px;
+		}
+
+		.currenttask{
+			background-color:  #0099cc;
+			color: white;
+		}
+
+		.red{background-color: red;}
+		.green{background-color: greenyellow;}
+		.blue{background-color: lightskyblue;}
+
+		.notice-label{
+			position:relative;
+		}
+
+		.celebration-spin{
+			opacity: 0;
+			transform: scale(0.01, 0.01);
+			position: absolute;
+			left: -50%;
+			top: 0;
+			animation: celebration 2s, fadeout 1s 2s;
+		}
+
+		@keyframes celebration {
+			from {
+				transform: rotate(-720deg) scale(0.01, 0.01);
+				opacity: 0;
+			}
+			to {
+				transform: rotate(720deg) scale(0.9, 0.9);
+				opacity:1;
+			}
+		}
+
+		@keyframes fadeout {
+			from {
+				transform: scale(0.9, 0.9);
+				opacity: 1;
+			}
+			to {
+				transform: scale(1, 1);
+				opacity: 0;
+			}
+		}

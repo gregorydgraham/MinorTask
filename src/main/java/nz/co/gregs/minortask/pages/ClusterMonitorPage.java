@@ -21,7 +21,7 @@ import nz.co.gregs.minortask.Globals;
  */
 @HtmlImport("styles/shared-styles.html")
 @StyleSheet("styles/cluster-monitor.css")
-@Route(value = "cluster", layout = MinortaskPushPage.class)
+//@Route(value = "cluster", layout = MinortaskPushPage.class)
 public class ClusterMonitorPage extends AuthorisedPage {
 
 	private final ClusterMonitorComponent clusterMonitorComponent;

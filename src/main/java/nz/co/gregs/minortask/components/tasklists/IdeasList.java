@@ -17,7 +17,12 @@ import nz.co.gregs.minortask.datamodel.Task;
  */
 public class IdeasList extends AbstractTaskList {
 
-	public IdeasList(Long parameter) {
+	public IdeasList() {
+		super();
+		setTooltipText("Never lose an idea, just create a task and don't set any dates, you'll find it here when you're ready");
+	}
+	
+	public IdeasList(Task parameter) {
 		super(parameter);
 		setTooltipText("Never lose an idea, just create a task and don't set any dates, you'll find it here when you're ready");
 	}

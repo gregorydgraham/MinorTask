@@ -26,8 +26,14 @@ public class OpenTaskList extends AbstractTaskList {
 	private CreateTaskInline createTaskSpan;
 	private SecureSpan footerContents;
 
-	public OpenTaskList(Long taskID) {
-		super(taskID);
+	public OpenTaskList() {
+		super();
+		this.addClassName("opentaskslist");
+		setTooltipText("All the tasks that are still be done");
+	}
+	
+	public OpenTaskList(Task task) {
+		super(task);
 		this.addClassName("opentaskslist");
 		setTooltipText("All the tasks that are still be done");
 	}
@@ -37,7 +43,7 @@ public class OpenTaskList extends AbstractTaskList {
 		setupAddButton();
 		createTaskSpan = new CreateTaskInline(getTask());
 		createTaskSpan.addCreateTaskListener((event) -> {
-			refreshList();
+			refresh();
 		});
 	}
 
@@ -96,5 +102,9 @@ public class OpenTaskList extends AbstractTaskList {
 
 	public void disableNewButton() {
 		addButton.setEnabled(false);
+	}
+
+	public void enableNewButton() {
+		addButton.setEnabled(true);
 	}
 }
