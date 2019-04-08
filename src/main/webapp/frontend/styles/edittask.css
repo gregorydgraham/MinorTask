@@ -16,6 +16,10 @@ and open the template in the editor.
 	color: black;
 }
 
+vaadin-button{
+	width: fit-content;
+}
+
 @media all and (min-width: 901px) {
 	.edit-task-notes{
 		--vaadin-text-field-default-width: 40em;
@@ -55,10 +59,10 @@ and open the template in the editor.
 }
 
 @media all and (max-width:550px){
-	.edit-task-addbuttons{
+/*	.edit-task-addbuttons{
 		flex-direction: column;
 		float:right;
-	}
+	}*/
 }
 
 .edit-task-component{

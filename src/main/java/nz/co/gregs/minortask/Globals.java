@@ -7,7 +7,7 @@ package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
+//import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -52,7 +52,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
-import nz.co.gregs.dbvolution.DBRow;
+//import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.actions.DBActionList;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
@@ -64,27 +64,25 @@ import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
 import nz.co.gregs.dbvolution.query.TreeNode;
 import nz.co.gregs.dbvolution.utility.RegularProcess;
-import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
-import nz.co.gregs.minortask.components.EditTask;
+//import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
+//import nz.co.gregs.minortask.components.EditTask;
 import nz.co.gregs.minortask.datamodel.RememberedLogin;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.colleagues.Colleagues;
-import nz.co.gregs.minortask.pages.AuthorisedPage;
-import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
+//import nz.co.gregs.minortask.pages.AuthorisedPage;
+//import nz.co.gregs.minortask.pages.AuthorisedOptionalTaskPage;
 import nz.co.gregs.minortask.pages.MinorTaskLayout;
-import nz.co.gregs.minortask.pages.FavouriteTasksPage;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
-import nz.co.gregs.minortask.pages.ProjectsLayout;
-import nz.co.gregs.minortask.pages.RecentTasksPage;
-import nz.co.gregs.minortask.pages.SearchForTaskPage;
+//import nz.co.gregs.minortask.pages.ProjectsLayout;
+//import nz.co.gregs.minortask.pages.SearchForTaskPage;
 import nz.co.gregs.minortask.pages.SignUpLayout;
-import nz.co.gregs.minortask.pages.TodaysTaskLayout;
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.Period;
+//import nz.co.gregs.minortask.pages.TodaysTaskLayout;
+//import org.joda.time.Chronology;
+//import org.joda.time.DateTime;
+//import org.joda.time.Period;
 
 /**
  *
@@ -322,33 +320,33 @@ public class Globals {
 		UI.getCurrent().navigate(MinorTaskLayout.class);
 	}
 
-	public static void showProjects() {
-		showPage(ProjectsLayout.class);
-	}
+//	public static void showProjects() {
+//		showPage(ProjectsLayout.class);
+//	}
 
-	public static void showTask(Long taskID) {
-		if (taskID == null) {
-			showProjects();
-		} else {
-			UI.getCurrent().navigate(MinorTaskLayout.class, taskID);
-		}
-	}
+//	public static void showTask(Long taskID) {
+//		if (taskID == null) {
+//			showProjects();
+//		} else {
+//			UI.getCurrent().navigate(MinorTaskLayout.class, taskID);
+//		}
+//	}
 
-	public static void showTodaysTasks() {
-		showPage(TodaysTaskLayout.class);
-	}
+//	public static void showTodaysTasks() {
+//		showPage(TodaysTaskLayout.class);
+//	}
 
-	public static void showSearchPage() {
-		showPage(SearchForTaskPage.class);
-	}
+//	public static void showSearchPage() {
+//		showPage(SearchForTaskPage.class);
+//	}
 
-	public static void showPage(Class<? extends AuthorisedPage> page) {
-		UI.getCurrent().navigate(page);
-	}
+//	public static void showPage(Class<? extends AuthorisedPage> page) {
+//		UI.getCurrent().navigate(page);
+//	}
 
-	public static void showPage(Class<? extends AuthorisedOptionalTaskPage> page, Long taskID) {
-		UI.getCurrent().navigate(page, taskID);
-	}
+//	public static void showPage(Class<? extends AuthorisedOptionalTaskPage> page, Long taskID) {
+//		UI.getCurrent().navigate(page, taskID);
+//	}
 
 	public static Task getProjectExample(Long taskID, long userID) {
 		Task task;
@@ -682,21 +680,21 @@ public class Globals {
 		return new Location(getURL(aClass));
 	}
 
-	public static void showRecentsPage() {
-		showPage(RecentTasksPage.class);
-	}
+//	public static void showRecentsPage() {
+//		showPage(RecentTasksPage.class);
+//	}
+//
+//	public static void showFavouritesPage() {
+//		showPage(FavouriteTasksPage.class);
+//	}
 
-	public static void showFavouritesPage() {
-		showPage(FavouriteTasksPage.class);
-	}
-
-	public static void showTask(Task task) {
-		if (task == null) {
-			showProjects();
-		} else {
-			showTask(task.taskID.getValue());
-		}
-	}
+//	public static void showTask(Task task) {
+//		if (task == null) {
+//			showProjects();
+//		} else {
+//			showTask(task.taskID.getValue());
+//		}
+//	}
 
 	protected static ScheduledThreadPoolExecutor getExecutor() {
 		return EXECUTOR;
@@ -731,112 +729,112 @@ public class Globals {
 		setDatabase(setupDatabase());
 	}
 
-	private static class CompleteTaskListener implements ComponentEventListener<ClickEvent<Button>> {
-
-		private final Long taskID;
-		private final MinorTask minortask;
-
-		public CompleteTaskListener(MinorTask minortask, Long taskID) {
-			this.taskID = taskID;
-			this.minortask = minortask;
-		}
-
-		@Override
-		public void onComponentEvent(ClickEvent<Button> event) {
-			completeTaskWithCongratulations(minortask, taskID);
-		}
-
-		public void completeTaskWithCongratulations(MinorTask minortask, Long taskID) {
-			try {
-				Task task = completeTask(taskID);
-				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
-				if (task == null) {
-					Globals.showProjects();
-				} else {
-					Long projectID = task.projectID.getValue();
-					Task usersCompletedTasks = new Task();
-					usersCompletedTasks.userID.setValue(minortask.getCurrentUserID());
-					usersCompletedTasks.completionDate.excludeNull();
-					try {
-						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
-						Task currentProject = new Task();
-						currentProject.projectID.setValue(projectID);
-						currentProject.completionDate.permitOnlyNull();
-						if (getDatabase().getDBQuery(currentProject).count() == 0) {
-							Globals.congratulate("All the subtasks are completed!");
-						}
-						if (completedTaskCount < 11) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount > 11 && completedTaskCount < 51
-								&& completedTaskCount % 10 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						} else if (completedTaskCount % 50 == 0) {
-							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
-						}
-					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
-						sqlerror(ex);
-					}
-					Globals.showTask(projectID);
-				}
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-
-		public Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
-			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
-			if (taskID != null) {
-				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask.getCurrentUserID());
-				for (Task subtask : subtasks) {
-					completeTask(subtask.taskID.getValue());
-				}
-				Task task = minortask.getTask(taskID);
-				task.completionDate.setValue(new Date());
-				try {
-					final DBDatabase database = Globals.getDatabase();
-					DBActionList update = database.update(task);
-					repeatTask(task);
-				} catch (SQLException ex) {
-					Globals.sqlerror(ex);
-				}
-				return task;
-			}
-			return null;
-		}
-
-		private void repeatTask(Task task) {
-			if (task.repeatOffset.isNotNull()) {
-				Period value = task.repeatOffset.getValue();
-				final Date now = new Date();
-				final Date startDateValue = task.startDate.getValue();
-				if (startDateValue != null
-						&& (startDateValue.before(now))) {
-					Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
-					value = value.plus(period);
-				}
-				Task copy = DBRow.copyDBRow(task);
-				copy.taskID.setValueToNull();
-				copy.completionDate.setValueToNull();
-				copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
-				copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
-				copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
-				try {
-					getDatabase().insert(copy);
-				} catch (SQLException ex) {
-					sqlerror(ex);
-				}
-			}
-		}
-
-		public Date offsetDate(final Date originalDate, Period value) {
-			if (originalDate != null) {
-				Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
-				return newDate;
-			} else {
-				return null;
-			}
-		}
-	}
+//	private static class CompleteTaskListener implements ComponentEventListener<ClickEvent<Button>> {
+//
+//		private final Long taskID;
+//		private final MinorTask minortask;
+//
+//		public CompleteTaskListener(MinorTask minortask, Long taskID) {
+//			this.taskID = taskID;
+//			this.minortask = minortask;
+//		}
+//
+//		@Override
+//		public void onComponentEvent(ClickEvent<Button> event) {
+//			completeTaskWithCongratulations(minortask, taskID);
+//		}
+//
+//		public void completeTaskWithCongratulations(MinorTask minortask, Long taskID) {
+//			try {
+//				Task task = completeTask(taskID);
+//				Globals.animatedNotice(new Icon(VaadinIcon.CHECK), "Done.");
+//				if (task == null) {
+//					Globals.showProjects();
+//				} else {
+//					Long projectID = task.projectID.getValue();
+//					Task usersCompletedTasks = new Task();
+//					usersCompletedTasks.userID.setValue(minortask.getCurrentUserID());
+//					usersCompletedTasks.completionDate.excludeNull();
+//					try {
+//						final Long completedTaskCount = getDatabase().getDBQuery(usersCompletedTasks).count();
+//						Task currentProject = new Task();
+//						currentProject.projectID.setValue(projectID);
+//						currentProject.completionDate.permitOnlyNull();
+//						if (getDatabase().getDBQuery(currentProject).count() == 0) {
+//							Globals.congratulate("All the subtasks are completed!");
+//						}
+//						if (completedTaskCount < 11) {
+//							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+//						} else if (completedTaskCount > 11 && completedTaskCount < 51
+//								&& completedTaskCount % 10 == 0) {
+//							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+//						} else if (completedTaskCount % 50 == 0) {
+//							Globals.congratulate(new Label("" + completedTaskCount + " TASKS"), "Completed");
+//						}
+//					} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+//						sqlerror(ex);
+//					}
+//					Globals.showTask(projectID);
+//				}
+//			} catch (Globals.InaccessibleTaskException ex) {
+//				Logger.getLogger(EditTask.class.getName()).log(Level.SEVERE, null, ex);
+//			}
+//		}
+//
+//		public Task completeTask(Long taskID) throws Globals.InaccessibleTaskException {
+//			UI.getCurrent().navigate(AuthorisedBannerMenu.getStaticID());
+//			if (taskID != null) {
+//				List<Task> subtasks = Globals.getActiveSubtasks(taskID, minortask.getCurrentUserID());
+//				for (Task subtask : subtasks) {
+//					completeTask(subtask.taskID.getValue());
+//				}
+//				Task task = minortask.getTask(taskID);
+//				task.completionDate.setValue(new Date());
+//				try {
+//					final DBDatabase database = Globals.getDatabase();
+//					DBActionList update = database.update(task);
+//					repeatTask(task);
+//				} catch (SQLException ex) {
+//					Globals.sqlerror(ex);
+//				}
+//				return task;
+//			}
+//			return null;
+//		}
+//
+//		private void repeatTask(Task task) {
+//			if (task.repeatOffset.isNotNull()) {
+//				Period value = task.repeatOffset.getValue();
+//				final Date now = new Date();
+//				final Date startDateValue = task.startDate.getValue();
+//				if (startDateValue != null
+//						&& (startDateValue.before(now))) {
+//					Period period = new Period(now.getTime() - startDateValue.getTime(), (Chronology) null);
+//					value = value.plus(period);
+//				}
+//				Task copy = DBRow.copyDBRow(task);
+//				copy.taskID.setValueToNull();
+//				copy.completionDate.setValueToNull();
+//				copy.startDate.setValue(offsetDate(copy.startDate.getValue(), value));
+//				copy.preferredDate.setValue(offsetDate(copy.preferredDate.getValue(), value));
+//				copy.finalDate.setValue(offsetDate(copy.finalDate.getValue(), value));
+//				try {
+//					getDatabase().insert(copy);
+//				} catch (SQLException ex) {
+//					sqlerror(ex);
+//				}
+//			}
+//		}
+//
+//		public Date offsetDate(final Date originalDate, Period value) {
+//			if (originalDate != null) {
+//				Date newDate = new DateTime(originalDate.getTime()).plus(value).toDate();
+//				return newDate;
+//			} else {
+//				return null;
+//			}
+//		}
+//	}
 
 	private static class DatabaseBackupProcess extends RegularProcess {
 

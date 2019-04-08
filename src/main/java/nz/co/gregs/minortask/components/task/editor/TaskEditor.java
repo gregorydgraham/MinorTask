@@ -9,7 +9,6 @@ import com.google.common.base.Objects;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.BlurNotifier;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -31,7 +30,6 @@ import nz.co.gregs.minortask.MinorTaskEventListener;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
 import nz.co.gregs.minortask.components.OptionaDateRepeat;
 import nz.co.gregs.minortask.components.OptionalDatePicker;
-import nz.co.gregs.minortask.components.ProjectPathAltered;
 import nz.co.gregs.minortask.components.SecureButton;
 import nz.co.gregs.minortask.components.SecureDatePicker;
 import nz.co.gregs.minortask.components.UserSelector;
@@ -42,7 +40,6 @@ import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.polymer.Details;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.components.task.HasTask;
-import nz.co.gregs.minortask.components.tasklists.AllCompletedTasksList;
 import nz.co.gregs.minortask.components.tasklists.CompletedTasksList;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
@@ -65,51 +62,51 @@ import org.joda.time.Period;
  */
 public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListener, MinorTaskEventNotifier {
 
-	PaperInput name = new PaperInput();
-	TextField ownerField = new TextField("User");
-	TextArea description = new TextArea();
-	UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
-	TextArea notes = new TextArea("Notes");
-	SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
-	SecureButton addRepeat = new SecureButton("Repeat", new Icon(VaadinIcon.TIME_FORWARD));
-	SecureButton addPlace = new SecureButton("Place", new Icon(VaadinIcon.MAP_MARKER));
-	SecureButton addImage = new SecureButton("Image", new Icon(VaadinIcon.FILE_PICTURE));
-	SecureButton addDocument = new SecureButton("Document", new Icon(VaadinIcon.FILE_ADD));
-	SecureButton addWebLink = new SecureButton("Bookmark", new Icon(VaadinIcon.BOOKMARK_O));
-	SecureButton addNotes = new SecureButton("Notes", new Icon(VaadinIcon.NOTEBOOK));
-	SecureButton completeButton = new SecureButton("Complete This Task");
-	SecureButton reopenButton = new SecureButton("Reopen This Task");
-	SecureButton deleteButton = new SecureButton("Delete Completely");
-	TaskProjectPicker project = new TaskProjectPicker();
-	final OpenTaskList subtasks = new OpenTaskList();
-	final CompletedTasksList completedTasks = new CompletedTasksList();
-	OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
-	OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
-	OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline Date");
-	OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
-	OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
-	Period repeatValue = null;
-	SecureDatePicker completedDate = new SecureDatePicker("Completed");
-	private final Div dates = new Div(
+	private final PaperInput name = new PaperInput();
+	private final TextField ownerField = new TextField("User");
+	private final TextArea description = new TextArea();
+	private final UserSelector assignedToSelector = new UserSelector.ColleagueSelector("Assigned To");
+	private final TextArea notes = new TextArea("Notes");
+	private final SecureButton addDates = new SecureButton("Dates", new Icon(VaadinIcon.CALENDAR_O));
+	private final SecureButton addRepeat = new SecureButton("Repeat", new Icon(VaadinIcon.TIME_FORWARD));
+	private final SecureButton addPlace = new SecureButton("Place", new Icon(VaadinIcon.MAP_MARKER));
+	private final SecureButton addImage = new SecureButton("Image", new Icon(VaadinIcon.FILE_PICTURE));
+	private final SecureButton addDocument = new SecureButton("Document", new Icon(VaadinIcon.FILE_ADD));
+	private final SecureButton addWebLink = new SecureButton("Bookmark", new Icon(VaadinIcon.BOOKMARK_O));
+	private final SecureButton addNotes = new SecureButton("Notes", new Icon(VaadinIcon.NOTEBOOK));
+	private final SecureButton completeButton = new SecureButton("Complete This Task");
+	private final SecureButton reopenButton = new SecureButton("Reopen This Task");
+	private final SecureButton deleteButton = new SecureButton("Delete Completely");
+	private final TaskProjectPicker project = new TaskProjectPicker();
+	private final OpenTaskList subtasks = new OpenTaskList();
+	private final CompletedTasksList completedTasks = new CompletedTasksList();
+	private final OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
+	private final OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
+	private final OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline Date");
+	private final OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
+	final OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
+	private Period repeatValue = null;
+	private final SecureDatePicker completedDate = new SecureDatePicker("Completed");
+	private final FlexBox dates = new FlexBox(
 			startDate,
 			preferredEndDate,
 			deadlineDate,
 			completedDate
 	);
-	WeblinkGrid weblinkGrid = new WeblinkGrid();
-	WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
-	TextArea notesEditor = new TextArea("Notes");
-	SecureDiv notesEditorDiv = new SecureDiv(notesEditor);
-	DocumentGrid documentGrid = new DocumentGrid();
-	DocumentUploadAndSelector documentUpload = new DocumentUploadAndSelector();
-	ImageUploadAndSelector imageUpload = new ImageUploadAndSelector();
-	PlaceGrid placeGrid = new PlaceGrid();
-	PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
-	Label activeIndicator = new Label("Active");
-	Label startedIndicator = new Label("Started");
-	Label overdueIndicator = new Label("Overdue");
-	Label oneDayMaybeIndicator = new Label("One Day Maybe");
-	Label completedIndicator = new Label("COMPLETED");
+	private final WeblinkGrid weblinkGrid = new WeblinkGrid();
+	private final WeblinkEditorComponent weblinkEditor = new WeblinkEditorComponent();
+	private final TextArea notesEditor = new TextArea("Notes");
+	private final SecureDiv notesEditorDiv = new SecureDiv(notesEditor);
+	private final DocumentGrid documentGrid = new DocumentGrid();
+	private final DocumentUploadAndSelector documentUpload = new DocumentUploadAndSelector();
+	private final ImageUploadAndSelector imageUpload = new ImageUploadAndSelector();
+	private final PlaceGrid placeGrid = new PlaceGrid();
+	private final PlaceSearchComponent placeSearcher = new PlaceSearchComponent();
+	private final Label activeIndicator = new Label("Active");
+	private final Label startedIndicator = new Label("Started");
+	private final Label overdueIndicator = new Label("Overdue");
+	private final Label oneDayMaybeIndicator = new Label("One Day Maybe");
+	private final Label completedIndicator = new Label("COMPLETED");
 	private Task.TaskAndProject taskAndProject;
 	private final SecureDiv nameDiv = new SecureDiv();
 	private final SecureDiv descriptionDiv = new SecureDiv();
@@ -120,7 +117,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	private boolean movingTask = false;
 	private final Div completeButtonDiv = new Div();
 	private final SecureDiv nameAndProjectDiv = new SecureDiv();
-	private final Div extrasLayout = new Div();
+	private final FlexColumn extrasLayout = new FlexColumn();
 	private final FlexColumn tasksDiv = new FlexColumn();
 
 	public TaskEditor() {
@@ -313,11 +310,6 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		preferredEndDate.addValueChangeListener(changer);
 		deadlineDate.addValueChangeListener(changer);
 
-		repeatEditor.addValueChangeListener((event) -> {
-			repeatValue = repeatEditor.getValue();
-			saveTask();
-		});
-
 		repeat.addValueChangeListener((event) -> {
 			repeatValue = repeat.getValue();
 			saveTask();
@@ -328,6 +320,10 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		});
 		addRepeat.addClickListener((event) -> {
 			showEditor(repeatEditor);
+		});
+		repeatEditor.addValueChangeListener((event) -> {
+			repeatValue = repeatEditor.getValue();
+			saveTask();
 		});
 		addDocument.addClickListener((event) -> {
 			showEditor(documentUpload);
@@ -374,7 +370,6 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 				final Task task1 = getTask(getTaskID());
 				if (!event.getSource().getValue().equals(task1.name.getValue())) {
 					saveTask();
-					fireEvent(new ProjectPathAltered(this, task1, false));
 				}
 			} catch (Globals.InaccessibleTaskException ex) {
 				Logger.getLogger(MinorTaskView.class.getName()).log(Level.SEVERE, null, ex);
@@ -632,19 +627,9 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		}
 	}
 
-	public void handleEscapeButton() {
-		Globals.showTask(getTaskID());
-	}
-
 	public final void setAsDefaultButton(Button button) {
 		button.addClickListener((event) -> {
 			saveTask();
-		});
-	}
-
-	public final void setEscapeButton(Button button) {
-		button.addClickListener((event) -> {
-			handleEscapeButton();
 		});
 	}
 
@@ -661,9 +646,6 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		notesEditorDiv.setVisible(false);
 		if (editor != null) {
 			editor.setVisible(!editorAlreadyShowing);
-			if (editor instanceof Focusable) {
-				((Focusable) editor).focus();
-			}
 			buttonsAndEditors.addClassName("open");
 		} else {
 			buttonsAndEditors.removeClassName("open");

@@ -30,6 +30,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.MinorTaskEventListener;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
+import nz.co.gregs.minortask.MinorTaskViews;
 
 /**
  *
@@ -82,14 +83,14 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 
 			SecureDiv defaultImageDiv = new SecureDiv();
 			defaultImageDiv.addClickListener((event) -> {
-				minortask().showProfile();
+				fireEvent(new MinorTaskEvent(event.getSource(), MinorTaskViews.PROFILE, true));
 			});
 			Component profileImageDiv = defaultImageDiv;
 
 			if (user.profileImage != null) {
 				SizedImageFromDocument image = new SizedImageFromDocument(user.profileImage, 100);
 				image.addClickListener((event) -> {
-					minortask().showProfile();
+					fireEvent(new MinorTaskEvent(event.getSource(), MinorTaskViews.PROFILE, true));
 				});
 				profileImageDiv = image;
 			}

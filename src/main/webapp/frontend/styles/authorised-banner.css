@@ -28,6 +28,7 @@ authorised-banner a:active{color: gray;font-style: oblique;}
 	align-items: center;
 	align-content: center;
 	vertical-align: central;
+	cursor: pointer;
 }
 
 .authorised-banner-right{    

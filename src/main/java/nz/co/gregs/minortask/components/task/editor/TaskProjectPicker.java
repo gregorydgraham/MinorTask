@@ -144,13 +144,13 @@ public class TaskProjectPicker extends SecureTaskDiv {
 						// enforce date constraints on tree
 						MinorTask.enforceDateConstraintsOnTaskTree(task);
 						picker.add(picker.getCurrentProjectComponent());
-						MinorTask.showTask(taskID);
+//						MinorTask.showTask(taskID);
 					}
 				} else {
 					task.projectID.setValueToNull();
 					MinorTask.getDatabase().update(task);
 					picker.add(picker.getCurrentProjectComponent());
-					MinorTask.showTask(taskID);
+//					MinorTask.showTask(taskID);
 				}
 			} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
 				MinorTask.sqlerror(ex);

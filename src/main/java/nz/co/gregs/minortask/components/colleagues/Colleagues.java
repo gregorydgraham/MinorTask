@@ -30,7 +30,7 @@ public class Colleagues extends DBRow{
 	
 	@DBColumn("userid2")
 	@DBPrimaryKey
-	@DBForeignKey(RequestedUser.class)
+	@DBForeignKey(InvitedUser.class)
 	public final DBInteger invited = new DBInteger();
 	
 	@DBColumn
@@ -55,7 +55,7 @@ public class Colleagues extends DBRow{
 		
 	}
 	
-	public static class RequestedUser extends User{
+	public static class InvitedUser extends User{
 		
 	}
 }

@@ -16,7 +16,7 @@ public class ColleagueListItem {
 	
 	private User otherUser;
 	private boolean accepted;
-	boolean canAccept;
+	private boolean canAccept;
 	private Colleagues colleaguesRow;
 	private boolean declined;
 	private MinorTask minortask;

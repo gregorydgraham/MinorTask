@@ -96,26 +96,29 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 
 	protected List<ColleagueListItem> getColleaguesToList() throws SQLException {
 		list.clear();
-		final Colleagues colleague = new Colleagues();
+		final Colleagues colleagueExample = new Colleagues();
 		final User requesterExample = new Colleagues.RequestingUser();
-		final User requestedExample = new Colleagues.RequestedUser();
-		DBQuery dbQuery = getDatabase().getDBQuery()
-				.add(colleague, requesterExample, requestedExample);
+		final User invitedExample = new Colleagues.InvitedUser();
+		DBQuery dbQuery = getDatabase().getDBQuery(colleagueExample, requesterExample, invitedExample);
 		dbQuery.addCondition(// at least one of the invite fields is the current user
 				IntegerExpression.value(getCurrentUserID())
 						.isIn(
-								colleague.column(colleague.requestor),
-								colleague.column(colleague.invited)
+								requesterExample.column(requesterExample.queryUserID()),
+								invitedExample.column(invitedExample.queryUserID())
 						)
 		);
 
 		System.out.println("getColleaguesToList: \n" + dbQuery.getSQLForQuery());
 		List<DBQueryRow> allRows = dbQuery.getAllRows();
-		allRows.forEach((row) -> {
-			final User requester = row.get(requesterExample);
-			final User requestee = row.get(requestedExample);
-			list.add(new ColleagueListItem(minortask(), row.get(colleague), requester, requestee));
-		});
+		for (DBQueryRow row : allRows) {
+			Colleagues colleagueRow = row.get(new Colleagues());
+			User requester = row.get(new Colleagues.RequestingUser());
+			User invited = row.get(new Colleagues.InvitedUser());
+			System.out.println(colleagueRow);
+			System.out.println(requester);
+			System.out.println(invited);
+			list.add(new ColleagueListItem(minortask(), colleagueRow, requester, invited));
+		}
 		return list;
 	}
 
@@ -189,7 +192,14 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 		final Label statusLabel = new Label();
 		statusLabel.addClassName("colleaguelist-status-label");
 		layout.add(statusLabel);
-		if (item.hasDeclined() && !item.canAccept) {
+//		layout.add(new Div(
+//				new Label(item.canAccept() ? "Acceptable" : ""),
+//				new Label(item.hasAcceptedInvitation() ? "Accepted" : ""),
+//				new Label(item.hasDeclined() ? "Declined" : ""),
+//				new Label(item.isInvited() ? "Invited" : ""),
+//				new Label(item.getOtherUser().getUsername())
+//		));
+		if (item.hasDeclined() && !item.canAccept()) {
 			statusLabel.setText("declined");
 			final Button rescindButton = new Button("Remove");
 			rescindButton.addClassName("colleaguelist-ejectbutton");
@@ -345,6 +355,4 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 		}
 		refreshList();
 	}
-
-
 }

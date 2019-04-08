@@ -196,20 +196,11 @@ public class MinorTaskLayout
 		changeURLPath(urlDestination);
 	}
 
-//	public void showDetails() {
-//		view.showDetails();
-//	}
-
 	private void showTask(MinorTaskEvent event) {
 		final Task task = event.getTask();
-//		System.out.println("nz.co.gregs.minortask.pages.MinorTaskLayout.showTask(): " + task);
-//		view.setTask(task);
-//		viewBanner.setTask(task);
-//		showDetails();
 		String title = (task == null ? "Projects" : task.name.getValue());
 		String description = (task == null ? "Build Your Plans Here" : task.description.getValue());
 		String urlFragment = "task" + (task == null ? "" : "/" + task.taskID.getValue());
-//		changeURLPath(urlFragment);
 		changeToTaskPage(task, title, description, urlFragment, view::showDetails);
 	}
 
@@ -218,33 +209,26 @@ public class MinorTaskLayout
 	}
 
 	public void showFavouritesList() {
-//		view.showFavouritesList();
 		changeToTopLevelPage("Favourites", "all your favourite tasks and projects", "favourites", view::showFavouritesList);
 	}
 
 	public void showSearchList() {
-//		view.showSearchList();
 		changeToTopLevelPage("Search", "search for tasks by name and description", "search", view::showSearchList);
 	}
 
 	private void showClusterPage() {
-//		view.showCluster();
 		changeToTopLevelPage("Cluster", "make sure the data is safe", "cluster", view::showCluster);
 	}
 
 	private void showColleagues() {
-//		view.showColleagues();
 		changeToTopLevelPage("Colleagues", "your work colleagues that will help with these tasks", "colleagues", view::showColleagues);
 	}
 
 	private void showProfile() {
-//		view.showProfile();
 		changeToTopLevelPage("Profile", "your settings and information", "profile", view::showProfile);
 	}
 
 	private void showTodayPage() {
-//		view.showToday();
-//		Runnable run = view::showToday;
 		changeToTopLevelPage("Today", "what to do today within your projects", "today", view::showToday);
 	}
 }

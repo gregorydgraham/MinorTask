@@ -202,7 +202,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 		SecureSpan wrapped = new SecureSpan(label1);
 		layout.add(wrapped);
 		layout.addClickListener((event) -> {
-			Globals.showTask(task.taskID.getValue());
+			fireEvent(new MinorTaskEvent(event.getSource(), task, true));
 		});
 		return layout;
 	}
