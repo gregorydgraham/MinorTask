@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components.generic;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
-import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.RequiresPermission;
 
 /**
@@ -22,16 +21,5 @@ public class SecureDiv extends Div implements RequiresPermission {
 	public SecureDiv(Component... components) {
 		super();
 		add(components);
-	}
-
-	@Override
-	public final void add(Component... components) {
-		if (!checkForPermission()) {
-			for (Component component : components) {
-				super.add(new AccessDeniedComponent());
-			}
-		} else {
-			super.add(components);
-		}
 	}
 }

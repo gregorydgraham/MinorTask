@@ -10,18 +10,18 @@ import nz.co.gregs.minortask.datamodel.Task;
 
 public class SecureTaskDiv extends SecureDiv implements HasTask {
 
-	private Task task;
+	private Task __task;
 
 	public SecureTaskDiv() {
 	}
 
 	@Override
 	public final Task getTask() {
-		return task;
+		return __task;
 	}
 
 	@Override
 	public void setTask(Task newTask) {
-		this.task = newTask;
+		this.__task = newTask;
 	}
 }

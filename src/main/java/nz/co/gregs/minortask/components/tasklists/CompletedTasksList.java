@@ -11,10 +11,11 @@ import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @StyleSheet("styles/completed-task-list.css")
-public class CompletedTasksList extends AbstractTaskList {
+public class CompletedTasksList extends AbstractTaskListOfDBQueryRow {
 
 	public CompletedTasksList(Task task) {
 		super(task);
@@ -27,13 +28,13 @@ public class CompletedTasksList extends AbstractTaskList {
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		Task example = new Task();
 //		example.userID.permittedValues(minortask().getCurrentUserID());
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permitOnlyNotNull();
 		example.completionDate.setSortOrderDescending();
-		final DBQuery query = getDatabase().getDBQuery(example);
+		final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())
@@ -46,8 +47,7 @@ public class CompletedTasksList extends AbstractTaskList {
 				example.column(example.name).ascending(),
 				example.column(example.taskID).ascending()
 		);
-		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;
+		return query.getAllRows();
 	}
 
 	@Override
@@ -56,12 +56,12 @@ public class CompletedTasksList extends AbstractTaskList {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		return "" + tasks.size() + " Completed Tasks";
 	}
 
 	@Override
-	protected Component getSubTaskNumberComponent(Task task) {
+	protected Component getSubTaskNumberComponent(Task task, Long number) {
 		return new Span();
 	}
 }

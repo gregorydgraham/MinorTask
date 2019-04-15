@@ -14,13 +14,14 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.components.task.CreateTaskInline;
 import nz.co.gregs.minortask.datamodel.Task;
 
 @StyleSheet("styles/open-task-list.css")
-public class OpenTaskList extends AbstractTaskList {
+public class OpenTaskList extends AbstractTaskListOfDBQueryRow {
 
 	private Button addButton;
 	private CreateTaskInline createTaskSpan;
@@ -53,16 +54,16 @@ public class OpenTaskList extends AbstractTaskList {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		return "" + tasks.size() + " Open Subtasks";
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
-		Task example = new Task.WithSortColumns();
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
+		Task example = new Task();
 		example.projectID.permittedValues(getTaskID());
 		example.completionDate.permittedValues((Date) null);
-		final DBQuery query = getDatabase().getDBQuery(example);
+		final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())
@@ -77,8 +78,7 @@ public class OpenTaskList extends AbstractTaskList {
 				example.column(example.startDate).ascending(),
 				example.column(example.name).ascending()
 		);
-		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;
+		return query.getAllRows();
 	}
 
 	@Override

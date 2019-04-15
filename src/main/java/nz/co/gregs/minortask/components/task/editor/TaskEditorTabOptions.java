@@ -12,14 +12,12 @@ package nz.co.gregs.minortask.components.task.editor;
 public interface TaskEditorTabOptions {
 
 	void showDetails();
-	void showTodayList();
+	void showTodayForThisTask();
 	void showUpcomingList();
 	void showOverdueList();
 	void showIdeasList();
 	void showOpenList();
 	void showCompletedList();
-//	void showRecentList();
-//	void showFavouritesList();
 	void showSearchList();
 	
 }

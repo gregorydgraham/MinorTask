@@ -27,13 +27,13 @@ import nz.co.gregs.minortask.datamodel.User;
  *
  * @author gregorygraham
  */
-//@Tag("minortask-login")
 public class LoginComponent extends VerticalLayout implements MinorTaskComponent, HasComponents, KeyNotifier, HasDefaultButton {
 
 	private TextField USERNAME_FIELD;
 	private PasswordField PASSWORD_FIELD;
 	private final Checkbox REMEMBER_ME_FIELD = new Checkbox("Remember Me", true);
 	private Location destination;
+	private Runnable run;
 
 	public LoginComponent() {
 		this("", "");
@@ -50,12 +50,10 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 
 		add(getComponent());
 
-		USERNAME_FIELD.focus();
 		Optional<Cookie> cookie = Globals.getLastUsernameCookieValue();
 		if (cookie.isPresent()) {
 			System.out.println("nz.co.gregs.minortask.components.LoginComponent.getComponent(): " + cookie.get().getValue());
 			USERNAME_FIELD.setValue(cookie.get().getValue());
-			PASSWORD_FIELD.focus();
 		} else {
 			System.out.println("NO LAST USER FOUND");
 		}
@@ -154,8 +152,15 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	}
 
 	private void showDestination() {
+		if (run != null) {
+			run.run();
+		}
 		if (destination != null) {
 			Globals.showLocation(destination);
 		}
+	}
+
+	public void setLoginMethod(Runnable run) {
+		this.run = run;
 	}
 }

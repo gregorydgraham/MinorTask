@@ -15,7 +15,7 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
-public class RecentlyCompletedTasks extends AbstractTaskList {
+public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 
 	public RecentlyCompletedTasks() {
 		super();
@@ -29,7 +29,7 @@ public class RecentlyCompletedTasks extends AbstractTaskList {
 		cal.add(GregorianCalendar.DAY_OF_YEAR, -7);
 		example.completionDate.permittedRange(cal.getTime(), null);
 		example.completionDate.setSortOrderDescending();
-		final DBQuery query = getDatabase().getDBQuery(example);
+		final DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())
@@ -43,8 +43,7 @@ public class RecentlyCompletedTasks extends AbstractTaskList {
 				example.column(example.taskID).ascending()
 		);
 		query.setPageSize(10);
-		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;
+		return query.getAllInstancesOf(new Task());
 	}
 
 	@Override
@@ -58,12 +57,17 @@ public class RecentlyCompletedTasks extends AbstractTaskList {
 	}
 
 	@Override
-	protected Component getSubTaskNumberComponent(Task task) {
+	protected Component getSubTaskNumberComponent(Task task, Long number) {
 		return new Span();
 	}
 
 	@Override
-	protected Component getPrefixComponent(Task task) {
+	protected Component getLeftComponent(Task task) {
+		return new Span();
+	}
+
+	@Override
+	protected Component getRightComponent(Task task) {
 		return new Span();
 	}
 }

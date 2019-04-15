@@ -27,15 +27,4 @@ public class FlexColumn extends Span implements RequiresPermission {
 		this();
 		add(components);
 	}
-
-	@Override
-	public final void add(Component... components) {
-		if (!checkForPermission()) {
-			for (Component component : components) {
-				super.add(new AccessDeniedComponent());
-			}
-		} else {
-			super.add(components);
-		}
-	}
 }

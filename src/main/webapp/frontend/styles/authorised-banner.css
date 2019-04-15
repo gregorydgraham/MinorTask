@@ -22,7 +22,6 @@ authorised-banner a:hover{color: gray;font-weight: bold;}
 authorised-banner a:active{color: gray;font-style: oblique;}
 
 .authorised-banner-left {
-	/*padding-left: 1px;*/
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -41,9 +40,14 @@ authorised-banner a:active{color: gray;font-style: oblique;}
 	width: 50px;
 	height: 50px;
 	object-fit: cover;
-	/*border-radius: 25px;*/
 	display: inline-block;	
 	border-bottom-left-radius: 5px;
+}
+
+#authorised-banner-profile-image img{
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
 }
 
 .authorised-banner-selected-button{
@@ -52,7 +56,6 @@ authorised-banner a:active{color: gray;font-style: oblique;}
 }
 
 .authorised-banner-button{
-	/*color: #0099cc;*/
 	color: gray;
 	width: 46px;
 	padding-left: 9px;

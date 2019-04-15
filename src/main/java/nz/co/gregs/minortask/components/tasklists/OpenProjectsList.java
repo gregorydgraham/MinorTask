@@ -14,6 +14,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.minortask.Globals;
@@ -25,7 +26,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  * @author gregorygraham
  */
 @StyleSheet("styles/open-projects-list.css")
-public class OpenProjectsList extends AbstractTaskList {
+public class OpenProjectsList extends AbstractTaskListOfDBQueryRow {
 
 	private Button addButton;
 	private CreateTaskInline createTask;
@@ -46,10 +47,10 @@ public class OpenProjectsList extends AbstractTaskList {
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		Task example = new Task();
 		example.completionDate.permitOnlyNull();
-		final DBQuery query = Globals.getDatabase().getDBQuery(example);
+		final DBQuery query = Globals.getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		query.addCondition(
 				BooleanExpression.allOf(
 						example.column(example.userID).is(minortask().getCurrentUserID()),
@@ -67,12 +68,11 @@ public class OpenProjectsList extends AbstractTaskList {
 		);
 		System.out.println("OPEN PROJECTS:");
 		System.out.println(query.getSQLForQuery());
-		List<Task> tasks = query.getAllInstancesOf(example);
-		return tasks;
+		return query.getAllRows();
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		return "" + tasks.size() + " Open Projects";
 	}
 

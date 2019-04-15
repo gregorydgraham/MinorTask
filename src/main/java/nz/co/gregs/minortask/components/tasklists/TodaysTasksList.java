@@ -6,13 +6,12 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class TodaysTasksList extends AbstractTaskList {
+public class TodaysTasksList extends AbstractTaskListOfTasks {
 
 	public TodaysTasksList(long taskID) {
 		super(taskID);
@@ -32,39 +31,35 @@ public class TodaysTasksList extends AbstractTaskList {
 	@Override
 	protected List<Task> getTasksToList() throws SQLException {
 		if (getTaskID() == null) {
-			Task.Project example = new Task.Project();
-			example.startDate.permittedRangeInclusive(null, new Date());
-			example.completionDate.permitOnlyNull();
-			final Task task = new Task();
-			task.completionDate.permitOnlyNull();
-			final DBQuery query = getDatabase().getDBQuery(example).addOptional(task);
+			final Task.Project project = new Task.Project();
+			Task task = new Task();
+			project.startDate.permitOnlyPast();
+			project.completionDate.permitOnlyNull();
+			final DBQuery query = getDatabase().getDBQuery(project).addOptional(task);
 			// add user requirement
 			query.addCondition(
-					example.column(example.userID).is(getCurrentUserID())
+					project.column(project.userID).is(getCurrentUserID())
 							.or(
-									example.column(example.assigneeID).is(getCurrentUserID())
+									project.column(project.assigneeID).is(getCurrentUserID())
 							)
 			);
 			// add the leaf requirement
 			query.addCondition(task.column(task.taskID).isNull());
 			query.setSortOrder(
-					example.column(example.finalDate).ascending().nullsLast(),
-					example.column(example.startDate).ascending().nullsLast(),
-					example.column(example.name).ascending()
+					project.column(project.finalDate).ascending().nullsLast(),
+					project.column(project.startDate).ascending().nullsLast(),
+					project.column(project.name).ascending()
 			);
-			List<Task> tasks = query.getAllInstancesOf(new Task.Project());
-			return tasks;
+			return query.getAllInstancesOf(project);
 		} else {
-			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
-			List<Task> tasks = new ArrayList<>();
 			final Date now = new Date();
-			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() == null
-						&& !t.taskID.getValue().equals(getTaskID())
-						&& t.startDate.getValue() != null
-						&& t.startDate.getValue().before(now);
-			}).forEach(tasks::add);
-			return tasks;
+			return minortask().getLeafTasksOfProjectFiltered(
+					getTaskID(),
+					(t) -> t.completionDate.getValue() == null
+					&& !t.taskID.getValue().equals(getTaskID())
+					&& t.startDate.getValue() != null
+					&& t.startDate.getValue().before(now)
+			);
 		}
 	}
 

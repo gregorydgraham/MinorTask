@@ -33,7 +33,7 @@ public class TaskEditorTabs extends Tabs implements MinorTaskComponent {
 		new MinorTaskTab("Today", this) {
 			@Override
 			public void moveTo() {
-				page.showTodayList();
+				page.showTodayForThisTask();
 			}
 		},
 		new MinorTaskTab("Upcoming", this) {

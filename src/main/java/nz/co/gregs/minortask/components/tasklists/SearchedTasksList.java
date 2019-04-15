@@ -15,11 +15,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.expressions.StringExpression;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class SearchedTasksList extends AbstractTaskList implements HasDefaultButton {
+public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements HasDefaultButton {
 
 	TextField searchField;
 	Checkbox includeDescriptionOption;
@@ -76,7 +77,7 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		if (tasks.isEmpty()) {
 			if (searchFor == null || searchFor.isEmpty()) {
 				return "Search above";
@@ -94,23 +95,33 @@ public class SearchedTasksList extends AbstractTaskList implements HasDefaultBut
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		try {
 			String[] terms = getSearchTerms();
 			if (terms.length > 0) {
-				Task example = new Task();//minortask().getSafeTaskExample(this);
+				Task example = new Task();
 				DBQuery query = getQuery(example, terms);
-				return query.getAllInstancesOf(example);
+				query.addCondition(
+				example.column(example.userID).is(getCurrentUserID())
+						.or(
+								example.column(example.assigneeID).is(getCurrentUserID())
+						)
+		);
+				query.setSortOrder(
+						example.column(example.name).ascending(), 
+						example.column(example.taskID).ascending()
+				);
+				return query.getAllRows();
 			} else {
-				return new ArrayList<Task>();
+				return new ArrayList<DBQueryRow>();
 			}
 		} catch (NothingToSearchFor ex) {
-			return new ArrayList<Task>();
+			return new ArrayList<DBQueryRow>();
 		}
 	}
 
 	private DBQuery getQuery(Task example, String[] terms) {
-		DBQuery query = getDatabase().getDBQuery(example);
+		DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())

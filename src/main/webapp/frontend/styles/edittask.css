@@ -8,7 +8,6 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 :root{
-	/*--vaadin-text-field-default-width: 40em;*/
 }
 
 .edit-task-button{
@@ -59,10 +58,6 @@ vaadin-button{
 }
 
 @media all and (max-width:550px){
-/*	.edit-task-addbuttons{
-		flex-direction: column;
-		float:right;
-	}*/
 }
 
 .edit-task-component{
@@ -192,7 +187,6 @@ div.vaadin-text-area-container {
 }
 
 .edit-task-editors.open{
-	background-color: #efe;
 	border: thin solid #cfc;
 	border-radius: 10px;
 	padding-left: 2px;

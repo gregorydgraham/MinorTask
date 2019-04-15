@@ -6,17 +6,18 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
  *
  * @author gregorygraham
  */
-public class OverdueTasksList extends AbstractTaskList {
+public class OverdueTasksList extends AbstractTaskListOfDBQueryRow {
 
 	public OverdueTasksList(Task task) {
 		super(task);
@@ -34,15 +35,14 @@ public class OverdueTasksList extends AbstractTaskList {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		return tasks.size() + " Overdue Tasks";
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		if (getTaskID() == null) {
 			Task.Project.WithSortColumns example = new Task.Project.WithSortColumns();
-//			example.userID.permittedValues(minortask().getCurrentUserID());
 			example.finalDate.permittedRangeExclusive(null, new Date());
 			example.completionDate.permittedValues((Date) null);
 			final Task task = new Task();
@@ -63,19 +63,32 @@ public class OverdueTasksList extends AbstractTaskList {
 					example.column(example.name).ascending()
 			);
 			query.printAllRows();
-			List<Task> tasks = query.getAllInstancesOf(example);
-			return tasks;
+			return query.getAllRows();
 		} else {
 			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
-			List<Task> tasks = new ArrayList<>();
+
 			final Date now = new Date();
-			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() == null
+			List<Long> taskIDs = descendants
+					.stream()
+					.filter((t) -> 
+							t.completionDate.getValue() == null
 						&& !t.taskID.getValue().equals(getTaskID())
 						&& t.finalDate.getValue() != null
-						&& t.finalDate.getValue().before(now);
-			}).forEach(tasks::add);
-			return tasks;
+						&& t.finalDate.getValue().before(now)
+					)
+					.map((t) -> t.taskID.getValue())
+					.collect(Collectors.toList());
+			Task example = new Task();
+			example.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+			DBQuery query = getDatabase().getDBQuery(example);
+			query.addCondition(
+					example.column(example.userID).is(minortask().getCurrentUserID())
+							.or(
+									example.column(example.assigneeID).is(minortask().getCurrentUserID())
+							)
+			);
+			List<DBQueryRow> list = query.getAllRows();
+			return list;
 		}
 	}
 

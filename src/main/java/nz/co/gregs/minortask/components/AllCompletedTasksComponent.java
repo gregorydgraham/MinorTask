@@ -12,20 +12,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
-import nz.co.gregs.dbvolution.DBRecursiveQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.components.tasklists.AbstractTaskList;
+import nz.co.gregs.minortask.components.tasklists.AbstractTaskListOfDBQueryRow;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("all-completed-task-list")
 public class AllCompletedTasksComponent extends Div implements MinorTaskComponent {
 
-	private ArrayList<Task> today;
-	private ArrayList<Task> week;
-	private ArrayList<Task> month;
-	private ArrayList<Task> others;
-	private ArrayList<Task> year;
+	private final ArrayList<DBQueryRow> today = new ArrayList<>();
+	private final ArrayList<DBQueryRow> week = new ArrayList<>();
+	private final ArrayList<DBQueryRow> month = new ArrayList<>();
+	private final ArrayList<DBQueryRow> others = new ArrayList<>();
+	private final ArrayList<DBQueryRow> year = new ArrayList<>();
 	private Task task = null;
 
 	public AllCompletedTasksComponent() {
@@ -34,21 +35,33 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 
 	public AllCompletedTasksComponent(Task parameter) {
 		this.task = parameter;
+		addClassName("all-completed-tasks-component");
+		add(todaysCompletedTasksList);
+		add(Globals.getSpacer());
+		add(weeksCompletedTasksList);
+		add(Globals.getSpacer());
+		add(thisMonthsCompletedTasksList);
+		add(Globals.getSpacer());
+		add(thisYearsCompletedTasksList);
+		add(Globals.getSpacer());
+		add(tooManyCompletedTasksList);
+	}
+
+	public TooManyCompletedTasksList tooManyCompletedTasksList = new TooManyCompletedTasksList(others);
+	public ThisYearsCompletedTasksList thisYearsCompletedTasksList = new ThisYearsCompletedTasksList(year);
+	public ThisMonthsCompletedTasksList thisMonthsCompletedTasksList = new ThisMonthsCompletedTasksList(month);
+	public WeeksCompletedTasksList weeksCompletedTasksList = new WeeksCompletedTasksList(week);
+	public TodaysCompletedTasksList todaysCompletedTasksList = new TodaysCompletedTasksList(today);
+
+	public void refresh() {
 		try {
-			addClassName("all-completed-tasks-component");
-			List<Task> allTasks = getTasksToList();
-
+			List<DBQueryRow> allTasks = getTasksToList();
 			splitTasks(allTasks);
-
-			add(new TodaysCompletedTasksList(today));
-			add(Globals.getSpacer());
-			add(new WeeksCompletedTasksList(week));
-			add(Globals.getSpacer());
-			add(new ThisMonthsCompletedTasksList(month));
-			add(Globals.getSpacer());
-			add(new ThisYearsCompletedTasksList(year));
-			add(Globals.getSpacer());
-			add(new TooManyCompletedTasksList(others));
+			todaysCompletedTasksList.refresh();
+			weeksCompletedTasksList.refresh();
+			thisMonthsCompletedTasksList.refresh();
+			thisYearsCompletedTasksList.refresh();
+			tooManyCompletedTasksList.refresh();
 		} catch (SQLException ex) {
 			sqlerror(ex);
 		}
@@ -102,7 +115,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		return startOfYear;
 	}
 
-	protected final List<Task> getTasksToList() throws SQLException {
+	protected final List<DBQueryRow> getTasksToList() throws SQLException {
 		if (task == null) {
 			// non-recursive query is faster
 			Task example = new Task();
@@ -114,58 +127,67 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 					example.column(example.name).ascending(),
 					example.column(example.taskID).ascending()
 			);
-			List<Task> tasks = dbTable.getAllInstancesOf(example);
-			return tasks;
+			return dbTable.getAllRows();
 		} else {
+			List<Task> descendants = minortask().getTasksOfProject(task == null ? null : task.taskID.getValue());
+
+			List<Long> taskIDs = descendants
+					.stream()
+					.filter((t)
+							-> t.completionDate.getValue() != null && !t.taskID.getValue().equals(task.taskID.getValue())
+					)
+					.map((t) -> t.taskID.getValue())
+					.collect(Collectors.toList());
 			Task example = new Task();
-			example.userID.permittedValues(getCurrentUserID());
-			example.taskID.permittedValues(task==null?null:task.taskID.getValue());
+			example.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
 			DBQuery query = getDatabase().getDBQuery(example);
+			query.addCondition(
+					example.column(example.userID).is(minortask().getCurrentUserID())
+							.or(
+									example.column(example.assigneeID).is(minortask().getCurrentUserID())
+							)
+			);
 			query.setSortOrder(
 					example.column(example.completionDate).descending(),
 					example.column(example.name).ascending(),
 					example.column(example.taskID).ascending()
 			);
-			DBRecursiveQuery<Task> recurse = getDatabase().getDBRecursiveQuery(query, example.column(example.projectID), example);
-			List<Task> descendants = recurse.getDescendants();
-			List<Task> tasks = new ArrayList<>();
-			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() != null && !t.taskID.getValue().equals(task.taskID.getValue());
-			}).forEach(tasks::add);
-			System.out.println("ALL COMPLETED TASKS FOUND: "+tasks.size());
-			return tasks;
+			List<DBQueryRow> list = query.getAllRows();
+			return list;
 		}
 	}
 
-	private void splitTasks(List<Task> allTasks) throws SQLException {
-		today = new ArrayList<Task>();
-		week = new ArrayList<Task>();
-		month = new ArrayList<Task>();
-		year = new ArrayList<Task>();
-		others = new ArrayList<Task>();
-		List<Task> tasksToList = allTasks;
+	private void splitTasks(List<DBQueryRow> allTasks) throws SQLException {
+		today.clear();
+		week.clear();
+		month.clear();
+		year.clear();
+		others.clear();
+		
+		List<DBQueryRow> tasksToList = allTasks;
 		Date startOfToday = getStartOfToday();
 		Date startOfWeek = getStartOfThisWeek();
 		Date startOfMonth = getStartOfThisMonth();
 		Date startOfYear = getStartOfThisYear();
-		tasksToList.forEach((t) -> {
+		tasksToList.forEach((row) -> {
+			Task t = row.get(new Task());
 			if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfToday)) {
-				today.add(t);
+				today.add(row);
 			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfWeek)) {
-				week.add(t);
+				week.add(row);
 			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfMonth)) {
-				month.add(t);
+				month.add(row);
 			} else if (t.completionDate.getValue() != null && t.completionDate.getValue().after(startOfYear)) {
-				year.add(t);
+				year.add(row);
 			} else {
-				others.add(t);
+				others.add(row);
 			}
 		});
 	}
 
-	public static class TodaysCompletedTasksList extends AbstractTaskList.PreQueried {
+	public static class TodaysCompletedTasksList extends AbstractTaskListOfDBQueryRow.PreQueried {
 
-		public TodaysCompletedTasksList(List<Task> list) {
+		public TodaysCompletedTasksList(List<DBQueryRow> list) {
 			super(list);
 		}
 
@@ -175,15 +197,15 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<Task> tasks) {
+		protected String getListCaption(List<DBQueryRow> tasks) {
 			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed Today (until " + AllCompletedTasksComponent.getStartOfToday() + ")";
 		}
 
 	}
 
-	public static class WeeksCompletedTasksList extends AbstractTaskList.PreQueried {
+	public static class WeeksCompletedTasksList extends AbstractTaskListOfDBQueryRow.PreQueried {
 
-		public WeeksCompletedTasksList(List<Task> list) {
+		public WeeksCompletedTasksList(List<DBQueryRow> list) {
 			super(list);
 		}
 
@@ -193,15 +215,15 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<Task> tasks) {
+		protected String getListCaption(List<DBQueryRow> tasks) {
 			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until " + AllCompletedTasksComponent.getStartOfThisWeek() + ")";
 		}
 
 	}
 
-	public static class ThisMonthsCompletedTasksList extends AbstractTaskList.PreQueried {
+	public static class ThisMonthsCompletedTasksList extends AbstractTaskListOfDBQueryRow.PreQueried {
 
-		public ThisMonthsCompletedTasksList(List<Task> list) {
+		public ThisMonthsCompletedTasksList(List<DBQueryRow> list) {
 			super(list);
 		}
 
@@ -211,15 +233,15 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<Task> tasks) {
+		protected String getListCaption(List<DBQueryRow> tasks) {
 			return "" + tasks.size() + " Other Tasks Completed This Month (until " + AllCompletedTasksComponent.getStartOfThisMonth() + ")";
 		}
 
 	}
 
-	public static class ThisYearsCompletedTasksList extends AbstractTaskList.PreQueried {
+	public static class ThisYearsCompletedTasksList extends AbstractTaskListOfDBQueryRow.PreQueried {
 
-		public ThisYearsCompletedTasksList(List<Task> list) {
+		public ThisYearsCompletedTasksList(List<DBQueryRow> list) {
 			super(list);
 		}
 
@@ -229,15 +251,15 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<Task> tasks) {
+		protected String getListCaption(List<DBQueryRow> tasks) {
 			return "" + tasks.size() + " Other Tasks Completed This Year (until " + AllCompletedTasksComponent.getStartOfThisYear() + ")";
 		}
 
 	}
 
-	public static class TooManyCompletedTasksList extends AbstractTaskList.PreQueried {
+	public static class TooManyCompletedTasksList extends AbstractTaskListOfDBQueryRow.PreQueried {
 
-		public TooManyCompletedTasksList(List<Task> list) {
+		public TooManyCompletedTasksList(List<DBQueryRow> list) {
 			super(list);
 		}
 
@@ -247,7 +269,7 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<Task> tasks) {
+		protected String getListCaption(List<DBQueryRow> tasks) {
 			return "" + tasks.size() + " Older Completed Tasks";
 		}
 

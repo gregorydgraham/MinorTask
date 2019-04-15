@@ -6,13 +6,13 @@
 package nz.co.gregs.minortask.components.banner;
 
 import nz.co.gregs.minortask.components.generic.SecureDiv;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBReport;
@@ -43,10 +43,17 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 	final Anchor welcomeMessage = new Anchor(Globals.getApplicationURL(), "Welcome");
 	final QuickLinks quickLinks = new QuickLinks();
 	final UserLinks userLinks = new UserLinks();
+	private final Span profileImageDiv = new Span();
+	Label counts = new Label("Tasks: ??/##");
+
+	Div left = new Div();
+	Div right = new Div();
+	Div centre = new Div();
 
 	public AuthorisedBannerMenu() {
 		super();
 		buildComponent();
+		refresh();
 		this.addClassName("authorised-banner");
 		this.setId(getStaticID());
 	}
@@ -59,54 +66,64 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 	public final void buildComponent() {
 		setSizeUndefined();
 
+		left.addClassName("authorised-banner-left");
+
+		right.addClassName("authorised-banner-right");
+
+		left.add(profileImageDiv, quickLinks);
+		centre.add(welcomeMessage);
+		right.add(userLinks, counts);
+		add(left, centre, right);
 		welcomeMessage.addClassName("welcome-message");
 
 		quickLinks.addMinorTaskEventListener(this);
 		userLinks.addMinorTaskEventListener(this);
 
+		profileImageDiv.addClickListener((event) -> {
+			fireEvent(new MinorTaskEvent(event.getSource(), MinorTaskViews.PROFILE, true));
+		});
+		profileImageDiv.setId("authorised-banner-profile-image");
+
+		left.addClassName("authorised-banner-left");
+
+		right.addClassName("authorised-banner-right");
+
+		left.add(profileImageDiv, quickLinks);
+		centre.add(welcomeMessage);
+		right.add(userLinks, counts);
+		add(left, centre, right);
+	}
+
+	public void refresh() {
 		setText("" + Globals.getApplicationName());
+		counts.setText("Tasks: ??/##");
 
 		final User user = getCurrentUser();
 		if (user != null) {
 
-			Label counts = new Label("Tasks: ??/##");
 			OwnerStatistics taskCounts = new OwnerStatistics();
 			try {
 				final Task.Owner owner = new Task.Owner();
 				owner.queryUserID().permittedValues(user.getUserID());
 				List<OwnerStatistics> got = getDatabase().get(taskCounts, owner);
 				final OwnerStatistics gotFirst = got.get(0);
-				counts = new Label("Velocity: " + gotFirst.velocity.stringValue() + " Tasks: " + gotFirst.completed.stringValue() + "/" + gotFirst.created.stringValue());
+				counts.setText("Velocity: " + gotFirst.velocity.stringValue() + " Tasks: " + gotFirst.completed.stringValue() + "/" + gotFirst.created.stringValue());
 			} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException | NoAvailableDatabaseException ex) {
 				sqlerror(ex);
 			}
 
-			SecureDiv defaultImageDiv = new SecureDiv();
-			defaultImageDiv.addClickListener((event) -> {
-				fireEvent(new MinorTaskEvent(event.getSource(), MinorTaskViews.PROFILE, true));
-			});
-			Component profileImageDiv = defaultImageDiv;
+			Div defaultImageDiv = new Div();
+			profileImageDiv.removeAll();
+			profileImageDiv.add(defaultImageDiv);
 
 			if (user.profileImage != null) {
 				SizedImageFromDocument image = new SizedImageFromDocument(user.profileImage, 100);
 				image.addClickListener((event) -> {
 					fireEvent(new MinorTaskEvent(event.getSource(), MinorTaskViews.PROFILE, true));
 				});
-				profileImageDiv = image;
+				profileImageDiv.removeAll();
+				profileImageDiv.add(image);
 			}
-
-			profileImageDiv.setId("authorised-banner-profile-image");
-
-			Div left = new Div();
-			left.addClassName("authorised-banner-left");
-
-			Div right = new Div();
-			right.addClassName("authorised-banner-right");
-
-			left.add(profileImageDiv, quickLinks);
-			Div centre = new Div(welcomeMessage);
-			right.add(userLinks, counts);
-			add(left, centre, right);
 		}
 	}
 

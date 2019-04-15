@@ -23,15 +23,4 @@ public class SecureSpan extends Span implements RequiresPermission {
 		super();
 		add(components);
 	}
-
-	@Override
-	public final void add(Component... components) {
-		if (!checkForPermission()) {
-			for (Component component : components) {
-				super.add(new AccessDeniedComponent());
-			}
-		} else {
-			super.add(components);
-		}
-	}
 }

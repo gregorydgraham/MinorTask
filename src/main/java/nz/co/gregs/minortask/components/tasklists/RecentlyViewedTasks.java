@@ -14,7 +14,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 
 
-public class RecentlyViewedTasks extends AbstractTaskList {
+public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 
 	public RecentlyViewedTasks() {
 		setTooltipText("This list shows the tasks that you've viewed with the most recent one at the top");
@@ -38,11 +38,11 @@ public class RecentlyViewedTasks extends AbstractTaskList {
 		cal.add(GregorianCalendar.DAY_OF_YEAR, -7);
 		taskViews.lastviewed.permittedRange(cal.getTime(), null);
 		final Task task = new Task();
-		DBQuery query = getDatabase().getDBQuery(task, taskViews);
+		DBQuery query = getDatabase().getDBQuery(task, taskViews).addOptional(new Task.Project());
 		query.setSortOrder(
 				taskViews.column(taskViews.lastviewed).descending(),
 				task.column(task.name).ascending());
-		return query.getAllInstancesOf(task);
+		return query.getAllInstancesOf(new Task());
 	}
 	
 }

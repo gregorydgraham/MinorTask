@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.xml.bind.DatatypeConverter;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -38,6 +40,7 @@ import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.IncorrectPasswordException;
 import nz.co.gregs.dbvolution.exceptions.UnexpectedNumberOfRowsException;
+import nz.co.gregs.dbvolution.expressions.DateExpression;
 import static nz.co.gregs.minortask.Globals.getDatabase;
 import static nz.co.gregs.minortask.Globals.sqlerror;
 import nz.co.gregs.minortask.datamodel.*;
@@ -341,7 +344,7 @@ public class MinorTask extends Globals implements Serializable {
 
 	public List<Task> getTasksOfProject(Long projectID) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
 		Task example = new Task();
-		example.taskID.permittedValues(projectID);
+		example.projectID.permittedValues(projectID);
 		final DBDatabase database = getDatabase();
 		DBQuery query = database.getDBQuery(example);
 		// add user requirement
@@ -491,4 +494,121 @@ public class MinorTask extends Globals implements Serializable {
 		}
 	}
 
+	public FavouritedTasks getTaskFavourite(Task task) {
+		try {
+			return getDatabase().getDBQuery(task, new FavouritedTasks()).getOnlyInstanceOf(new FavouritedTasks());
+		} catch (SQLException | AccidentalCartesianJoinException | AccidentalBlankQueryException ex) {
+			sqlerror(ex);
+		} catch (UnexpectedNumberOfRowsException ex) {
+			if (ex.getActualRows() > 1) {
+				sqlerror(ex);
+			} else {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public boolean checkUserCanViewTask(final Task task) {
+		if (task == null) {
+			return false;
+		} else {
+			Long assignee = task.assigneeID.getValue();
+			Long user = task.userID.getValue();
+			final Long currentUserID = getCurrentUserID();
+			return (user != null && user.equals(currentUserID))
+					|| (assignee != null && assignee.equals(currentUserID));
+		}
+	}
+
+	public List<DBQueryRow> getDBQueryRowOfProjectFiltered(Long taskID, Predicate<? super Task> extraFilter) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		DBQuery query;
+		List<Task> descendants = getTasksOfProject(taskID);
+		List<Long> taskIDs = descendants
+				.stream()
+				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter(extraFilter)
+				.map((t) -> t.taskID.getValue())
+				.collect(Collectors.toList());
+		Task task = new Task();
+		task.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+		query = getDatabase().getDBQuery(task).addOptional(new Task.Project());
+		query.addCondition(
+				task.column(task.userID).is(getCurrentUserID())
+						.or(
+								task.column(task.assigneeID).is(getCurrentUserID())
+						)
+		);
+		query.setSortOrder(
+				task.column(task.completionDate).descending().nullsFirst(),
+				task.column(task.finalDate).isLessThan(DateExpression.currentDate()).descending(),
+				task.column(task.startDate).isLessThan(DateExpression.currentDate()).descending(),
+				task.column(task.finalDate).ascending().nullsLast(),
+				task.column(task.startDate).ascending().nullsLast(),
+				task.column(task.name).ascending()
+		);
+		return query.getAllRows();
+	}
+
+	public List<Task> getTasksOfProjectFiltered(Long taskID, Predicate<? super Task> extraFilter) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		DBQuery query;
+		List<Task> descendants = getTasksOfProject(taskID);
+		List<Long> taskIDs = descendants
+				.stream()
+				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter(extraFilter)
+				.map((t) -> t.taskID.getValue())
+				.collect(Collectors.toList());
+		Task task = new Task();
+		task.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+		query = getDatabase().getDBQuery(task).addOptional(new Task.Project());
+		query.addCondition(
+				task.column(task.userID).is(getCurrentUserID())
+						.or(
+								task.column(task.assigneeID).is(getCurrentUserID())
+						)
+		);
+		query.setSortOrder(
+				task.column(task.completionDate).descending().nullsFirst(),
+				task.column(task.finalDate).isLessThan(DateExpression.currentDate()).descending(),
+				task.column(task.startDate).isLessThan(DateExpression.currentDate()).descending(),
+				task.column(task.finalDate).ascending().nullsLast(),
+				task.column(task.startDate).ascending().nullsLast(),
+				task.column(task.name).ascending()
+		);
+		return query.getAllInstancesOf(new Task());
+	}
+
+	public List<Task> getLeafTasksOfProjectFiltered(Long taskID, Predicate<? super Task> extraFilter) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		DBQuery query;
+		List<Task> descendants = getTasksOfProject(taskID);
+		List<Long> taskIDs = descendants
+				.stream()
+				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter(extraFilter)
+				.map((t) -> t.taskID.getValue())
+				.collect(Collectors.toList());
+		Task.Project project = new Task.Project();
+		project.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+		final Task task = new Task();
+		query = getDatabase().getDBQuery(project).addOptional(task);
+		// add leaf condition
+		query.addCondition(task.column(task.taskID).isNull());
+		// add security condition
+		query.addCondition(
+				project.column(project.userID).is(getCurrentUserID())
+						.or(
+								project.column(project.assigneeID).is(getCurrentUserID())
+						)
+		);
+		query.setSortOrder(
+				project.column(project.completionDate).descending().nullsFirst(),
+				project.column(project.finalDate).isLessThan(DateExpression.currentDate()).descending(),
+				project.column(project.startDate).isLessThan(DateExpression.currentDate()).descending(),
+				project.column(project.finalDate).ascending().nullsLast(),
+				project.column(project.startDate).ascending().nullsLast(),
+				project.column(project.name).ascending()
+		);
+		return query.getAllInstancesOf(new Task.Project());
+	}
 }

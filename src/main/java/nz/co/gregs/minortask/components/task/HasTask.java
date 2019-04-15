@@ -13,14 +13,14 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-public interface HasTask extends RequiresPermission{
-	
+public interface HasTask extends RequiresPermission {
+
 	public Task getTask();
 
 	public void setTask(Task newTask);
 
-	public default Long getTaskID(){
-		return getTask()==null? null: getTask().taskID.longValue();
+	public default Long getTaskID() {
+		return getTask() == null ? null : getTask().taskID.longValue();
 	}
 
 	@Override

@@ -8,15 +8,13 @@ package nz.co.gregs.minortask.components.generic;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.html.Span;
-import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.RequiresPermission;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("flexbox")
-public class FlexBox extends Span implements RequiresPermission {
+public class FlexBox extends Span {
 
 	public FlexBox() {
 		getStyle().set("display", "flex");
@@ -27,16 +25,5 @@ public class FlexBox extends Span implements RequiresPermission {
 	public FlexBox(Component... components) {
 		this();
 		add(components);
-	}
-
-	@Override
-	public final void add(Component... components) {
-		if (!checkForPermission()) {
-			for (Component component : components) {
-				super.add(new AccessDeniedComponent());
-			}
-		} else {
-			super.add(components);
-		}
 	}
 }

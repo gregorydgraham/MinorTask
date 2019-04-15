@@ -10,8 +10,6 @@ and open the template in the editor.
 
 
 .tasklist{
-	/*background-color: #e5e5e5;*/
-	/*box-shadow: inset 0 0 6px darkgrey, 0 0 0 black;*/
 	border-radius: 5px;
 	width: 100%;
 	display: flex;
@@ -43,13 +41,26 @@ and open the template in the editor.
 	width: calc(100% - 1em);
 	max-width: 900px;
 	background-color: white;
-	/*border-left: thin solid #e5e5e5;*/
-	/*border-right: thin solid #e5e5e5;*/
 	box-shadow: 0 1px 6px darkgrey;
 	margin-bottom: 5px;
 	border-radius: 5px;
 	margin-left: 2px;
 	margin-right: 2px;
+}
+
+.tasklist-grid-row-header{
+	display: block;
+	width:100%;
+}
+
+
+.tasklist-entry-content{
+	width:100%;
+}
+
+.tasklist-grid-row-footer{
+	display: block;
+	width:100%;
 }
 
 .task-list-grid-container{
@@ -82,7 +93,6 @@ and open the template in the editor.
 }
 
 .tasklist-project.tasklist-complete-tick{
-	/*display: none;*/
 	opacity: 0;
 }
 

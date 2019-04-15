@@ -8,15 +8,11 @@ package nz.co.gregs.minortask.components.task.editor;
 import nz.co.gregs.minortask.components.colleagues.ColleaguesDiv;
 import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
-import nz.co.gregs.minortask.components.tasklists.CompletedTasksList;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
-import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.components.tasklists.*;
 import nz.co.gregs.minortask.MinorTaskEventListener;
@@ -39,7 +35,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	private final OverdueTasksList overdueTasksList = new OverdueTasksList();
 	private final IdeasList ideasList = new IdeasList();
 	private final AllOpenTasksList openTaskList = new AllOpenTasksList();
-	private final CompletedTasksList completedTaskList = new CompletedTasksList();
+	private final AllCompletedTasksList completedTaskList = new AllCompletedTasksList();
 	private final FavouritedTasksList favouritedTasksList = new FavouritedTasksList();
 	private final SearchedTasksList searchedTasksList = new SearchedTasksList();
 	private final RecentlyViewedTasks recentlyViewedTasks = new RecentlyViewedTasks();
@@ -47,6 +43,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	private final ProfileDiv profileDiv = new ProfileDiv();
 	
 	private final TaskEditorTabs taskTabs = new TaskEditorTabs(this);
+	private final LoginComponent loginComponent = new LoginComponent();
 	
 
 	public MinorTaskView() {
@@ -94,6 +91,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		add(recentlyViewedTasks);
 		add(colleaguesDiv);
 		add(profileDiv);
+		add(loginComponent);
 	}
 
 	private void hideAll() {
@@ -109,16 +107,13 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		recentlyViewedTasks.setVisible(false);
 		colleaguesDiv.setVisible(false);
 		profileDiv.setVisible(false);
+		loginComponent.setVisible(false);
 	}
 
-	public void showToday() {
+	public void showTodayForAllProjects() {
 		setTitle("Today");
 		taskTabs.setVisible(false);
-		try {
-			todaysTasksList.setTask(getTask(null));
-		} catch (Globals.InaccessibleTaskException ex) {
-			sqlerror(ex);
-		}
+		todaysTasksList.setTask(null);
 		showComponent(todaysTasksList);
 	}
 
@@ -233,10 +228,20 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	}
 
 	@Override
-	public void showTodayList() {
+	public void showTodayForThisTask() {
 		setTitle("Today");
 		taskTabs.setVisible(true);
 		todaysTasksList.setTask(getTask());
 		showComponent(todaysTasksList);
+	}
+
+	public void showLogin() {
+		setTitle("Login");
+		taskTabs.setVisible(false);
+		showComponent(loginComponent);
+	}
+	
+	public void setLoginMethod(Runnable run){
+		loginComponent.setLoginMethod(run);
 	}
 }

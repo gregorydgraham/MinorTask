@@ -75,12 +75,16 @@ public class MinorTaskLayout
 	@Override
 	public void beforeEnter(BeforeEnterEvent event) {
 		System.out.println("BEFORE ENTER EditorLayout");
-		Location location = event.getLocation();
-		String intendedView = location.getFirstSegment();
-		try {
-			handleMinorTaskEvent(MinorTaskViews.getEventFor(this, intendedView, getTask(requestedTaskID)));
-		} catch (Globals.InaccessibleTaskException ex) {
-			handleMinorTaskEvent(MinorTaskViews.getEventFor(this, intendedView));
+		if (!minortask().isLoggedIn()) {
+			showLogin(event);
+		} else {
+			Location location = event.getLocation();
+			String intendedView = location.getFirstSegment();
+			try {
+				handleMinorTaskEvent(MinorTaskViews.getEventFor(this, intendedView, getTask(requestedTaskID)));
+			} catch (Globals.InaccessibleTaskException ex) {
+				handleMinorTaskEvent(MinorTaskViews.getEventFor(this, intendedView));
+			}
 		}
 		System.out.println("AFTER ENTER EditorLayout");
 	}
@@ -229,6 +233,17 @@ public class MinorTaskLayout
 	}
 
 	private void showTodayPage() {
-		changeToTopLevelPage("Today", "what to do today within your projects", "today", view::showToday);
+		changeToTopLevelPage("Today", "what to do today within your projects", "today", view::showTodayForAllProjects);
+	}
+
+	private void showLogin(BeforeEnterEvent event) {
+		viewBanner.setTitle("Login");
+		viewBanner.setDescription("Please login first");
+		view.setLoginMethod(() -> {
+			appBanner.refresh();
+			sidebar.refresh();
+			beforeEnter(event);
+		});
+		view.showLogin();
 	}
 }

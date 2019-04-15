@@ -28,7 +28,7 @@ import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.MinorTaskEventListener;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
-import nz.co.gregs.minortask.components.OptionaDateRepeat;
+import nz.co.gregs.minortask.components.OptionaDateOnlyRepeat;
 import nz.co.gregs.minortask.components.OptionalDatePicker;
 import nz.co.gregs.minortask.components.SecureButton;
 import nz.co.gregs.minortask.components.SecureDatePicker;
@@ -83,8 +83,8 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	private final OptionalDatePicker startDate = new OptionalDatePicker("Start Date");
 	private final OptionalDatePicker preferredEndDate = new OptionalDatePicker("Reminder");
 	private final OptionalDatePicker deadlineDate = new OptionalDatePicker("Deadline Date");
-	private final OptionaDateRepeat repeatEditor = new OptionaDateRepeat("Repeat");
-	final OptionaDateRepeat repeat = new OptionaDateRepeat("Repeat");
+	private final OptionaDateOnlyRepeat repeatEditor = new OptionaDateOnlyRepeat("Repeat");
+	private final OptionaDateOnlyRepeat repeat = new OptionaDateOnlyRepeat("Repeat");
 	private Period repeatValue = null;
 	private final SecureDatePicker completedDate = new SecureDatePicker("Completed");
 	private final FlexBox dates = new FlexBox(
@@ -271,11 +271,11 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		assignedToSelector.setTooltipText("Ask someone else to do this task, note that they can refuse");
 
 		addDates.setTooltipText("Add dates to have the task appear on the Today's Task list when appropriate");
+		addRepeat.setTooltipText("Have a new version of this task automatically created when you complete the current one, great for those regular jobs");
 		addDocument.setTooltipText("Collect relevant files and documents");
 		addImage.setTooltipText("Add images that support this task");
 		addNotes.setTooltipText("Write everything you need to help with this task");
 		addPlace.setTooltipText("Include any locations that are relevant");
-		addRepeat.setTooltipText("Have a new version of this task automatically created when you complete the current one, great for those regular jobs");
 		addWebLink.setTooltipText("Collect all the websites you need");
 
 		startDate.setTooltipText("Start date defines when the task will start appearing in the Today's Tasks list, and removes it from the Ideas list.");
@@ -319,9 +319,11 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 			showEditor(dates);
 		});
 		addRepeat.addClickListener((event) -> {
+			System.out.println("ADD REPEAT CLICKED");
 			showEditor(repeatEditor);
 		});
 		repeatEditor.addValueChangeListener((event) -> {
+			showEditor(null);
 			repeatValue = repeatEditor.getValue();
 			saveTask();
 		});
@@ -487,7 +489,9 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 
 			if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 				dates.setVisible(false);
+				addDates.setVisible(true);
 			} else {
+				dates.setVisible(true);
 				addDates.setVisible(false);
 			}
 			if (task.repeatOffset.isNotNull()) {
@@ -634,7 +638,9 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void showEditor(Component editor) {
+		System.out.println("EDITOR: "+editor);
 		boolean editorAlreadyShowing = editor == null ? false : editor.isVisible();
+		System.out.println("EDITOR ALREADY SHOWING: "+editorAlreadyShowing);
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
@@ -645,8 +651,13 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 		weblinkEditor.setVisible(false);
 		notesEditorDiv.setVisible(false);
 		if (editor != null) {
-			editor.setVisible(!editorAlreadyShowing);
-			buttonsAndEditors.addClassName("open");
+			if (editorAlreadyShowing) {
+				editor.setVisible(false);
+				buttonsAndEditors.removeClassName("open");
+			} else {
+				editor.setVisible(true);
+				buttonsAndEditors.addClassName("open");
+			}
 		} else {
 			buttonsAndEditors.removeClassName("open");
 		}

@@ -18,7 +18,7 @@ import org.joda.time.Period;
  *
  * @author gregorygraham
  */
-public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRepeat, Period> implements HasToolTip {
+public class OptionaDateOnlyRepeat extends AbstractCompositeField<Div, OptionaDateOnlyRepeat, Period> implements HasToolTip {
 
 	private final Checkbox enabler = new Checkbox(false);
 	private final TextField input = new TextField();
@@ -28,14 +28,18 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 	private final String DAYS = "Days";
 	private final ComboBox<String> selectDuration = new ComboBox<>();
 
-	public OptionaDateRepeat(String label) {
-		this((Period) null);
-
-		setLabel(label);
+	public OptionaDateOnlyRepeat(String label) {
+		this(label, (Period) null);
 	}
 
-	public OptionaDateRepeat(Period defaultValue) {
+	public OptionaDateOnlyRepeat(Period defaultValue) {
+		this("", defaultValue);
+	}
+
+	public OptionaDateOnlyRepeat(String label, Period defaultValue) {
 		super(defaultValue);
+		
+		setLabel(label);
 
 		if (defaultValue == null) {
 			input.setReadOnly(true);
@@ -48,7 +52,7 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 		selectDuration.setItems(DAYS, WEEKS, MONTHS, YEARS);
 		selectDuration.setValue(DAYS);
 
-		new Div(this.getContent()).addClassName("daterepeat-editor");
+		this.getContent().addClassName("daterepeat-editor");
 		enabler.addClassName("daterepeat-editor-enabler");
 		input.addClassName("daterepeat-editor-input");
 
@@ -72,8 +76,8 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 		selectDuration.addValueChangeListener((event) -> {
 			setModelValue(this.getCurrentPeriod(), false);
 		});
-
-		new Div(this.getContent()).add(enabler, input, selectDuration);
+		
+		this.getContent().add(enabler, input, selectDuration);
 	}
 
 	public final void setLabel(String label) {
@@ -106,7 +110,7 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 		input.setReadOnly(!event.getValue());
 		selectDuration.setReadOnly(!event.getValue());
 	}
-	
+
 	private Period getCurrentPeriod() {
 		final String inputValue = input.getValue();
 		if (Objects.equals(enabler.getValue(), Boolean.FALSE) || inputValue == null || inputValue.isEmpty()) {
@@ -114,34 +118,30 @@ public class OptionaDateRepeat extends AbstractCompositeField<Div, OptionaDateRe
 		} else {
 			final Integer val = Integer.valueOf(inputValue);
 			System.out.println("" + val);
-			if (val != null) {
-				int years = 0;
-				int months = 0;
-				int weeks = 0;
-				int days = 0;
-				switch (selectDuration.getValue()) {
-					case YEARS: {
-						years = val.intValue();
-						break;
-					}
-					case MONTHS: {
-						months = val.intValue();
-						break;
-					}
-					case WEEKS: {
-						weeks = val.intValue();
-						break;
-					}
-					default: {
-						days = val.intValue();
-						break;
-					}
+			int years = 0;
+			int months = 0;
+			int weeks = 0;
+			int days = 0;
+			switch (selectDuration.getValue()) {
+				case YEARS: {
+					years = val;
+					break;
 				}
-				final Period period = new Period(years, months, weeks, days, 0, 0, 0, 0);
-				return period;
-			} else {
-				return null;
+				case MONTHS: {
+					months = val;
+					break;
+				}
+				case WEEKS: {
+					weeks = val;
+					break;
+				}
+				default: {
+					days = val;
+					break;
+				}
 			}
+			final Period period = new Period(years, months, weeks, days, 0, 0, 0, 0);
+			return period;
 		}
 	}
 

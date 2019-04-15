@@ -7,16 +7,17 @@ package nz.co.gregs.minortask.components.tasklists;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("upcoming-task-list")
-public class UpcomingTasksList extends AbstractTaskList {
+public class UpcomingTasksList extends AbstractTaskListOfDBQueryRow {
 
 	private static final int DAYS_AHEAD = +3;
 
@@ -41,12 +42,12 @@ public class UpcomingTasksList extends AbstractTaskList {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<DBQueryRow> tasks) {
 		return tasks.size() + " Tasks will start within " + DAYS_AHEAD + " days";
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		LocalDate nowLocalDate = LocalDate.now();
 		Date now = Globals.asDate(nowLocalDate);
 		final LocalDate plusDays = nowLocalDate.plusDays(DAYS_AHEAD);
@@ -72,19 +73,44 @@ public class UpcomingTasksList extends AbstractTaskList {
 					example.column(example.startDate).ascending(),
 					example.column(example.name).ascending()
 			);
-			List<Task> tasks = query.getAllInstancesOf(example);
-			return tasks;
+			return query.getAllRows();
+//			List<Task> tasks = query.getAllInstancesOf(example);
+//			return tasks;
 		} else {
 			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
-			List<Task> tasks = new ArrayList<>();
-			descendants.stream().filter((t) -> {
-				return t.completionDate.getValue() == null
+
+			List<Long> taskIDs = descendants
+					.stream()
+					.filter((t) -> 
+							t.completionDate.getValue() == null
 						&& !t.taskID.getValue().equals(getTaskID())
 						&& t.startDate.getValue() != null
 						&& t.startDate.getValue().after(now)
-						&& t.startDate.getValue().before(threeDaysHence);
-			}).forEach(tasks::add);
-			return tasks;
+						&& t.startDate.getValue().before(threeDaysHence)
+					)
+					.map((t) -> t.taskID.getValue())
+					.collect(Collectors.toList());
+			Task example = new Task();
+			example.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+			DBQuery query = getDatabase().getDBQuery(example);
+			query.addCondition(
+					example.column(example.userID).is(minortask().getCurrentUserID())
+							.or(
+									example.column(example.assigneeID).is(minortask().getCurrentUserID())
+							)
+			);
+			List<DBQueryRow> list = query.getAllRows();
+			return list;
+//			List<Task> descendants = minortask().getTasksOfProject(getTaskID());
+//			List<Task> tasks = new ArrayList<>();
+//			descendants.stream().filter((t) -> {
+//				return t.completionDate.getValue() == null
+//						&& !t.taskID.getValue().equals(getTaskID())
+//						&& t.startDate.getValue() != null
+//						&& t.startDate.getValue().after(now)
+//						&& t.startDate.getValue().before(threeDaysHence);
+//			}).forEach(tasks::add);
+//			return tasks;
 		}
 	}
 }

@@ -9,22 +9,15 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.MinorTask;
 import nz.co.gregs.minortask.components.HasToolTip.Position;
-import nz.co.gregs.minortask.components.banner.IconWithToolTip;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
-import nz.co.gregs.minortask.components.generic.SecureSpan;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
-import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
-import nz.co.gregs.minortask.components.changes.Changes;
 import nz.co.gregs.minortask.MinorTaskEvent;
-import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.MinorTaskEventListener;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
@@ -32,12 +25,13 @@ import nz.co.gregs.minortask.MinorTaskEventNotifier;
 /**
  *
  * @author gregorygraham
+ * @param <S>
  */
 @StyleSheet("styles/abstract-task-list.css")
-public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTaskEventListener, MinorTaskEventNotifier {
+public abstract class AbstractTaskList<S> extends SecureTaskDiv implements MinorTaskEventListener, MinorTaskEventNotifier {
 
 	private final Div gridDiv = new Div();
-	private final SecureDiv label = new SecureDiv();
+	private final SecureDiv label = new SecureDiv(new Label("List"));
 	private final Div footer = new Div();
 	private final Div header = new Div();
 
@@ -65,12 +59,41 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 	}
 
 	public final void buildComponent() {
+		add(getControlsAbove());
+
+		Div well = createWell();
+		setupWell(well);
+		add(well);
+	}
+
+	private void setupWell(Div well) {
+		setupHeader();
+		well.add(header);
+
+		setupGrid();
+		well.add(gridDiv);
+
+		setupFooter();
+		well.add(footer);
+	}
+
+	private void setupFooter() {
+		footer.removeAll();
+		final Component[] footerExtras = getFooterExtras();
+		if (footerExtras.length > 0) {
+			footer.add(footerExtras);
+		}
+		footer.addClassNames(getListClassName(), "tasklist-footer", getListClassName() + "-footer");
+	}
+
+	private Div createWell() {
 		Div well = new Div();
 		well.addClassName(getListClassName());
 		well.addClassName("tasklist-well");
-		add(getControlsAbove());
-		List<Task> allRows = new ArrayList<Task>();
-		setLabel(allRows);
+		return well;
+	}
+
+	private void setupHeader() {
 		header.removeAll();
 		header.addClassName("tasklist-header");
 		header.add(label);
@@ -81,24 +104,11 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 			headerRight.add(headerExtras);
 		}
 		header.add(headerRight);
-		well.add(header);
-
-		setupGrid(allRows);
-		well.add(gridDiv);
-
-		footer.removeAll();
-		final Component[] footerExtras = getFooterExtras();
-		if (footerExtras.length > 0) {
-			footer.add(footerExtras);
-		}
-		footer.addClassNames(getListClassName(), "tasklist-footer", getListClassName() + "-footer");
-		well.add(footer);
-		add(well);
 	}
 
-	private List<Task> getPermittedTasks() throws SQLException {
-		List<Task> permittedTasks = new ArrayList<>(0);
-		List<Task> tasks = getTasksToList();
+	private List<S> getPermittedTasks() throws SQLException {
+		List<S> permittedTasks = new ArrayList<>(0);
+		List<S> tasks = getTasksToList();
 		if (tasks != null) {
 			tasks.forEach((t) -> {
 				if (checkForPermission(t)) {
@@ -108,7 +118,7 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 		}
 		return permittedTasks;
 	}
-
+	
 	@Override
 	public final void setTooltipText(String text) {
 		label.setTooltipText(text);
@@ -126,9 +136,9 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 
 	protected abstract String getListClassName();
 
-	protected abstract String getListCaption(List<Task> tasks);
+	protected abstract String getListCaption(List<S> tasks);
 
-	protected abstract List<Task> getTasksToList() throws SQLException;
+	protected abstract List<S> getTasksToList() throws SQLException;
 
 	protected Component[] getFooterExtras() {
 		return new Component[]{};
@@ -138,112 +148,72 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 		return new Component[]{};
 	}
 
-	private void setLabel(List<Task> allRows) {
+	private void setLabel(List<S> allRows) {
 		final String caption = getListCaption(allRows);
 		label.removeAll();
 		label.add(new Label(caption));
 	}
 
-	private void setupGrid(List<Task> allRows) {
+	private void setupGrid() {
 		gridDiv.addClassName("task-list-grid-container");
-		setGridItems(allRows);
+//		setGridItems(allRows);
 	}
 
-	private void setGridItems(List<Task> allRows) {
+	private void setGridItems(List<S> allRows) {
 		gridDiv.removeAll();
 		allRows.forEach(
-				(t) -> {
-					final Div div = new Div(
-							getPrefixComponent(t),
-							getDescriptionComponent(t),
-							getSubTaskNumberComponent(t),
-							getSuffixComponent(t)
-					);
-					div.addClassName("tasklist-grid-row");
-					gridDiv.add(div);
+				(row) -> {
+					if (row != null) {
+//						Component headline = protect(getRowHeaderComponent(row));
+//						Component left = protect(getLeftComponent(row));
+//						Component central = protect(getCentralComponent(row));
+//						Component right = protect(getRightComponent(row));
+//						Component footline = protect(getRowFooterComponent(row));
+//						final Div div = new Div(new Div(headline), new Div(left, central, right), new Div(footline));
+//						div.addClassName("tasklist-grid-row");
+//						headline.getElement().getClassList().add("tasklist-grid-row-header");
+//						left.getElement().getClassList().add("tasklist-grid-row-left");
+//						central.getElement().getClassList().add("tasklist-grid-row-central");
+//						right.getElement().getClassList().add("tasklist-grid-row-right");
+//						footline.getElement().getClassList().add("tasklist-grid-row-footer");
+//						gridDiv.add(div);
+						final Div div = new Div(
+								protect(getLeftComponent(row), "tasklist-entry-prefix"),
+								protect(getCentralComponent(row), "tasklist-entry-content"),
+								//getSubTaskNumberComponent(t),
+								protect(getRightComponent(row), "tasklist-entry-suffix"));
+						div.addClassName("tasklist-grid-row");
+						gridDiv.add(div);
+					}
 				}
 		);
 	}
 
-	protected Component getPrefixComponent(Task task) {
-		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
-		heart.addClassName("tasklist-entry-prefix");
-		if (minortask().taskIsFavourited(task)) {
-			heart.addClickListener((event) -> {
-				removeFavourite(task);
-				heart.removeClassName("favourited-task-heart");
-				heart.addClassName("normal-task-heart");
-			});
-			heart.addClassName("favourited-task-heart");
-		} else {
-			heart.addClickListener((event) -> {
-				addFavourite(task);
-				heart.removeClassName("normal-task-heart");
-				heart.addClassName("favourited-task-heart");
-			});
-			heart.addClassName("normal-task-heart");
+	private Component protect(Component comp, String classname) {
+		final Span span = new Span();
+		if (comp != null) {
+			span.add(comp);
 		}
-		return heart;
+		span.addClassName(classname);
+		return span;
 	}
 
-	protected Component getDescriptionComponent(Task task) {
-		final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(task);
-		taskOverviewSpan.addMinorTaskEventListener(this);
-		return taskOverviewSpan;
-	}
+	abstract protected Component getRowHeaderComponent(S row);
 
-	protected Component getSubTaskNumberComponent(Task task) {
-		SecureSpan layout = new SecureSpan();
-		layout.addClassName("tasklist-subtask-count");
-		Icon icon = VaadinIcon.ANGLE_RIGHT.create();
-		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
-		Label label1 = new Label("" + numberOfSubTasks);
-		label1.add(icon);
-		SecureSpan wrapped = new SecureSpan(label1);
-		layout.add(wrapped);
-		layout.addClickListener((event) -> {
-			fireEvent(new MinorTaskEvent(event.getSource(), task, true));
-		});
-		return layout;
-	}
+	abstract protected Component getRowFooterComponent(S row);
 
-	protected Component getSuffixComponent(Task task) {
-		SecureSpan layout = new SecureSpan();
-		final int numberOfSubTasks = MinorTask.getActiveSubtasks(task, minortask().getCurrentUser()).size();
+	abstract protected Component getLeftComponent(S row);
 
-		final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK);
-		checkIcon.addClickListener((event) -> {
-			if (task.completionDate.isNull()) {
-				minortask().completeTaskWithCongratulations(task);
-				checkIcon.removeClassName("tasklist-complete-tick");
-				checkIcon.addClassName("tasklist-reopen-tick");
-			} else {
-				minortask().reopenTask(task);
-				checkIcon.removeClassName("tasklist-reopen-tick");
-				checkIcon.addClassName("tasklist-complete-tick");
-			}
-		});
-		if (numberOfSubTasks == 0) {
-			checkIcon.addClassName("tasklist-endtask");
-		} else {
-			checkIcon.addClassName("tasklist-project");
-		}
-		if (task.completionDate.isNull()) {
-			checkIcon.addClassName("tasklist-complete-tick");
-		} else {
-			checkIcon.addClassName("tasklist-reopen-tick");
-		}
-		layout.add(checkIcon);
-		layout.addClassName("tasklist-entry-suffix");
-		return layout;
-	}
+	abstract protected Component getCentralComponent(S row);
+	
+	abstract protected Component getRightComponent(S row);
 
 	public final void refresh() {
 		this.getUI().ifPresent((t) -> {
 			t.access(() -> {
 				try {
 					if (thereAreRowsToShow()) {
-						List<Task> allRows = getPermittedTasks();
+						List<S> allRows = getPermittedTasks();
 						setLabel(allRows);
 						setGridItems(allRows);
 					}
@@ -268,28 +238,6 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 		return true;
 	}
 
-	private void addFavourite(Task task) {
-		try {
-			final FavouritedTasks favour = new FavouritedTasks(task, minortask().getCurrentUser());
-			Globals.getDatabase().insert(favour);
-			getDatabase().insert(new Changes(getCurrentUser(), task, "Added " + task.name.getValue() + " to Favourites"));
-		} catch (SQLException ex) {
-			Globals.sqlerror(ex);
-		}
-	}
-
-	private void removeFavourite(Task task) {
-		try {
-			final FavouritedTasks favour = new FavouritedTasks();
-			favour.taskID.setValue(task.taskID);
-			favour.userID.setValue(minortask().getCurrentUserID());
-			Globals.getDatabase().delete(favour);
-		} catch (SQLException ex) {
-			Globals.sqlerror(ex);
-
-		}
-	}
-
 	protected void setupTaskList() {
 	}
 
@@ -306,18 +254,20 @@ public abstract class AbstractTaskList extends SecureTaskDiv implements MinorTas
 		fireEvent(event);
 	}
 
-	public static abstract class PreQueried extends AbstractTaskList {
+	public abstract boolean checkForPermission(S item);
 
-		private final List<Task> list;
+	public static abstract class PreQueried<L> extends AbstractTaskList<L> {
 
-		public PreQueried(List<Task> list) {
+		private final List<L> list;
+
+		public PreQueried(List<L> list) {
 			super(null);
 			this.list = list;
 			refresh();
 		}
 
 		@Override
-		protected final List<Task> getTasksToList() throws SQLException {
+		protected final List<L> getTasksToList() throws SQLException {
 			return list;
 		}
 

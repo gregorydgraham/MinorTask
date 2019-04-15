@@ -12,8 +12,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.shared.Registration;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.polymer.Details;
@@ -21,26 +19,28 @@ import nz.co.gregs.minortask.datamodel.Task;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
+import nz.co.gregs.minortask.datamodel.Task.Project;
 
 /**
  *
  * @author gregorygraham
  */
 @StyleSheet("styles/taskoverview.css")
-public class TaskOverviewSpan extends SecureTaskSpan implements MinorTaskEventNotifier{
+public class TaskOverviewSpan extends SecureTaskSpan implements MinorTaskEventNotifier {
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd, YYYY");
+	Span name = new Span();
 
-	public TaskOverviewSpan(Task task) {
+	public TaskOverviewSpan(Task task, Project project) {
 		super(task);
+		final String value = task.name.getValue();
 
-		Span name = new Span();
-		name.setText(task.name.getValue());
+		name.setText(value == null ? "" : value);
 		name.addClassNames("taskoverview-name");
 
-		Span project = createProjectSpan(task);
+		Span projectSpan = createProjectSpan(task, project);
 
-		Div topDiv = new Div(name, project);
+		Div topDiv = new Div(name, projectSpan);
 		topDiv.setSizeUndefined();
 		topDiv.addClassName("taskoverview-nameandproject");
 
@@ -51,7 +51,6 @@ public class TaskOverviewSpan extends SecureTaskSpan implements MinorTaskEventNo
 
 		Span summary = new Span(topDiv, desc);
 		summary.addClickListener((event) -> {
-//			Globals.showTask(task.taskID.getValue());
 			fireEvent(new MinorTaskEvent(this, task, false));
 		});
 		summary.addClassName("taskoverview-summary");
@@ -66,19 +65,14 @@ public class TaskOverviewSpan extends SecureTaskSpan implements MinorTaskEventNo
 		this.addClassName("taskoverview");
 	}
 
-	protected final Span createProjectSpan(Task task) {
-		Span project = new Span();
-		project.setSizeUndefined();
-		if (task.projectID.isNotNull()) {
-			Long taskProjectID = task.projectID.getValue();
-			try {
-				project.setText(getTask(taskProjectID).name.getValue());
-			} catch (Globals.InaccessibleTaskException ex) {
-				Logger.getLogger(TaskOverviewSpan.class.getName()).log(Level.SEVERE, null, ex);
-			}
+	protected final Span createProjectSpan(Task task, Project project) {
+		Span projectSpan = new Span();
+		projectSpan.setSizeUndefined();
+		if (project != null) {
+			projectSpan.setText(project.name.getValue());
 		}
-		project.addClassNames("taskoverview-project");
-		return project;
+		projectSpan.addClassNames("taskoverview-project");
+		return projectSpan;
 	}
 
 	private void setDetails(Details details) {
