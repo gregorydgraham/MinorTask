@@ -99,6 +99,7 @@ public class WeblinkGrid extends SecureDiv {
 
 	private void setItems() {
 		try {
+			gridDiv.removeAll();
 			Weblink example = new Weblink();
 			example.taskID.permittedValues(this.taskID);
 			allRows = getDatabase().getDBTable(example).getAllRows();
