@@ -26,6 +26,10 @@
 
 	<repositories>
 		<repository>
+			<id>Maven2 Central</id>
+			<url>http://repo.maven.apache.org/maven2/</url>
+		</repository>
+		<repository>
 			<id>Vaadin prereleases</id>
 			<url>https://maven.vaadin.com/vaadin-prereleases</url>
 		</repository>
@@ -44,14 +48,18 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>JCenter Cache Repo</id>
-			<url>http://oss.jfrog.org/artifactory/jcenter-cache/</url>
-		</repository>
+<!--		<repository>
+			<id>JFrog Artifactory Repo</id>
+			<url>http://oss.jfrog.org/artifactory/libs-release/</url>
+		</repository>-->
 		<repository>
 			<id>Spring Libs Repo</id>
 			<url>http://repo.spring.io/libs-release/</url>
 		</repository>
+<!--		<repository>
+			<id>JCenter Cache Repo</id>
+			<url>http://oss.jfrog.org/artifactory/jcenter-cache/</url>
+		</repository>-->
 	</repositories>
 
 	<pluginRepositories>
