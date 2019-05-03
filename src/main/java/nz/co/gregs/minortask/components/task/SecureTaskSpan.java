@@ -16,9 +16,8 @@ public class SecureTaskSpan extends SecureSpan implements HasTask{
 	
 	private Task task;
 
-//	public SecureTaskSpan(Long taskid) {
-//		setTask(taskid);
-//	}
+	public SecureTaskSpan() {
+	}
 
 	public SecureTaskSpan(Task task) {
 		setTask(task);

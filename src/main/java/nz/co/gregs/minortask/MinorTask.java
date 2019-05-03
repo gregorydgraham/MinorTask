@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask;
 
+import com.vaadin.flow.component.Component;
 import nz.co.gregs.minortask.components.changes.Changes;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
@@ -526,7 +527,7 @@ public class MinorTask extends Globals implements Serializable {
 		List<Task> descendants = getTasksOfProject(taskID);
 		List<Long> taskIDs = descendants
 				.stream()
-				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter((t) -> t.userID.getValue() == getCurrentUserID() || t.assigneeID.getValue() == getCurrentUserID())
 				.filter(extraFilter)
 				.map((t) -> t.taskID.getValue())
 				.collect(Collectors.toList());
@@ -555,7 +556,7 @@ public class MinorTask extends Globals implements Serializable {
 		List<Task> descendants = getTasksOfProject(taskID);
 		List<Long> taskIDs = descendants
 				.stream()
-				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter((t) -> t.userID.getValue() == getCurrentUserID() || t.assigneeID.getValue() == getCurrentUserID())
 				.filter(extraFilter)
 				.map((t) -> t.taskID.getValue())
 				.collect(Collectors.toList());
@@ -584,7 +585,7 @@ public class MinorTask extends Globals implements Serializable {
 		List<Task> descendants = getTasksOfProject(taskID);
 		List<Long> taskIDs = descendants
 				.stream()
-				.filter((t) -> t.userID.getValue()==getCurrentUserID()||t.assigneeID.getValue()==getCurrentUserID())
+				.filter((t) -> t.userID.getValue() == getCurrentUserID() || t.assigneeID.getValue() == getCurrentUserID())
 				.filter(extraFilter)
 				.map((t) -> t.taskID.getValue())
 				.collect(Collectors.toList());

@@ -45,6 +45,8 @@
 		<init-param>
 			<param-name>closeIdleSessions</param-name>
 			<param-value>enabled</param-value>
+			<param-name>async-supported</param-name>
+			<param-value>enabled</param-value>
 		</init-param>
 	</servlet>
 </web-app>

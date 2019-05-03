@@ -32,7 +32,7 @@ import nz.co.gregs.minortask.MinorTaskEventNotifier;
  * @author gregorygraham
  */
 @StyleSheet("styles/changelist.css")
-public class ChangesList extends SecureDiv implements MinorTaskEventListener, MinorTaskEventNotifier{
+public class ChangesList extends SecureDiv implements MinorTaskEventListener, MinorTaskEventNotifier {
 
 	private final Div gridDiv = new Div();
 	private final SecureDiv label = new SecureDiv();
@@ -194,8 +194,8 @@ public class ChangesList extends SecureDiv implements MinorTaskEventListener, Mi
 	}
 
 	public final void refresh() {
-		this.getUI().ifPresent((t) -> {
-			t.access(() -> {
+		this.getUI().ifPresent((ui) -> {
+			ui.access(() -> {
 				try {
 					if (thereAreRowsToShow()) {
 						List<Changes> allRows = getPermittedChanges();
@@ -237,7 +237,6 @@ public class ChangesList extends SecureDiv implements MinorTaskEventListener, Mi
 //	public List<TaskMoveListener> getTaskMoveHandlers() {
 //		return taskMoveHandlers;
 //	}
-
 	public static abstract class PreQueried extends ChangesList {
 
 		private final List<Changes> list;

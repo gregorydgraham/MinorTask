@@ -6,12 +6,14 @@
 package nz.co.gregs.minortask.pages;
 
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.InitialPageSettings;
 import com.vaadin.flow.server.PageConfigurator;
+import com.vaadin.flow.shared.communication.PushMode;
 import nz.co.gregs.minortask.MinorTask;
 
-//@Push // used by the cluster adminitration page
+@Push(PushMode.AUTOMATIC) // used by the cluster adminitration page
 public class MinortaskPage extends Div
 		implements RouterLayout, PageConfigurator {
 

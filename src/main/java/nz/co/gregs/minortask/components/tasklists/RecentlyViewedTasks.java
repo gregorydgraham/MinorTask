@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.dbvolution.annotations.DBColumn;
+import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 
@@ -43,6 +45,12 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 				taskViews.column(taskViews.lastviewed).descending(),
 				task.column(task.name).ascending());
 		return query.getAllInstancesOf(new Task());
+	}
+	
+	public static class LatestTaskView extends TaskViews{
+		
+		@DBColumn
+		DBDate mostRecent = new DBDate(this.column(this.lastviewed).max());
 	}
 	
 }

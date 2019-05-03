@@ -113,7 +113,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	public void showTodayForAllProjects() {
 		setTitle("Today");
 		taskTabs.setVisible(false);
-		todaysTasksList.setTask(null);
+		todaysTasksList.setTask((Task)null);
 		showComponent(todaysTasksList);
 	}
 

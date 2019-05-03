@@ -5,23 +5,24 @@
  */
 package nz.co.gregs.minortask.components.task;
 
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class SecureTaskDiv extends SecureDiv implements HasTask {
+public class SecureTaskDiv extends SecureDiv implements HasTaskAndProject {
 
-	private Task __task;
+	private Task.TaskAndProject __taskAndProject;
 
 	public SecureTaskDiv() {
 	}
 
 	@Override
-	public final Task getTask() {
-		return __task;
+	public final Task.TaskAndProject getTaskAndProject() throws Globals.InaccessibleTaskException {
+			return __taskAndProject;
 	}
 
 	@Override
-	public void setTask(Task newTask) {
-		this.__task = newTask;
+	public void setTaskAndProject(Task.TaskAndProject newTaskAndProject) {
+		this.__taskAndProject = newTaskAndProject;
 	}
 }

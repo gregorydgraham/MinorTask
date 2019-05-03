@@ -5,11 +5,16 @@
  */
 package nz.co.gregs.minortask.components.task.editor;
 
-import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.GeneratedVaadinComboBox;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.shared.Registration;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -17,143 +22,150 @@ import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.expressions.BooleanExpression;
 import nz.co.gregs.minortask.MinorTask;
+import nz.co.gregs.minortask.MinorTaskEvent;
+import nz.co.gregs.minortask.MinorTaskEventNotifier;
 import nz.co.gregs.minortask.components.AccessDeniedComponent;
-import nz.co.gregs.minortask.components.polymer.PaperInput;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public class TaskProjectPicker extends SecureTaskDiv {
+public class TaskProjectPicker extends SecureTaskDiv implements MinorTaskEventNotifier {
 
 	private Task.TaskAndProject taskAndProject = null;
+	private final Task emptyTask = new Task();
+	private final List<Task> listOfTasks = new ArrayList<>();
+	private final ProjectComboBox taskList = new ProjectComboBox("Part Of", listOfTasks, emptyTask);
+	private final Div container = new Div();
+	private boolean updating = false;
 
 	public TaskProjectPicker() {
 		super();
+		taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this));
+		setTooltipText("Part of this project, you can move it to another from here");
+//		label.setLabel("Part Of:");
+		add(taskList);
 	}
 
 	@Override
-	public void setTask(Task newTask) {
-		super.setTask(newTask);
+	public void setTask(Task task) {
 		try {
-			taskAndProject = getTaskAndProject(getTaskID());
-			this.add(getCurrentProjectComponent());
+			setTask(minortask().getTaskAndProject(task));
 		} catch (MinorTask.InaccessibleTaskException ex) {
-			this.add(new AccessDeniedComponent());
+			this.container.add(new AccessDeniedComponent());
 		}
 	}
 
-	private Component getPickerComponent() {
+	@Override
+	public void setTask(Task.TaskAndProject newTaskAndProject) {
+		super.setTask(newTaskAndProject);
 		try {
+			taskAndProject = getTaskAndProject();
+			updateProjectList();
+		} catch (MinorTask.InaccessibleTaskException ex) {
+			this.container.add(new AccessDeniedComponent());
+		}
+	}
+
+	private void updateProjectList() {
+		try {
+			updating = true;
 			Task example = new Task();
 			example.userID.permittedValues(minortask().getCurrentUserID());
-			example.taskID.excludedValues(taskAndProject.getTask().taskID.getValue());
+			example.taskID.excludedValues(getTaskID());
 			example.name.setSortOrderAscending();
 			final DBQuery query = getDatabase().getDBQuery(example);
 			query.addCondition(
 					BooleanExpression.anyOf(
 							example.column(example.completionDate).isNull(),
-							example.column(example.taskID).is(taskAndProject.getProject().taskID.getValue())
+							example.column(example.taskID).is(getProjectID())
 					)
 			);
 			query.setSortOrder(example.column(example.name).ascending());
 
-			List<Task> listOfTasks = query.getAllInstancesOf(example);
+			listOfTasks.clear();
+			listOfTasks.addAll(query.getAllInstancesOf(example));
 
-			Task emptyTask = new Task();
-
-			ComboBox<Task> taskList = new ProjectComboBox("Part Of", listOfTasks, emptyTask);
 			listOfTasks.add(0, taskList.getEmptyValue());
 			taskList.setDataProvider(new TasksDataProvider(listOfTasks));
 
 			final Task.Project project = taskAndProject.getProject();
-			try {
-				taskList.setValue(project == null ? taskList.getEmptyValue() : project);
-				taskList.addValueChangeListener(new ProjectChosenListener(minortask(), this, getTaskID()));
-				setTooltipText("Part of this project, you can move it to another from here");
-				return taskList;
-			} catch (IllegalArgumentException ex) {
-				final PaperInput label = new PaperInput();
-				label.setLabel("Part Of");
-				label.setValue(project.name.getValue());
-				label.setEnabled(false);
-				setTooltipText("This task is part of a project that you don't have access to");
-				return label;
-			}
+			taskList.setValue(project == null ? taskList.getEmptyValue() : project);
 		} catch (SQLException ex) {
 			sqlerror(ex);
-			return new ComboBox<Task>("Projects");
+		} finally {
+			updating = false;
 		}
 	}
 
-	private Component getCurrentProjectComponent() {
-		return getPickerComponent();
-	}
+	private static class ProjectChosenListener implements HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<Task>, Task>> {
 
-	private static class ProjectChosenListener implements HasValue.ValueChangeListener<HasValue.ValueChangeEvent<Task>> {
-
-		private final Long taskID;
+//		private final Long taskID;
 		private final TaskProjectPicker picker;
 		private final MinorTask minortask;
 
-		public ProjectChosenListener(MinorTask minortask, TaskProjectPicker picker, Long taskID) {
+		public ProjectChosenListener(MinorTask minortask, TaskProjectPicker picker) {
 			this.minortask = minortask;
 			this.picker = picker;
-			this.taskID = taskID;
+//			this.taskID = taskID;
 		}
 
 		@Override
-		public void valueChanged(HasValue.ValueChangeEvent<Task> event) {
-			try {
-				Task task = minortask.getTask(taskID);
-				final Task selectedProject = event.getValue();
-				if (selectedProject != null) {
-					// prevent self-projects
-					final Long newProjectID = selectedProject.taskID.getValue();
-					if (newProjectID != null && taskID.equals(newProjectID)) {
-						MinorTask.chat("No self-referential projects please");
-					} else {
-						final Long taskProjectID = task.projectID.getValue();
-						final Date taskStartDate = task.startDate.getValue();
-						final Date taskDeadlineDate = task.finalDate.getValue();
-						// ensure the tree integrity by promoting any separated tasks
-						List<Task> projectPathTasks = MinorTask.getProjectPathTasks(newProjectID, minortask.getCurrentUserID());
-						for (Task projectPathTask : projectPathTasks) {
-							final DBInteger projectID = projectPathTask.projectID;
-							if (taskID.equals(projectID.longValue())) {
-								projectPathTask.projectID.setValue(taskProjectID);
-							}
-							// force the starting date upwards
-							if (taskStartDate != null && projectPathTask.startDate.dateValue() != null) {
-								if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
-									projectPathTask.startDate.setValue(taskStartDate);
+		public void valueChanged(AbstractField.ComponentValueChangeEvent<ComboBox<Task>, Task> event) {
+			if (!picker.updating) {
+				try {
+					final Task task = picker.getTask();
+					final Task selectedProject = event.getSource().getValue();
+					System.out.println("MOVE TO PROJECT: " + selectedProject.name.getValue());
+					if (selectedProject != null) {
+						// prevent self-projects
+						final Long newProjectID = selectedProject.taskID.getValue();
+						if (newProjectID != null && task.taskID.longValue().equals(newProjectID)) {
+							MinorTask.chat("No self-referential projects please");
+						} else {
+							final Long taskProjectID = task.projectID.getValue();
+							final Date taskStartDate = task.startDate.getValue();
+							final Date taskDeadlineDate = task.finalDate.getValue();
+							// ensure the tree integrity by promoting any separated tasks
+							List<Task> projectPathTasks = MinorTask.getProjectPathTasks(newProjectID, minortask.getCurrentUserID());
+							for (Task projectPathTask : projectPathTasks) {
+								final DBInteger projectID = projectPathTask.projectID;
+								if (task.taskID.longValue().equals(projectID.longValue())) {
+									projectPathTask.projectID.setValue(taskProjectID);
+								}
+								// force the starting date upwards
+								if (taskStartDate != null && projectPathTask.startDate.dateValue() != null) {
+									if (projectPathTask.startDate.dateValue().after(taskStartDate)) {
+										projectPathTask.startDate.setValue(taskStartDate);
+									}
+								}
+								// force the deadline downwards
+								final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
+								if (taskDeadlineDate != null && projectPathTaskDeadlineDate != null) {
+									if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
+										task.finalDate.setValue(projectPathTaskDeadlineDate);
+									}
+								}
+								// save the project task if necessary
+								if (projectPathTask.hasChangedSimpleTypes()) {
+									MinorTask.getDatabase().update(projectPathTask);
 								}
 							}
-							// force the deadline downwards
-							final Date projectPathTaskDeadlineDate = projectPathTask.finalDate.dateValue();
-							if (taskDeadlineDate != null && projectPathTaskDeadlineDate != null) {
-								if (projectPathTaskDeadlineDate.before(taskDeadlineDate)) {
-									task.finalDate.setValue(projectPathTaskDeadlineDate);
-								}
-							}
-							// save the project task if necessary
-							if (projectPathTask.hasChangedSimpleTypes()) {
-								MinorTask.getDatabase().update(projectPathTask);
-							}
+							task.projectID.setValue(newProjectID);
+							MinorTask.getDatabase().update(task);
+							// enforce date constraints on tree
+							MinorTask.enforceDateConstraintsOnTaskTree(task);
+							picker.fireEvent(new MinorTaskEvent(picker, picker.getTask(), true));
 						}
-						task.projectID.setValue(newProjectID);
+					} else if (task.projectID.getValue() != null) {
+						System.out.println("MOVING PROJECT TO TOP LEVEL.");
+						task.projectID.setValueToNull();
 						MinorTask.getDatabase().update(task);
-						// enforce date constraints on tree
-						MinorTask.enforceDateConstraintsOnTaskTree(task);
-						picker.add(picker.getCurrentProjectComponent());
-//						MinorTask.showTask(taskID);
+						picker.fireEvent(new MinorTaskEvent(picker, picker.getTask(), true));
+					} else {
+						System.out.println("NOTHING TO CHANGE:");
 					}
-				} else {
-					task.projectID.setValueToNull();
-					MinorTask.getDatabase().update(task);
-					picker.add(picker.getCurrentProjectComponent());
-//					MinorTask.showTask(taskID);
+				} catch (SQLException ex) {
+					MinorTask.sqlerror(ex);
 				}
-			} catch (SQLException | MinorTask.InaccessibleTaskException ex) {
-				MinorTask.sqlerror(ex);
 			}
 		}
 	}

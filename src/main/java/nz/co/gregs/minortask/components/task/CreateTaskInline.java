@@ -24,6 +24,10 @@ import nz.co.gregs.minortask.components.changes.Changes;
 @StyleSheet("styles/createtaskinline.css")
 public class CreateTaskInline extends SecureTaskSpan {
 
+	public CreateTaskInline() {
+		super(); 
+		setClassName();
+	}
 	public CreateTaskInline(Task task) {
 		super(task);
 		setClassName();

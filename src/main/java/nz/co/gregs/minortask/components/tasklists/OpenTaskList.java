@@ -89,6 +89,14 @@ public class OpenTaskList extends AbstractTaskListOfDBQueryRow {
 		return new Component[]{footerContents};
 	}
 
+	@Override
+	public void setTask(Task newTask) {
+		super.setTask(newTask);
+		if (createTaskSpan != null) {
+			createTaskSpan.setTask(newTask);
+		}
+	}
+
 	private void setupAddButton() {
 		addButton = new Button();
 		addButton.addClassName("opentasks-addminortaskbutton");

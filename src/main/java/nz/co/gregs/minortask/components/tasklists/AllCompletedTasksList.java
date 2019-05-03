@@ -40,10 +40,6 @@ public class AllCompletedTasksList extends AbstractTaskListOfDBQueryRow {
 		return "" + tasks.size() + " Completed Tasks";
 	}
 
-	Long getProjectID() {
-		return getTaskID();
-	}
-
 	@Override
 	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		Task example = new Task();

@@ -38,10 +38,6 @@ public class AllOpenTasksList extends AbstractTaskListOfDBQueryRow {
 		return "" + tasks.size() + " Open Tasks";
 	}
 
-	Long getProjectID() {
-		return getTaskID();
-	}
-
 	@Override
 	protected List<DBQueryRow> getTasksToList() throws SQLException {
 		Task example = new Task();

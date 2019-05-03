@@ -35,7 +35,7 @@ import nz.co.gregs.minortask.MinorTaskEventListener;
  *
  * @author gregorygraham
  */
-@Route(value = "editor", layout = MinortaskPushPage.class)
+@Route(value = "editor", layout = MinortaskPage.class)
 @RouteAlias("ideas")
 @RouteAlias("overdue")
 @RouteAlias("projects")
@@ -182,7 +182,7 @@ public class MinorTaskLayout
 
 	private void changeToTopLevelPage(String bannerTitle, String bannerDescription, String urlSnippet, Runnable viewCall) {
 		viewCall.run();
-		viewBanner.setTask(null);
+		viewBanner.setTask((Task)null);
 		changeToPage(bannerTitle, bannerDescription, urlSnippet);
 	}
 
@@ -198,6 +198,7 @@ public class MinorTaskLayout
 		viewBanner.setDescription(description);
 		UI.getCurrent().getPage().setTitle(getPageTitle());
 		changeURLPath(urlDestination);
+//		sidebar.refresh();
 	}
 
 	private void showTask(MinorTaskEvent event) {

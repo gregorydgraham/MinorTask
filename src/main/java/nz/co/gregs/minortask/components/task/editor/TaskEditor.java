@@ -230,6 +230,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 				documentUpload,
 				imageUpload);
 
+		project.addMinorTaskEventListener(this);
 		subtasks.addMinorTaskEventListener(this);
 		completedTasks.addMinorTaskEventListener(this);
 
@@ -451,6 +452,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	public void setFieldValues() {
 		final Long currentTaskId = getTaskID();
 		Task task = taskAndProject.getTask();
+		project.setTask(taskAndProject);
 		subtasks.setTask(task);
 		completedTasks.setTask(task);
 		if (currentTaskId != null && task != null) {
@@ -638,9 +640,9 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void showEditor(Component editor) {
-		System.out.println("EDITOR: "+editor);
+		System.out.println("EDITOR: " + editor);
 		boolean editorAlreadyShowing = editor == null ? false : editor.isVisible();
-		System.out.println("EDITOR ALREADY SHOWING: "+editorAlreadyShowing);
+		System.out.println("EDITOR ALREADY SHOWING: " + editorAlreadyShowing);
 		if (startDate.isEmpty() && preferredEndDate.isEmpty() && deadlineDate.isEmpty()) {
 			dates.setVisible(false);
 		}
