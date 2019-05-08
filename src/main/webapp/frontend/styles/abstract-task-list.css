@@ -109,6 +109,8 @@ and open the template in the editor.
 
 .tasklist-entry-suffix{
 	padding-right: 3px;
+    display: inline-block;
+    width: max-content;
 }
 
 .tasklist-footer{
