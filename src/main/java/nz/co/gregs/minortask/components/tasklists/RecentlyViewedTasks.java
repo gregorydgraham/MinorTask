@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -45,6 +46,11 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 				taskViews.column(taskViews.lastviewed).descending(),
 				task.column(task.name).ascending());
 		return query.getAllInstancesOf(new Task());
+	}
+
+	@Override
+	protected Component getRightComponent(Task task) {
+		return null;
 	}
 	
 	public static class LatestTaskView extends TaskViews{
