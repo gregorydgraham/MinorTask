@@ -17,6 +17,10 @@ import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
@@ -178,11 +182,12 @@ public class MinorTaskLayout
 				break;
 			default:;
 		}
+		refreshSideBar();
 	}
 
 	private void changeToTopLevelPage(String bannerTitle, String bannerDescription, String urlSnippet, Runnable viewCall) {
 		viewCall.run();
-		viewBanner.setTask((Task)null);
+		viewBanner.setTask((Task) null);
 		changeToPage(bannerTitle, bannerDescription, urlSnippet);
 	}
 
@@ -246,5 +251,14 @@ public class MinorTaskLayout
 			beforeEnter(event);
 		});
 		view.showLogin();
+	}
+
+	private LocalTime nextRefresh;
+
+	private void refreshSideBar() {
+		if (nextRefresh == null || LocalTime.now().isAfter(nextRefresh)) {
+			sidebar.refresh();
+			nextRefresh = LocalTime.now().plus(20, ChronoUnit.SECONDS);
+		}
 	}
 }
