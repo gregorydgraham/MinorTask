@@ -39,7 +39,7 @@ import nz.co.gregs.minortask.components.generic.FlexColumn;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import nz.co.gregs.minortask.components.polymer.Details;
 import nz.co.gregs.minortask.components.polymer.PaperInput;
-import nz.co.gregs.minortask.components.task.HasTask;
+import nz.co.gregs.minortask.components.task.HasTaskAndProject;
 import nz.co.gregs.minortask.components.tasklists.CompletedTasksList;
 import nz.co.gregs.minortask.components.tasklists.OpenTaskList;
 import nz.co.gregs.minortask.components.upload.DocumentAddedEvent;
@@ -60,7 +60,7 @@ import org.joda.time.Period;
  *
  * @author gregorygraham
  */
-public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListener, MinorTaskEventNotifier {
+public class TaskEditor extends FlexBox implements HasTaskAndProject, MinorTaskEventListener, MinorTaskEventNotifier {
 
 	private final PaperInput name = new PaperInput();
 	private final TextField ownerField = new TextField("User");
@@ -114,7 +114,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	private final SecureDiv addButtons = new SecureDiv();
 	private final Div buttonsAndEditors = new Div();
 
-	private boolean movingTask = false;
+	private boolean refreshing = false;
 	private final Div completeButtonDiv = new Div();
 	private final SecureDiv nameAndProjectDiv = new SecureDiv();
 	private final FlexColumn extrasLayout = new FlexColumn();
@@ -368,7 +368,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void checkAndSaveName(BlurNotifier.BlurEvent<PaperInput> event) {
-		if (!movingTask) {
+		if (!refreshing) {
 			try {
 				final Task task1 = getTask(getTaskID());
 				if (!event.getSource().getValue().equals(task1.name.getValue())) {
@@ -381,7 +381,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void checkAndSaveDescription(BlurNotifier.BlurEvent<TextArea> event) {
-		if (!movingTask) {
+		if (!refreshing) {
 			try {
 				final Task task1 = getTask(getTaskID());
 				if (!event.getSource().getValue().equals(task1.description.getValue())) {
@@ -394,7 +394,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void checkAndSaveNotesEditor() {
-		if (!movingTask) {
+		if (!refreshing) {
 			try {
 				final Task task1 = getTask(getTaskID());
 				if (!notesEditor.getValue().equals(task1.notes.stringValue())) {
@@ -410,7 +410,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void checkAndSaveNotes() {
-		if (!movingTask) {
+		if (!refreshing) {
 			try {
 				final Task task1 = getTask(getTaskID());
 				if (!notes.getValue().equals(task1.notes.stringValue())) {
@@ -425,7 +425,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	private void checkAndSaveAssignee(AbstractField.ComponentValueChangeEvent<ComboBox<User>, User> event) {
-		if (!movingTask) {
+		if (!refreshing) {
 			try {
 				final Task task1 = getTask(getTaskID());
 				final User sourceValue = event.getSource().getValue();
@@ -509,7 +509,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 			placeSearcher.setTask(task);
 			weblinkGrid.setTaskID(currentTaskId);
 			weblinkEditor.setTaskID(currentTaskId);
-			documentGrid.setTaskID(currentTaskId);
+			documentGrid.setTaskAndProject(getTaskAndProject());
 
 			showEditor(null);
 
@@ -594,7 +594,7 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	public void saveTask() {
-		if (!movingTask) {
+		if (!refreshing) {
 			Task task = getTask();
 
 			task.name.setValue(name.getValue());
@@ -627,10 +627,17 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 
 	public void refresh() {
 		try {
-			this.setTask(getTask(getTaskID()));
-		} catch (Globals.InaccessibleTaskException ex) {
-			Logger.getLogger(MinorTaskView.class.getName()).log(Level.SEVERE, null, ex);
+			refreshing = true;
+			setFieldValues();
+			addViewedDate(taskAndProject);
+		} finally {
+			refreshing = false;
 		}
+//		try {
+//			this.setTask(getTask(getTaskID()));
+//		} catch (Globals.InaccessibleTaskException ex) {
+//			Logger.getLogger(MinorTaskView.class.getName()).log(Level.SEVERE, null, ex);
+//		}
 	}
 
 	public final void setAsDefaultButton(Button button) {
@@ -721,17 +728,22 @@ public class TaskEditor extends FlexBox implements HasTask, MinorTaskEventListen
 	}
 
 	@Override
+	public Task.TaskAndProject getTaskAndProject() {
+		return this.taskAndProject;
+	}
+
+	@Override
 	public void setTask(Task newTask) {
-		movingTask = true;
 		try {
-			taskAndProject = getTaskAndProject(newTask);
-			setFieldValues();
-			addViewedDate(taskAndProject);
+			setTaskAndProject(getTaskAndProject(newTask));
 		} catch (Globals.InaccessibleTaskException ex) {
 			sqlerror(ex);
-		} finally {
-			movingTask = false;
 		}
+	}
+
+	@Override
+	public void setTaskAndProject(Task.TaskAndProject taskAndProject) {
+		this.taskAndProject = taskAndProject;
 	}
 
 }

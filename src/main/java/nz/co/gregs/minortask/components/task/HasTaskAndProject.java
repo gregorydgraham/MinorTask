@@ -14,7 +14,7 @@ import nz.co.gregs.minortask.datamodel.Task;
  *
  * @author gregorygraham
  */
-interface HasTaskAndProject extends HasTask {
+public interface HasTaskAndProject extends HasTask {
 
 	public void setTaskAndProject(Task.TaskAndProject taskAndProject);
 

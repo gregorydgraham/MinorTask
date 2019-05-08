@@ -123,6 +123,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		taskTabs.setVisible(true);
 		taskTabs.setSelectedTab(taskTabs.getDetailsTab());
 		editorComponent.setTask(task);
+		editorComponent.refresh();
 		showComponent(editorComponent);
 	}
 

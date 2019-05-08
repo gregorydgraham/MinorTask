@@ -7,6 +7,7 @@ package nz.co.gregs.minortask.components.task;
 
 import nz.co.gregs.minortask.components.RequiresPermission;
 import java.util.Objects;
+import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -18,6 +19,14 @@ public interface HasTask extends RequiresPermission {
 	public Task getTask();
 
 	public void setTask(Task newTask);
+
+	public default void setTask(Long newTask){
+		try {
+			this.setTask(minortask().getTask(newTask));
+		} catch (Globals.InaccessibleTaskException ex) {
+			sqlerror(ex);
+		}
+	}
 
 	public default Long getTaskID() {
 		return getTask() == null ? null : getTask().taskID.longValue();
