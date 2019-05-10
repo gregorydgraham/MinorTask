@@ -586,7 +586,7 @@ public class Globals {
 			note.close();
 		});
 		note.setPosition(Notification.Position.TOP_CENTER);
-		note.open();
+		UI.getCurrent().access(() -> note.open());
 	}
 
 	public static final void error(final String topic, final Exception error) {
