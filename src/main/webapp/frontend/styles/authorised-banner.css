@@ -14,7 +14,10 @@ authorised-banner {
 	background-color: whitesmoke;
 	color:gray;
 	display: flex;
-	justify-content: space-between
+	justify-content: space-between;
+	position: fixed;
+	z-index: 9000;
+	opacity: 1;
 }
 
 authorised-banner a{color: gray;}
