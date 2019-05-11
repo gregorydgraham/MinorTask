@@ -6,6 +6,10 @@
 	border:  0;
 }
 
+.minortask-internal-container{
+	padding-top: 50px; /* to fit the floating banner */
+}
+
 html{
 	background-attachment: fixed;
 	background-size: cover;
