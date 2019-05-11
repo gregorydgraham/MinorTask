@@ -16,7 +16,7 @@ authorised-banner {
 	display: flex;
 	justify-content: space-between;
 	position: fixed;
-	z-index: 9000;
+	z-index: 2;
 	opacity: 1;
 }
 
