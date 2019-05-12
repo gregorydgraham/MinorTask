@@ -7,7 +7,6 @@ package nz.co.gregs.minortask.components.generic;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Span;
-import nz.co.gregs.minortask.components.AccessDeniedComponent;
 import nz.co.gregs.minortask.components.RequiresPermission;
 
 /**

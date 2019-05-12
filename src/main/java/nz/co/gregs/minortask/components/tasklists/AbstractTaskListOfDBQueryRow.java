@@ -66,7 +66,7 @@ public abstract class AbstractTaskListOfDBQueryRow extends AbstractTaskList<DBQu
 		Task gotTask = row.get(new Task());
 		Task.Project gotProject = row.get(new Task.Project());
 		if (gotTask != null) {
-			final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(gotTask, gotProject);
+			final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(new Task.TaskAndProject(gotTask, gotProject));
 			taskOverviewSpan.addMinorTaskEventListener(this);
 			return taskOverviewSpan;
 		} else {

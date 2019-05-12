@@ -8,8 +8,10 @@ package nz.co.gregs.minortask.components.tasklists;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
+import org.jsoup.select.Collector;
 
 public class TodaysTasksList extends AbstractTaskListOfTasks {
 
@@ -18,7 +20,7 @@ public class TodaysTasksList extends AbstractTaskListOfTasks {
 		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
 	}
 
-	public TodaysTasksList(Task task) {
+	public TodaysTasksList(Task.TaskAndProject task) {
 		super(task);
 		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
 	}
@@ -29,7 +31,7 @@ public class TodaysTasksList extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<Task.TaskAndProject> getTasksToList() throws SQLException {
 		if (getTaskID() == null) {
 			final Task.Project project = new Task.Project();
 			Task task = new Task();
@@ -50,10 +52,13 @@ public class TodaysTasksList extends AbstractTaskListOfTasks {
 					project.column(project.startDate).ascending().nullsLast(),
 					project.column(project.name).ascending()
 			);
-			return query.getAllInstancesOf(project);
+			return query.getAllInstancesOf(project)
+					.stream()
+					.map((t)-> new Task.TaskAndProject(t, t.project))
+					.collect(Collectors.toList());
 		} else {
 			final Date now = new Date();
-			return minortask().getLeafTasksOfProjectFiltered(
+			return minortask().getLeafTaskAndProjectsOfProjectFiltered(
 					getTaskID(),
 					(t) -> t.completionDate.getValue() == null
 					&& !t.taskID.getValue().equals(getTaskID())
@@ -69,7 +74,7 @@ public class TodaysTasksList extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<Task.TaskAndProject> tasks) {
 		return "" + tasks.size() + " for Today (open tasks with a start date  in the past)";
 	}
 }

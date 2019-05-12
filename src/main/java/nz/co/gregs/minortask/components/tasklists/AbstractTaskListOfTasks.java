@@ -23,7 +23,7 @@ import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
 import nz.co.gregs.minortask.datamodel.FavouritedTasks;
 import nz.co.gregs.minortask.datamodel.Task;
 
-public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task> {
+public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task.TaskAndProject> {
 
 	public AbstractTaskListOfTasks() {
 	}
@@ -32,14 +32,16 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task> {
 		super(taskID);
 	}
 
-	public AbstractTaskListOfTasks(Task task) {
-		super(task);
+	public AbstractTaskListOfTasks(Task.TaskAndProject task) {
+		super(task.getTask());
+		setTaskAndProject(task);
 	}
 
 	@Override
-	protected Component getLeftComponent(Task task) {
+	protected Component getLeftComponent(Task.TaskAndProject taskAndProject) {
 		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
 		heart.addClassName("tasklist-entry-prefix");
+		Task task = taskAndProject.getTask();
 		FavouritedTasks gotFav = minortask().getTaskFavourite(task);
 		if (task != null && gotFav != null && gotFav.favouritedDate.getValue() != null) {
 			heart.addClickListener((event) -> {
@@ -60,12 +62,13 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task> {
 	}
 
 	@Override
-	protected Component getCentralComponent(Task task) {
+	protected Component getCentralComponent(Task.TaskAndProject taskAndProject) {
+		Task task = taskAndProject.getTask();
 		try {
 			Task.Project gotProject = minortask().getTaskAndProject(task).getProject();
 			if (task != null) {
 
-				final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(task, gotProject);
+				final TaskOverviewSpan taskOverviewSpan = new TaskOverviewSpan(new Task.TaskAndProject(task, gotProject));
 				taskOverviewSpan.addMinorTaskEventListener(this);
 				return taskOverviewSpan;
 			} else {
@@ -90,7 +93,8 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task> {
 	}
 
 	@Override
-	protected Component getRightComponent(Task task) {
+	protected Component getRightComponent(Task.TaskAndProject taskAndProject) {
+		Task task = taskAndProject.getTask();
 		SecureSpan layout = new SecureSpan();
 		layout.addClassName("tasklist-entry-suffix");
 		if (task != null) {
@@ -147,32 +151,32 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task> {
 	}
 
 	@Override
-	public boolean checkForPermission(Task item) {
-		return minortask().checkUserCanViewTask(item);
+	public boolean checkForPermission(Task.TaskAndProject item) {
+		return minortask().checkUserCanViewTask(item.getTask());
 	}
 
 	@Override
-	protected Component getRowHeaderComponent(Task row) {
+	protected Component getRowHeaderComponent(Task.TaskAndProject row) {
 		return null;
 	}
 
 	@Override
-	protected Component getRowFooterComponent(Task row) {
+	protected Component getRowFooterComponent(Task.TaskAndProject row) {
 		return null;
 	}
 
 	public static abstract class PreQueried extends AbstractTaskListOfTasks {
 
-		private final List<Task> list;
+		private final List<Task.TaskAndProject> list;
 
-		public PreQueried(List<Task> list) {
+		public PreQueried(List<Task.TaskAndProject> list) {
 			super(null);
 			this.list = list;
 			refresh();
 		}
 
 		@Override
-		protected final List<Task> getTasksToList() throws SQLException {
+		protected final List<Task.TaskAndProject> getTasksToList() throws SQLException {
 			return list;
 		}
 

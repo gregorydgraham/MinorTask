@@ -68,6 +68,7 @@ import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.User;
 import nz.co.gregs.minortask.components.upload.Document;
 import nz.co.gregs.minortask.components.colleagues.Colleagues;
+import nz.co.gregs.minortask.components.task.TaskOverviewSpan;
 import nz.co.gregs.minortask.pages.MinorTaskLayout;
 import nz.co.gregs.minortask.pages.LoginPage;
 import nz.co.gregs.minortask.pages.LostPasswordLayout;
@@ -654,26 +655,38 @@ public class Globals {
 		return new Location(getURL(aClass));
 	}
 
-//	public static void showRecentsPage() {
-//		showPage(RecentTasksPage.class);
-//	}
-//
-//	public static void showFavouritesPage() {
-//		showPage(FavouriteTasksPage.class);
-//	}
-//	public static void showTask(Task task) {
-//		if (task == null) {
-//			showProjects();
-//		} else {
-//			showTask(task.taskID.getValue());
-//		}
-//	}
 	protected static ScheduledThreadPoolExecutor getExecutor() {
 		return EXECUTOR;
 	}
 
 	public static Location getOpeningLocation() {
 		return new Location("today");
+	}
+
+	public static void moveStartDateToNextWeek(Task task, TaskOverviewSpan taskOverviewSpan) {
+		Date nextWeek = Globals.asDate(LocalDate.now().plusDays(7));
+		if (task.finalDate.getValue() == null || (task.finalDate.getValue().after(nextWeek))) {
+			task.startDate.setValue(nextWeek);
+			try {
+				taskOverviewSpan.getDatabase().update(task);
+				chat("Moved "+task.name+" to next week");
+			} catch (SQLException ex) {
+				taskOverviewSpan.sqlerror(ex);
+			}
+		}
+	}
+
+	public static void moveStartDateToTomorrow(Task task, TaskOverviewSpan taskOverviewSpan) {
+		Date tomorrow = Globals.asDate(LocalDate.now().plusDays(1));
+		if (task.finalDate.getValue() == null || (task.finalDate.getValue().after(tomorrow))) {
+			task.startDate.setValue(tomorrow);
+			try {
+				taskOverviewSpan.getDatabase().update(task);
+				chat("Moved "+task.name+" to tomorrow");
+			} catch (SQLException ex) {
+				taskOverviewSpan.sqlerror(ex);
+			}
+		}
 	}
 
 	public static class InaccessibleTaskException extends Exception {

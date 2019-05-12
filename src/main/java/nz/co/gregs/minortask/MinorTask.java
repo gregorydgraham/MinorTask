@@ -612,4 +612,40 @@ public class MinorTask extends Globals implements Serializable {
 		);
 		return query.getAllInstancesOf(new Task.Project());
 	}
+
+	public List<Task.TaskAndProject> getLeafTaskAndProjectsOfProjectFiltered(Long taskID, Predicate<? super Task> extraFilter) throws AccidentalCartesianJoinException, SQLException, AccidentalBlankQueryException {
+		DBQuery query;
+		List<Task> descendants = getTasksOfProject(taskID);
+		List<Long> taskIDs = descendants
+				.stream()
+				.filter((t) -> t.userID.getValue() == getCurrentUserID() || t.assigneeID.getValue() == getCurrentUserID())
+				.filter(extraFilter)
+				.map((t) -> t.taskID.getValue())
+				.collect(Collectors.toList());
+		Task.Project project = new Task.Project();
+		project.taskID.permittedValues(taskIDs.toArray(new Long[]{}));
+		final Task task = new Task();
+		query = getDatabase().getDBQuery(project).addOptional(task);
+		// add leaf condition
+		query.addCondition(task.column(task.taskID).isNull());
+		// add security condition
+		query.addCondition(
+				project.column(project.userID).is(getCurrentUserID())
+						.or(
+								project.column(project.assigneeID).is(getCurrentUserID())
+						)
+		);
+		query.setSortOrder(
+				project.column(project.completionDate).descending().nullsFirst(),
+				project.column(project.finalDate).isLessThan(DateExpression.currentDate()).descending(),
+				project.column(project.startDate).isLessThan(DateExpression.currentDate()).descending(),
+				project.column(project.finalDate).ascending().nullsLast(),
+				project.column(project.startDate).ascending().nullsLast(),
+				project.column(project.name).ascending()
+		);
+		return query.getAllInstancesOf(new Task.Project())
+					.stream()
+					.map((t)-> new Task.TaskAndProject(t, t.project))
+					.collect(Collectors.toList());
+	}
 }

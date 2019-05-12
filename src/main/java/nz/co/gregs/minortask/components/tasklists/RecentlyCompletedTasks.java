@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
+import nz.co.gregs.minortask.components.task.TaskSummarySpan;
 import nz.co.gregs.minortask.datamodel.Task;
 
 //@Tag("completed-task-list")
@@ -23,7 +25,7 @@ public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<Task.TaskAndProject> getTasksToList() throws SQLException {
 		Task example = new Task();
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.add(GregorianCalendar.DAY_OF_YEAR, -7);
@@ -43,16 +45,20 @@ public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 				example.column(example.taskID).ascending()
 		);
 		query.setPageSize(10);
-		return query.getAllInstancesOf(new Task());
+		List<Task> instances = query.getAllInstancesOf(new Task());
+		return instances
+				.stream()
+				.map((t) ->  new Task.TaskAndProject(t, t.project))
+				.collect(Collectors.toList());
 	}
-
+	
 	@Override
 	protected String getListClassName() {
 		return "recentlycompletedtasklist";
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<Task.TaskAndProject> tasks) {
 		return "" + tasks.size() + " Recently Completed";
 	}
 
@@ -62,12 +68,17 @@ public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected Component getLeftComponent(Task task) {
+	protected Component getLeftComponent(Task.TaskAndProject task) {
 		return new Span();
 	}
 
 	@Override
-	protected Component getRightComponent(Task task) {
+	protected Component getRightComponent(Task.TaskAndProject task) {
 		return new Span();
+	}
+
+	@Override
+	protected Component getCentralComponent(Task.TaskAndProject task) {
+		return new TaskSummarySpan(task);
 	}
 }

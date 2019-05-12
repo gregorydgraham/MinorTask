@@ -61,6 +61,19 @@ public interface HasTaskAndProject extends HasTask {
 		return null;
 	}
 
+	public default Task.Project getProject() {
+		try {
+			if (getTaskAndProject() == null) {
+				return null;
+			} else {
+				return getTaskAndProject().getProject();
+			}
+		} catch (Globals.InaccessibleTaskException ex) {
+			Logger.getLogger(HasTaskAndProject.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
 	@Override
 	public default void setTask(Task newTask) {
 		try {

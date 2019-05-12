@@ -9,7 +9,6 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,75 +20,61 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
 import nz.co.gregs.minortask.components.RequiresPermission;
-import nz.co.gregs.minortask.components.banner.IconWithToolTip;
+import nz.co.gregs.minortask.datamodel.Task.Project;
 
 /**
  *
  * @author gregorygraham
  */
-@StyleSheet("styles/taskoverview.css")
-public class TaskOverviewSpan extends Span implements MinorTaskEventNotifier, HasTaskAndProject, RequiresPermission {
+@StyleSheet("styles/tasksummary.css")
+public class TaskSummarySpan extends Span implements MinorTaskEventNotifier, HasTaskAndProject, RequiresPermission {
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, MMM dd, YYYY");
 	Span name = new Span();
 	private Task.TaskAndProject taskAndProject;
 
-	public TaskOverviewSpan(Task.TaskAndProject taskAndProject) {
+	public TaskSummarySpan(Task.TaskAndProject taskAndProject) {
 //		super(task);
 		setTaskAndProject(taskAndProject);
 		final String value = getTask().name.getValue();
 
 		name.setText(value == null ? "" : value);
-		name.addClassNames("taskoverview-name");
+		name.addClassNames("tasksummary-name");
 
-		Span projectSpan = createProjectSpan(getTaskAndProject());
+		Span projectSpan = createProjectSpan(getTask(), getProject());
 
 		Div topDiv = new Div(name, projectSpan);
 		topDiv.setSizeUndefined();
-		topDiv.addClassName("taskoverview-nameandproject");
+		topDiv.addClassName("tasksummary-nameandproject");
 
 		Span desc = new Span();
 		desc.setText(getTask().description.getValue());
 		desc.setSizeFull();
-		desc.addClassNames("taskoverview-description");
+		desc.addClassNames("tasksummary-description");
 
 		Span summary = new Span(topDiv, desc);
 		summary.addClickListener((event) -> {
 			fireEvent(new MinorTaskEvent(this, getTask(), false));
 		});
-		summary.addClassName("taskoverview-summary");
+		summary.addClassName("tasksummary-summary");
 
 		Details details = new Details("more...");
 		setDetails(details);
 
 		Div summaryAndDetails = new Div(summary, details);
-		summaryAndDetails.addClassName("taskoverview-all");
-		
-		final IconWithToolTip moveToTomorrow = new IconWithToolTip(VaadinIcon.CHEVRON_CIRCLE_RIGHT, "Bump the start date until tomorrow", Position.BOTTOM_RIGHT);
-		final IconWithToolTip moveToNextWeek = new IconWithToolTip(VaadinIcon.CHEVRON_RIGHT, "Bump the start date until tomorrow", Position.BOTTOM_RIGHT);
-		moveToTomorrow.addClickListener((event) -> {
-			Globals.moveStartDateToTomorrow(getTask(), this);
-		});moveToNextWeek.addClickListener((event) -> {
-			Globals.moveStartDateToNextWeek(getTask(), this);
-		});
-		final Span footerTools = new Span(
-				moveToTomorrow,
-				moveToNextWeek
-		);
-		footerTools.addClassName("taskoverview-footertools");
-		
-		this.add(summaryAndDetails, footerTools);
-		this.addClassName("taskoverview");
+		summaryAndDetails.addClassName("tasksummary-all");
+
+		this.add(summaryAndDetails);
+		this.addClassName("tasksummary");
 	}
 
-
-	protected final Span createProjectSpan(Task.TaskAndProject taskAndProject) {
+	protected final Span createProjectSpan(Task task, Project project) {
 		Span projectSpan = new Span();
 		projectSpan.setSizeUndefined();
-		if (taskAndProject.getProject() != null) {
-			projectSpan.setText(taskAndProject.getProject().name.getValue());
+		if (project != null) {
+			projectSpan.setText(project.name.getValue());
 		}
-		projectSpan.addClassNames("taskoverview-project");
+		projectSpan.addClassNames("tasksummary-project");
 		return projectSpan;
 	}
 
@@ -162,7 +147,7 @@ public class TaskOverviewSpan extends Span implements MinorTaskEventNotifier, Ha
 	}
 
 	@Override
-	public Task.TaskAndProject getTaskAndProject() {
+	public Task.TaskAndProject getTaskAndProject() throws Globals.InaccessibleTaskException {
 		return taskAndProject;
 	}
 }

@@ -10,9 +10,11 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
+import nz.co.gregs.minortask.components.task.TaskSummarySpan;
 import nz.co.gregs.minortask.datamodel.Task;
 import nz.co.gregs.minortask.datamodel.TaskViews;
 
@@ -29,12 +31,12 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected String getListCaption(List<Task> tasks) {
+	protected String getListCaption(List<Task.TaskAndProject> tasks) {
 		return ""+tasks.size()+" Tasks viewed in the last week";
 	}
 
 	@Override
-	protected List<Task> getTasksToList() throws SQLException {
+	protected List<Task.TaskAndProject> getTasksToList() throws SQLException {
 		final TaskViews taskViews = new TaskViews();
 		taskViews.userID.permittedValues(getCurrentUserID());
 		Calendar cal = GregorianCalendar.getInstance();
@@ -45,12 +47,19 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 		query.setSortOrder(
 				taskViews.column(taskViews.lastviewed).descending(),
 				task.column(task.name).ascending());
-		return query.getAllInstancesOf(new Task());
+		return query.getAllInstancesOf(new Task()).stream().map((t) -> {
+			return new Task.TaskAndProject(t, t.project);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	protected Component getRightComponent(Task task) {
+	protected Component getRightComponent(Task.TaskAndProject task) {
 		return null;
+	}
+
+	@Override
+	protected Component getCentralComponent(Task.TaskAndProject task) {
+		return new TaskSummarySpan(task);
 	}
 	
 	public static class LatestTaskView extends TaskViews{

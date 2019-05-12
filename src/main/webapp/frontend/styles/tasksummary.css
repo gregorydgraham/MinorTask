@@ -8,13 +8,13 @@ and open the template in the editor.
     Author     : gregorygraham
 */
 
-.taskoverview{
+.tasksummary{
 	padding-left: 2px;
 	display: inline-block;
 	width: 100%;
 }
 
-.taskoverview-all{
+.tasksummary-all{
 	display: flex;
 	/*flex-direction: row;*/
 	flex-direction: column;
@@ -25,13 +25,13 @@ and open the template in the editor.
 }
 
 /*@media all and (max-width: 600px) {
-	.taskoverview-all{
+	.tasksummary-all{
 		flex-direction: column;
 		align-items: flex-end;
 	}
 }*/
 
-.taskoverview-summary{
+.tasksummary-summary{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -39,7 +39,7 @@ and open the template in the editor.
 	width: 100%;
 }
 
-.taskoverview-nameandproject{
+.tasksummary-nameandproject{
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -47,14 +47,14 @@ and open the template in the editor.
 	width: 100%;
 }
 
-.taskoverview-name{
+.tasksummary-name{
 	color: cadetblue;
 	white-space: normal;
 	display: block;
 	width: inherit;
 }
 
-.taskoverview-project{
+.tasksummary-project{
 	color: darkgray;
 	white-space: normal;
 	display: block;
@@ -62,20 +62,20 @@ and open the template in the editor.
 	padding-right: 1em;
 }
 
-.taskoverview-description{
+.tasksummary-description{
 	color: #666666;
 	white-space: normal;
 	font-size: smaller;
 }
 
-.taskoverview details{
+.tasksummary details{
 	font-size: smaller;
 	color: gray;
 	margin-right: 5px;
 	min-width:5em;
 }
 
-.taskoverview details div{
+.tasksummary details div{
 	font-size: smaller;
 	/*color: gray;*/
 	margin-right: 5px;
@@ -83,11 +83,11 @@ and open the template in the editor.
 	white-space: nowrap;
 }
 
-.taskoverview details div span{
+.tasksummary details div span{
 	display: block;
 	white-space: nowrap;
 }
 
-.taskoverview-footertools iron-icon{
+.tasksummary-footertools iron-icon{
 	height: 15px;
 }

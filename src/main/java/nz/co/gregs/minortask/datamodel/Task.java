@@ -52,6 +52,9 @@ public class Task extends DBRow {
 	@DBForeignKey(Task.Project.class)
 	public final DBInteger projectID = new DBInteger();
 
+	@AutoFillDuringQueryIfPossible
+	public Project project;
+
 	@DBColumn
 	public final DBString name = new DBString();
 
