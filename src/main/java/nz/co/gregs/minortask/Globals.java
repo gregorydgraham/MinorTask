@@ -7,6 +7,7 @@ package nz.co.gregs.minortask;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasElement;
 //import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.UI;
@@ -687,6 +688,14 @@ public class Globals {
 				taskOverviewSpan.sqlerror(ex);
 			}
 		}
+	}
+
+	public static void scrollToElementByID(HasElement component, String elementID) {
+		component.getElement().executeJavaScript("document.getElementById(\"" + elementID + "\").scrollIntoView()");
+	}
+
+	public static void scrollToTop() {
+		UI.getCurrent().getPage().executeJavaScript("window.scrollTo(0,0)");
 	}
 
 	public static class InaccessibleTaskException extends Exception {

@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.pages;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.BeforeEvent;
@@ -52,15 +53,23 @@ public class MinorTaskLayout
 		implements HasUrlParameter<Long>, MinorTaskComponent, BeforeEnterObserver, HasDynamicTitle, MinorTaskEventListener {
 
 	protected final AuthorisedBannerMenu appBanner = new AuthorisedBannerMenu();
+	private final Span topmostElement = new Span();
 	private final ViewBanner viewBanner = new ViewBanner(this);
 	private final MinorTaskView view = new MinorTaskView();
 	private final Sidebar sidebar = new Sidebar();
-	private final Div bottomLeft = new Div();
-	private final Div bottomRight = new Div();
-	private final Div bottom = new Div();
-	private final Div taskComponents = new Div();
-	private final FlexBox editorSection = new FlexBox();
+	private final Div editorContents = new Div(view);
+	private final Div bottomLeft = new Div(editorContents);
+	private final Div bottomRight = new Div(sidebar);
+	private final Div bottom = new Div(bottomLeft, bottomRight);
+	private final Div topLeft = new Div(topmostElement, viewBanner);
+	private final Div topRightSpacer = new Div();
+	private final Div topRight = new Div(topRightSpacer);
+	private final Div top = new Div(topLeft, topRight);
+	private final Div taskComponents = new Div(top, bottom);
+	private final FlexBox editorSection = new FlexBox(taskComponents);
+	private final Div verticalLayout = new Div(editorSection);
 	private Long requestedTaskID = null;
+	private final String TOPMOST_ELEMENT_ID = "MINORTASK_APP_BANNER";
 
 	public MinorTaskLayout() {
 		super();
@@ -100,44 +109,25 @@ public class MinorTaskLayout
 		removeAll();
 		add(new MinorTaskTemplate());
 
-		viewBanner.addClassName("minortask-taskbanner");
+		appBanner.addMinorTaskEventListener(this);
+		topmostElement.setId(TOPMOST_ELEMENT_ID);
 
+		viewBanner.addClassName("minortask-taskbanner");
 		viewBanner.addMinorTaskEventListener(this);
+
 		view.addMinorTaskEventListener(this);
 		sidebar.addMinorTaskEventListener(this);
-		appBanner.addMinorTaskEventListener(this);
 
-		final Div topLeft = new Div(viewBanner);
 		topLeft.addClassName("minortask-topleft");
-
-		final Div topRightSpacer = new Div();
 		topRightSpacer.addClassName("minortask-topright-spacer");
-
-		final Div topRight = new Div(topRightSpacer);
 		topRight.addClassName("minortask-topright");
-
-		final Div top = new Div(topLeft, topRight);
 		top.addClassName("minortask-top");
-
-		final Div editorContents = new Div(view);
 		editorContents.addClassName("minortask-editorcontents");
-
-		bottomLeft.add(editorContents);
 		bottomLeft.addClassName("minortask-taskcomponents");
-
-		bottomRight.add(sidebar);
 		bottomRight.addClassName("minortask-bottomright");
-
-		bottom.add(bottomLeft, bottomRight);
 		bottom.addClassName("minortask-underthebanner");
-
-		taskComponents.add(top, bottom);
 		taskComponents.addClassName("minortask-tasksection");
-
-		editorSection.add(taskComponents);
 		editorSection.addClassName("minortask-internal");
-
-		Div verticalLayout = new Div(editorSection);
 		verticalLayout.addClassName("minortask-internal-container");
 
 		add(appBanner);
@@ -153,6 +143,7 @@ public class MinorTaskLayout
 
 	@Override
 	public void handleMinorTaskEvent(MinorTaskEvent event) {
+		Globals.scrollToTop();
 		switch (event.getView()) {
 			case SEARCH:
 				showSearchList();

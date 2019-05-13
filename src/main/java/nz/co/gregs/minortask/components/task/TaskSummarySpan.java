@@ -54,7 +54,7 @@ public class TaskSummarySpan extends Span implements MinorTaskEventNotifier, Has
 
 		Span summary = new Span(topDiv, desc);
 		summary.addClickListener((event) -> {
-			fireEvent(new MinorTaskEvent(this, getTask(), false));
+			fireEvent(new MinorTaskEvent(this, getTask(), true));
 		});
 		summary.addClassName("tasksummary-summary");
 
@@ -81,13 +81,8 @@ public class TaskSummarySpan extends Span implements MinorTaskEventNotifier, Has
 	private void setDetails(Details details) {
 		final Task task = getTask();
 		if (task != null) {
-			Long projectID = task.projectID.getValue();
-			if (projectID != null) {
-				try {
-					details.add(new Div(new Span("Part Of: " + minortask().getTask(projectID).name.getValue())));
-				} catch (Globals.InaccessibleTaskException ex) {
-					// I don't care, if they can't see we won't add it.
-				}
+			if (getProject() != null) {
+				details.add(new Div(new Span("Part Of: " + getProject().name.getValue()))); // I don't care, if they can't see we won't add it.
 			}
 
 			final Task.Owner owner = task.getOwner();
