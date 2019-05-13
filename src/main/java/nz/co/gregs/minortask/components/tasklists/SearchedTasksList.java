@@ -101,16 +101,6 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 			if (terms.length > 0) {
 				Task example = new Task();
 				DBQuery query = getQuery(example, terms);
-				query.addCondition(
-				example.column(example.userID).is(getCurrentUserID())
-						.or(
-								example.column(example.assigneeID).is(getCurrentUserID())
-						)
-		);
-				query.setSortOrder(
-						example.column(example.name).ascending(), 
-						example.column(example.taskID).ascending()
-				);
 				return query.getAllRows();
 			} else {
 				return new ArrayList<DBQueryRow>();
@@ -123,6 +113,12 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 	private DBQuery getQuery(Task example, String[] terms) {
 		DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
+		query.addCondition(
+				example.column(example.userID).is(getCurrentUserID())
+						.or(
+								example.column(example.assigneeID).is(getCurrentUserID())
+						)
+		);
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())
 						.or(
