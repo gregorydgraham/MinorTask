@@ -59,7 +59,9 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 
 	@Override
 	protected Component getCentralComponent(Task.TaskAndProject task) {
-		return new TaskSummarySpan(task);
+		final TaskSummarySpan summary = new TaskSummarySpan(task);
+		summary.addTaskMoveListener(this);
+		return summary;
 	}
 	
 	public static class LatestTaskView extends TaskViews{
