@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -58,8 +59,8 @@ public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected String getListCaption(List<Task.TaskAndProject> tasks) {
-		return "" + tasks.size() + " Recently Completed";
+	protected Label getListCaption(List<Task.TaskAndProject> tasks) {
+		return new Label("" + tasks.size() + " Recently Completed");
 	}
 
 	@Override

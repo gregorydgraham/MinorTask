@@ -8,6 +8,7 @@ package nz.co.gregs.minortask.components.tasklists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import java.sql.SQLException;
@@ -54,8 +55,8 @@ public class OpenTaskList extends AbstractTaskListOfDBQueryRow {
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
-		return "" + tasks.size() + " Open Subtasks";
+	protected Component getListCaption(List<DBQueryRow> tasks) {
+		return new Label("" + tasks.size() + " Open Subtasks");
 	}
 
 	@Override

@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components;
 
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -197,8 +198,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<DBQueryRow> tasks) {
-			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed Today (until " + AllCompletedTasksComponent.getStartOfToday() + ")";
+		protected Label getListCaption(List<DBQueryRow> tasks) {
+			return new Label("" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed Today (until " + AllCompletedTasksComponent.getStartOfToday() + ")");
 		}
 
 	}
@@ -215,8 +216,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<DBQueryRow> tasks) {
-			return "" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until " + AllCompletedTasksComponent.getStartOfThisWeek() + ")";
+		protected Label getListCaption(List<DBQueryRow> tasks) {
+			return new Label("" + (tasks == null ? 0 : tasks.size()) + " Tasks Completed This Week (until " + AllCompletedTasksComponent.getStartOfThisWeek() + ")");
 		}
 
 	}
@@ -233,8 +234,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<DBQueryRow> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Month (until " + AllCompletedTasksComponent.getStartOfThisMonth() + ")";
+		protected Label getListCaption(List<DBQueryRow> tasks) {
+			return new Label("" + tasks.size() + " Other Tasks Completed This Month (until " + AllCompletedTasksComponent.getStartOfThisMonth() + ")");
 		}
 
 	}
@@ -251,8 +252,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<DBQueryRow> tasks) {
-			return "" + tasks.size() + " Other Tasks Completed This Year (until " + AllCompletedTasksComponent.getStartOfThisYear() + ")";
+		protected Label getListCaption(List<DBQueryRow> tasks) {
+			return new Label("" + tasks.size() + " Other Tasks Completed This Year (until " + AllCompletedTasksComponent.getStartOfThisYear() + ")");
 		}
 
 	}
@@ -269,8 +270,8 @@ public class AllCompletedTasksComponent extends Div implements MinorTaskComponen
 		}
 
 		@Override
-		protected String getListCaption(List<DBQueryRow> tasks) {
-			return "" + tasks.size() + " Older Completed Tasks";
+		protected Label getListCaption(List<DBQueryRow> tasks) {
+			return new Label("" + tasks.size() + " Older Completed Tasks");
 		}
 
 	}

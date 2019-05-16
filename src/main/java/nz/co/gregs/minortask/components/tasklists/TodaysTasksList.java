@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +75,7 @@ public class TodaysTasksList extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected String getListCaption(List<Task.TaskAndProject> tasks) {
-		return "" + tasks.size() + " for Today (open tasks with a start date  in the past)";
+	protected Label getListCaption(List<Task.TaskAndProject> tasks) {
+		return new Label("" + tasks.size() + " for Today (open tasks with a start date  in the past)");
 	}
 }

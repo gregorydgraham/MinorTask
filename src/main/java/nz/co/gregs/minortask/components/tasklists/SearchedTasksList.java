@@ -8,15 +8,17 @@ package nz.co.gregs.minortask.components.tasklists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.Emphasis;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
-import nz.co.gregs.dbvolution.expressions.StringExpression;
+import nz.co.gregs.dbvolution.expressions.search.SearchAcross;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
@@ -77,15 +79,15 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
+	protected Component getListCaption(List<DBQueryRow> tasks) {
 		if (tasks.isEmpty()) {
 			if (searchFor == null || searchFor.isEmpty()) {
-				return "Search above";
+				return new Label("Search above");
 			} else {
-				return "No Results Found";
+				return new Label("No Results Found");
 			}
 		} else {
-			return "Found " + tasks.size() + " Tasks for \"" + searchFor + "\"";
+			return new Span(new Span("Found " + tasks.size() + " Tasks for ") , new Emphasis(searchFor));
 		}
 	}
 
@@ -96,21 +98,12 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 
 	@Override
 	protected List<DBQueryRow> getTasksToList() throws SQLException {
-		try {
-			String[] terms = getSearchTerms();
-			if (terms.length > 0) {
-				Task example = new Task();
-				DBQuery query = getQuery(example, terms);
-				return query.getAllRows();
-			} else {
-				return new ArrayList<DBQueryRow>();
-			}
-		} catch (NothingToSearchFor ex) {
-			return new ArrayList<DBQueryRow>();
-		}
+		DBQuery query = getQuery();
+		return query.getAllRows();
 	}
 
-	private DBQuery getQuery(Task example, String[] terms) {
+	private DBQuery getQuery() {
+		Task example = new Task();
 		DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
 		// add user requirement
 		query.addCondition(
@@ -119,42 +112,17 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
-		query.addCondition(
-				example.column(example.userID).is(getCurrentUserID())
-						.or(
-								example.column(example.assigneeID).is(getCurrentUserID())
-						)
-		);
-		StringExpression column = example.column(example.name);
+		SearchAcross terms = new SearchAcross(getSearchField().getValue())
+				.andSearchAcross(example.column(example.name), "name");
 		if (getIncludeDescriptionOption().getValue()) {
-			column = column.append(" ").append(example.column(example.description));
+			terms.andSearchAcross(example.column(example.description), "desc");
 		}
 		if (getIncludeCompletedTasksOption().getValue() == false) {
 			query.addCondition(example.column(example.completionDate).isNull());
 		}
-		query.addCondition(column.searchFor(terms));
-		query.setSortOrder(column.searchForRanking(terms).descending());
+		query.addCondition(terms);
+		query.setSortOrder(terms.descending(), example.column(example.name).ascending());
 		return query;
-	}
-
-	private String[] getSearchTerms() throws NothingToSearchFor {
-		String value = getSearchField().getValue();
-		return getSearchTerms(value);
-	}
-
-	private String[] getSearchTerms(String value) throws NothingToSearchFor {
-		if (value != null) {
-			String[] split = value.split(" ");
-			List<String> results = new ArrayList<>(0);
-			for (String string : split) {
-				if (!string.isEmpty()) {
-					results.add(string);
-				}
-			}
-			return results.toArray(new String[]{});
-		} else {
-			throw new NothingToSearchFor();
-		}
 	}
 
 	@Override
@@ -173,12 +141,6 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 		});
 		controls.setSpacing(false);
 		return new Component[]{getSearchField(), controls};
-	}
-
-	private static class NothingToSearchFor extends Exception {
-
-		public NothingToSearchFor() {
-		}
 	}
 
 }

@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -35,8 +37,8 @@ public class OverdueTasksList extends AbstractTaskListOfDBQueryRow {
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
-		return tasks.size() + " Overdue Tasks";
+	protected Component getListCaption(List<DBQueryRow> tasks) {
+		return new Label(tasks.size() + " Overdue Tasks");
 	}
 
 	@Override

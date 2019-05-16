@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.components.tasklists;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -31,8 +32,8 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 	}
 
 	@Override
-	protected String getListCaption(List<Task.TaskAndProject> tasks) {
-		return ""+tasks.size()+" Tasks viewed in the last week";
+	protected Label getListCaption(List<Task.TaskAndProject> tasks) {
+		return new Label(""+tasks.size()+" Tasks viewed in the last week");
 	}
 
 	@Override

@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -42,8 +43,8 @@ public class UpcomingTasksList extends AbstractTaskListOfDBQueryRow {
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
-		return tasks.size() + " Tasks will start within " + DAYS_AHEAD + " days";
+	protected Label getListCaption(List<DBQueryRow> tasks) {
+		return new Label(tasks.size() + " Tasks will start within " + DAYS_AHEAD + " days");
 	}
 
 	@Override

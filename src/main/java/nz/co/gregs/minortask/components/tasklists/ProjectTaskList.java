@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -29,8 +30,8 @@ public class ProjectTaskList extends AbstractTaskListOfDBQueryRow {
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
-		return "" + tasks.size() + " Project Tasks";
+	protected Label getListCaption(List<DBQueryRow> tasks) {
+		return new Label("" + tasks.size() + " Project Tasks");
 	}
 
 	@Override

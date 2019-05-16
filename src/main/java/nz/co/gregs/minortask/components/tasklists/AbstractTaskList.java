@@ -136,7 +136,7 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 
 	protected abstract String getListClassName();
 
-	protected abstract String getListCaption(List<S> tasks);
+	protected abstract Component getListCaption(List<S> tasks);
 
 	protected abstract List<S> getTasksToList() throws SQLException;
 
@@ -149,9 +149,9 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	}
 
 	private void setLabel(List<S> allRows) {
-		final String caption = getListCaption(allRows);
+		final Component caption = getListCaption(allRows);
 		label.removeAll();
-		label.add(new Label(caption));
+		label.add(caption);
 	}
 
 	private void setupGrid() {

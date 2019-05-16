@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components.tasklists;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Label;
 import java.sql.SQLException;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBQuery;
@@ -25,8 +27,8 @@ public class FavouritedTasksList extends AbstractTaskListOfDBQueryRow {
 	}
 
 	@Override
-	protected String getListCaption(List<DBQueryRow> tasks) {
-		return ""+tasks.size()+" favourited tasks";
+	protected Component getListCaption(List<DBQueryRow> tasks) {
+		return new Label(""+tasks.size()+" favourited tasks");
 	}
 
 	@Override
