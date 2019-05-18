@@ -113,9 +113,9 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 						)
 		);
 		SearchAcross terms = new SearchAcross(getSearchField().getValue())
-				.andSearchAcross(example.column(example.name), "name");
+				.addSearchColumn(example.column(example.name), "name");
 		if (getIncludeDescriptionOption().getValue()) {
-			terms.andSearchAcross(example.column(example.description), "desc");
+			terms.addSearchColumn(example.column(example.description), "desc");
 		}
 		if (getIncludeCompletedTasksOption().getValue() == false) {
 			query.addCondition(example.column(example.completionDate).isNull());
