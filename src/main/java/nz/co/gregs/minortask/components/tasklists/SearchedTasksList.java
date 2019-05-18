@@ -87,7 +87,7 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 				return new Label("No Results Found");
 			}
 		} else {
-			return new Span(new Span("Found " + tasks.size() + " Tasks for ") , new Emphasis(searchFor));
+			return new Span(new Span("Found " + tasks.size() + " Tasks for "), new Emphasis(searchFor));
 		}
 	}
 
@@ -105,6 +105,7 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 	private DBQuery getQuery() {
 		Task example = new Task();
 		DBQuery query = getDatabase().getDBQuery(example).addOptional(new Task.Project());
+
 		// add user requirement
 		query.addCondition(
 				example.column(example.userID).is(getCurrentUserID())
@@ -112,16 +113,22 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 								example.column(example.assigneeID).is(getCurrentUserID())
 						)
 		);
-		SearchAcross terms = new SearchAcross(getSearchField().getValue())
+
+		SearchAcross terms = SearchAcross
+				.searchFor(getSearchField().getValue())
 				.addSearchColumn(example.column(example.name), "name");
+
 		if (getIncludeDescriptionOption().getValue()) {
 			terms.addSearchColumn(example.column(example.description), "desc");
 		}
+
 		if (getIncludeCompletedTasksOption().getValue() == false) {
 			query.addCondition(example.column(example.completionDate).isNull());
 		}
+
 		query.addCondition(terms);
 		query.setSortOrder(terms.descending(), example.column(example.name).ascending());
+
 		return query;
 	}
 
