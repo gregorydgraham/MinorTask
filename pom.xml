@@ -48,7 +48,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-<!--		<repository>
+		<!--		<repository>
 			<id>JFrog Artifactory Repo</id>
 			<url>http://oss.jfrog.org/artifactory/libs-release/</url>
 		</repository>-->
@@ -56,7 +56,7 @@
 			<id>Spring Libs Repo</id>
 			<url>http://repo.spring.io/libs-release/</url>
 		</repository>
-<!--		<repository>
+		<!--		<repository>
 			<id>JCenter Cache Repo</id>
 			<url>http://oss.jfrog.org/artifactory/jcenter-cache/</url>
 		</repository>-->
@@ -172,6 +172,12 @@
 			<groupId>net.dean.jraw</groupId>
 			<artifactId>JRAW</artifactId>
 			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10.1</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 
