@@ -67,17 +67,17 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	}
 
 	private void setupWell(Div well) {
-		setupHeader();
+		setupHeader(header);
 		well.add(header);
 
-		setupGrid();
+		setupGrid(gridDiv);
 		well.add(gridDiv);
 
-		setupFooter();
+		setupFooter(footer);
 		well.add(footer);
 	}
 
-	private void setupFooter() {
+	private void setupFooter(Div footer) {
 		footer.removeAll();
 		final Component[] footerExtras = getFooterExtras();
 		if (footerExtras.length > 0) {
@@ -93,9 +93,10 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 		return well;
 	}
 
-	private void setupHeader() {
+	private void setupHeader(Div header) {
 		header.removeAll();
 		header.addClassName("tasklist-header");
+		setDefaultLabel();
 		header.add(label);
 		Div headerRight = new Div();
 		headerRight.addClassName("right");
@@ -154,9 +155,14 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 		label.add(caption);
 	}
 
-	private void setupGrid() {
+	private void setDefaultLabel() {
+		final Component caption = getDefaultLabel();
+		label.removeAll();
+		label.add(caption);
+	}
+
+	private void setupGrid(Div gridDiv) {
 		gridDiv.addClassName("task-list-grid-container");
-//		setGridItems(allRows);
 	}
 
 	private void setGridItems(List<S> allRows) {
@@ -164,23 +170,9 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 		allRows.forEach(
 				(row) -> {
 					if (row != null) {
-//						Component headline = protect(getRowHeaderComponent(row));
-//						Component left = protect(getLeftComponent(row));
-//						Component central = protect(getCentralComponent(row));
-//						Component right = protect(getRightComponent(row));
-//						Component footline = protect(getRowFooterComponent(row));
-//						final Div div = new Div(new Div(headline), new Div(left, central, right), new Div(footline));
-//						div.addClassName("tasklist-grid-row");
-//						headline.getElement().getClassList().add("tasklist-grid-row-header");
-//						left.getElement().getClassList().add("tasklist-grid-row-left");
-//						central.getElement().getClassList().add("tasklist-grid-row-central");
-//						right.getElement().getClassList().add("tasklist-grid-row-right");
-//						footline.getElement().getClassList().add("tasklist-grid-row-footer");
-//						gridDiv.add(div);
 						final Div div = new Div(
 								protect(getLeftComponent(row), "tasklist-entry-prefix"),
 								protect(getCentralComponent(row), "tasklist-entry-content"),
-								//getSubTaskNumberComponent(t),
 								protect(getRightComponent(row), "tasklist-entry-suffix"));
 						div.addClassName("tasklist-grid-row");
 						gridDiv.add(div);
@@ -255,6 +247,10 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	}
 
 	public abstract boolean checkForPermission(S item);
+
+	public Component getDefaultLabel() {
+		return new Label("");
+	}
 
 	public static abstract class PreQueried<L> extends AbstractTaskList<L> {
 

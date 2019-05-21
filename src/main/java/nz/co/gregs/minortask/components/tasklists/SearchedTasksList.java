@@ -8,8 +8,11 @@ package nz.co.gregs.minortask.components.tasklists;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Emphasis;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -22,6 +25,7 @@ import nz.co.gregs.dbvolution.expressions.search.SearchAcross;
 import nz.co.gregs.minortask.components.HasDefaultButton;
 import nz.co.gregs.minortask.datamodel.Task;
 
+@StyleSheet("styles/search-task-list.css")
 public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements HasDefaultButton {
 
 	TextField searchField;
@@ -32,7 +36,12 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 	public SearchedTasksList() {
 		super();
 		getSearchField();
-		setTooltipText("Search for your tasks based on their name and description");
+		setTooltipText("Search for your tasks based on their name and description. Use quotes to group terms, + to prioritise terms, - to reduce terms, and name: and desc: to limit the term to only the name or description respectively.  For example: 'improve \"too many\" -exercise +robert name:stretch'");
+	}
+
+	@Override
+	public Component getDefaultLabel() {
+		return new Label("Search Above");
 	}
 
 	private Checkbox getIncludeDescriptionOption() {
@@ -143,11 +152,27 @@ public class SearchedTasksList extends AbstractTaskListOfDBQueryRow implements H
 				(event) -> refresh()
 		);
 		HorizontalLayout controls = new HorizontalLayout(new Component[]{
-			getIncludeDescriptionOption(),
-			getIncludeCompletedTasksOption(), searchButton
+			new Span(getIncludeDescriptionOption()),
+			new Span(getIncludeCompletedTasksOption()),
+			searchButton
 		});
 		controls.setSpacing(false);
 		return new Component[]{getSearchField(), controls};
+	}
+
+	@Override
+	protected Component[] getFooterExtras() {
+		final Paragraph summary = new Paragraph("Search for your tasks based on their name and description. ");
+		final Paragraph example = new Paragraph(
+				new Span("For example: "),
+				new Emphasis("improve \"too many\" -exercise +vibrant name:stretch"));
+		final Paragraph explainExample = new Paragraph(
+				new Span("The above example will search for tasks containing 'improve', 'too many', and 'vibrant' with a name containing 'stretch'. Results with 'vibrant' will be placed higher in the list and those with 'exercise' will be lower")
+		);
+		final Paragraph descriptionOfTerms = new Paragraph("Use quotes to group terms, + to prioritise terms, - to reduce terms, and name: and desc: to limit the term to only the name or description respectively.  ");
+		final Div div = new Div(summary, example, explainExample, descriptionOfTerms);
+		div.setClassName("explanation");
+		return new Component[]{div};
 	}
 
 }
