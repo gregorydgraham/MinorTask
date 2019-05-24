@@ -88,7 +88,7 @@ public class Kittens extends MinortaskPage {
 // Authenticate and get a RedditClient instance
 			RedditClient redditClient = OAuthHelper.automatic(adapter, credentials);
 			DefaultPaginator<Submission> kittensReddit = redditClient
-					.subreddits("kittens", "Otters")//, "awww", "Otters", "puppies")
+					.subreddits("kittens", "Otters", "corgi")//, "awww", "Otters", "puppies")
 					.posts()
 					.sorting(SubredditSort.HOT)
 					.limit(100)
