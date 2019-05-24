@@ -98,7 +98,7 @@ public class DatabaseComponent extends Div {
 				clusterReconnectDiv.add(new Label("Reconnect: "+autoReconnect));
 				
 				ClusterDetails details = cluster.getClusterDetails();
-				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabase();
+				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabaseConnectionSettings();
 				DBDatabase[] allDBs = details.getAllDatabases();
 				for (DBDatabase db : allDBs) {
 					Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
