@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.gregs.minortask.components;
+package nz.co.gregs.minortask.components.database;
 
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
@@ -40,8 +40,8 @@ public class DatabaseComponent extends Div {
 		databaseStatusDiv.addClassName("cluster-monitor-database-status");
 		addClassName(
 				status.equals(DBDatabaseCluster.Status.READY)
-						?"cluster-monitor-ready-database"
-						:"cluster-monitor-nonready-database");
+				? "cluster-monitor-ready-database"
+				: "cluster-monitor-nonready-database");
 	}
 
 	public DatabaseComponent(DBDatabase database) {
@@ -84,21 +84,16 @@ public class DatabaseComponent extends Div {
 			}
 
 			for (RegularProcess regProc : database.getRegularProcessors()) {
-				final Div div = new Div(
-						new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
-						new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
-						new Div(new Label("Next Processing: " + regProc.getNextRuntime()))
-				);
-				regularProcessorsDiv.add(div);
+				regularProcessorsDiv.add(new RegularProcessorOverview(regProc));
 			}
 			if (database instanceof DBDatabaseCluster) {
 				addClassName("cluster-monitor-database-cluster");
 				DBDatabaseCluster cluster = (DBDatabaseCluster) database;
 				boolean autoReconnect = cluster.getAutoReconnect();
 				boolean autoRebuild = cluster.getAutoRebuild();
-				clusterRebuildDiv.add(new Label("Rebuild: "+autoRebuild));
-				clusterReconnectDiv.add(new Label("Reconnect: "+autoReconnect));
-				
+				clusterRebuildDiv.add(new Label("Rebuild: " + autoRebuild));
+				clusterReconnectDiv.add(new Label("Reconnect: " + autoReconnect));
+
 				ClusterDetails details = cluster.getClusterDetails();
 				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabaseConnectionSettings();
 				DBDatabase[] allDBs = details.getAllDatabases();
@@ -107,6 +102,8 @@ public class DatabaseComponent extends Div {
 					dbDiv.addClassName("cluster-monitor-contained-database");
 					containedDatabaseDiv.add(dbDiv);
 				}
+			} else {
+				remove(containedDatabaseDiv);
 			}
 		}
 	}

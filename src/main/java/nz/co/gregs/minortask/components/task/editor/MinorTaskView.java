@@ -5,6 +5,8 @@
  */
 package nz.co.gregs.minortask.components.task.editor;
 
+import nz.co.gregs.minortask.components.database.ClusterMonitorComponent;
+import nz.co.gregs.minortask.components.database.DatabaseComponent;
 import nz.co.gregs.minortask.components.colleagues.ColleaguesDiv;
 import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
@@ -212,10 +214,10 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		setTitle("Cluster Management");
 		taskTabs.setVisible(false);
 		adminDiv.removeAll();
-		adminDiv.add(new ClusterMonitorComponent());
 		DBDatabase database = getDatabase();
 		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
 		adminDiv.add(databaseDiv);
+		adminDiv.add(new ClusterMonitorComponent());
 		showComponent(adminDiv);
 	}
 
