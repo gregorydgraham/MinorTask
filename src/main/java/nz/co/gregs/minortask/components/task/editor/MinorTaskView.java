@@ -44,6 +44,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	
 	private final TaskEditorTabs taskTabs = new TaskEditorTabs(this);
 	private final LoginComponent loginComponent = new LoginComponent();
+	private final Div adminDiv = new Div();
 	
 
 	public MinorTaskView() {
@@ -92,6 +93,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		add(colleaguesDiv);
 		add(profileDiv);
 		add(loginComponent);
+		add(adminDiv);
 	}
 
 	private void hideAll() {
@@ -108,6 +110,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		colleaguesDiv.setVisible(false);
 		profileDiv.setVisible(false);
 		loginComponent.setVisible(false);
+		adminDiv.setVisible(false);
 	}
 
 	public void showTodayForAllProjects() {
@@ -208,11 +211,12 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	public void showCluster() {
 		setTitle("Cluster Management");
 		taskTabs.setVisible(false);
-		Div div = new Div(new ClusterMonitorComponent());
+		adminDiv.removeAll();
+		adminDiv.add(new ClusterMonitorComponent());
 		DBDatabase database = getDatabase();
 		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
-		div.add(databaseDiv);
-		showComponent(div);
+		adminDiv.add(databaseDiv);
+		showComponent(adminDiv);
 	}
 
 	public void showColleagues() {

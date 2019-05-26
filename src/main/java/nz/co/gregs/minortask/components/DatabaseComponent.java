@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
@@ -17,6 +18,7 @@ import nz.co.gregs.dbvolution.utility.RegularProcess;
  *
  * @author gregorygraham
  */
+@StyleSheet("styles/cluster-monitor.css")
 public class DatabaseComponent extends Div {
 
 	private final Div databaseDescriptionDiv = new Div();
@@ -82,12 +84,12 @@ public class DatabaseComponent extends Div {
 			}
 
 			for (RegularProcess regProc : database.getRegularProcessors()) {
-				regularProcessorsDiv.add(new Div(
-								new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
-								new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
-								new Div(new Label("Next Processing: " + regProc.getNextRuntime()))
-						)
+				final Div div = new Div(
+						new Label(regProc.getClass().getSimpleName() + " - " + regProc.getLastResult()),
+						new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
+						new Div(new Label("Next Processing: " + regProc.getNextRuntime()))
 				);
+				regularProcessorsDiv.add(div);
 			}
 			if (database instanceof DBDatabaseCluster) {
 				addClassName("cluster-monitor-database-cluster");
