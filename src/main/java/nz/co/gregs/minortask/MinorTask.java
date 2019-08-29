@@ -19,6 +19,7 @@ import com.vaadin.flow.server.VaadinSessionState;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.dbvolution.DBQueryRow;
 import nz.co.gregs.dbvolution.DBRecursiveQuery;
@@ -298,10 +299,12 @@ public class MinorTask extends Globals implements Serializable {
 		if (profileImage != null
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
+			String encode = Arrays.toString(Base64.getUrlEncoder().encode(profileImage.documentContents.getBytes()));
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
-					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
+					+encode;
+//					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
 			aThis.getStyle().set("background-image", "url(" + imageString + ")");
 			aThis.getStyle().set("background-size", "cover");
 			aThis.getStyle().set("background-position", "center");
@@ -314,11 +317,13 @@ public class MinorTask extends Globals implements Serializable {
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
 			ThumbnailImageDocumentStreamFactory res = new ThumbnailImageDocumentStreamFactory(profileImage);
-			DatatypeConverter.printBase64Binary(res.getByteArray());
+			String encode = Arrays.toString(Base64.getUrlEncoder().encode(res.getByteArray()));
+//			DatatypeConverter.printBase64Binary(res.getByteArray());
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
-					+ DatatypeConverter.printBase64Binary(res.getByteArray());//profileImage.documentContents.getBytes());
+					+encode;
+//					+ DatatypeConverter.printBase64Binary(res.getByteArray());//profileImage.documentContents.getBytes());
 			aThis.getStyle().set("background-image", "url(" + imageString + ")");
 			aThis.getStyle().set("background-size", "cover");
 			aThis.getStyle().set("background-position", "center");
@@ -331,11 +336,13 @@ public class MinorTask extends Globals implements Serializable {
 				&& profileImage.mediaType.getValue() != null
 				&& profileImage.mediaType.getValue().startsWith("image/")) {
 			SizedImageDocumentStreamFactory res = new SizedImageDocumentStreamFactory(profileImage);
-			DatatypeConverter.printBase64Binary(res.getByteArray());
+			String encode = Arrays.toString(Base64.getUrlEncoder().encode(res.getByteArray()));
+//			DatatypeConverter.printBase64Binary(res.getByteArray());
 			String imageString
 					= "data:" + profileImage.mediaType.getValue()
 					+ ";base64,"
-					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
+					+encode;
+//					+ DatatypeConverter.printBase64Binary(profileImage.documentContents.getBytes());
 			aThis.getStyle().set("background-image", "url(" + imageString + ")");
 			aThis.getStyle().set("background-size", "cover");
 			aThis.getStyle().set("background-position", "center");
