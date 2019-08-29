@@ -35,10 +35,12 @@ public class RegularProcessorOverview extends Div {
 				output.add(new Paragraph(string));
 			}
 		}
-		add(new Label(regProc.getClass().getSimpleName() + " -"), 
+		final Div processing = new Div(
 				output,
 				new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
 				new Div(new Label("Next Processing: " + regProc.getNextRuntime())));
+		processing.setTitle(regProc.getClass().getSimpleName());
+		add(new Label(regProc.getClass().getSimpleName()), processing);
 	}
 
 }
