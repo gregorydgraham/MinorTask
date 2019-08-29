@@ -17,6 +17,7 @@ import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
 import nz.co.gregs.dbvolution.datatypes.DBString;
+import nz.co.gregs.dbvolution.datatypes.QueryableDatatype;
 import nz.co.gregs.dbvolution.expressions.DateExpression;
 import nz.co.gregs.dbvolution.internal.properties.PropertyWrapper;
 import nz.co.gregs.minortask.components.upload.Document;
@@ -35,20 +36,42 @@ public class Changes extends DBRow {
 	public static DBRow[] getChanges(User user, Task task) {
 		List<PropertyWrapper> props = task.getColumnPropertyWrappers();
 		List<Changes> list = props.stream()
-				.filter((t) -> t.getQueryableDatatype().hasChanged())
+				.filter((t) -> {
+					final QueryableDatatype<?> qdt = t.getQueryableDatatype();
+					return qdt.hasChanged()
+							&& (qdt.getPreviousValue() != qdt.getValue());
+				})
 				.map((t) -> {
-							return new Changes(
-									user,
-									task,
-									t.javaName(),
-									""+t.getQueryableDatatype().getPreviousValue(),
-									""+t.getQueryableDatatype().getValue(),
-									t.javaName()
-									+ " updated to \"" + t.getQueryableDatatype().getValue()
-									+ "'\" from \"" + t.getQueryableDatatype().getPreviousValue()+"\"");
-						})
+			final QueryableDatatype<?> qdt = t.getQueryableDatatype();
+					return new Changes(
+							user,
+							task,
+							t.javaName(),
+							"" + qdt.getPreviousValue(),
+							"" + qdt.getValue(),
+							describeChange(t));
+				})
 				.collect(Collectors.toList());
 		return list.toArray(new DBRow[]{});
+	}
+
+	private static String describeChange(PropertyWrapper t) {
+		final String javaName = t.javaName();
+		final QueryableDatatype<?> qdt = t.getQueryableDatatype();
+		final Object newValue = qdt.getValue();
+		final Object oldValue = qdt.getPreviousValue();
+		if (qdt.isLargeObject()) {
+			return javaName + " was updated.";
+		} else if (oldValue == null) {
+			return javaName + " set to \"" + newValue
+					+ "'\"";
+		} else if (newValue == null) {
+			return javaName + " has been cleared (was \"" + oldValue + "\")";
+		} else {
+			return javaName
+					+ " changed to \"" + newValue
+					+ "'\" from \"" + oldValue + "\"";
+		}
 	}
 
 	@DBAutoIncrement
@@ -63,7 +86,7 @@ public class Changes extends DBRow {
 	@DBColumn
 	@DBForeignKey(Task.class)
 	DBInteger taskid = new DBInteger();
-	
+
 	@AutoFillDuringQueryIfPossible
 	Task task;
 
@@ -121,7 +144,7 @@ public class Changes extends DBRow {
 	public Changes(User user, Task task) {
 		this.userid.setValue(user.getUserID());
 		this.taskid.setValue(task.taskID.getValue());
-		this.description.setValue("Created Task: "+task.name.getValue());
+		this.description.setValue("Created Task: " + task.name.getValue());
 	}
 
 	public Changes(User user, Task task, String description) {
@@ -133,13 +156,13 @@ public class Changes extends DBRow {
 	public Changes(User user, Place location) {
 		this.userid.setValue(user.getUserID());
 		this.locationid.setValue(location.locationID.getValue());
-		this.description.setValue("Created Place: "+location.displayName);
+		this.description.setValue("Created Place: " + location.displayName);
 	}
 
 	public Changes(User user, Task task, Weblink weblink) {
 		this.userid.setValue(user.getUserID());
 		this.taskid.setValue(task.taskID.getValue());
-		this.description.setValue("Added web bookmark "+weblink.description.getValue()+" to "+task.taskID.getValue());
+		this.description.setValue("Added web bookmark " + weblink.description.getValue() + " to " + task.taskID.getValue());
 	}
 
 }
