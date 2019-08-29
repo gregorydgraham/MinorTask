@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import nz.co.gregs.dbvolution.DBReport;
 import nz.co.gregs.dbvolution.annotations.DBColumn;
@@ -22,7 +23,7 @@ import nz.co.gregs.dbvolution.datatypes.DBNumber;
 import nz.co.gregs.dbvolution.exceptions.AccidentalBlankQueryException;
 import nz.co.gregs.dbvolution.exceptions.AccidentalCartesianJoinException;
 import nz.co.gregs.dbvolution.exceptions.NoAvailableDatabaseException;
-import nz.co.gregs.dbvolution.expressions.DateExpression;
+import nz.co.gregs.dbvolution.expressions.NumberExpression;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.images.SizedImageFromDocument;
 import nz.co.gregs.minortask.MinorTaskEvent;
@@ -182,11 +183,14 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 		public DBNumber velocity = new DBNumber(
 				task.column(task.completionDate)
 						.isNotNull()
-						.and(
-								task.column(task.completionDate)
-										.isGreaterThanOrEqual(DateExpression.currentDate().addDays(-30))
-						)
-						.ifThenElse(1, 0)
+//						.and(
+//								task.column(task.completionDate)
+//										.isGreaterThanOrEqual(DateExpression.currentDate().addDays(-30))
+//						)
+//						.ifThenElse(	1,0)
+						.ifThenElse(
+								NumberExpression.value(1).dividedBy(task.column(task.completionDate).monthsFrom(new Date()).abs().plus(1).integerResult()), 
+								NumberExpression.value(0.0))
 						.sum()
 						.dividedBy(30)
 						.round(2)
