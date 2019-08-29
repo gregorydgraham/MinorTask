@@ -83,6 +83,7 @@ public class DatabaseComponent extends Div {
 				exceptionDiv.add(new Div(new Label("No Exception")));
 			}
 
+			regularProcessorsDiv.add(new Label("Processors"));
 			for (RegularProcess regProc : database.getRegularProcessors()) {
 				regularProcessorsDiv.add(new RegularProcessorOverview(regProc));
 			}
@@ -97,6 +98,7 @@ public class DatabaseComponent extends Div {
 				ClusterDetails details = cluster.getClusterDetails();
 				DatabaseConnectionSettings authoritativeDatabase = details.getAuthoritativeDatabaseConnectionSettings();
 				DBDatabase[] allDBs = details.getAllDatabases();
+				containedDatabaseDiv.add(new Label("Databases"));
 				for (DBDatabase db : allDBs) {
 					Div dbDiv = new DatabaseComponent(db, details, authoritativeDatabase);
 					dbDiv.addClassName("cluster-monitor-contained-database");
