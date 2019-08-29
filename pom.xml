@@ -273,7 +273,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
-					<source>10</source>
+					<source>1.10</source>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>  
@@ -283,6 +283,19 @@
 				<version>3.0.0-M2</version>
 				<executions>
 					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>1.10</version>
+								</requireJavaVersion>
+							</rules>    
+						</configuration>
+					</execution>
+					<!--<execution>
 						<id>enforce-maven</id>
 						<goals>
 							<goal>enforce</goal>
@@ -294,7 +307,7 @@
 								</requireMavenVersion>
 							</rules>    
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 		</plugins>
