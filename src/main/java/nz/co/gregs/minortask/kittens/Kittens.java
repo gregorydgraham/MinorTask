@@ -150,7 +150,7 @@ public class Kittens extends MinortaskPage {
 					// Do the changes to the page
 					System.out.println("CHANGE KITTEN " + (new Date()));
 					KittenBox[] comps = view.components;
-					int random = new Double(Math.random() * comps.length).intValue();
+					int random = Double.valueOf(Math.random() * comps.length).intValue();
 					KittenBox target = comps[random];
 					if (target != null) {
 						// do something
