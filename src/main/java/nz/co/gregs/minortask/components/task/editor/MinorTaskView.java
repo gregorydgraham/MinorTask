@@ -5,8 +5,6 @@
  */
 package nz.co.gregs.minortask.components.task.editor;
 
-import nz.co.gregs.minortask.components.database.ClusterMonitorComponent;
-import nz.co.gregs.minortask.components.database.DatabaseComponent;
 import nz.co.gregs.minortask.components.colleagues.ColleaguesDiv;
 import nz.co.gregs.minortask.MinorTaskEvent;
 import nz.co.gregs.minortask.components.task.SecureTaskDiv;
@@ -14,11 +12,11 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.tabs.Tabs;
-import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.minortask.components.*;
 import nz.co.gregs.minortask.components.tasklists.*;
 import nz.co.gregs.minortask.MinorTaskEventListener;
 import nz.co.gregs.minortask.MinorTaskEventNotifier;
+import nz.co.gregs.minortask.components.database.AdminLayout;
 import nz.co.gregs.minortask.datamodel.Task;
 
 /**
@@ -28,7 +26,6 @@ import nz.co.gregs.minortask.datamodel.Task;
 @Tag("task-editor")
 @StyleSheet("styles/edittask.css")
 public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListener, MinorTaskEventNotifier, TaskEditorTabOptions {
-
 
 	private final TaskEditor editorComponent = new TaskEditor();
 
@@ -43,11 +40,10 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	private final RecentlyViewedTasks recentlyViewedTasks = new RecentlyViewedTasks();
 	private final ColleaguesDiv colleaguesDiv = new ColleaguesDiv();
 	private final ProfileDiv profileDiv = new ProfileDiv();
-	
+
 	private final TaskEditorTabs taskTabs = new TaskEditorTabs(this);
 	private final LoginComponent loginComponent = new LoginComponent();
 	private final Div adminDiv = new Div();
-	
 
 	public MinorTaskView() {
 		super();
@@ -62,13 +58,12 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 
 	private void addAllViews() {
 		hideAll();
-		
+
 		taskTabs.addSelectedChangeListener((event) -> {
 			taskTabs.tabClicked(event);
 		});
 		taskTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
-		
-		
+
 		editorComponent.addMinorTaskEventListener(this);
 		todaysTasksList.addMinorTaskEventListener(this);
 		upcomingTasksList.addMinorTaskEventListener(this);
@@ -118,7 +113,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 	public void showTodayForAllProjects() {
 		setTitle("Today");
 		taskTabs.setVisible(false);
-		todaysTasksList.setTask((Task)null);
+		todaysTasksList.setTask((Task) null);
 		showComponent(todaysTasksList);
 	}
 
@@ -134,7 +129,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 
 	public Task setTitleToTaskName() {
 		final Task task = getTask();
-		setTitle(task==null?"Projects": task.name.getValue());
+		setTitle(task == null ? "Projects" : task.name.getValue());
 		return task;
 	}
 
@@ -214,10 +209,7 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		setTitle("Cluster Management");
 		taskTabs.setVisible(false);
 		adminDiv.removeAll();
-		DBDatabase database = getDatabase();
-		final DatabaseComponent databaseDiv = new DatabaseComponent(database);
-		adminDiv.add(databaseDiv);
-		adminDiv.add(new ClusterMonitorComponent());
+		adminDiv.add(new AdminLayout());
 		showComponent(adminDiv);
 	}
 
@@ -247,8 +239,8 @@ public class MinorTaskView extends SecureTaskDiv implements MinorTaskEventListen
 		taskTabs.setVisible(false);
 		showComponent(loginComponent);
 	}
-	
-	public void setLoginMethod(Runnable run){
+
+	public void setLoginMethod(Runnable run) {
 		loginComponent.setLoginMethod(run);
 	}
 }
