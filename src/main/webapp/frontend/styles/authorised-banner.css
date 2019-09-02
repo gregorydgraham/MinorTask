@@ -12,7 +12,7 @@ authorised-banner {
 	width: 100%;
 	height:50px;
 	background-color: cadetblue;
-	color:white;
+	color:darkslategray;
 	display: flex;
 	justify-content: space-between;
 	position: fixed;
@@ -20,9 +20,9 @@ authorised-banner {
 	opacity: 1;
 }
 
-authorised-banner a{color: white; font-weight: bold;}
-authorised-banner a:hover{color: #ccffff;font-weight: bold;}
-authorised-banner a:active{color: #ccffff;font-style: oblique;}
+authorised-banner a{color: darkslategray; font-weight: bold;}
+authorised-banner a:hover{color: darkslategray;font-weight: bold;}
+authorised-banner a:active{color: darkslategray;font-style: oblique;}
 
 .authorised-banner-left {
 	display: flex;
@@ -31,6 +31,12 @@ authorised-banner a:active{color: #ccffff;font-style: oblique;}
 	align-content: center;
 	vertical-align: central;
 	cursor: pointer;
+}
+
+.authorised-banner-centre{
+	display: flex;
+	align-items: center;
+	font-size: larger;
 }
 
 .authorised-banner-right{    
@@ -63,7 +69,6 @@ authorised-banner a:active{color: #ccffff;font-style: oblique;}
 }
 
 .authorised-banner-button{
-	color: white;
 	width: 46px;
 	padding-left: 9px;
 	padding-right: 9px;

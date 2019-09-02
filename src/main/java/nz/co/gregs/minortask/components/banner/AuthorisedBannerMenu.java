@@ -68,7 +68,7 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 		setSizeUndefined();
 
 		left.addClassName("authorised-banner-left");
-
+		centre.addClassName("authorised-banner-centre");
 		right.addClassName("authorised-banner-right");
 
 		left.add(profileImageDiv, quickLinks);
