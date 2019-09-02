@@ -42,6 +42,28 @@
 						username="minortask" 
 						password="minortask"
 	/>
+  <Resource auth="Container" 
+						name="bean/DatabaseConnectionSettings2" 
+						factory="org.apache.naming.factory.BeanFactory" 
+						type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" 
+						dbdatabaseClass="nz.co.gregs.dbvolution.databases.SQLiteDB" 
+						label="BaseSQLite" 
+						url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask_2.sqlite" 
+						username="admin" 
+						password="admin"
+	/>
+  <Resource auth="Container" 
+						name="bean/DatabaseConnectionSettings3" 
+						factory="org.apache.naming.factory.BeanFactory" 
+						type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" 
+						dbdatabaseClass="nz.co.gregs.dbvolution.databases.MySQLDB" 
+						label="baseMySQL" 
+						host="localhost" 
+						port="5432"  
+						instance="minortask" 
+						username="minortask" 
+						password="minortask"
+	/>
   <!--<Resource auth="Container" dbdatabaseClass="nz.co.gregs.dbvolution.databases.H2MemoryDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings1" label="MemH2" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:h2:mem:TestDatabase.h2" username="admin"/>-->
   <!--<Resource auth="Container" dbdatabaseClass="nz.co.gregs.dbvolution.databases.SQLiteDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings2" label="SecondarySQLite" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:sqlite:/Users/gregorygraham/Projects/MinorTask/MinorTask2.sqlite" username="admin"/>-->
   <!--<Resource auth="Container" dbdatabaseClass="nz.co.gregs.dbvolution.databases.H2SharedDB" factory="org.apache.naming.factory.BeanFactory" name="bean/DatabaseConnectionSettings3" label="BaseH2" password="admin" type="nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings" url="jdbc:h2:tcp://localhost//Users/gregorygraham/Projects/MinorTask/MinorTask1.h2" username="admin"/>-->
