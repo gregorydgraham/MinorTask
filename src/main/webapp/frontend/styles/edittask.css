@@ -19,6 +19,10 @@ vaadin-button{
 	width: fit-content;
 }
 
+.edit-task-addbuttons vaadin-button{
+	padding-left: 1px;
+}
+
 @media all and (min-width: 901px) {
 	.edit-task-notes{
 		--vaadin-text-field-default-width: 40em;
