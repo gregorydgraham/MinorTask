@@ -11,8 +11,8 @@ and open the template in the editor.
 authorised-banner {
 	width: 100%;
 	height:50px;
-	background-color: whitesmoke;
-	color:gray;
+	background-color: cadetblue;
+	color:white;
 	display: flex;
 	justify-content: space-between;
 	position: fixed;
@@ -20,9 +20,9 @@ authorised-banner {
 	opacity: 1;
 }
 
-authorised-banner a{color: gray;}
-authorised-banner a:hover{color: gray;font-weight: bold;}
-authorised-banner a:active{color: gray;font-style: oblique;}
+authorised-banner a{color: white; font-weight: bold;}
+authorised-banner a:hover{color: #ccffff;font-weight: bold;}
+authorised-banner a:active{color: #ccffff;font-style: oblique;}
 
 .authorised-banner-left {
 	display: flex;
@@ -37,6 +37,10 @@ authorised-banner a:active{color: gray;font-style: oblique;}
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
+}
+
+.authorised-banner-right label{    
+	color: darkslategray;
 }
 
 #authorised-banner-profile-image{
@@ -59,7 +63,7 @@ authorised-banner a:active{color: gray;font-style: oblique;}
 }
 
 .authorised-banner-button{
-	color: gray;
+	color: white;
 	width: 46px;
 	padding-left: 9px;
 	padding-right: 9px;
