@@ -286,7 +286,7 @@ public class TaskEditor extends FlexBox implements HasTaskAndProject, MinorTaskE
 		completeButton.setTooltipText("When you're happy it's done press this button");
 	}
 
-	protected void addChangeListeners() {
+	protected final void addChangeListeners() {
 		name.addBlurListener((event) -> {
 			checkAndSaveName(event);
 		});
