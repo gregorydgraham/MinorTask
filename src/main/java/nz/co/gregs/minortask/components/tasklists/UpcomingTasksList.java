@@ -27,11 +27,6 @@ public class UpcomingTasksList extends AbstractTaskListOfDBQueryRow {
 		setTooltipText("You'll need to be doing these soon, but you've got a little time yet");
 	}
 	
-	public UpcomingTasksList(Long task) {
-		super(task);
-		setTooltipText("You'll need to be doing these soon, but you've got a little time yet");
-	}
-	
 	public UpcomingTasksList(Task task) {
 		super(task);
 		setTooltipText("You'll need to be doing these soon, but you've got a little time yet");
