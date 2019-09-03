@@ -155,7 +155,7 @@ public class ColleagueList extends SecureDiv implements RequiresLogin {
 	}
 
 	private Component getPrefixComponent(ColleagueListItem source) {
-		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.USER);
+		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.USER, source.getOtherUser().getUsername());
 		icon.addClassName("colleaguelist-entry-prefix");
 		if (source.hasDeclined()) {
 			icon.addClassName("colleaguelist-entry-declined");
