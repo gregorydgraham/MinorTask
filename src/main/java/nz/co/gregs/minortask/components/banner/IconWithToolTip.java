@@ -15,10 +15,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  */
 public class IconWithToolTip extends SecureSpan {
 
-	public IconWithToolTip(VaadinIcon vaadinIcon) {
-		_init(vaadinIcon, null, Position.BOTTOM_RIGHT);
-	}
-
 	public IconWithToolTip(VaadinIcon vaadinIcon, String tooltip) {
 		_init(vaadinIcon, tooltip, Position.BOTTOM_RIGHT);
 	}
@@ -30,13 +26,13 @@ public class IconWithToolTip extends SecureSpan {
 	private void _init(VaadinIcon vaadinIcon, String tooltip, Position posn) {
 		this.add(new Icon(vaadinIcon));
 		if (tooltip != null) {
-			this.setTitle(tooltip);
 			setTooltipText(tooltip, posn);
 		}
 	}
-	
+
 	@Override
 	public void setTooltipText(String text) {
+		this.setTitle(text);
 		setTooltipText(text, Position.BOTTOM_RIGHT);
 	}
 }
