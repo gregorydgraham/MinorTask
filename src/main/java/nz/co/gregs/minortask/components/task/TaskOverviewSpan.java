@@ -37,9 +37,10 @@ public class TaskOverviewSpan extends Span implements MinorTaskEventNotifier, Ha
 	public TaskOverviewSpan(Task.TaskAndProject taskAndProject) {
 //		super(task);
 		setTaskAndProject(taskAndProject);
-		final String value = getTask().name.getValue();
+		final String taskName = getTask().name.getValue();
+		this.setTitle("View the details of "+taskName);
 
-		name.setText(value == null ? "" : value);
+		name.setText(taskName == null ? "" : taskName);
 		name.addClassNames("taskoverview-name");
 
 		Span projectSpan = createProjectSpan(getTaskAndProject());
@@ -65,8 +66,8 @@ public class TaskOverviewSpan extends Span implements MinorTaskEventNotifier, Ha
 		Div summaryAndDetails = new Div(summary, details);
 		summaryAndDetails.addClassName("taskoverview-all");
 		
-		final IconWithToolTip moveToTomorrow = new IconWithToolTip(VaadinIcon.CHEVRON_CIRCLE_RIGHT, "Bump the start date until tomorrow", Position.BOTTOM_RIGHT);
-		final IconWithToolTip moveToNextWeek = new IconWithToolTip(VaadinIcon.CHEVRON_RIGHT, "Bump the start date until tomorrow", Position.BOTTOM_RIGHT);
+		final IconWithToolTip moveToTomorrow = new IconWithToolTip(VaadinIcon.CHEVRON_CIRCLE_RIGHT, "move to tomorrow", Position.BOTTOM_RIGHT);
+		final IconWithToolTip moveToNextWeek = new IconWithToolTip(VaadinIcon.CHEVRON_RIGHT, "move to next week", Position.BOTTOM_RIGHT);
 		moveToTomorrow.addClickListener((event) -> {
 			Globals.moveStartDateToTomorrow(getTask(), this);
 		});moveToNextWeek.addClickListener((event) -> {
