@@ -736,6 +736,10 @@ public class TaskEditor extends FlexBox implements HasTaskAndProject, MinorTaskE
 	public void setTask(Task newTask) {
 		try {
 			setTaskAndProject(getTaskAndProject(newTask));
+			final Task task = getTask();
+			if (task != null) {
+				setTitle(task.name.stringValue());
+			}
 		} catch (Globals.InaccessibleTaskException ex) {
 			sqlerror(ex);
 		}
