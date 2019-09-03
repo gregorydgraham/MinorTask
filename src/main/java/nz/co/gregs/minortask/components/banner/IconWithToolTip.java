@@ -30,6 +30,7 @@ public class IconWithToolTip extends SecureSpan {
 	private void _init(VaadinIcon vaadinIcon, String tooltip, Position posn) {
 		this.add(new Icon(vaadinIcon));
 		if (tooltip != null) {
+			this.setTitle(tooltip);
 			setTooltipText(tooltip, posn);
 		}
 	}
