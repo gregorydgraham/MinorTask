@@ -176,7 +176,7 @@ public class ChangesList extends SecureDiv implements MinorTaskEventListener, Mi
 	}
 
 	private Component getPrefixComponent(Changes change) {
-		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.CLIPBOARD_CHECK);
+		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.CLIPBOARD_CHECK, "this item has been changed");
 		icon.addClassName("changelist-entry-prefix");
 		return icon;
 	}
