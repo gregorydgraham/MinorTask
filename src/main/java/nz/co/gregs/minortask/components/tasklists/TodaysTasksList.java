@@ -12,14 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import nz.co.gregs.dbvolution.DBQuery;
 import nz.co.gregs.minortask.datamodel.Task;
-import org.jsoup.select.Collector;
 
 public class TodaysTasksList extends AbstractTaskListOfTasks {
-
-	public TodaysTasksList(long taskID) {
-		super(taskID);
-		setTooltipText("Set a start date on the task to have it appear here when you need to start it");
-	}
 
 	public TodaysTasksList(Task.TaskAndProject task) {
 		super(task);
