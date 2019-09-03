@@ -7,31 +7,13 @@
 }
 
 .minortask-internal-container{
+	background-color: cadetblue;
 	padding-top: 50px; /* to fit the floating banner */
 }
 
 html{
-	background-attachment: fixed;
-	background-size: cover;
-	background-position-x: center;
-	background-color: white;
+	background-color: rgb(219, 233, 234);
 }
-
-html{
-}
-body{
-	padding:0;
-	margin:0;
-	width: 100%;
-}
-
-/*		.background-1{background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);}
-		.background-2{background-image: url(images/cloudy-mountains.jpg), url(frontend/styles/images/cloudy-mountains.jpg);}
-		.background-3{background-image: url(images/coast.jpg), url(frontend/styles/images/coast.jpg);}
-		.background-4{background-image: url(images/fall.jpg), url(frontend/styles/images/fall.jpg);}
-		.background-5{background-image: url(images/flying-bird.jpg), url(frontend/styles/images/flying-bird.jpg);}
-		.background-6{background-image: url(images/green-river.jpg), url(frontend/styles/images/green-river.jpg);}
-		.background-7{background-image: url(images/heaphy.jpg), url(frontend/styles/images/heaphy.jpg);}*/
 
 body>vaadin-vertical-layout {
 	padding: 0;
@@ -64,7 +46,7 @@ upcoming-task-list{
 .minortask-internal{
 	padding-left: 0;
 	padding-right:0;
-	background-color: white;
+	/*background-color: white;*/
 	justify-content: space-between;
 }
 
@@ -82,12 +64,16 @@ upcoming-task-list{
 }
 
 .minortask-editorcontents{
+	background-color: white;
 	max-width:50em;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .minortask-underthebanner{
 	display: flex;
 	justify-items: center;
+	background-color: rgb(219, 233, 234);
 	align-items: flex-start;
 }
 
@@ -96,7 +82,7 @@ upcoming-task-list{
 	margin-left:  0px;
 	padding-right: 0px;
 	margin-right:  0px;
-	background-color: white;
+	/*background-color: white;*/
 	background-image: none; 
 }    
 
