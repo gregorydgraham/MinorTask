@@ -38,19 +38,13 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	public AbstractTaskList() {
 		this((Task) null);
 	}
-
-	public AbstractTaskList(long taskID) {
-		super();
-		setupTaskList();
-		buildComponent();
-		this.addClassName("tasklist");
-		this.addClassName(this.getListClassName());
-		this.addAttachListener((event) -> refresh());
-	}
-
 	public AbstractTaskList(Task task) {
 		super();
 		setTask(task);
+		initTaskList();
+	}
+
+	private void initTaskList() {
 		setupTaskList();
 		buildComponent();
 		this.addClassName("tasklist");
