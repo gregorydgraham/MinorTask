@@ -10,7 +10,7 @@
 			background-attachment: fixed;
 			background-size: cover;
 			background-position-x: center;
-			background-color: white;
+			/*background-color: white;*/
 		}
 
 		html{
@@ -19,6 +19,7 @@
 			padding:0;
 			margin:0;
 			width: 100%;
+			max-width: 100%;
 		}
 
 		/*		.background-1{background-image: url(images/remarkables.jpg), url(frontend/styles/images/remarkables.jpg);}
