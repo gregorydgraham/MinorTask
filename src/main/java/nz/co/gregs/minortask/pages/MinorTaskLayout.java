@@ -21,7 +21,6 @@ import com.vaadin.flow.router.RouteAlias;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import nz.co.gregs.minortask.Globals;
-import nz.co.gregs.minortask.MinorTaskTemplate;
 import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
 import nz.co.gregs.minortask.components.FooterMenu;
 import nz.co.gregs.minortask.components.MinorTaskComponent;
@@ -73,6 +72,7 @@ public class MinorTaskLayout
 
 	public MinorTaskLayout() {
 		super();
+		this.addClassName("minortask-layout");
 		buildContents();
 	}
 
@@ -107,7 +107,8 @@ public class MinorTaskLayout
 
 	private void buildContents() {
 		removeAll();
-		add(new MinorTaskTemplate());
+//		add(new MinorTaskTemplate());
+		this.addClassName("minortask-layout-contents");
 
 		appBanner.addMinorTaskEventListener(this);
 		topmostElement.setId(TOPMOST_ELEMENT_ID);
