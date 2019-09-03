@@ -29,17 +29,13 @@ public abstract class AbstractTaskListOfDBQueryRow extends AbstractTaskList<DBQu
 		super();
 	}
 
-	public AbstractTaskListOfDBQueryRow(long taskID) {
-		super(taskID);
-	}
-
 	public AbstractTaskListOfDBQueryRow(Task task) {
 		super(task);
 	}
 
 	@Override
 	protected Component getLeftComponent(DBQueryRow row) {
-		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
+		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART, "add this task to your favourites list");
 		heart.addClassName("tasklist-entry-prefix");
 		Task gotTask = row.get(new Task());
 		FavouritedTasks gotFav = row.get(new FavouritedTasks());
@@ -95,7 +91,7 @@ public abstract class AbstractTaskListOfDBQueryRow extends AbstractTaskList<DBQu
 		if (task != null) {
 			final Long numberOfSubTasks = MinorTask.getActiveSubtaskCount(task, minortask().getCurrentUser());
 			layout.add(getSubTaskNumberComponent(task, numberOfSubTasks));
-			final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK);
+			final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK, "complete this task now");
 			checkIcon.addClickListener((event) -> {
 				if (task.completionDate.isNull()) {
 					minortask().completeTaskWithCongratulations(task);
