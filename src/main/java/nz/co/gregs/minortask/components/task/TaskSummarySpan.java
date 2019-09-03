@@ -36,9 +36,10 @@ public class TaskSummarySpan extends Span implements MinorTaskEventNotifier, Has
 	public TaskSummarySpan(Task.TaskAndProject taskAndProject) {
 //		super(task);
 		setTaskAndProject(taskAndProject);
-		final String value = getTask().name.getValue();
+		final String taskName = getTask().name.getValue();
+		this.setTitle("Summary of "+taskName);
 
-		name.setText(value == null ? "" : value);
+		name.setText(taskName == null ? "" : taskName);
 		name.addClassNames("tasksummary-name");
 
 		Span projectSpan = createProjectSpan(getTask(), getProject());
