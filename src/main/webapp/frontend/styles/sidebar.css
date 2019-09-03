@@ -30,7 +30,7 @@ sidebar{
 }*/
 
 sidebar .tasklist{
-	background-color: white;
+	/*background-color: white;*/
 	box-shadow: none;
 }
 
@@ -39,7 +39,7 @@ sidebar .tasklist-grid-row{
 }
 
 sidebar .changelist{
-	background-color: white;
+	/*background-color: white;*/
 	box-shadow: none;
 }
 
