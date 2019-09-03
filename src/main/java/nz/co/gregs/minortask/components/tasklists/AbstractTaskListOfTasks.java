@@ -28,10 +28,6 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task.Task
 	public AbstractTaskListOfTasks() {
 	}
 
-	public AbstractTaskListOfTasks(long taskID) {
-		super(taskID);
-	}
-
 	public AbstractTaskListOfTasks(Task.TaskAndProject task) {
 		super(task.getTask());
 		setTaskAndProject(task);
@@ -39,7 +35,7 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task.Task
 
 	@Override
 	protected Component getLeftComponent(Task.TaskAndProject taskAndProject) {
-		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART);
+		final IconWithToolTip heart = new IconWithToolTip(VaadinIcon.HEART, "add this task to your favourites");
 		heart.addClassName("tasklist-entry-prefix");
 		Task task = taskAndProject.getTask();
 		FavouritedTasks gotFav = minortask().getTaskFavourite(task);
@@ -101,7 +97,7 @@ public abstract class AbstractTaskListOfTasks extends AbstractTaskList<Task.Task
 			final Long numberOfSubTasks = MinorTask.getActiveSubtaskCount(task, minortask().getCurrentUser());
 			layout.add(getSubTaskNumberComponent(task, numberOfSubTasks));
 
-			final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK);
+			final IconWithToolTip checkIcon = new IconWithToolTip(VaadinIcon.CHECK, "complete this task now");
 			checkIcon.addClickListener((event) -> {
 				if (task.completionDate.isNull()) {
 					minortask().completeTaskWithCongratulations(task);
