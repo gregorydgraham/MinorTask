@@ -5,6 +5,7 @@
  */
 package nz.co.gregs.minortask.components.banner;
 
+import com.vaadin.flow.component.Component;
 import nz.co.gregs.minortask.components.generic.SecureDiv;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Tag;
@@ -95,12 +96,22 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 		add(left, centre, right);
 	}
 
-	public void refresh() {
+	public final void refresh() {
 		setText("" + Globals.getApplicationName());
+//		left.setVisible(false);
+		Component[] leftContents = left.getChildren().toArray(Component[]::new);
+		left.removeAll();
+//		right.setVisible(false);
+		Component[] rightContents = right.getChildren().toArray(Component[]::new);
+		right.removeAll();
 		counts.setText("Tasks: ??/##");
 
 		final User user = getCurrentUser();
 		if (user != null) {
+			left.setVisible(true);
+			left.add(leftContents);
+			right.setVisible(true);
+			right.add(rightContents);
 
 			OwnerStatistics taskCounts = new OwnerStatistics();
 			try {
@@ -183,13 +194,13 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 		public DBNumber velocity = new DBNumber(
 				task.column(task.completionDate)
 						.isNotNull()
-//						.and(
-//								task.column(task.completionDate)
-//										.isGreaterThanOrEqual(DateExpression.currentDate().addDays(-30))
-//						)
-//						.ifThenElse(	1,0)
+						//						.and(
+						//								task.column(task.completionDate)
+						//										.isGreaterThanOrEqual(DateExpression.currentDate().addDays(-30))
+						//						)
+						//						.ifThenElse(	1,0)
 						.ifThenElse(
-								NumberExpression.value(1).dividedBy(task.column(task.completionDate).monthsFrom(new Date()).abs().plus(1).integerResult()), 
+								NumberExpression.value(1).dividedBy(task.column(task.completionDate).monthsFrom(new Date()).abs().plus(1).integerResult()),
 								NumberExpression.value(0.0))
 						.sum()
 						.dividedBy(30)
