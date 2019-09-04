@@ -38,8 +38,6 @@ public class ThumbnailImageDocumentStreamFactory extends ImageDocumentStreamFact
 		final int height = (int) ((0d + original.getHeight()) * scale);
 		BufferedImage after = new BufferedImage(width, height, original.getType());
 		AffineTransform at = new AffineTransform();
-		System.out.println("SCALE: "+(targetSize)+" / "+(original.getWidth())+", "+ targetSize+" / "+original.getHeight());
-		System.out.println("SCALE: "+scale);
 		at.scale(scale,scale);
 		AffineTransformOp scaleOp
 				= new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
