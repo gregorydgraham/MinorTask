@@ -199,7 +199,7 @@ public class Globals {
 				System.out.println("REMEMBERED COOKIE VALUE: " + value);
 				RememberedLogin example = new RememberedLogin();
 				example.rememberCode.permittedValues(value);
-				example.expires.permittedRange(new Date(), null);
+				example.expires.permittedRange(LocalDateTime.now(), null);
 				try {
 					final DBDatabase db = getDatabase();
 					//db.setPrintSQLBeforeExecuting(true);
@@ -264,13 +264,13 @@ public class Globals {
 			}
 			setCookie(MINORTASK_MEMORY_KEY, identifier, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
 			RememberedLogin example = new RememberedLogin();
-			example.expires.permittedRange(new Date(), null);
+			example.expires.permittedRange(LocalDateTime.now(), null);
 			example.userid.permittedValues(user.getUserID());
 			example.rememberCode.permittedValues(identifier);
 			List<RememberedLogin> rows = getDatabase().get(example);
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.add(GregorianCalendar.SECOND, REMEMBER_ME_COOKIE_SECONDS_OFFSET);
-			Date expiryDate = cal.getTime();
+			LocalDateTime expiryDate = LocalDateTime.now().plusDays(REMEMBERED_USER_EXPIRATION_OFFSET);
 			if (rows.size() > 0) {
 				rows.forEach((RememberedLogin row) -> {
 					row.expires.setValue(expiryDate);
@@ -282,6 +282,7 @@ public class Globals {
 			}
 		}
 	}
+	private static final int REMEMBERED_USER_EXPIRATION_OFFSET = 30;
 
 	public static String getRandomID() {
 		return new BigInteger(130, new SecureRandom()).toString(32);
