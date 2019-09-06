@@ -6,6 +6,7 @@
 package nz.co.gregs.minortask.datamodel;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import nz.co.gregs.dbvolution.DBRow;
 import nz.co.gregs.dbvolution.actions.DBActionList;
@@ -17,6 +18,7 @@ import nz.co.gregs.dbvolution.annotations.DBRequiredTable;
 import nz.co.gregs.dbvolution.databases.DBDatabase;
 import nz.co.gregs.dbvolution.datatypes.DBDate;
 import nz.co.gregs.dbvolution.datatypes.DBInteger;
+import nz.co.gregs.dbvolution.datatypes.DBLocalDateTime;
 import nz.co.gregs.dbvolution.datatypes.DBString;
 
 /**
@@ -39,13 +41,13 @@ public class RememberedLogin extends DBRow {
 	public DBString rememberCode = new DBString();
 	
 	@DBColumn
-	public DBDate expires = new DBDate();
+	public DBLocalDateTime expires = new DBLocalDateTime();
 
 	public RememberedLogin() {
 		super();
 	}
 
-	public RememberedLogin(Long userID, String identifier, Date expiryDate) {
+	public RememberedLogin(Long userID, String identifier, LocalDateTime expiryDate) {
 		this();
 		this.userid.setValue(userID);
 		this.rememberCode.setValue(identifier);
@@ -54,7 +56,7 @@ public class RememberedLogin extends DBRow {
 	
 	public static DBActionList cleanUpTable(DBDatabase db) throws SQLException{
 		RememberedLogin example = new RememberedLogin();
-		example.expires.permittedRangeExclusive(null, new Date());
+		example.expires.permittedRangeExclusive(null, LocalDateTime.now().minusDays(30));
 		db.print(db.getByExample(example));
 		return db.delete(example);
 	}
