@@ -84,4 +84,9 @@ public class RecentlyCompletedTasks extends AbstractTaskListOfTasks {
 		summary.addTaskMoveListener(this);
 		return summary;
 	}
+
+	@Override
+	protected boolean listCanBeShown() {
+		return minortask().isLoggedIn();
+	}
 }

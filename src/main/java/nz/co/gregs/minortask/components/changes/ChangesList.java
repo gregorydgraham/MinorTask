@@ -175,6 +175,14 @@ public class ChangesList extends SecureDiv implements MinorTaskEventListener, Mi
 		);
 	}
 
+	private void clearGridItems() {
+		gridDiv.removeAll();
+	}
+
+	protected boolean listCanBeShown() {
+		return minortask().isLoggedIn();
+	}
+
 	private Component getPrefixComponent(Changes change) {
 		final IconWithToolTip icon = new IconWithToolTip(VaadinIcon.CLIPBOARD_CHECK, "this item has been changed");
 		icon.addClassName("changelist-entry-prefix");
@@ -197,10 +205,15 @@ public class ChangesList extends SecureDiv implements MinorTaskEventListener, Mi
 		this.getUI().ifPresent((ui) -> {
 			ui.access(() -> {
 				try {
-					if (thereAreRowsToShow()) {
-						List<Changes> allRows = getPermittedChanges();
-						setLabel(allRows);
-						setGridItems(allRows);
+					final boolean canShow = listCanBeShown();
+					if (canShow) {
+						if (thereAreRowsToShow()) {
+							List<Changes> allRows = getPermittedChanges();
+							setLabel(allRows);
+							setGridItems(allRows);
+						}
+					} else {
+						clearGridItems();
 					}
 				} catch (SQLException ex) {
 					Globals.sqlerror(ex);

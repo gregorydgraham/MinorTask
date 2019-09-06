@@ -49,9 +49,13 @@ public class Sidebar extends SecureSpan implements MinorTaskEventNotifier, Minor
 	}
 
 	public void refresh() {
+		final boolean loggedIn = isLoggedIn();
 		recentlyCompletedTasks.refresh();
 		changesList.refresh();
 		recentlyViewedTasks.refresh();
+		recentlyCompletedTasks.setVisible(loggedIn);
+		changesList.setVisible(loggedIn);
+		recentlyViewedTasks.setVisible(loggedIn);
 	}
 
 	@Override

@@ -64,6 +64,11 @@ public class RecentlyViewedTasks extends AbstractTaskListOfTasks {
 		summary.addTaskMoveListener(this);
 		return summary;
 	}
+
+	@Override
+	protected boolean listCanBeShown() {
+		return minortask().isLoggedIn();
+	}
 	
 	public static class LatestTaskView extends TaskViews{
 		

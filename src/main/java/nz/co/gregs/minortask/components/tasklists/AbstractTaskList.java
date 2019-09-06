@@ -38,6 +38,7 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	public AbstractTaskList() {
 		this((Task) null);
 	}
+
 	public AbstractTaskList(Task task) {
 		super();
 		setTask(task);
@@ -113,9 +114,10 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 		}
 		return permittedTasks;
 	}
-	
+
 	@Override
 	public final void setTooltipText(String text) {
+		this.setTitle(text);
 		label.setTooltipText(text);
 	}
 
@@ -175,6 +177,10 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 		);
 	}
 
+	private void clearGridItems() {
+		gridDiv.removeAll();
+	}
+
 	private Component protect(Component comp, String classname) {
 		final Span span = new Span();
 		if (comp != null) {
@@ -191,17 +197,22 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 	abstract protected Component getLeftComponent(S row);
 
 	abstract protected Component getCentralComponent(S row);
-	
+
 	abstract protected Component getRightComponent(S row);
 
 	public final void refresh() {
 		this.getUI().ifPresent((t) -> {
 			t.access(() -> {
 				try {
-					if (thereAreRowsToShow()) {
-						List<S> allRows = getPermittedTasks();
-						setLabel(allRows);
-						setGridItems(allRows);
+					final boolean canShow = listCanBeShown();
+					if (canShow) {
+						if (thereAreRowsToShow()) {
+							List<S> allRows = getPermittedTasks();
+							setLabel(allRows);
+							setGridItems(allRows);
+						}
+					} else {
+						clearGridItems();
 					}
 				} catch (SQLException ex) {
 					Globals.sqlerror(ex);
@@ -244,6 +255,10 @@ public abstract class AbstractTaskList<S> extends SecureTaskDiv implements Minor
 
 	public Component getDefaultLabel() {
 		return new Label("");
+	}
+
+	protected boolean listCanBeShown() {
+		return true;
 	}
 
 	public static abstract class PreQueried<L> extends AbstractTaskList<L> {
