@@ -52,6 +52,9 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 	Div right = new Div();
 	Div centre = new Div();
 
+	Component[] leftContents;
+	Component[] rightContents;
+
 	public AuthorisedBannerMenu() {
 		super();
 		buildComponent();
@@ -93,16 +96,16 @@ public class AuthorisedBannerMenu extends SecureDiv implements HasText, MinorTas
 		left.add(profileImageDiv, quickLinks);
 		centre.add(welcomeMessage);
 		right.add(userLinks, counts);
+
+		leftContents = left.getChildren().toArray(Component[]::new);
+		rightContents = right.getChildren().toArray(Component[]::new);
+
 		add(left, centre, right);
 	}
 
 	public final void refresh() {
 		setText("" + Globals.getApplicationName());
-//		left.setVisible(false);
-		Component[] leftContents = left.getChildren().toArray(Component[]::new);
 		left.removeAll();
-//		right.setVisible(false);
-		Component[] rightContents = right.getChildren().toArray(Component[]::new);
 		right.removeAll();
 		counts.setText("Tasks: ??/##");
 

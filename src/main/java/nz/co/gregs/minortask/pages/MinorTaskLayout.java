@@ -18,7 +18,7 @@ import com.vaadin.flow.router.Location;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import nz.co.gregs.minortask.Globals;
 import nz.co.gregs.minortask.components.banner.AuthorisedBannerMenu;
@@ -145,6 +145,8 @@ public class MinorTaskLayout
 	@Override
 	public void handleMinorTaskEvent(MinorTaskEvent event) {
 		Globals.scrollToTop();
+		appBanner.refresh();
+		refreshSideBar();
 		switch (event.getView()) {
 			case SEARCH:
 				showSearchList();
@@ -172,7 +174,6 @@ public class MinorTaskLayout
 				break;
 			default:;
 		}
-		refreshSideBar();
 	}
 
 	private void changeToTopLevelPage(String bannerTitle, String bannerDescription, String urlSnippet, Runnable viewCall) {
@@ -189,6 +190,7 @@ public class MinorTaskLayout
 	}
 
 	private void changeToPage(final String title, final String description, final String urlDestination) {
+		appBanner.refresh();
 		viewBanner.setTitle(title);
 		viewBanner.setDescription(description);
 		UI.getCurrent().getPage().setTitle(getPageTitle());
@@ -236,6 +238,7 @@ public class MinorTaskLayout
 		viewBanner.setTitle("Login");
 		viewBanner.setDescription("Please login first");
 		view.setLoginMethod(() -> {
+			System.out.println("LOGGING IN THRU MINORTASKLAYOUT");
 			appBanner.refresh();
 			sidebar.refresh();
 			beforeEnter(event);
@@ -243,12 +246,12 @@ public class MinorTaskLayout
 		view.showLogin();
 	}
 
-	private LocalTime nextRefresh;
+	private LocalDateTime nextRefresh = LocalDateTime.now().minusSeconds(20);
 
 	private void refreshSideBar() {
-		if (nextRefresh == null || LocalTime.now().isAfter(nextRefresh)) {
+		if (nextRefresh == null || LocalDateTime.now().isAfter(nextRefresh)) {
 			sidebar.refresh();
-			nextRefresh = LocalTime.now().plus(20, ChronoUnit.SECONDS);
+			nextRefresh = LocalDateTime.now().plusSeconds(10);
 		}
 	}
 }

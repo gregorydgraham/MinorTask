@@ -148,19 +148,25 @@ public class LoginComponent extends VerticalLayout implements MinorTaskComponent
 	}
 
 	public void setDestination(Location location) {
+		this.run = null;
 		destination = location;
 	}
 
 	private void showDestination() {
 		if (run != null) {
+			System.out.println("LOGGING IN THRU RUN");
 			run.run();
-		}
-		if (destination != null) {
+		} else if (destination != null) {
+			System.out.println("LOGGING IN THRU DESTINATION");
 			Globals.showLocation(destination);
+		} else {
+			System.out.println("LOGGING IN THRU SHOWOPENINGPAGE");
+			Globals.showOpeningPage();
 		}
 	}
 
 	public void setLoginMethod(Runnable run) {
+		this.destination = null;
 		this.run = run;
 	}
 }
