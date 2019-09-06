@@ -13,6 +13,7 @@ import nz.co.gregs.dbvolution.databases.DBDatabaseCluster;
 import nz.co.gregs.dbvolution.databases.DatabaseConnectionSettings;
 import nz.co.gregs.dbvolution.internal.database.ClusterDetails;
 import nz.co.gregs.dbvolution.utility.RegularProcess;
+import nz.co.gregs.minortask.components.polymer.Details;
 
 /**
  *
@@ -24,7 +25,7 @@ public class DatabaseComponent extends Div {
 	private final Div databaseDescriptionDiv = new Div();
 	private final Div labelDiv = new Div();
 	private final Div databaseStatusDiv = new Div();
-	private final Div exceptionDiv = new Div();
+	private final Details exceptionDiv = new Details("No Exception");
 	private final Div containedDatabaseDiv = new Div();
 	private final Div regularProcessorsDiv = new Div();
 	private final Div clusterRebuildDiv = new Div();
@@ -74,7 +75,7 @@ public class DatabaseComponent extends Div {
 
 			Exception except = database.getLastException();
 			if (except != null) {
-				exceptionDiv.add(new Div(new Label(database.getLastException().getLocalizedMessage())));
+				exceptionDiv.setSummary(database.getLastException().getLocalizedMessage());
 				StackTraceElement[] stackTrace = except.getStackTrace();
 				for (StackTraceElement stackTraceElement : stackTrace) {
 					exceptionDiv.add(new Div(new Label(stackTraceElement.toString())));
