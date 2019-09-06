@@ -9,21 +9,25 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
+import java.util.Arrays;
 
 /**
  *
  * @author gregorygraham
  */
 @Tag("details")
-public class Details extends Component implements HasComponents, HasStyle{
+public class Details extends Component implements HasComponents, HasStyle {
+
+	final Summary summary = new Summary("");
 
 	private Details() {
 		super();
+		add(summary);
 	}
 
 	public Details(String text) {
 		this();
-		add(new Summary(text));
+		summary.setText(text);
 	}
 
 	public Details(Component... components) {
@@ -35,4 +39,26 @@ public class Details extends Component implements HasComponents, HasStyle{
 		this(summary);
 		add(components);
 	}
+
+	public void setSummary(String text) {
+		summary.setText(text);
+	}
+
+	public void clearSummary() {
+		summary.setText("");
+	}
+
+	@Override
+	public void removeAll() {
+		HasComponents.super.removeAll();
+		add(summary);
+	}
+
+	@Override
+	public void remove(Component... components) {
+		Arrays.asList(components)
+				.stream().filter((t) -> t != summary)
+				.forEach((t) -> HasComponents.super.remove(t));
+	}
+
 }
