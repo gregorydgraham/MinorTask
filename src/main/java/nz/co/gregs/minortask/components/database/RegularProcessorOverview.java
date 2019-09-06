@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import nz.co.gregs.dbvolution.utility.RegularProcess;
+import nz.co.gregs.minortask.components.polymer.Details;
 
 /**
  *
@@ -40,7 +41,7 @@ public class RegularProcessorOverview extends Div {
 				new Div(new Label("Last Processed: " + regProc.getLastRuntime())),
 				new Div(new Label("Next Processing: " + regProc.getNextRuntime())));
 		processing.setTitle(regProc.getClass().getSimpleName());
-		add(new Label(regProc.getClass().getSimpleName()), processing);
+		add(new Details(regProc.getClass().getSimpleName(), processing));
 	}
 
 }
