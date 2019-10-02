@@ -75,7 +75,8 @@ public class DatabaseComponent extends Div {
 
 			Exception except = database.getLastException();
 			if (except != null) {
-				exceptionDiv.setSummary(database.getLastException().getLocalizedMessage());
+				exceptionDiv.setSummary(database.getLastException().getLocalizedMessage().substring(0, 50));
+				exceptionDiv.add(new Div(new Label(database.getLastException().getLocalizedMessage())));
 				StackTraceElement[] stackTrace = except.getStackTrace();
 				for (StackTraceElement stackTraceElement : stackTrace) {
 					exceptionDiv.add(new Div(new Label(stackTraceElement.toString())));
