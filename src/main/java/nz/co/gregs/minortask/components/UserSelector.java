@@ -288,7 +288,7 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 				User example = new User();
 				example.queryUsername().setSortOrderAscending();
 				DBQuery dbquery = getDBQuery(example, query);
-				return dbquery.count().intValue() + staticTeamMembers.size();
+				return dbquery.getAllRows().size() + staticTeamMembers.size();
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
 			}
