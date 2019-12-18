@@ -74,6 +74,7 @@ public class ColleaguesButton extends SecureSpan implements MinorTaskEventNotifi
 		DBQuery dbQuery
 				= getDatabase()
 						.getDBQuery()
+						.setQueryLabel("Number Of Pending Invites")
 						.add(colleague);
 
 		System.out.println("" + dbQuery.getSQLForQuery());
