@@ -270,8 +270,8 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 			listOfColleagues.addAll(staticTeamMembers);
 			try {
 				User example = new User();
-				example.queryUsername().setSortOrderAscending();
-				DBQuery dbquery = getDBQuery(example, query);
+//				example.queryUsername().setSortOrderAscending();
+				DBQuery dbquery = getDBQuery(example, query).setQueryLabel("Fetch From Backend");
 				List<User> listOfUsers = dbquery.getAllInstancesOf(example);
 				listOfUsers.forEach((t) -> {
 					listOfColleagues.add(t);
@@ -286,8 +286,8 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 		public int sizeInBackEnd(Query<User, BooleanExpression> query) {
 			try {
 				User example = new User();
-				example.queryUsername().setSortOrderAscending();
-				DBQuery dbquery = getDBQuery(example, query);
+//				example.queryUsername().setSortOrderAscending();
+				DBQuery dbquery = getDBQuery(example, query).setQueryLabel("Size In Backend");
 				return dbquery.getAllRows().size() + staticTeamMembers.size();
 			} catch (SQLException ex) {
 				Logger.getLogger(UserSelector.class.getName()).log(Level.SEVERE, null, ex);
@@ -297,29 +297,32 @@ public class UserSelector extends ComboBox<User> implements RequiresLogin {
 
 		@Override
 		public DBQuery getDBQuery(User example, Query<User, BooleanExpression> query) {
+			DBQuery dbquery;
+
 			Colleagues colleagues = new Colleagues();
 			colleagues.acceptanceDate.permitOnlyNotNull();
-			final User exampleUser = new User();
 			colleagues.ignoreAllForeignKeys();
-			final DBQuery dbquery = Globals.getDatabase().getDBQuery(exampleUser, colleagues);
-			if (user != null) {
-				exampleUser.queryUserID().excludedValues(user.getUserID());
-				dbquery.addCondition(// connect the user table and the colleagues table
-						exampleUser.column(exampleUser.queryUserID())
-								.isIn(
-										colleagues.column(colleagues.requestor),
-										colleagues.column(colleagues.invited))
-								.and(
-										IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
-												.isIn(// and make sure we're looking for colleagues of the current user
-														colleagues.column(colleagues.requestor),
-														colleagues.column(colleagues.invited)))
-				);
-			}
+
+			final User exampleUser = new User();
+			exampleUser.queryUserID().excludedValues(user.getUserID());
+
+			dbquery = Globals.getDatabase().getDBQuery(exampleUser, colleagues).setQueryLabel("User Selector Generic Query");
+			dbquery.addCondition(// connect the user table and the colleagues table
+					exampleUser.column(exampleUser.queryUserID())
+							.isIn(
+									colleagues.column(colleagues.requestor),
+									colleagues.column(colleagues.invited))
+							.and(
+									IntegerExpression.value(user.getUserID()) // this needs to be added as part of the FK
+											.isIn(// and make sure we're looking for colleagues of the current user
+													colleagues.column(colleagues.requestor),
+													colleagues.column(colleagues.invited)))
+			);
 			dbquery.setSortOrder(
 					exampleUser.column(exampleUser.queryUsername()),
 					exampleUser.column(exampleUser.queryUserID())
 			);
+
 			System.out.println("" + dbquery.getSQLForQuery());
 			return dbquery;
 		}
